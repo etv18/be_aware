@@ -3,6 +3,7 @@ from flask_migrate import Migrate
 
 from app.config import Config
 from app.extensions import db
+from app.routes.home_routes import home_bp
 
 def create_app():
     app = Flask(__name__)
@@ -20,5 +21,5 @@ def register_extensions(app):
     migrate = Migrate(app, db)
 
 def register_resources(app):
-    #app.register_blueprint()
-    pass
+    app.register_blueprint(home_bp)
+    

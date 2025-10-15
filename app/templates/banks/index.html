@@ -1,9 +1,36 @@
 {% extends "layout.html" %}
 
-{% block title %}Home · Be Aware{% endblock %}
+{% block title %}Banks · Be Aware{% endblock %}
 
 {% block content %}
-  <h1>hello bank index</h1>
-  <h1>hello bank index</h1>
-  <h1>hello bank index</h1>
+    <div class="container w-75">
+        <a href="#" class="btn btn-outline-primary">New Bank</a>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                <th scope="col"># Id</th>
+                <th scope="col">Bank</th>
+                <th scope="col">Create at</th>
+                <th scope="col">Acctions</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                <tr>
+                    <th scope="row">3</th>
+                    <td>John</td>
+                    <td>Doe</td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <a href="#" class="btn btn-success">Edit</a>
+                            <form action="#">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
 {% endblock %}

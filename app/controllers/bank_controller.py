@@ -8,7 +8,9 @@ def create_bank():
         name = request.form['name']
 
         bank = Bank(name=name)
-        bank.save()
+        
+        db.session.add(bank)
+        db.session.commit()
 
         data = {
             'id': bank.id,

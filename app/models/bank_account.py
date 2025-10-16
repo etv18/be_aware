@@ -5,7 +5,6 @@ from sqlalchemy.orm import relationship
 class BankAccount(db.Model):
     __tablename__ = 'bank_accounts'
     id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(50), nullable=False)
     nick_name = db.Column(db.String(120))
     amount_available = db.Column(db.Numeric(10, 2), nullable=False)
     is_active = db.Column(db.Boolean, default=True)

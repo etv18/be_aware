@@ -12,6 +12,10 @@ class Bank(db.Model):
     bank_accounts = relationship('BankAccount', back_populates='bank')
     credit_cards = relationship('CreditCard', back_populates='bank')
 
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
     @classmethod
     def get_all(cls):
         result_set = cls.query.all()

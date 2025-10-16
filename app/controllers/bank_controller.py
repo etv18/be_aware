@@ -1,5 +1,7 @@
-from app.models.bank import Bank
 from flask import request
+
+from app.models.bank import Bank
+from app.extensions import db
 
 def create_bank():
     if request.method == 'POST':
@@ -15,3 +17,9 @@ def create_bank():
         }
 
         return data
+    
+def update_bank(bank):
+    if request.method == 'POST':
+        bank.name = request.form['name']
+
+        db.session.commit()

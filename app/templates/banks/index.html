@@ -6,28 +6,28 @@
     <div class="container w-75">
 
         <section class="modal fade" tabindex="-1" id="create-bank">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">New Bank</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="#">
+            <form action="{{ url_for('bank.create' ) }}" method="post">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">New Bank</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
                             <div class="col-sm">
                                 <div class="form-floating mt-2 w-">
-                                    <input type="email" name="email" id="email1" class="form-control" placeholder="Bank name">
-                                    <label for="email1">Bank name</label>
+                                    <input type="text" name="name" id="name" class="form-control" placeholder="Bank name">
+                                    <label for="name">Bank name</label>
                                 </div>
                             </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save</button>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
         </section>
 
         <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-bank">New Bank</button>
@@ -49,7 +49,7 @@
                     <td>
                         <div class="d-flex gap-2">
                             <a href="#" class="btn btn-success">Edit</a>
-                            <form action="#">
+                            <form action="{{ url_for('bank.create' ) }}" method="post">
                                 <button type="submit" class="btn btn-danger">Delete</button>
                             </form>
                         </div>

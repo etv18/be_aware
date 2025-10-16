@@ -8,6 +8,7 @@ class BankAccount(db.Model):
     nick_name = db.Column(db.String(120))
     amount_available = db.Column(db.Numeric(10, 2), nullable=False)
     is_active = db.Column(db.Boolean, default=True)
+    account_number = db.Column(db.Integer, nullable=True)
 
     bank_id = db.Column(db.Integer, db.ForeignKey('banks.id'))
     

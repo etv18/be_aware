@@ -23,3 +23,8 @@ def update_bank(bank):
         bank.name = request.form['name']
 
         db.session.commit()
+
+def delete_bank(bank):
+    if request.method == 'POST':
+        db.session.delete(bank)
+        db.session.commit()

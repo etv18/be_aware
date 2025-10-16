@@ -21,10 +21,16 @@ def create():
 def update():
     bank_id = request.form['id']
     bank = Bank.query.get(bank_id)
-
     if bank:
         bank_controller.update_bank(bank)
     
     return redirect(url_for('bank.index'))
-    
+
+@bank_bp.route('/delete/<int:id>', methods=['GET', 'POST'])
+def delete(id):
+    bank = Bank.query.get(id)
+    if bank:
+        bank_controller.delete_bank(bank)
+
+    return redirect(url_for('bank.index'))    
 

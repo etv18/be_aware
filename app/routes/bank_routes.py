@@ -7,7 +7,7 @@ bank_bp = Blueprint('bank', __name__, url_prefix='/banks')
 
 @bank_bp.route('/index', methods=['GET'])
 def index():
-    banks = Bank.get_all()
+    banks = Bank.query.all()
 
     return render_template('banks/index.html', banks=banks)
 

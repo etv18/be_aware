@@ -19,24 +19,4 @@ class CreditCard(db.Model):
 
     #This allows sqlalchemy to navigated between relationships in python code
     bank = relationship('Bank', back_populates='credit_cards')
-    expenses = relationship('Expense', back_populates='credit_card')
-
-    def save(self):
-        db.session.add(self)
-        db.session.commit()
-
-    @classmethod
-    def get_all(cls):
-        #cls = class, @classmethod decorator passes it as 1st arg
-        result_set = cls.query.all()
-        records = []
-
-        for e in result_set:
-            records.append(e)
-
-        return records
-    
-    @classmethod
-    def get_by_id(cls, id):
-        return cls.query.filter(cls.id == id).first()
-        
+    expenses = relationship('Expense', back_populates='credit_card')   

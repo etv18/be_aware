@@ -11,17 +11,3 @@ class ExpenseCategory(db.Model):
     updated_at = db.Column(db.DateTime(timezone=True), onupdate=func.now())
 
     expenses = relationship('Expense', back_populates='expense_category')
-
-    @classmethod
-    def get_all(cls):
-        result_set = cls.query.all()
-        records = []
-
-        for e in result_set:
-            records.append(e)
-
-        return records
-    
-    @classmethod
-    def get_by_id(cls, id):
-        return cls.query.filter(cls.id == id).first()

@@ -12,20 +12,6 @@ class Bank(db.Model):
     bank_accounts = relationship('BankAccount', back_populates='bank')
     credit_cards = relationship('CreditCard', back_populates='bank')
 
-    def save(self):
-        db.session.add(self)
-        db.session.commit()
 
-    @classmethod
-    def get_all(cls):
-        result_set = cls.query.all()
-        records = []
 
-        for e in result_set:
-            records.append(e)
-
-        return records
-    
-    @classmethod
-    def get_by_id(cls, id):
-        return cls.query.filter(cls.id == id).first()
+   

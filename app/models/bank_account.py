@@ -17,18 +17,3 @@ class BankAccount(db.Model):
     bank = relationship('Bank', back_populates='bank_accounts')
     expenses = relationship('Expense', back_populates='bank_account')
     incomes = relationship('Income', back_populates='bank_account')
-
-    @classmethod
-    def get_all(cls):
-        result_set = cls.query.all()
-        records = []
-
-        for e in result_set:
-            records.append(e)
-
-        return records
-    
-    @classmethod
-    def get_by_id(cls, id):
-        return cls.query.filter(cls.id == id).first()
-    

@@ -8,17 +8,9 @@ def create_bank():
         name = request.form['name']
 
         bank = Bank(name=name)
-        
+
         db.session.add(bank)
         db.session.commit()
-
-        data = {
-            'id': bank.id,
-            'name': bank.name,
-            'created_at': bank.created_at
-        }
-
-        return data
     
 def update_bank(bank):
     if request.method == 'POST':

@@ -13,7 +13,7 @@ def index():
 
 @bank_bp.route('/create', methods=['GET', 'POST'])
 def create():
-    bank = bank_controller.create_bank()
+    bank_controller.create_bank()
 
     return redirect(url_for('bank.index'))
 

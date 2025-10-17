@@ -9,8 +9,14 @@ bank_account_bp = Blueprint('bank_account', __name__, url_prefix='/bank_accounts
 @bank_account_bp.route('/index', methods=['GET'])
 def index():
     banks = Bank.query.all()
+    bank_accounts = BankAccount.query.all()
 
-    return render_template('bank_accounts/index.html', banks=banks)
+    context = {
+        'banks': banks,
+        'bank_accounts': bank_accounts
+    }
+
+    return render_template('bank_accounts/index.html', **context)
 
 @bank_account_bp.route('/create', methods=['GET', 'POST'])
 def create():

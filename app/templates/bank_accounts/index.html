@@ -56,4 +56,49 @@
     </section>
 
     <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-bank-account">New Account</button>
+            <table class="table table-striped">
+            <thead>
+                <tr>
+                <th scope="col"># Id</th>
+                <th scope="col">Account Number</th>
+                <th scope="col">Nick Name</th>
+                <th scope="col">Bank</th>
+                <th scope="col">Amount Available</th>
+                <th scope="col">Status</th>
+                <th scope="col">Create at</th>
+                <th scope="col">Acctions</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                {% for bank_account in bank_accounts %}                    
+                <tr>
+                    <th scope="row">{{ bank_account.id }}</th>
+                    <td>{{ bank_account.account_number }}</td>
+                    <td>{{ bank_account.nick_name }}</td>
+                    <td>{{ bank_account.bank.name }}</td>
+                    <td>{{ bank_account.amount_available }}</td>
+                    <td>{{ bank_account.is_active }}</td>
+                    <td>{{ bank_account.created_at }}</td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <button 
+                                type="button" 
+                                class="btn btn-success" 
+                                data-bs-toggle="modal" 
+                                data-bs-target=""
+                                data-id=""
+                                data-name=""
+                            >
+                            Edit
+                            </button>
+                            <form action="#" method="">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 {% endblock %}

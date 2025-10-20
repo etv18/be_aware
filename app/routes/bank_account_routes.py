@@ -22,3 +22,6 @@ def index():
 def create():
     ba_controller.create_bank_account()
     return redirect(url_for('bank_account.index'))
+
+def update():
+    return redirect(url_for('bank_account.index'))

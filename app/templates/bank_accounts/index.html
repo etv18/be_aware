@@ -3,102 +3,182 @@
 {% block title%}Bank Accounts{% endblock %}
 
 {% block content %}
-    <h2>Bank Accounts</h2>
-    <section class="modal fade" tabindex="-1" id="create-bank-account">
-        <form action="{{ url_for('bank_account.create' ) }}" method="POST">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">New Bank Account</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-sm">
-                                <div class="form-floating mt-2">
-                                    <input type="text" name="nick-name" id="nick-name-id" class="form-control" placeholder="Nick Name" required>
-                                    <label for="nick-name-id">Nick Name</label>
-                                </div>
-                            </div>
-                            <div class="col-sm">
-                                <div class="form-floating mt-2">
-                                    <input type="text" name="account-number" id="account-number-id" class="form-control" placeholder="Account Number" required>
-                                    <label for="account-number-id">Account Number</label>
-                                </div>
+<h2>Bank Accounts</h2>
+<section class="modal fade" tabindex="-1" id="create-bank-account">
+    <form action="{{ url_for('bank_account.create' ) }}" method="POST">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">New Bank Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm">
+                            <div class="form-floating mt-2">
+                                <input type="text" name="nick-name" id="nick-name-id" class="form-control"
+                                    placeholder="Nick Name" required>
+                                <label for="nick-name-id">Nick Name</label>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-sm">
-                                <div class="form-floating mt-2">
-                                    <input type="text" name="amount-available" id="amount-available-id" class="form-control" placeholder="Amount Available" required>
-                                    <label for="amount-available-id">Amount Available</label>
-                                </div>
-                            </div>
-                            <div class="col-sm">
-                                <div class="form-floating mt-2">
-                                    <select name="select-banks" id="select-banks-id" class="form-select">
-                                        {% for bank in banks %}
-                                        <option value="{{ bank.id }}">{{ bank.name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    <label for="select-banks-id" class="ml-2">Choose a bank</label>
-                                </div>
+                        <div class="col-sm">
+                            <div class="form-floating mt-2">
+                                <input type="text" name="account-number" id="account-number-id" class="form-control"
+                                    placeholder="Account Number" required>
+                                <label for="account-number-id">Account Number</label>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                    <div class="row">
+                        <div class="col-sm">
+                            <div class="form-floating mt-2">
+                                <input type="text" name="amount-available" id="amount-available-id" class="form-control"
+                                    placeholder="Amount Available" required>
+                                <label for="amount-available-id">Amount Available</label>
+                            </div>
+                        </div>
+                        <div class="col-sm">
+                            <div class="form-floating mt-2">
+                                <select name="select-banks" id="select-banks-id" class="form-select">
+                                    {% for bank in banks %}
+                                    <option value="{{ bank.id }}">{{ bank.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="select-banks-id" class="ml-2">Choose a bank</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
             </div>
-        </form>
-    </section>
-
-    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-bank-account">New Account</button>
-            <table class="table table-striped">
-            <thead>
-                <tr>
-                <th scope="col"># Id</th>
-                <th scope="col">Account Number</th>
-                <th scope="col">Nick Name</th>
-                <th scope="col">Bank</th>
-                <th scope="col">Amount Available</th>
-                <th scope="col">Status</th>
-                <th scope="col">Create at</th>
-                <th scope="col">Acctions</th>
-                </tr>
-            </thead>
-            
-            <tbody>
-                {% for bank_account in bank_accounts %}                    
-                <tr>
-                    <th scope="row">{{ bank_account.id }}</th>
-                    <td>{{ bank_account.account_number }}</td>
-                    <td>{{ bank_account.nick_name }}</td>
-                    <td>{{ bank_account.bank.name }}</td>
-                    <td>{{ bank_account.amount_available }}</td>
-                    <td>{{ bank_account.is_active }}</td>
-                    <td>{{ bank_account.created_at }}</td>
-                    <td>
-                        <div class="d-flex gap-2">
-                            <button 
-                                type="button" 
-                                class="btn btn-success" 
-                                data-bs-toggle="modal" 
-                                data-bs-target=""
-                                data-id=""
-                                data-name=""
-                            >
-                            Edit
-                            </button>
-                            <form action="#" method="">
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                            </form>
+        </div>
+    </form>
+</section>
+<section class="modal fade" tabindex="-1" id="edit-bank-account">
+    <form action="{{ url_for('bank_account.create' ) }}" method="POST">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="e-title-id"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm">
+                            <div class="form-floating mt-2">
+                                <input type="text" name="e-nick-name" id="e-nick-name-id" class="form-control"
+                                    placeholder="Nick Name" required>
+                                <label for="e-nick-name-id">Nick Name</label>
+                            </div>
                         </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                        <div class="col-sm">
+                            <div class="form-floating mt-2">
+                                <input type="text" name="e-account-number" id="e-account-number-id" class="form-control"
+                                    placeholder="Account Number" required>
+                                <label for="e-account-number-id">Account Number</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm">
+                            <div class="form-floating mt-2">
+                                <input type="text" name="e-amount-available" id="e-amount-available-id" class="form-control"
+                                    placeholder="Amount Available" required>
+                                <label for="e-amount-available-id">Amount Available</label>
+                            </div>
+                        </div>
+                        <div class="col-sm">
+                            <div class="form-floating mt-2">
+                                <select name="e-select-banks" id="e-select-banks-id" class="form-select">
+                                    {% for bank in banks %}
+                                    <option value="{{ bank.id }}">{{ bank.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="e-select-banks-id" class="ml-2">Choose a bank</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+
+<button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-bank-account">New
+    Account</button>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col"># Id</th>
+            <th scope="col">Account Number</th>
+            <th scope="col">Nick Name</th>
+            <th scope="col">Bank</th>
+            <th scope="col">Amount Available</th>
+            <th scope="col">Status</th>
+            <th scope="col">Create at</th>
+            <th scope="col">Acctions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for bank_account in bank_accounts %}
+        <tr>
+            <th scope="row">{{ bank_account.id }}</th>
+            <td>{{ bank_account.account_number }}</td>
+            <td>{{ bank_account.nick_name }}</td>
+            <td>{{ bank_account.bank.name }}</td>
+            <td>{{ bank_account.amount_available }}</td>
+            <td>{{ bank_account.is_active }}</td>
+            <td>{{ bank_account.created_at }}</td>
+            <td>
+                <div class="d-flex gap-2">
+                    <button 
+                        type="button" 
+                        class="btn btn-success" 
+                        data-bs-toggle="modal"
+                        data-bs-target="#edit-bank-account" 
+                        data-account-number="{{ bank_account.account_number }}"
+                        data-nick-name="{{ bank_account.nick_name }}"
+                        data-amount-available="{{ bank_account.amount_available }}"
+                        data-bank-id="{{ bank_account.bank.id }}"
+                    >Edit
+                    </button>
+                    <form action="#" method="">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+        const editBankAccountModal = document.getElementById('edit-bank-account');
+
+        editBankAccountModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+
+            const accountNumber = button.getAttribute('data-account-number');
+            const nickName = button.getAttribute('data-nick-name');
+            const amountAvailable = button.getAttribute('data-amount-available');
+            const bankId = button.getAttribute('data-bank-id');
+
+            document.getElementById('e-title-id').textContent = nickName+' '+accountNumber;
+            document.getElementById('e-nick-name-id').value = nickName;
+            document.getElementById('e-amount-available-id').value = amountAvailable;
+            document.getElementById('e-account-number-id').value = accountNumber;
+            document.getElementById('e-select-banks-id').value = bankId;
+
+        });
+    });
+</script>
 {% endblock %}

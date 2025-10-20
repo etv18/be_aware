@@ -58,7 +58,8 @@
     </form>
 </section>
 <section class="modal fade" tabindex="-1" id="edit-bank-account">
-    <form action="{{ url_for('bank_account.create' ) }}" method="POST">
+    <form action="{{ url_for('bank_account.update') }}" method="post">
+        <input type="hidden" name="id" id="e-bank_account-id">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -144,6 +145,7 @@
                         class="btn btn-success" 
                         data-bs-toggle="modal"
                         data-bs-target="#edit-bank-account" 
+                        data-bank-account-id="{{ bank_account.id }}"
                         data-account-number="{{ bank_account.account_number }}"
                         data-nick-name="{{ bank_account.nick_name }}"
                         data-amount-available="{{ bank_account.amount_available }}"
@@ -171,13 +173,14 @@
             const nickName = button.getAttribute('data-nick-name');
             const amountAvailable = button.getAttribute('data-amount-available');
             const bankId = button.getAttribute('data-bank-id');
+            const bankAccountId = button.getAttribute('data-bank-account-id');
+            document.getElementById('e-bank_account-id').value = bankAccountId;
 
             document.getElementById('e-title-id').textContent = nickName+' '+accountNumber;
             document.getElementById('e-nick-name-id').value = nickName;
             document.getElementById('e-amount-available-id').value = amountAvailable;
             document.getElementById('e-account-number-id').value = accountNumber;
             document.getElementById('e-select-banks-id').value = bankId;
-
         });
     });
 </script>

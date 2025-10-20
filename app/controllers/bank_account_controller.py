@@ -22,9 +22,11 @@ def create_bank_account():
 
 def update_bank_account(bank_account):
     if request.method == 'POST':
-        bank_account.nick_name = request.form['nick_name'];
-        bank_account.account_number = request.form['account_number'];
-        bank_account.bank_id = request.form['bank_id'];
-        bank_account.amount_available = request.form['amount_available'];
+        bank_account.nick_name = request.form['e-nick-name'];
+        bank_account.account_number = request.form['e-account-number'];
+        bank_account.amount_available = request.form['e-amount-available'];
+
+        bank_id = request.form['e-select-banks'];
+        bank_account.bank_id = int(bank_id)
 
         db.session.commit()

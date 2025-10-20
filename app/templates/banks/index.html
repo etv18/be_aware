@@ -32,6 +32,7 @@
 
         <section class="modal fade" tabindex="-1" id="edit-bank">
             <form action="{{ url_for('bank.update') }}" method="post">
+                <input type="hidden" name="id" id="bank-id-input">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -40,7 +41,6 @@
                         </div>
                         <div class="modal-body">
                             <p id="bank-id" class="fs-6 fw-bold"></p>
-                            <input type="hidden" name="id" id="bank-id-input">
                             <div class="col-sm">
                                 <div class="form-floating mt-2 w-">
                                     <input type="text" name="name" id="bank-name" class="form-control" placeholder="Bank name" required>

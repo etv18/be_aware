@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for, request
 
 from app.controllers import bank_account_controller as ba_controller
 from app.models.bank_account import BankAccount
@@ -23,5 +23,11 @@ def create():
     ba_controller.create_bank_account()
     return redirect(url_for('bank_account.index'))
 
+@bank_account_bp.route('/update', methods=['GET', 'POST'])
 def update():
+    bank_account_id = request.form['id']
+    print(bank_account_id)
+    bank_account = BankAccount.query.get(bank_account_id)
+    if bank_account:
+        ba_controller.update_bank_account(bank_account)
     return redirect(url_for('bank_account.index'))

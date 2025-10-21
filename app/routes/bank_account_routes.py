@@ -31,3 +31,11 @@ def update():
     if bank_account:
         ba_controller.update_bank_account(bank_account)
     return redirect(url_for('bank_account.index'))
+
+@bank_account_bp.route('/delete/<int:id>', methods=['GET', 'POST'])
+def delete(id):
+    bank_account = BankAccount.query.get(id)
+    if bank_account:
+        ba_controller.delete_bank_account(bank_account)
+
+    return redirect(url_for('bank_account.index'))

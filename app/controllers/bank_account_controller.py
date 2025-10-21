@@ -30,3 +30,8 @@ def update_bank_account(bank_account):
         bank_account.bank_id = int(bank_id)
 
         db.session.commit()
+
+def delete_bank_account(bank_account):
+    if request.method == 'POST':
+        db.session.delete(bank_account)
+        db.session.commit()

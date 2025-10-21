@@ -8,7 +8,12 @@ credit_card_bp = Blueprint('credit_card', __name__, url_prefix='/credit_cards')
 
 @credit_card_bp.route('/index', methods=['GET'])
 def index():
-    return render_template('credit_cards/index.html')
+    banks = Bank.query.all()
+
+    context = {
+        'banks': banks
+    }
+    return render_template('credit_cards/index.html', **context)
 
 @credit_card_bp.route('/create', methods=['POST'])
 def create():

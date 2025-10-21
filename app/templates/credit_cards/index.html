@@ -1,0 +1,109 @@
+{% extends 'layout.html' %}
+
+{% block title %}Credit Cards{% endblock %}
+
+{% block content %}
+    <h2>Credit Cards</h2>
+    <section class="modal fade" tabindex="-1" id="create-credit-card">
+        <form action="{{ url_for('credit_card.create' ) }}" method="POST">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">New Credit Card</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm">
+                                <div class="form-floating mt-2">
+                                    <input type="text" name="nick-name" id="nick-name-id" class="form-control"
+                                        placeholder="Nick Name" required>
+                                    <label for="nick-name-id">Nick Name</label>
+                                </div>
+                            </div>
+                            <div class="col-sm">
+                                <div class="form-floating mt-2">
+                                    <input type="text" name="limit" id="limit-id" class="form-control"
+                                        placeholder="Account Number" required>
+                                    <label for="limit-id">Limit</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm">
+                                <div class="form-floating mt-2">
+                                    <input type="text" name="amount-available" id="amount-available-id" class="form-control"
+                                        placeholder="Amount Available" required>
+                                    <label for="amount-available-id">Amount Available</label>
+                                </div>
+                            </div>
+                            <div class="col-sm">
+                                <div class="form-floating mt-2">
+                                    <select name="select-banks" id="select-banks-id" class="form-select">
+                                        {% for bank in banks %}
+                                        <option value="{{ bank.id }}">{{ bank.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="select-banks-id" class="ml-2">Choose a bank</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </section>
+    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-credit-card">New
+    Credit Card</button>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col"># Id</th>
+                <th scope="col">Nick Name</th>
+                <th scope="col">Bank</th>
+                <th scope="col">Limit</th>
+                <th scope="col">Amount Available</th>
+                <th scope="col">Status</th>
+                <th scope="col">Create at</th>
+                <th scope="col">Acctions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for bank_account in bank_accounts %}
+            <tr>
+                <th scope="row">{{ bank_account.id }}</th>
+                <td>{{ bank_account.account_number }}</td>
+                <td>{{ bank_account.nick_name }}</td>
+                <td>{{ bank_account.bank.name }}</td>
+                <td>{{ bank_account.amount_available }}</td>
+                <td>{{ bank_account.is_active }}</td>
+                <td>{{ bank_account.created_at }}</td>
+                <td>
+                    <div class="d-flex gap-2">
+                        <button 
+                            type="button" 
+                            class="btn btn-success" 
+                            data-bs-toggle="modal"
+                            data-bs-target="#edit-bank-account" 
+                            data-credit-card-id="{{ bank_account.id }}"
+                            data-limit="{{ bank_account.account_number }}"
+                            data-nick-name="{{ bank_account.nick_name }}"
+                            data-amount-available="{{ bank_account.amount_available }}"
+                            data-bank-id="{{ bank_account.bank.id }}"
+                        >Edit
+                        </button>
+                        <form action="{{ url_for('bank_account.delete', id=bank_account.id) }}" method="POST">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

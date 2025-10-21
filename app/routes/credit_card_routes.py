@@ -21,3 +21,11 @@ def create():
     cc_controller.create_credit_card()
 
     return redirect(url_for('credit_card.index'))
+
+@credit_card_bp.route('/delete/<int:id>', methods=['POST'])
+def delete(id):
+    credit_card = CreditCard.query.get(id)
+    if credit_card:
+        cc_controller.delete_credit_card(credit_card)
+        
+    return redirect(url_for('credit_card.index'))

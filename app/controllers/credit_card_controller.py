@@ -19,3 +19,8 @@ def create_credit_card():
 
         db.session.add(credit_card)
         db.session.commit()
+
+def delete_credit_card(credit_card):
+    if request.method == 'POST':
+        db.session.delete(credit_card)
+        db.session.commit()

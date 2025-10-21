@@ -3,7 +3,7 @@ from flask_migrate import Migrate
 
 from app.config import Config
 from app.extensions import db
-from app.routes import home_routes, bank_routes, bank_account_routes
+from app.routes import home_routes, bank_routes, bank_account_routes, credit_card_routes
 
 def create_app():
     app = Flask(__name__)
@@ -24,4 +24,5 @@ def register_resources(app):
     app.register_blueprint(home_routes.home_bp)
     app.register_blueprint(bank_routes.bank_bp)
     app.register_blueprint(bank_account_routes.bank_account_bp)
+    app.register_blueprint(credit_card_routes.credit_card_bp)
     

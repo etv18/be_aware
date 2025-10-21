@@ -26,8 +26,7 @@ def create():
 @bank_account_bp.route('/update', methods=['GET', 'POST'])
 def update():
     bank_account_id = request.form['id']
-    print(bank_account_id)
-    bank_account = BankAccount.query.get(bank_account_id)
+    bank_account = BankAccount.query.get(int(bank_account_id))
     if bank_account:
         ba_controller.update_bank_account(bank_account)
     return redirect(url_for('bank_account.index'))

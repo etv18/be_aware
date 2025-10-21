@@ -22,10 +22,19 @@ def create():
 
     return redirect(url_for('credit_card.index'))
 
+@credit_card_bp.route('/update', methods=['POST'])
+def update():
+    credit_card_id = request.form['id']
+    credit_card = CreditCard.query.get(int(credit_card_id))
+
+    if credit_card:
+        cc_controller.update_credit_card(credit_card)
+    return redirect(url_for('credit_card.index'))
+
 @credit_card_bp.route('/delete/<int:id>', methods=['POST'])
 def delete(id):
     credit_card = CreditCard.query.get(id)
     if credit_card:
         cc_controller.delete_credit_card(credit_card)
-        
+
     return redirect(url_for('credit_card.index'))

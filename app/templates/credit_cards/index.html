@@ -57,6 +57,60 @@
             </div>
         </form>
     </section>
+    <section class="modal fade" tabindex="-1" id="edit-credit-card">
+        <form action="{{ url_for('credit_card.update' ) }}" method="POST">
+            <input type="hidden" name="id" id="cc-id"> 
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="e-title-id"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm">
+                                <div class="form-floating mt-2">
+                                    <input type="text" name="e-nick-name" id="e-nick-name-id" class="form-control"
+                                        placeholder="Nick Name" required>
+                                    <label for="e-nick-name-id">Nick Name</label>
+                                </div>
+                            </div>
+                            <div class="col-sm">
+                                <div class="form-floating mt-2">
+                                    <input type="text" name="e-limit" id="e-limit-id" class="form-control"
+                                        placeholder="Limit" required>
+                                    <label for="e-limit-id">Limit</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm">
+                                <div class="form-floating mt-2">
+                                    <input type="text" name="e-amount-available" id="e-amount-available-id" class="form-control"
+                                        placeholder="Amount Available" required>
+                                    <label for="e-amount-available-id">Amount Available</label>
+                                </div>
+                            </div>
+                            <div class="col-sm">
+                                <div class="form-floating mt-2">
+                                    <select name="e-select-banks" id="e-select-banks-id" class="form-select">
+                                        {% for bank in banks %}
+                                        <option value="{{ bank.id }}">{{ bank.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="e-select-banks-id" class="ml-2">Choose a bank</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </section>
     <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-credit-card">New
     Credit Card</button>
     <table class="table table-striped">
@@ -89,7 +143,7 @@
                             type="button" 
                             class="btn btn-success" 
                             data-bs-toggle="modal"
-                            data-bs-target="#edit-bank-account" 
+                            data-bs-target="#edit-credit-card" 
                             data-credit-card-id="{{ credit_card.id }}"
                             data-limit="{{ credit_card.limit }}"
                             data-nick-name="{{ credit_card.nick_name }}"
@@ -106,4 +160,27 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const editCreditCard = document.getElementById('edit-credit-card');
+
+            editCreditCard.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+
+                const creditCardId = button.getAttribute('data-credit-card-id');
+                const limit = button.getAttribute('data-limit');
+                const nickName = button.getAttribute('data-nick-name');
+                const bankId = button.getAttribute('data-bank-id');
+                const amountAvailable = button.getAttribute('data-amount-available');
+
+                document.getElementById('e-title-id').textContent = creditCardId + ' ' + nickName;
+                document.getElementById('e-nick-name-id').value = nickName;
+                document.getElementById('e-limit-id').value = limit;
+                document.getElementById('e-amount-available-id').value = amountAvailable;
+                document.getElementById('e-select-banks-id').value = bankId;
+                document.getElementById('cc-id').value = creditCardId; //Id to edit the right credit card record
+            });
+        });
+    </script>
 {% endblock %}

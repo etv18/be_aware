@@ -15,9 +15,11 @@ def create_expense_category():
 def update_expense_category(expense_category):
     if request.method == 'POST':
         expense_category.name = request.form['name']
-        
+
         db.session.commit()
 
 def delete_expense_category(expense_category):
-    pass
+    if request.method == 'POST':
+        db.session.delete(expense_category)
+        db.session.commit()
 

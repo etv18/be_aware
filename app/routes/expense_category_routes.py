@@ -23,5 +23,13 @@ def update():
     expense_category = ExpenseCategory.query.get(expense_category_id)
     if expense_category:
         ec_controller.update_expense_category(expense_category)
-        
+
+    return redirect(url_for('expense_category.index'))
+
+@expense_category_bp.route('/delete/<int:id>', methods=['GET', 'POST'])
+def delete(id):
+    expense_category = ExpenseCategory.query.get(id)
+    if expense_category:
+        ec_controller.delete_expense_category(expense_category)
+
     return redirect(url_for('expense_category.index'))

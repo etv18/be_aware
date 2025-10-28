@@ -5,7 +5,58 @@
 {% block content %}
     <h2>Expense Categories</h2>
     <div class="container w-75">
-        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-bank">New Bank</button>
+
+        <section class="modal fade" tabindex="-1" id="create-expense-category">
+            <form action="{{ url_for('expense_category.create' ) }}" method="post">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">New Category</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-sm">
+                                <div class="form-floating mt-2 w-">
+                                    <input type="text" name="name" id="name" class="form-control" placeholder="Bank name" required>
+                                    <label for="name">Category name</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+        <section class="modal fade" tabindex="-1" id="edit-expense-category">
+            <form action="{{ url_for('expense_category.update' ) }}" method="post">
+                <input type="hidden" name="id" id="expense-category-id-input">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-sm">
+                                <div class="form-floating mt-2 w-">
+                                    <input type="text" name="name" id="expense-category-name" class="form-control" placeholder="Bank name" required>
+                                    <label for="name">Category name</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-expense-category">New Bank</button>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -17,24 +68,24 @@
             </thead>
             
             <tbody>
-                {% for bank in banks %}                    
+                {% for expense_category in expense_categories %}                    
                 <tr>
-                    <th scope="row">{{ bank.id }}</th>
-                    <td>{{ bank.name }}</td>
-                    <td>{{ bank.created_at }}</td>
+                    <th scope="row">{{ expense_category.id }}</th>
+                    <td>{{ expense_category.name }}</td>
+                    <td>{{ expense_category.created_at }}</td>
                     <td>
                         <div class="d-flex gap-2">
                             <button 
                                 type="button" 
                                 class="btn btn-success" 
                                 data-bs-toggle="modal" 
-                                data-bs-target="#edit-bank"
-                                data-id="{{ bank.id }}"
-                                data-name="{{ bank.name }}"
+                                data-bs-target="#edit-expense-category"
+                                data-id="{{ expense_category.id }}"
+                                data-name="{{ expense_category.name }}"
                             >
                             Edit
                             </button>
-                            <form action="{{ url_for('bank.delete', id=bank.id ) }}" method="post">
+                            <form action="#" method="post">
                                 <button type="submit" class="btn btn-danger">Delete</button>
                             </form>
                         </div>
@@ -45,4 +96,19 @@
         </table>
     </div>   
     
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const editExpenseCategory = document.getElementById('edit-expense-category');
+
+            editExpenseCategory.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+
+                const exepenseCategoryId = button.getAttribute('data-id');
+                const expenseCategoryName = button.getAttribute('data-name');
+
+                document.getElementById('expense-category-id-input').value = exepenseCategoryId;
+                document.getElementById('expense-category-name').value = expenseCategoryName;
+            });
+        })
+    </script>
 {% endblock %}

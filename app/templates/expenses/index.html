@@ -4,8 +4,78 @@
 
 {% block content %}
     <h2>Expenses</h2>
-    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-bank-account"
-    >New Expense</button>
+    <section class="modal fade" tabindex="-1" id="create-expense">
+        <form action="{{ url_for('bank_account.create' ) }}" method="POST">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">New Expense</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm">
+                                <div class="form-floating mt-2">
+                                    <input type="text" name="amount" id="amount-id" class="form-control"
+                                        placeholder="Amount" required>
+                                    <label for="amount-id">Amount</label>
+                                </div>
+                            </div>
+                            <div class="col-sm">
+                                <div class="form-check form-switch mt-2">
+                                    <input class="form-check-input" type="checkbox" id="checkNativeSwitch" switch checked>
+                                    <label class="form-check-label" for="checkNativeSwitch">
+                                        Cash
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-floating mt-2">
+                                <select name="select-expense-category" id="select-expense-category-id" class="form-select">
+                                    {% for category in expense_categories %}
+                                    <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="select-expense-category-id" class="p-3">Category</label>
+                            </div>
+                        </div>
+
+                        <div class="row" id="bank-products-id">
+                            <div class="col-sm">
+                                <div class="form-floating mt-2">
+                                    <select name="select-credit-card" id="select-credit-card-id" class="form-select">
+                                        <option value="none">...Select...</option>
+                                        {% for cc in credit_cards %}
+                                        <option value="{{ cc.id }}">{{ cc.nick_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="select-credit-card-id" class="p-3">Credit Card</label>
+                                </div>
+                            </div>
+                            <div class="col-sm">
+                                <div class="form-floating mt-2">
+                                    <select name="select-bank-account" id="select-bank-account-id" class="form-select">
+                                        <option value="none">...Select...</option>
+                                        {% for ba in bank_accounts %}
+                                        <option value="{{ ba.id }}">{{ ba.nick_name }}</option>                                        
+                                        {% endfor %}
+                                    </select>
+                                    <label for="select-bank-account-id" class="p-3">Bank Account</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </section>
+    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-expense"
+    id="btn-create-expense-id">New Expense</button>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -21,15 +91,15 @@
         </thead>
 
         <tbody>
-            {% for bank_account in bank_accounts %}
+           
             <tr>
-                <th scope="row">{{ bank_account.id }}</th>
-                <td>{{ bank_account.account_number }}</td>
-                <td>{{ bank_account.nick_name }}</td>
-                <td>{{ bank_account.bank.name }}</td>
-                <td>{{ bank_account.amount_available }}</td>
-                <td>{{ bank_account.is_active }}</td>
-                <td>{{ bank_account.created_at }}</td>
+                <th scope="row"></th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
                 <td>
                     <div class="d-flex gap-2">
                         <button 
@@ -37,20 +107,69 @@
                             class="btn btn-success" 
                             data-bs-toggle="modal"
                             data-bs-target="#edit-bank-account" 
-                            data-bank-account-id="{{ bank_account.id }}"
-                            data-account-number="{{ bank_account.account_number }}"
-                            data-nick-name="{{ bank_account.nick_name }}"
-                            data-amount-available="{{ bank_account.amount_available }}"
-                            data-bank-id="{{ bank_account.bank.id }}"
+                            data-bank-account-id=""
+                            data-account-number=""
+                            data-nick-name=""
+                            data-amount-available=""
+                            data-bank-id=""
                         >Edit
                         </button>
-                        <form action="{{ url_for('bank_account.delete', id=bank_account.id) }}" method="POST">
+                        <form action="#" method="">
                             <button type="submit" class="btn btn-danger">Delete</button>
                         </form>
                     </div>
                 </td>
             </tr>
-            {% endfor %}
+           
         </tbody>
     </table>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const checkbox = document.getElementById("checkNativeSwitch");
+            const bankProducts = document.getElementById("bank-products-id");
+            const createExpenseModal = document.getElementById("create-expense");
+
+            function toggleBankProducts() {
+                if (checkbox.checked) {
+                    bankProducts.classList.add("d-none");
+                } else {
+                    bankProducts.classList.remove("d-none");
+                }
+            }
+
+            //Run the function when the page content is loaded
+            toggleBankProducts();
+
+            checkbox.addEventListener("change", toggleBankProducts);
+            createExpenseModal.addEventListener("show.bs.modal", () => { 
+                const selectBankAccounts = document.getElementById("select-bank-account-id");
+                const selectCreditCards = document.getElementById("select-credit-card-id");
+
+                checkbox.checked = true;
+                selectBankAccounts.value = "none";
+                selectCreditCards.value = "none";
+                selectBankAccounts.disabled = false;
+                selectCreditCards.disabled = false;
+
+                toggleBankProducts();
+
+                selectBankAccounts.addEventListener("change", () => {
+                    if (selectBankAccounts.value != "none") {
+                        selectCreditCards.disabled = true;
+                    } else {
+                        selectCreditCards.disabled = false;                      
+                    }
+                });
+                selectCreditCards.addEventListener("change", () => {
+                    if (selectCreditCards.value != "none") {
+                        selectBankAccounts.disabled = true;
+                    } else {
+                        selectBankAccounts.disabled = false;                      
+                    }
+                });
+            });
+            
+        })
+    </script>
 {% endblock %}

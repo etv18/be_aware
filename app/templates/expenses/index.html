@@ -5,7 +5,7 @@
 {% block content %}
     <h2>Expenses</h2>
     <section class="modal fade" tabindex="-1" id="create-expense">
-        <form action="{{ url_for('bank_account.create' ) }}" method="POST">
+        <form action="{{ url_for('expense.create' ) }}" method="POST">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -23,7 +23,7 @@
                             </div>
                             <div class="col-sm">
                                 <div class="form-check form-switch mt-2">
-                                    <input class="form-check-input" type="checkbox" id="checkNativeSwitch" switch checked>
+                                    <input class="form-check-input" type="checkbox" name="is-cash" id="checkNativeSwitch" switch checked>
                                     <label class="form-check-label" for="checkNativeSwitch">
                                         Cash
                                     </label>
@@ -91,15 +91,15 @@
         </thead>
 
         <tbody>
-           
+            {% for expense in expenses %}                
             <tr>
-                <th scope="row"></th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <th scope="row">{{ expense.id }}</th>
+                <td>{{ expense.amount }}</td>
+                <td>{{ expense.is_cash }}</td>
+                <td>{{ expense.credit_card.nick_name }}</td>
+                <td>{{ expense.bank_account.nick_name }}</td>
+                <td>{{ expense.expense_category.name }}</td>
+                <td>{{ expense.created_at }}</td>
                 <td>
                     <div class="d-flex gap-2">
                         <button 
@@ -120,6 +120,7 @@
                     </div>
                 </td>
             </tr>
+            {% endfor %}
            
         </tbody>
     </table>
@@ -143,6 +144,7 @@
 
             checkbox.addEventListener("change", toggleBankProducts);
             createExpenseModal.addEventListener("show.bs.modal", () => { 
+
                 const selectBankAccounts = document.getElementById("select-bank-account-id");
                 const selectCreditCards = document.getElementById("select-credit-card-id");
 
@@ -157,6 +159,7 @@
                 selectBankAccounts.addEventListener("change", () => {
                     if (selectBankAccounts.value != "none") {
                         selectCreditCards.disabled = true;
+                        selectCreditCards.value = "none";
                     } else {
                         selectCreditCards.disabled = false;                      
                     }
@@ -164,6 +167,7 @@
                 selectCreditCards.addEventListener("change", () => {
                     if (selectCreditCards.value != "none") {
                         selectBankAccounts.disabled = true;
+                        selectBankAccounts.value = "none";
                     } else {
                         selectBankAccounts.disabled = false;                      
                     }

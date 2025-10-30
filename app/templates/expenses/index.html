@@ -74,6 +74,76 @@
             </div>
         </form>
     </section>
+    <section class="modal fade" tabindex="-1" id="edit-expense">
+        <form action="#" method="POST">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm">
+                                <div class="form-floating mt-2">
+                                    <input type="text" name="amount" id="e-amount-id" class="form-control"
+                                        placeholder="Amount" required>
+                                    <label for="e-amount-id">Amount</label>
+                                </div>
+                            </div>
+                            <div class="col-sm">
+                                <div class="form-check form-switch mt-2">
+                                    <input class="form-check-input" type="checkbox" name="is-cash" id="e-checkNativeSwitch" switch checked>
+                                    <label class="form-check-label" for="e-checkNativeSwitch">
+                                        Cash
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-floating mt-2">
+                                <select name="select-expense-category" id="e-select-expense-category-id" class="form-select">
+                                    {% for category in expense_categories %}
+                                    <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="e-select-expense-category-id" class="p-3">Category</label>
+                            </div>
+                        </div>
+
+                        <div class="row" id="e-bank-products-id">
+                            <div class="col-sm">
+                                <div class="form-floating mt-2">
+                                    <select name="select-credit-card" id="e-select-credit-card-id" class="form-select">
+                                        <option value="none">...Select...</option>
+                                        {% for cc in credit_cards %}
+                                        <option value="{{ cc.id }}">{{ cc.nick_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="e-select-credit-card-id" class="p-3">Credit Card</label>
+                                </div>
+                            </div>
+                            <div class="col-sm">
+                                <div class="form-floating mt-2">
+                                    <select name="select-bank-account" id="e-select-bank-account-id" class="form-select">
+                                        <option value="none">...Select...</option>
+                                        {% for ba in bank_accounts %}
+                                        <option value="{{ ba.id }}">{{ ba.nick_name }}</option>                                        
+                                        {% endfor %}
+                                    </select>
+                                    <label for="e-select-bank-account-id" class="p-3">Bank Account</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </section>
     <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-expense"
     id="btn-create-expense-id">New Expense</button>
     <table class="table table-striped">
@@ -106,12 +176,12 @@
                             type="button" 
                             class="btn btn-success" 
                             data-bs-toggle="modal"
-                            data-bs-target="#edit-bank-account" 
-                            data-bank-account-id=""
-                            data-account-number=""
-                            data-nick-name=""
-                            data-amount-available=""
-                            data-bank-id=""
+                            data-bs-target="#edit-expense" 
+                            data-amount-id="{{ expense.amount }}"
+                            data-is-cash="{{ expense.is_cash }}"
+                            data-select-expense-category-id="{{ expense.expense_category_id }}"
+                            data-select-credit-card-id="{{ expense.credit_card_id }}"
+                            data-select-bank-account-id="{{ expense.bank_account_id }}"
                         >Edit
                         </button>
                         <form action="#" method="">
@@ -127,53 +197,96 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const checkbox = document.getElementById("checkNativeSwitch");
-            const bankProducts = document.getElementById("bank-products-id");
-            const createExpenseModal = document.getElementById("create-expense");
+            const cCheckbox = document.getElementById("checkNativeSwitch");
+            const eCheckbox = document.getElementById("e-checkNativeSwitch");
 
-            function toggleBankProducts() {
+            const cBankProducts = document.getElementById("bank-products-id");
+            const eBankProducts = document.getElementById("e-bank-products-id");
+
+            const createExpenseModal = document.getElementById("create-expense");
+            const editExpenseModal = document.getElementById("edit-expense");
+
+            function toggleBankProducts(checkbox, dynamicSection) {
                 if (checkbox.checked) {
-                    bankProducts.classList.add("d-none");
+                    dynamicSection.classList.add("d-none");
                 } else {
-                    bankProducts.classList.remove("d-none");
+                    dynamicSection.classList.remove("d-none");
                 }
             }
 
             //Run the function when the page content is loaded
-            toggleBankProducts();
+            toggleBankProducts(cCheckbox, cBankProducts);
 
-            checkbox.addEventListener("change", toggleBankProducts);
             createExpenseModal.addEventListener("show.bs.modal", () => { 
+                cCheckbox.addEventListener("change", () => toggleBankProducts(cCheckbox, cBankProducts));
 
-                const selectBankAccounts = document.getElementById("select-bank-account-id");
-                const selectCreditCards = document.getElementById("select-credit-card-id");
+                const cSelectBankAccounts = document.getElementById("select-bank-account-id");
+                const cSelectCreditCards = document.getElementById("select-credit-card-id");
 
-                checkbox.checked = true;
-                selectBankAccounts.value = "none";
-                selectCreditCards.value = "none";
-                selectBankAccounts.disabled = false;
-                selectCreditCards.disabled = false;
+                cCheckbox.checked = true; //Cash check box will be true everytime you open the modal
 
-                toggleBankProducts();
+                cSelectBankAccounts.value = "none";
+                cSelectCreditCards.value = "none";
 
-                selectBankAccounts.addEventListener("change", () => {
-                    if (selectBankAccounts.value != "none") {
-                        selectCreditCards.disabled = true;
-                        selectCreditCards.value = "none";
+                cSelectBankAccounts.disabled = false;
+                cSelectCreditCards.disabled = false;
+
+                cSelectBankAccounts.addEventListener("change", () => {
+                    if (cSelectBankAccounts.value != "none") {
+                        cSelectCreditCards.disabled = true;
+                        cSelectCreditCards.value = "none";
                     } else {
-                        selectCreditCards.disabled = false;                      
+                        cSelectCreditCards.disabled = false;                      
                     }
                 });
-                selectCreditCards.addEventListener("change", () => {
-                    if (selectCreditCards.value != "none") {
-                        selectBankAccounts.disabled = true;
-                        selectBankAccounts.value = "none";
+                cSelectCreditCards.addEventListener("change", () => {
+                    if (cSelectCreditCards.value != "none") {
+                        cSelectBankAccounts.disabled = true;
+                        cSelectBankAccounts.value = "none";
                     } else {
-                        selectBankAccounts.disabled = false;                      
+                        cSelectBankAccounts.disabled = false;                      
                     }
                 });
             });
             
+            editExpenseModal.addEventListener("show.bs.modal", () => {
+                const button = event.relatedTarget;
+                
+                const amount = button.getAttribute("data-amount-id");
+                const isCash = button.getAttribute("data-is-cash") === "True";
+                const expenseCategoryId = button.getAttribute("data-select-expense-category-id");
+                const creditCardId = button.getAttribute("data-select-credit-card-id");
+                const bankAccountId = button.getAttribute("data-select-bank-account-id");
+
+                document.getElementById("e-amount-id").value = amount;
+                document.getElementById("e-checkNativeSwitch").checked = isCash;
+                document.getElementById("e-select-expense-category-id").value = expenseCategoryId;
+                document.getElementById("e-select-credit-card-id").value = creditCardId;
+                document.getElementById("e-select-bank-account-id").value = bankAccountId;
+
+                const eSelectBankAccounts = document.getElementById("e-select-bank-account-id");
+                const eSelectCreditCards = document.getElementById("e-select-credit-card-id");
+                
+                eCheckbox.addEventListener("change", () => toggleBankProducts(eCheckbox, eBankProducts));
+
+
+                eSelectBankAccounts.addEventListener("change", () => {
+                    if (eSelectBankAccounts.value != "none") {
+                        eSelectCreditCards.disabled = true;
+                        eSelectCreditCards.value = "none";
+                    } else {
+                        eSelectCreditCards.disabled = false;                      
+                    }
+                });
+                eSelectCreditCards.addEventListener("change", () => {
+                    if (eSelectCreditCards.value != "none") {
+                        eSelectBankAccounts.disabled = true;
+                        eSelectBankAccounts.value = "none";
+                    } else {
+                        eSelectBankAccounts.disabled = false;                      
+                    }
+                });
+            });
         })
     </script>
 {% endblock %}

@@ -248,8 +248,10 @@
                     }
                 });
             });
-            
             editExpenseModal.addEventListener("show.bs.modal", () => {
+                const eSelectBankAccounts = document.getElementById("e-select-bank-account-id");
+                const eSelectCreditCards = document.getElementById("e-select-credit-card-id");
+
                 const button = event.relatedTarget;
                 
                 const amount = button.getAttribute("data-amount-id");
@@ -259,17 +261,21 @@
                 const bankAccountId = button.getAttribute("data-select-bank-account-id");
 
                 document.getElementById("e-amount-id").value = amount;
-                document.getElementById("e-checkNativeSwitch").checked = isCash;
+                eCheckbox.checked = isCash;
                 document.getElementById("e-select-expense-category-id").value = expenseCategoryId;
                 document.getElementById("e-select-credit-card-id").value = creditCardId;
                 document.getElementById("e-select-bank-account-id").value = bankAccountId;
 
-                const eSelectBankAccounts = document.getElementById("e-select-bank-account-id");
-                const eSelectCreditCards = document.getElementById("e-select-credit-card-id");
+
+                if(isCash){
+                    eSelectBankAccounts.value = "none";
+                    eSelectCreditCards.value = "none";
+                }
+                toggleBankProducts(eCheckbox, eBankProducts);//This whether will or won't show bank products's section on edit modal when I first click on edit
+                eCheckbox.addEventListener("change", () => {
+                    toggleBankProducts(eCheckbox, eBankProducts);//This will make appear or disappear edit modal when I click on the switch
+                });
                 
-                eCheckbox.addEventListener("change", () => toggleBankProducts(eCheckbox, eBankProducts));
-
-
                 eSelectBankAccounts.addEventListener("change", () => {
                     if (eSelectBankAccounts.value != "none") {
                         eSelectCreditCards.disabled = true;

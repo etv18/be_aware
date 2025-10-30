@@ -214,16 +214,14 @@
                 }
             }
 
-            //Run the function when the page content is loaded
-            toggleBankProducts(cCheckbox, cBankProducts);
-
             createExpenseModal.addEventListener("show.bs.modal", () => { 
+                cCheckbox.checked = true; //Cash check box will be true everytime you open the modal
+                toggleBankProducts(cCheckbox, cBankProducts); //Run the function when the modal content is loaded
+                
                 cCheckbox.addEventListener("change", () => toggleBankProducts(cCheckbox, cBankProducts));
 
                 const cSelectBankAccounts = document.getElementById("select-bank-account-id");
                 const cSelectCreditCards = document.getElementById("select-credit-card-id");
-
-                cCheckbox.checked = true; //Cash check box will be true everytime you open the modal
 
                 cSelectBankAccounts.value = "none";
                 cSelectCreditCards.value = "none";

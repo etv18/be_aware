@@ -75,7 +75,8 @@
         </form>
     </section>
     <section class="modal fade" tabindex="-1" id="edit-expense">
-        <form action="#" method="POST">
+        <form action="{{ url_for('expense.update' ) }}" method="POST">
+            <input type="hidden" name="id" id="e-expense-id">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -177,6 +178,7 @@
                             class="btn btn-success" 
                             data-bs-toggle="modal"
                             data-bs-target="#edit-expense" 
+                            data-expense-id="{{ expense.id }}"
                             data-amount-id="{{ expense.amount }}"
                             data-is-cash="{{ expense.is_cash }}"
                             data-select-expense-category-id="{{ expense.expense_category_id }}"
@@ -217,7 +219,7 @@
             createExpenseModal.addEventListener("show.bs.modal", () => { 
                 cCheckbox.checked = true; //Cash check box will be true everytime you open the modal
                 toggleBankProducts(cCheckbox, cBankProducts); //Run the function when the modal content is loaded
-                
+
                 cCheckbox.addEventListener("change", () => toggleBankProducts(cCheckbox, cBankProducts));
 
                 const cSelectBankAccounts = document.getElementById("select-bank-account-id");
@@ -252,12 +254,14 @@
 
                 const button = event.relatedTarget;
                 
+                const expenseId = button.getAttribute("data-expense-id");
                 const amount = button.getAttribute("data-amount-id");
                 const isCash = button.getAttribute("data-is-cash") === "True";
                 const expenseCategoryId = button.getAttribute("data-select-expense-category-id");
                 const creditCardId = button.getAttribute("data-select-credit-card-id");
                 const bankAccountId = button.getAttribute("data-select-bank-account-id");
 
+                document.getElementById("e-expense-id").value = expenseId;
                 document.getElementById("e-amount-id").value = amount;
                 eCheckbox.checked = isCash;
                 document.getElementById("e-select-expense-category-id").value = expenseCategoryId;

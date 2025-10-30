@@ -27,3 +27,11 @@ def create():
     expense_controller.create_expense()
 
     return redirect(url_for('expense.index'))
+
+@expense_bp.route('/update', methods=['GET', 'POST'])
+def update():
+    id = request.form['id']
+    expense = Expense.query.get(id)
+    if expense:
+        expense_controller.update_expense(expense)
+    return redirect(url_for('expense.index'))

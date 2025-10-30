@@ -186,7 +186,7 @@
                             data-select-bank-account-id="{{ expense.bank_account_id }}"
                         >Edit
                         </button>
-                        <form action="#" method="">
+                        <form action="{{ url_for('expense.delete', id=expense.id) }}" method="POST">
                             <button type="submit" class="btn btn-danger">Delete</button>
                         </form>
                     </div>

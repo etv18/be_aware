@@ -31,7 +31,6 @@ def create_expense():
         db.session.add(expense)
         db.session.commit()
 
-
 def update_expense(expense):
     if request.method == 'POST':
         amount = request.form['amount']
@@ -55,5 +54,10 @@ def update_expense(expense):
         expense.credit_card_id = credit_card_id
         expense.bank_account_id = bank_account_id
 
+        db.session.commit()
+
+def delete_expense(expense):
+    if request.method == 'POST':
+        db.session.delete(expense)
         db.session.commit()
 

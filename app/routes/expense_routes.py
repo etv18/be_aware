@@ -35,3 +35,10 @@ def update():
     if expense:
         expense_controller.update_expense(expense)
     return redirect(url_for('expense.index'))
+
+@expense_bp.route('/delete/<int:id>', methods=['GET', 'POST'])
+def delete(id):
+    expense = Expense.query.get(id)
+    if expense:
+        expense_controller.delete_expense(expense)
+    return redirect(url_for('expense.index'))

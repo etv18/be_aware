@@ -1,3 +1,5 @@
+Be Aware is personal project which helps me to track my financial records on a monthly basis, keeping post on incomes and expenses and how my back accounts fluctuate date to date depending on my cash flow.
+
 Instalation
 
 1. clone the repo

@@ -3,5 +3,45 @@
 {% block title %}Incomes{% endblock %}
 
 {% block content %}
-    Holaaaaa
+    <div class="container w-75">
+        <h2>Incomes</h2>
+        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-bank">New Bank</button>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                <th scope="col"># Id</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Create at</th>
+                <th scope="col">Acctions</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                {% for bank in banks %}                    
+                <tr>
+                    <th scope="row">{{ bank.id }}</th>
+                    <td>{{ bank.name }}</td>
+                    <td>{{ bank.created_at }}</td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <button 
+                                type="button" 
+                                class="btn btn-success" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#edit-bank"
+                                data-id=""
+                                data-name=""
+                            >
+                            Edit
+                            </button>
+                            <form action="#" method="post">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

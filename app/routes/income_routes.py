@@ -6,5 +6,5 @@ income_bp = Blueprint('income', __name__, url_prefix='/incomes')
 
 @income_bp.route('/index', methods=['GET', 'POST'])
 def index():
-
+    
     return render_template('incomes/index.html')

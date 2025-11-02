@@ -3,9 +3,8 @@
 {% block title %}Expense Categories{% endblock %}
 
 {% block content %}
-    <h2>Expense Categories</h2>
     <div class="container w-75">
-
+        <h2>Expense Categories</h2>
         <section class="modal fade" tabindex="-1" id="create-expense-category">
             <form action="{{ url_for('expense_category.create' ) }}" method="post">
                 <div class="modal-dialog">

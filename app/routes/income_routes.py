@@ -1,14 +1,16 @@
 from flask import Blueprint, redirect, render_template, request, url_for
 
 from app.models import income, bank_account
+from app.models.income import Income
+from app.models.bank_account import BankAccount
 from app.controllers import income_controller
 
 income_bp = Blueprint('income', __name__, url_prefix='/incomes')
 
 @income_bp.route('/index', methods=['GET', 'POST'])
 def index():
-    incomes = income.Income.query.all()
-    bank_accounts = bank_account.BankAccount.query.all()
+    incomes = Income.query.all()
+    bank_accounts = BankAccount.query.all()
 
     context = {
         'incomes': incomes,
@@ -24,5 +26,10 @@ def create():
 
 @income_bp.route('/update', methods=['POST'])
 def update():
-    
+    id = int(request.form['income_id'])
+    income = Income.query.get(id)
+
+    if income:
+        income_controller.update_income(income)
+
     return redirect(url_for('income.index'))

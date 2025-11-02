@@ -6,7 +6,7 @@
     <div class="container w-75">
 
         <h2>Incomes</h2>
-        <section class="modal fade" tabindex="-1" id="create-income">
+        <section class="modal fade" tabindex="-1" id="create-income" id="create-income-form">
             <form action="{{ url_for('income.create' ) }}" method="POST">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -53,7 +53,7 @@
             </form>
         </section>
         <section class="modal fade" tabindex="-1" id="edit-income">
-            <form action="{{ url_for('income.update' ) }}" method="POST">
+            <form action="{{ url_for('income.update' ) }}" method="POST" id="edit-income-form">
                 <input type="hidden" name="income_id" id="income-id">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -93,7 +93,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="submit" class="btn btn-primary" id="btn-submit-edition">Save</button>
                         </div>
                     </div>
                 </div>
@@ -152,10 +152,21 @@
 
         function toggleBankAccount(checkbox, select){
             if(checkbox.checked) {
-                select.disabled = true;
+                select.disabled = checkbox.checked;
                 select.value = "none";
             } else {
-                select.disabled = false;
+                select.disabled = checkbox.checked;
+            }
+        }
+        function selectBankAccountOption(checkbox, select, event){
+            if(!checkbox.checked && select.value == 'none') {
+                event.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'No selected bank account',
+                    text: 'If you transaction was not made in cash you must select a bank account.'
+                });
+                return;
             }
         }
         
@@ -166,15 +177,13 @@
             toggleBankAccount(isCash, bankAccountsSelect);
             isCash.addEventListener('change', () => toggleBankAccount(isCash, bankAccountsSelect));
         });
-
         editIncomeModal.addEventListener('show.bs.modal', (event) => {
             const button = event.relatedTarget;
+            const btnSubmitEdition = document.getElementById('btn-submit-edition');
+            const editIncomeForm = document.getElementById('edit-income-form');
             const editIsCash = document.getElementById('e-is-cash-id');
             const editBankAccountsSelect = document.getElementById('e-select-bank-account-id');
             const editAmount = document.getElementById('e-amount');
-
-            toggleBankAccount(editIsCash, editBankAccountsSelect);
-            editIsCash.addEventListener('change', () => toggleBankAccount(editIsCash, editBankAccountsSelect));
 
             const oldIsCash = button.getAttribute('data-is-cash') === 'True';
             const oldBankAccountId = button.getAttribute('data-bank-account-id');
@@ -182,10 +191,22 @@
             const incomeId = button.getAttribute('data-income-id');
 
             document.getElementById('e-amount-id').value = oldAmount;
-            document.getElementById('e-select-bank-account-id').value = oldBankAccountId;
             document.getElementById('e-is-cash-id').checked = oldIsCash;
             document.getElementById('income-id').value = incomeId;
+            document.getElementById('e-select-bank-account-id').value = oldBankAccountId; //If on the db its value it's Null flask will convert it into 'None' which the browser interprets it as String value in js
+            if(oldBankAccountId === 'None') {
+                document.getElementById('e-select-bank-account-id').value = 'none';
+            }
+            
+            toggleBankAccount(editIsCash, editBankAccountsSelect);
+            editIsCash.addEventListener('change', () => toggleBankAccount(editIsCash, editBankAccountsSelect));
+
+            editIncomeForm.addEventListener('submit', (event) => {
+                selectBankAccountOption(editIsCash, editBankAccountsSelect, event);
+            });
+
         });
     })
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 {% endblock %}

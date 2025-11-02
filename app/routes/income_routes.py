@@ -33,3 +33,10 @@ def update():
         income_controller.update_income(income)
 
     return redirect(url_for('income.index'))
+
+@income_bp.route('/delete/<int:id>', methods=['POST'])
+def delete(id):
+    income = Income.query.get(id)
+    if income:
+        income_controller.delete_income(income)
+    return redirect(url_for('income.index'))

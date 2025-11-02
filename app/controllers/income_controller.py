@@ -33,4 +33,9 @@ def update_income(income):
         
         db.session.commit()
 
+def delete_income(income):
+    if request.method == 'POST':
+        db.session.delete(income)
+        db.session.commit()
+
             

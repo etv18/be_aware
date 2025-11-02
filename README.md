@@ -1,4 +1,4 @@
-Be Aware is a personal project which helps me to track my financial records on a monthly basis, keeping me post on my incomes and expenses and how my back accounts fluctuate date to date depending on my cash flow.
+Be Aware is a personal project which helps me to track my financial records on a monthly basis, keeping me post on my incomes and expenses and how my bank accounts fluctuate date to date depending on my cash flow.
 
 Instalation
 

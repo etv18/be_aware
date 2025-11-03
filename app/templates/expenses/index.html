@@ -215,7 +215,14 @@
                     dynamicSection.classList.remove("d-none");
                 }
             }
-
+            function editableAndDisableSelects(editableSelect, disableSelect){
+                if (editableSelect.value != "none") {
+                    disableSelect.disabled = true;
+                    disableSelect.value = "none";
+                } else {
+                    disableSelect.disabled = false;                      
+                }
+            }
             createExpenseModal.addEventListener("show.bs.modal", () => { 
                 cCheckbox.checked = true; //Cash check box will be true everytime you open the modal
                 toggleBankProducts(cCheckbox, cBankProducts); //Run the function when the modal content is loaded
@@ -232,20 +239,10 @@
                 cSelectCreditCards.disabled = false;
 
                 cSelectBankAccounts.addEventListener("change", () => {
-                    if (cSelectBankAccounts.value != "none") {
-                        cSelectCreditCards.disabled = true;
-                        cSelectCreditCards.value = "none";
-                    } else {
-                        cSelectCreditCards.disabled = false;                      
-                    }
+                    editableAndDisableSelects(cSelectBankAccounts, cSelectCreditCards);
                 });
                 cSelectCreditCards.addEventListener("change", () => {
-                    if (cSelectCreditCards.value != "none") {
-                        cSelectBankAccounts.disabled = true;
-                        cSelectBankAccounts.value = "none";
-                    } else {
-                        cSelectBankAccounts.disabled = false;                      
-                    }
+                    editableAndDisableSelects(cSelectCreditCards, cSelectBankAccounts);
                 });
             });
             editExpenseModal.addEventListener("show.bs.modal", () => {
@@ -263,10 +260,10 @@
 
                 document.getElementById("e-expense-id").value = expenseId;
                 document.getElementById("e-amount-id").value = amount;
-                eCheckbox.checked = isCash;
                 document.getElementById("e-select-expense-category-id").value = expenseCategoryId;
-                document.getElementById("e-select-credit-card-id").value = creditCardId;
-                document.getElementById("e-select-bank-account-id").value = bankAccountId;
+                eCheckbox.checked = isCash;
+                eSelectCreditCards.value = (creditCardId === "None") ? "none" : creditCardId;
+                eSelectBankAccounts.value = (bankAccountId === "None") ? "none" : bankAccountId;
 
 
                 if(isCash){
@@ -275,24 +272,27 @@
                 }
                 toggleBankProducts(eCheckbox, eBankProducts);//This whether will or won't show bank products's section on edit modal when I first click on edit
                 eCheckbox.addEventListener("change", () => {
-                    toggleBankProducts(eCheckbox, eBankProducts);//This will make appear or disappear edit modal when I click on the switch
+                    toggleBankProducts(eCheckbox, eBankProducts);//This will make appear or disappear bank products's section on edit modal when I click on the switch
                 });
                 
+                
+                console.log(`value of BA: <${bankAccountId}> and is type of ${typeof(bankAccountId)}`)
+                console.log(`value of CC: <${creditCardId}> and is type of ${typeof(creditCardId)}`)
+                mytest = "";
+                console.log(`value of test: <${mytest}> and is type of ${typeof(eSelectCreditCards.value)}`)
+
                 eSelectBankAccounts.addEventListener("change", () => {
-                    if (eSelectBankAccounts.value != "none") {
+                    /*if (eSelectBankAccounts.value != "none") {
                         eSelectCreditCards.disabled = true;
                         eSelectCreditCards.value = "none";
                     } else {
                         eSelectCreditCards.disabled = false;                      
-                    }
+                    }*/
+
+                    editableAndDisableSelects(eSelectBankAccounts, eSelectCreditCards);
                 });
                 eSelectCreditCards.addEventListener("change", () => {
-                    if (eSelectCreditCards.value != "none") {
-                        eSelectBankAccounts.disabled = true;
-                        eSelectBankAccounts.value = "none";
-                    } else {
-                        eSelectBankAccounts.disabled = false;                      
-                    }
+                    editableAndDisableSelects(eSelectCreditCards, eSelectBankAccounts);
                 });
             });
         })

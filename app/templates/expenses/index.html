@@ -5,7 +5,7 @@
 {% block content %}
     <h2>Expenses</h2>
     <section class="modal fade" tabindex="-1" id="create-expense">
-        <form action="{{ url_for('expense.create' ) }}" method="POST">
+        <form action="{{ url_for('expense.create' ) }}" method="POST" id="create-expense-form">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -68,7 +68,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-primary" onclick="createExpense()">Save</button>
                     </div>
                 </div>
             </div>
@@ -265,7 +265,6 @@
                 eSelectCreditCards.value = (creditCardId === "None") ? "none" : creditCardId;
                 eSelectBankAccounts.value = (bankAccountId === "None") ? "none" : bankAccountId;
 
-
                 if(isCash){
                     eSelectBankAccounts.value = "none";
                     eSelectCreditCards.value = "none";
@@ -274,27 +273,59 @@
                 eCheckbox.addEventListener("change", () => {
                     toggleBankProducts(eCheckbox, eBankProducts);//This will make appear or disappear bank products's section on edit modal when I click on the switch
                 });
-                
-                
-                console.log(`value of BA: <${bankAccountId}> and is type of ${typeof(bankAccountId)}`)
-                console.log(`value of CC: <${creditCardId}> and is type of ${typeof(creditCardId)}`)
-                mytest = "";
-                console.log(`value of test: <${mytest}> and is type of ${typeof(eSelectCreditCards.value)}`)
 
-                eSelectBankAccounts.addEventListener("change", () => {
-                    /*if (eSelectBankAccounts.value != "none") {
-                        eSelectCreditCards.disabled = true;
-                        eSelectCreditCards.value = "none";
-                    } else {
-                        eSelectCreditCards.disabled = false;                      
-                    }*/
+                eSelectBankAccounts.addEventListener("change", () => editableAndDisableSelects(eSelectBankAccounts, eSelectCreditCards));
+                eSelectCreditCards.addEventListener("change", () => editableAndDisableSelects(eSelectCreditCards, eSelectBankAccounts));
 
-                    editableAndDisableSelects(eSelectBankAccounts, eSelectCreditCards);
-                });
-                eSelectCreditCards.addEventListener("change", () => {
-                    editableAndDisableSelects(eSelectCreditCards, eSelectBankAccounts);
-                });
+                //Will load the selected bank product enabled 
+                eSelectCreditCards.disabled = (eSelectBankAccounts.value != 'none');
+                eSelectBankAccounts.disabled = (eSelectCreditCards.value != 'none');
             });
         })
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function createExpense(){
+            const form = document.getElementById('create-expense-form');
+            const formData = new FormData(form);
+
+            fetch('/expenses/create', {
+                method: 'POST',
+                body: formData,
+                headers: {'X-Requested-With': 'XMLHttpRequest'}
+            })
+            .then(async response => {
+                const data = await response.json();//If the promise is resolved from fetch() it returns a response
+                if(!response.ok) {
+                    console.log(response.json())
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.error || 'Something went wrong while creating the expense.'
+                    });
+                    return;
+                }
+                location.reload();
+            })
+            .catch(async err => {
+                console.error('Fetch error:', err);
+
+                try {
+                    const res = err.response; //gets the raw http response from the server
+                    const data = await res.json() //convert it to json
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Server Error',
+                        text: data.error || 'Unexpected error occurred.'
+                    });
+                } catch {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Network Error',
+                        text: err.message || 'Could not connect to server.'
+                    });
+                }
+            })
+        }
     </script>
 {% endblock %}

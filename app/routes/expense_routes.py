@@ -1,5 +1,6 @@
-from flask import request, redirect, url_for, render_template, Blueprint
+from flask import request, redirect, url_for, render_template, Blueprint, jsonify
 
+from app.extensions import db
 from app.models.expense import Expense
 from app.controllers import expense_controller
 from app.models import credit_card, expense_category, bank_account, expense
@@ -24,10 +25,22 @@ def index():
 
 @expense_bp.route('/create', methods=['GET', 'POST'])
 def create():
-    expense_controller.create_expense()
+    try:
+        expense_controller.create_expense()
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'message': 'Expense created successfully!'}), 201
+        
+        return redirect(url_for('expense.index'))
+    
+    except Exception as e:
+        db.session.rollback()
 
-    return redirect(url_for('expense.index'))
-
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            print(e)
+            return jsonify({'error': str(e)}), 400
+        
+        raise e
 @expense_bp.route('/update', methods=['GET', 'POST'])
 def update():
     id = request.form['id']

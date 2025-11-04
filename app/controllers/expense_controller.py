@@ -1,11 +1,16 @@
 from flask import request
+from sqlalchemy.exc import SQLAlchemyError
+
+from decimal import Decimal
 
 from app.extensions import db
 from app.models.expense import Expense
+from app.models.bank_account import BankAccount
+from app.exceptions import excs
 
 def create_expense():
-    if request.method == 'POST':
-        amount = request.form['amount']
+    try:
+        amount = Decimal(request.form['amount'])
         is_cash = request.form.get('is-cash') == 'on'
         expense_category_id = int(request.form['select-expense-category'])
         credit_card_id = None
@@ -27,6 +32,7 @@ def create_expense():
 
             if selected_bank_account and selected_bank_account != 'none':
                 bank_account_id = int(request.form['select-bank-account'])
+                update_bank_account_money_on_create(bank_account_id, amount)
 
         expense = Expense(
             amount=amount,
@@ -38,6 +44,21 @@ def create_expense():
 
         db.session.add(expense)
         db.session.commit()
+
+    except (
+        excs.AmountGreaterThanAvailableMoney,
+        excs.BankAccountDoesNotExists,
+        excs.NoAvailableMoney
+    ) as e:
+        db.session.rollback()
+        raise e #will automatically sends to the controller the error msg I defined before on update_bank_account_money_on_create(account_id, amount) function
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        raise Exception('Database error occurred: ' + str(e))
+    except Exception as e:
+        db.session.rollback()
+        raise e
+
 
 def update_expense(expense):
     if request.method == 'POST':
@@ -74,4 +95,21 @@ def delete_expense(expense):
     if request.method == 'POST':
         db.session.delete(expense)
         db.session.commit()
+
+def update_bank_account_money_on_create(account_id, amount):
+    bank_account = BankAccount.query.get(account_id)
+
+    if not bank_account:
+        raise excs.BankAccountDoesNotExists('Bank account does not exists.')
+    if bank_account.amount_available <= 0:
+        raise excs.NoAvailableMoney('Bank Account does not have any money left.')
+    if bank_account.amount_available < amount:
+        raise excs.AmountGreaterThanAvailableMoney('Insufficient founds.')
+    
+    bank_account.amount_available -= amount
+    db.session.commit()
+
+def update_credit_card_money_on_create():
+    pass
+
 

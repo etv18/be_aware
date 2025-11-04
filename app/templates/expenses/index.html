@@ -5,7 +5,7 @@
 {% block content %}
     <h2>Expenses</h2>
     <section class="modal fade" tabindex="-1" id="create-expense">
-        <form action="{{ url_for('expense.create' ) }}" method="POST" id="create-expense-form">
+        <form id="create-expense-form">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -75,7 +75,7 @@
         </form>
     </section>
     <section class="modal fade" tabindex="-1" id="edit-expense">
-        <form action="{{ url_for('expense.update' ) }}" method="POST">
+        <form id="edit-expense-form">
             <input type="hidden" name="id" id="e-expense-id">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -139,7 +139,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-primary" onclick="editExpense()">Save</button>
                     </div>
                 </div>
             </div>
@@ -309,8 +309,8 @@
             })
             .catch(async err => {
                 console.error('Fetch error:', err);
-
                 try {
+                    //Getting the server exception http response
                     const res = err.response; //gets the raw http response from the server
                     const data = await res.json() //convert it to json
                     Swal.fire({
@@ -326,6 +326,51 @@
                     });
                 }
             })
+        }
+    </script>
+    <script>
+        function editExpense(){
+            const expenseId = document.getElementById('e-expense-id').value;
+            const form = document.getElementById('edit-expense-form');
+            const formData = new FormData(form);
+
+            fetch(`/expenses/update/${expenseId}`, {
+                method: 'PUT',
+                body: formData,
+                headers: {'X-Requested-With': 'XMLHttpRequest'}
+            })
+            .then(async response => {
+                const data = await response.json();
+                if(!response.ok){
+                    console.log(response.json());
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.error || 'Somethig went wrong while editing the expense.'
+                    });
+                    return;
+                }
+                location.reload();
+            })
+            .catch(async err => {
+                console.error('Fetch error', err);
+                try {
+                    const res = err.response;
+                    const data = await res.json();
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Server Error',
+                        text: data.error || 'Unexpected error occurred.'
+                    });
+                } catch {
+                    Swal.fire({
+                        icon: 'error', 
+                        title: 'Network Error', 
+                        text: err.message || 'Could not connect to server.'
+                    });
+                }
+            });
         }
     </script>
 {% endblock %}

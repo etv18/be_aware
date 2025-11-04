@@ -7,8 +7,9 @@ from app.extensions import db
 from app.models.expense import Expense
 from app.models.bank_account import BankAccount
 from app.models.credit_card import CreditCard
-from app.exceptions import excs
+from project.app.exceptions.bankProductsException import *
 
+#HANDLERS
 def create_expense():
     try:
         amount = Decimal(request.form['amount'])
@@ -48,9 +49,9 @@ def create_expense():
         db.session.commit()
 
     except (
-        excs.AmountGreaterThanAvailableMoney,
-        excs.BankAccountDoesNotExists,
-        excs.NoAvailableMoney
+        AmountGreaterThanAvailableMoney,
+        BankAccountDoesNotExists,
+        NoAvailableMoney
     ) as e:
         db.session.rollback()
         raise e #will automatically sends to the controller the error msg I defined before on update_bank_account_money_on_create(account_id, amount) function
@@ -98,9 +99,9 @@ def update_expense(expense):
 
         db.session.commit()
     except (
-        excs.AmountGreaterThanAvailableMoney,
-        excs.BankAccountDoesNotExists,
-        excs.NoAvailableMoney
+        AmountGreaterThanAvailableMoney,
+        BankAccountDoesNotExists,
+        NoAvailableMoney
     ) as e:
         db.session.rollback()
         raise e #will automatically sends to the controller the error msg I defined before on update_bank_account_money_on_create(account_id, amount) function
@@ -116,15 +117,16 @@ def delete_expense(expense):
         db.session.delete(expense)
         db.session.commit()
 
+#HELPER FUNCTIONS
 def update_bank_account_money_on_create(id, amount):
     bank_account = BankAccount.query.get(id)
 
     if not bank_account:
-        raise excs.BankAccountDoesNotExists('This bank account does not exists.')
+        raise BankAccountDoesNotExists('This bank account does not exists.')
     if bank_account.amount_available <= 0:
-        raise excs.NoAvailableMoney('Bank Account does not have any money left.')
+        raise NoAvailableMoney('Bank Account does not have any money left.')
     if bank_account.amount_available < amount:
-        raise excs.AmountGreaterThanAvailableMoney('Insufficient founds.')
+        raise AmountGreaterThanAvailableMoney('Insufficient founds.')
     
     bank_account.amount_available -= amount
 
@@ -132,11 +134,11 @@ def update_credit_card_money_on_create(id, amount):
     credit_card = CreditCard.query.get(id)
 
     if not credit_card:
-        raise excs.CreditCardDoesNotExists('This credit card does not exists.')
+        raise CreditCardDoesNotExists('This credit card does not exists.')
     if credit_card.amount_available <= 0:
-        raise excs.NoAvailableMoney('Credit card does not have any money left.')
+        raise NoAvailableMoney('Credit card does not have any money left.')
     if credit_card.amount_available < amount:
-        raise excs.AmountGreaterThanAvailableMoney('Insufficient founds.')
+        raise AmountGreaterThanAvailableMoney('Insufficient founds.')
     
     credit_card.amount_available -= amount
 
@@ -144,14 +146,14 @@ def update_bank_account_money_on_update(id, old_amount, new_amount):
     bank_account = BankAccount.query.get(id)
 
     if not bank_account:
-        raise excs.BankAccountDoesNotExists('This bank account does not exists.')
+        raise BankAccountDoesNotExists('This bank account does not exists.')
     
     bank_account.amount_available += old_amount;
 
     if bank_account.amount_available <= 0:
-        raise excs.NoAvailableMoney('Bank Account does not have any money left.')
+        raise NoAvailableMoney('Bank Account does not have any money left.')
     if bank_account.amount_available < new_amount:
-        raise excs.AmountGreaterThanAvailableMoney('Insufficient founds.')
+        raise AmountGreaterThanAvailableMoney('Insufficient founds.')
     
     bank_account.amount_available -= new_amount;
     
@@ -159,13 +161,13 @@ def update_credit_card_money_on_update(id, old_amount, new_amount):
     credit_card = CreditCard.query.get(id)
 
     if not credit_card:
-        raise excs.CreditCardDoesNotExists('This credit card does not exists.')
+        raise CreditCardDoesNotExists('This credit card does not exists.')
     
     credit_card.amount_available += old_amount
 
     if credit_card.amount_available <= 0:
-        raise excs.NoAvailableMoney('Credit card does not have any money left.')
+        raise NoAvailableMoney('Credit card does not have any money left.')
     if credit_card.amount_available < new_amount:
-        raise excs.AmountGreaterThanAvailableMoney('Insufficient founds.')
+        raise AmountGreaterThanAvailableMoney('Insufficient founds.')
     
     credit_card.amount_available -= new_amount

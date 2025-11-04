@@ -6,3 +6,6 @@ class AmountGreaterThanAvailableMoney(Exception):
 
 class BankAccountDoesNotExists(Exception):
     pass
+
+class CreditCardDoesNotExists(Exception):
+    pass

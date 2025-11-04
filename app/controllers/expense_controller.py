@@ -6,6 +6,7 @@ from decimal import Decimal
 from app.extensions import db
 from app.models.expense import Expense
 from app.models.bank_account import BankAccount
+from app.models.credit_card import CreditCard
 from app.exceptions import excs
 
 def create_expense():
@@ -29,7 +30,8 @@ def create_expense():
 
             if selected_credit_card and selected_credit_card != 'none':
                 credit_card_id = int(request.form['select-credit-card'])
-
+                update_credit_card_money_on_create(credit_card_id, amount)
+                
             if selected_bank_account and selected_bank_account != 'none':
                 bank_account_id = int(request.form['select-bank-account'])
                 update_bank_account_money_on_create(bank_account_id, amount)
@@ -61,46 +63,44 @@ def create_expense():
 
 
 def update_expense(expense):
-    if request.method == 'POST':
-        amount = request.form['amount']
-        is_cash = request.form.get('is-cash') == 'on'
-        expense_category_id = int(request.form['select-expense-category'])
-        credit_card_id = None
-        bank_account_id = None
+    amount = Decimal(request.form['amount'])
+    is_cash = request.form.get('is-cash') == 'on'
+    expense_category_id = int(request.form['select-expense-category'])
+    credit_card_id = None
+    bank_account_id = None
+    '''
+    if the expense you are updating, you edit it as it wasnt made with
+    cash then the program it'll save either the credit_card_id or 
+    bank_account_id
+    '''
+    if not is_cash:
+        selected_credit_card = request.form.get('select-credit-card')
+        selected_bank_account = request.form.get('select-bank-account')
 
-        '''
-        if the expense you are updating, you edit it as it wasnt made with
-        cash then the program it'll save either the credit_card_id or 
-        bank_account_id
-        '''
-        if not is_cash:
-            selected_credit_card = request.form.get('select-credit-card')
-            selected_bank_account = request.form.get('select-bank-account')
+        if selected_credit_card and selected_credit_card != 'none':
+            credit_card_id = int(request.form['select-credit-card'])
 
-            if selected_credit_card and selected_credit_card != 'none':
-                credit_card_id = int(request.form['select-credit-card'])
+        if selected_bank_account and selected_bank_account != 'none':
+            bank_account_id = int(request.form['select-bank-account'])
 
-            if selected_bank_account and selected_bank_account != 'none':
-                bank_account_id = int(request.form['select-bank-account'])
+    expense.amount = amount
+    expense.is_cash = is_cash
+    expense.expense_category_id = expense_category_id
+    expense.credit_card_id = credit_card_id
+    expense.bank_account_id = bank_account_id
 
-        expense.amount = amount
-        expense.is_cash = is_cash
-        expense.expense_category_id = expense_category_id
-        expense.credit_card_id = credit_card_id
-        expense.bank_account_id = bank_account_id
-
-        db.session.commit()
+    db.session.commit()
 
 def delete_expense(expense):
     if request.method == 'POST':
         db.session.delete(expense)
         db.session.commit()
 
-def update_bank_account_money_on_create(account_id, amount):
-    bank_account = BankAccount.query.get(account_id)
+def update_bank_account_money_on_create(id, amount):
+    bank_account = BankAccount.query.get(id)
 
     if not bank_account:
-        raise excs.BankAccountDoesNotExists('Bank account does not exists.')
+        raise excs.BankAccountDoesNotExists('This bank account does not exists.')
     if bank_account.amount_available <= 0:
         raise excs.NoAvailableMoney('Bank Account does not have any money left.')
     if bank_account.amount_available < amount:
@@ -109,7 +109,16 @@ def update_bank_account_money_on_create(account_id, amount):
     bank_account.amount_available -= amount
     db.session.commit()
 
-def update_credit_card_money_on_create():
-    pass
+def update_credit_card_money_on_create(id, amount):
+    credit_card = CreditCard.query.get(id)
+
+    if not credit_card:
+        raise excs.CreditCardDoesNotExists('This credit card does not exists.')
+    if credit_card.amount_available <= 0:
+        raise excs.NoAvailableMoney('Credit card does not have any money left.')
+    if credit_card.amount_available < amount:
+        raise excs.AmountGreaterThanAvailableMoney('Insufficient founds.')
+    
+    credit_card.amount_available -= amount
 
 

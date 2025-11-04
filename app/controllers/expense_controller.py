@@ -31,7 +31,7 @@ def create_expense():
             if selected_credit_card and selected_credit_card != 'none':
                 credit_card_id = int(request.form['select-credit-card'])
                 update_credit_card_money_on_create(credit_card_id, amount)
-                
+
             if selected_bank_account and selected_bank_account != 'none':
                 bank_account_id = int(request.form['select-bank-account'])
                 update_bank_account_money_on_create(bank_account_id, amount)
@@ -63,33 +63,51 @@ def create_expense():
 
 
 def update_expense(expense):
-    amount = Decimal(request.form['amount'])
-    is_cash = request.form.get('is-cash') == 'on'
-    expense_category_id = int(request.form['select-expense-category'])
-    credit_card_id = None
-    bank_account_id = None
-    '''
-    if the expense you are updating, you edit it as it wasnt made with
-    cash then the program it'll save either the credit_card_id or 
-    bank_account_id
-    '''
-    if not is_cash:
-        selected_credit_card = request.form.get('select-credit-card')
-        selected_bank_account = request.form.get('select-bank-account')
+    try:
+        amount = Decimal(request.form['amount'])
+        is_cash = request.form.get('is-cash') == 'on'
+        expense_category_id = int(request.form['select-expense-category'])
+        credit_card_id = None
+        bank_account_id = None
+        '''
+        if the expense you are updating, you edit it as it wasnt made with
+        cash then the program it'll save either the credit_card_id or 
+        bank_account_id
+        '''
+        if not is_cash:
+            selected_credit_card = request.form.get('select-credit-card')
+            selected_bank_account = request.form.get('select-bank-account')
 
-        if selected_credit_card and selected_credit_card != 'none':
-            credit_card_id = int(request.form['select-credit-card'])
+            if selected_credit_card and selected_credit_card != 'none':
+                credit_card_id = int(request.form['select-credit-card'])
 
-        if selected_bank_account and selected_bank_account != 'none':
-            bank_account_id = int(request.form['select-bank-account'])
+            if selected_bank_account and selected_bank_account != 'none':
+                bank_account_id = int(request.form['select-bank-account'])
+                old_amount = expense.amount #the expense object hasnt being assigned the newest amount
+                new_amount = amount #newest amount from the form the user submitted
+                update_bank_account_money_on_update(bank_account_id, old_amount, new_amount)
 
-    expense.amount = amount
-    expense.is_cash = is_cash
-    expense.expense_category_id = expense_category_id
-    expense.credit_card_id = credit_card_id
-    expense.bank_account_id = bank_account_id
+        expense.amount = amount
+        expense.is_cash = is_cash
+        expense.expense_category_id = expense_category_id
+        expense.credit_card_id = credit_card_id
+        expense.bank_account_id = bank_account_id
 
-    db.session.commit()
+        db.session.commit()
+    except (
+        excs.AmountGreaterThanAvailableMoney,
+        excs.BankAccountDoesNotExists,
+        excs.NoAvailableMoney
+    ) as e:
+        db.session.rollback()
+        raise e #will automatically sends to the controller the error msg I defined before on update_bank_account_money_on_create(account_id, amount) function
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        raise Exception('Database error occurred: ' + str(e))
+    except Exception as e:
+        db.session.rollback()
+        raise e 
+
 
 def delete_expense(expense):
     if request.method == 'POST':
@@ -107,7 +125,6 @@ def update_bank_account_money_on_create(id, amount):
         raise excs.AmountGreaterThanAvailableMoney('Insufficient founds.')
     
     bank_account.amount_available -= amount
-    db.session.commit()
 
 def update_credit_card_money_on_create(id, amount):
     credit_card = CreditCard.query.get(id)
@@ -121,4 +138,18 @@ def update_credit_card_money_on_create(id, amount):
     
     credit_card.amount_available -= amount
 
+def update_bank_account_money_on_update(id, old_amount, new_amount):
+    bank_account = BankAccount.query.get(id)
 
+    if not bank_account:
+        raise excs.BankAccountDoesNotExists('This bank account does not exists.')
+    
+    bank_account.amount_available += old_amount;
+
+    if bank_account.amount_available <= 0:
+        raise excs.NoAvailableMoney('Bank Account does not have any money left.')
+    if bank_account.amount_available < new_amount:
+        raise excs.AmountGreaterThanAvailableMoney('Insufficient founds.')
+    
+    bank_account.amount_available -= new_amount;
+    

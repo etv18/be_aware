@@ -35,19 +35,30 @@ def create():
     
     except Exception as e:
         db.session.rollback()
-
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             print(e)
             return jsonify({'error': str(e)}), 400
         
         raise e
-@expense_bp.route('/update', methods=['GET', 'POST'])
-def update():
-    id = request.form['id']
-    expense = Expense.query.get(id)
-    if expense:
+@expense_bp.route('/update/<int:id>', methods=['GET', 'PUT'])
+def update(id):
+    try:
+        expense = Expense.query.get(id)
+        if not expense:
+            jsonify({'error': 'Expense not found'}), 404
+        
         expense_controller.update_expense(expense)
-    return redirect(url_for('expense.index'))
+
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'message': 'Expense updated successfully!'}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            print(e)
+            return jsonify({'error': str(e)}), 400
+        raise e
+    
 
 @expense_bp.route('/delete/<int:id>', methods=['GET', 'POST'])
 def delete(id):

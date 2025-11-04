@@ -61,7 +61,6 @@ def create_expense():
         db.session.rollback()
         raise e
 
-
 def update_expense(expense):
     try:
         amount = Decimal(request.form['amount'])
@@ -80,6 +79,10 @@ def update_expense(expense):
 
             if selected_credit_card and selected_credit_card != 'none':
                 credit_card_id = int(request.form['select-credit-card'])
+                old_amount = expense.amount #the expense object hasnt being assigned the newest amount
+                new_amount = amount #newest amount from the form the user submitted
+                update_credit_card_money_on_update(credit_card_id, old_amount, new_amount)
+
 
             if selected_bank_account and selected_bank_account != 'none':
                 bank_account_id = int(request.form['select-bank-account'])
@@ -107,7 +110,6 @@ def update_expense(expense):
     except Exception as e:
         db.session.rollback()
         raise e 
-
 
 def delete_expense(expense):
     if request.method == 'POST':
@@ -153,3 +155,17 @@ def update_bank_account_money_on_update(id, old_amount, new_amount):
     
     bank_account.amount_available -= new_amount;
     
+def update_credit_card_money_on_update(id, old_amount, new_amount):
+    credit_card = CreditCard.query.get(id)
+
+    if not credit_card:
+        raise excs.CreditCardDoesNotExists('This credit card does not exists.')
+    
+    credit_card.amount_available += old_amount
+
+    if credit_card.amount_available <= 0:
+        raise excs.NoAvailableMoney('Credit card does not have any money left.')
+    if credit_card.amount_available < new_amount:
+        raise excs.AmountGreaterThanAvailableMoney('Insufficient founds.')
+    
+    credit_card.amount_available -= new_amount

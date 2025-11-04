@@ -9,3 +9,6 @@ class BankAccountDoesNotExists(Exception):
 
 class CreditCardDoesNotExists(Exception):
     pass
+
+class AmountIsLessThanOrEqualsToZero(Exception):
+    pass

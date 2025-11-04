@@ -1,5 +1,6 @@
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, redirect, render_template, request, url_for, jsonify
 
+from app.extensions import db
 from app.models import income, bank_account
 from app.models.income import Income
 from app.models.bank_account import BankAccount
@@ -21,8 +22,20 @@ def index():
 
 @income_bp.route('/create', methods=['GET', 'POST'])
 def create():
-    income_controller.create_income()
-    return redirect(url_for('income.index'))
+    try:
+        income_controller.create_income()
+
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'message': 'Income created successfully!'}), 201
+        
+    except Exception as e:
+        db.session.rollback()
+
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            print(e)
+            return jsonify({'error': str(e)}), 400
+        
+        raise e
 
 @income_bp.route('/update', methods=['POST'])
 def update():

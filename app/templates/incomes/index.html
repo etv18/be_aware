@@ -8,7 +8,7 @@
 
         <h2>Incomes</h2>
         <section class="modal fade" tabindex="-1" id="create-income" id="create-income-form">
-            <form action="{{ url_for('income.create' ) }}" method="POST">
+            <form id="create-income-form">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -47,7 +47,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-primary" onclick="createIncome()">Save</button>
                         </div>
                     </div>
                 </div>
@@ -146,6 +146,8 @@
         </table>
     </div>
 
+<link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script> 
     document.addEventListener('DOMContentLoaded', () => {
         const createIncomeModal = document.getElementById('create-income');
@@ -209,6 +211,51 @@
         });
     })
 </script>
-<link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    async function createIncome(){
+        const form = document.getElementById('create-income-form');
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch('/incomes/create', {
+                method: 'POST',
+                body: formData,
+                headers: {'X-Requested-With': 'XMLHttpRequest'}
+            });
+
+            const data = await response.json();
+            
+            if(!response.ok){
+                console.log(response.json());
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error || 'Something went wrong while creating the expense.'
+                });
+                return;
+            }
+            location.reload();//Reload the current page to see the new added income
+        
+        } catch (error) {
+            console.error('Fetch error: ',error)
+            try{
+                //Getting the server exception in a http response
+                const response = error.response;
+                const data = await response.json();
+                console.log(response)
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Server Error',
+                    text: data.error || 'Unexpected error occurred.'
+                });
+            } catch {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Network Error',
+                    text: error.message || 'Could not connect to server.'
+                });
+            }
+        }        
+    }
+</script>
 {% endblock %}

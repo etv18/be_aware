@@ -1,29 +1,45 @@
 from flask import request
+from sqlalchemy.exc import SQLAlchemyError
+
+from decimal import Decimal
 
 from app.models.income import Income
+from app.models.bank_account import BankAccount
+from app.exceptions.bankProductsException import BankAccountDoesNotExists, AmountIsLessThanOrEqualsToZero
 from app.extensions import db
 
 def create_income():
-    if request.method == 'POST':
-        amount = request.form['amount']
-        is_cash = request.form.get('is-cash') == 'on'
-        bank_account_id = None
+        try:    
+            amount = Decimal(request.form['amount'])
+            is_cash = request.form.get('is-cash') == 'on'
+            bank_account_id = None
 
-        if not is_cash:
-            bank_account_id = int(request.form.get('select-bank-account'))
-            
-        income = Income(
-            amount=amount,
-            is_cash=is_cash,
-            bank_account_id=bank_account_id
-        )
+            if not is_cash:
+                bank_account_id = int(request.form.get('select-bank-account'))
+                update_bank_account_money_on_create(bank_account_id, amount)
+                
+            income = Income(
+                amount=amount,
+                is_cash=is_cash,
+                bank_account_id=bank_account_id
+            )
 
-        db.session.add(income)
-        db.session.commit()
+            db.session.add(income)
+            db.session.commit()
+
+        except (AmountIsLessThanOrEqualsToZero, BankAccountDoesNotExists) as e:
+            db.session.rollback()
+            raise e
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            raise Exception('Database error occurred: ' + str(e))
+        except Exception as e:
+            db.session.rollback()
+            raise e
 
 def update_income(income):
     if request.method == 'POST':
-        income.amount = request.form['amount']
+        income.amount = Decimal(request.form['amount'])
         income.is_cash = request.form.get('is-cash') == 'on'
         income.bank_account_id = None
         selected_bank_account = request.form.get('select-bank-account')
@@ -38,4 +54,12 @@ def delete_income(income):
         db.session.delete(income)
         db.session.commit()
 
-            
+def update_bank_account_money_on_create(id, amount):
+    bank_account = BankAccount.query.get(id)
+
+    if not bank_account:
+        raise BankAccountDoesNotExists('This bank account does not exists.')
+    if amount <= 0:
+        raise AmountIsLessThanOrEqualsToZero('You need to enter an amount greater than 0')
+    
+    bank_account.amount_available += amount

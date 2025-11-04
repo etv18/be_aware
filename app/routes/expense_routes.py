@@ -30,9 +30,7 @@ def create():
         
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({'message': 'Expense created successfully!'}), 201
-        
-        return redirect(url_for('expense.index'))
-    
+            
     except Exception as e:
         db.session.rollback()
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':

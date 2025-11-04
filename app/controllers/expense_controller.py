@@ -7,7 +7,7 @@ from app.extensions import db
 from app.models.expense import Expense
 from app.models.bank_account import BankAccount
 from app.models.credit_card import CreditCard
-from project.app.exceptions.bankProductsException import *
+from app.exceptions.bankProductsException import *
 
 #HANDLERS
 def create_expense():

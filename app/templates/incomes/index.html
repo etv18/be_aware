@@ -7,7 +7,7 @@
     <div class="container w-75">
 
         <h2>Incomes</h2>
-        <section class="modal fade" tabindex="-1" id="create-income" id="create-income-form">
+        <section class="modal fade" tabindex="-1" id="create-income">
             <form id="create-income-form">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -54,7 +54,7 @@
             </form>
         </section>
         <section class="modal fade" tabindex="-1" id="edit-income">
-            <form action="{{ url_for('income.update' ) }}" method="POST" id="edit-income-form">
+            <form id="edit-income-form">
                 <input type="hidden" name="income_id" id="income-id">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -94,7 +94,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" id="btn-submit-edition">Save</button>
+                            <button type="button" class="btn btn-primary" id="btn-submit-edition" onclick="editIncome()">Save</button>
                         </div>
                     </div>
                 </div>
@@ -224,7 +224,7 @@
             });
 
             const data = await response.json();
-            
+
             if(!response.ok){
                 console.log(response.json());
                 Swal.fire({
@@ -237,25 +237,52 @@
             location.reload();//Reload the current page to see the new added income
         
         } catch (error) {
-            console.error('Fetch error: ',error)
-            try{
-                //Getting the server exception in a http response
-                const response = error.response;
-                const data = await response.json();
-                console.log(response)
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Server Error',
-                    text: data.error || 'Unexpected error occurred.'
-                });
-            } catch {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Network Error',
-                    text: error.message || 'Could not connect to server.'
-                });
-            }
+            console.error('Fetch error:', error);
+
+            Swal.fire({
+            icon: 'error',
+            title: 'Network Error',
+            text: error.message || 'Could not connect to server.'
+            });
         }        
     }
+
+    async function editIncome(){
+        const incomeId = document.getElementById('income-id').value;
+        const form = document.getElementById('edit-income-form');
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch(`/incomes/update/${incomeId}`, {
+                method: 'PUT',
+                body: formData,
+                headers: {'X-Requested-With': 'XMLHttpRequest'}
+            });
+
+            const data = await response.json();
+
+            if(!response.ok){
+                console.log(response.json())
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error || 'Something went wrong while creating the expense.'
+                });
+                return;
+            }
+
+            location.reload();
+
+        } catch (error) {
+            console.error('Fetch error:', error);
+
+            Swal.fire({
+            icon: 'error',
+            title: 'Network Error',
+            text: error.message || 'Could not connect to server.'
+            });
+        }
+    }
 </script>
+
 {% endblock %}

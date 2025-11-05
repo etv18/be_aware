@@ -37,15 +37,24 @@ def create():
         
         raise e
 
-@income_bp.route('/update', methods=['POST'])
-def update():
-    id = int(request.form['income_id'])
+@income_bp.route('/update/<int:id>', methods=['PUT'])
+def update(id):
     income = Income.query.get(id)
+    try:
+      
+      if not income:
+        return jsonify({'error': 'Income record not found'}), 404
 
-    if income:
-        income_controller.update_income(income)
+      income_controller.update_income(income)
 
-    return redirect(url_for('income.index'))
+      if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return jsonify({'message': 'Income edited successfully!'}), 201
+      
+    except Exception as e:
+        db.session.rollback()
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            print(e)
+            return jsonify({'error': str(e)}), 400
 
 @income_bp.route('/delete/<int:id>', methods=['POST'])
 def delete(id):

@@ -1,4 +1,5 @@
-const canvas = document.getElementById('incomes-and-expenses');
+const monthlyIncomesAndExpensesChart = document.getElementById('incomes-and-expenses-monthly');
+const yearlyIncomesAndExpensesChart = document.getElementById('incomes-and-expenses-yearly');
 
 async function getIncomeAndExpenseData(){
     try {
@@ -16,17 +17,16 @@ async function getIncomeAndExpenseData(){
     return null;
 }
 
-async function generateChart() {
+async function generateChart(canvas, type) {
     data = await getIncomeAndExpenseData();
-    console.log(data.expenses)
-    console.log(data.incomes)
+
     try {
         new Chart(canvas, {
-            type: 'bar',
+            type: type,
             data: {
                 labels: ['Incomes', 'Expenses'],
                 datasets: [{
-                    label: '# of Votes',
+                    label: 'Amount',
                     data: [data.incomes, data.expenses],
                     borderWidth: 1
                 }]
@@ -43,4 +43,7 @@ async function generateChart() {
     }
 } 
 
-document.addEventListener('DOMContentLoaded', (event) => generateChart())
+document.addEventListener('DOMContentLoaded', (event) => {
+    generateChart(monthlyIncomesAndExpensesChart, 'doughnut');
+    generateChart(yearlyIncomesAndExpensesChart, 'bar');
+});

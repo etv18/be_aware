@@ -4,9 +4,16 @@
 
 {% block content %}
     <h5>Home</h5>
-    <div class="row">
+    <div class="container row">
         <div class="col-sm">
-            <canvas id="incomes-and-expenses"></canvas>
+            <div class="container" style="width: 60%;">
+                <canvas id="incomes-and-expenses-monthly"></canvas>
+            </div>
+        </div>
+        <div class="col-sm">
+            <div>
+                <canvas id="incomes-and-expenses-yearly"></canvas>
+            </div>
         </div>
     </div>
 

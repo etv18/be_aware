@@ -1,23 +1,46 @@
-const ctx = document.getElementById('incomes-and-expenses');
-const ctx2 = document.getElementById('incomes-and-expenses2');
+const canvas = document.getElementById('incomes-and-expenses');
 
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-      datasets: [{
-        label: '# of Votes',
-        data: [12, 19, 3, 5, 2, 3],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
+async function getIncomeAndExpenseData(){
+    try {
+        const response = await fetch('/home/populate_expense_and_income_chart');
+        if(!response.ok) {
+            console.log(response);
+            return;
         }
-      }
-    }
-  });
+        const data = await response.json();
 
-  
+        return data;
+    } catch (error) {
+        console.error(error);
+    }
+    return null;
+}
+
+async function generateChart() {
+    data = await getIncomeAndExpenseData();
+    console.log(data.expenses)
+    console.log(data.incomes)
+    try {
+        new Chart(canvas, {
+            type: 'bar',
+            data: {
+                labels: ['Incomes', 'Expenses'],
+                datasets: [{
+                    label: '# of Votes',
+                    data: [data.incomes, data.expenses],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {beginAtZero: true}
+                }
+            }
+        });
+    } catch (error) {
+        console.error(error)
+        throw new Error();
+    }
+} 
+
+document.addEventListener('DOMContentLoaded', (event) => generateChart())

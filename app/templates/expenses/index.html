@@ -147,55 +147,56 @@
     </section>
     <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-expense"
     id="btn-create-expense-id">New Expense</button>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col"># Id</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Is Cash</th>
-                <th scope="col">Credit Card</th>
-                <th scope="col">Bank Account</th>
-                <th scope="col">Category</th>
-                <th scope="col">Create at</th>
-                <th scope="col">Acctions</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            {% for expense in expenses %}                
-            <tr>
-                <th scope="row">{{ expense.id }}</th>
-                <td>{{ expense.amount }}</td>
-                <td>{{ expense.is_cash }}</td>
-                <td>{{ expense.credit_card.nick_name }}</td>
-                <td>{{ expense.bank_account.nick_name }}</td>
-                <td>{{ expense.expense_category.name }}</td>
-                <td>{{ expense.created_at }}</td>
-                <td>
-                    <div class="d-flex gap-2">
-                        <button 
-                            type="button" 
-                            class="btn btn-success" 
-                            data-bs-toggle="modal"
-                            data-bs-target="#edit-expense" 
-                            data-expense-id="{{ expense.id }}"
-                            data-amount-id="{{ expense.amount }}"
-                            data-is-cash="{{ expense.is_cash }}"
-                            data-select-expense-category-id="{{ expense.expense_category_id }}"
-                            data-select-credit-card-id="{{ expense.credit_card_id }}"
-                            data-select-bank-account-id="{{ expense.bank_account_id }}"
-                        >Edit
-                        </button>
-                        <form action="{{ url_for('expense.delete', id=expense.id) }}" method="POST">
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            {% endfor %}
-           
-        </tbody>
-    </table>
+    <div class="table-responsive overflow-y-auto border rounded-3 mt-1" style="max-height: 457px;">
+        <table class="table table-striped table-hover">
+            <thead class="sticky-top">
+                <tr>
+                    <th scope="col"># Id</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Is Cash</th>
+                    <th scope="col">Credit Card</th>
+                    <th scope="col">Bank Account</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Create at</th>
+                    <th scope="col">Acctions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in expenses %}                
+                <tr>
+                    <th scope="row">{{ expense.id }}</th>
+                    <td>{{ expense.amount }}</td>
+                    <td>{{ expense.is_cash }}</td>
+                    <td>{{ expense.credit_card.nick_name }}</td>
+                    <td>{{ expense.bank_account.nick_name }}</td>
+                    <td>{{ expense.expense_category.name }}</td>
+                    <td>{{ expense.created_at }}</td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <button 
+                                type="button" 
+                                class="btn btn-success" 
+                                data-bs-toggle="modal"
+                                data-bs-target="#edit-expense" 
+                                data-expense-id="{{ expense.id }}"
+                                data-amount-id="{{ expense.amount }}"
+                                data-is-cash="{{ expense.is_cash }}"
+                                data-select-expense-category-id="{{ expense.expense_category_id }}"
+                                data-select-credit-card-id="{{ expense.credit_card_id }}"
+                                data-select-bank-account-id="{{ expense.bank_account_id }}"
+                            >Edit
+                            </button>
+                            <form action="{{ url_for('expense.delete', id=expense.id) }}" method="POST">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+               
+            </tbody>
+        </table>
+    </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {

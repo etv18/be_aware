@@ -101,49 +101,51 @@
             </form>
         </section>
         <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-income">New Income</button>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                <th scope="col"># Id</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Is Cash</th>
-                <th scope="col">Bank Account</th>
-                <th scope="col">Create at</th>
-                <th scope="col">Acctions</th>
-                </tr>
-            </thead>
-            
-            <tbody>
-              {% for income in incomes %}
-                <tr>
-                    <th scope="row">{{ income.id }}</th>
-                    <td>{{ income.amount }}</td>
-                    <td>{{ income.is_cash }}</td>
-                    <td>{{ income.bank_account.nick_name }}</td>
-                    <td>{{ income.created_at }}</td>
-                    <td>
-                        <div class="d-flex gap-2">
-                            <button 
-                                type="button" 
-                                class="btn btn-success" 
-                                data-bs-toggle="modal" 
-                                data-bs-target="#edit-income"
-                                data-income-id="{{ income.id }}"
-                                data-amount="{{ income.amount }}"
-                                data-is-cash="{{ income.is_cash }}"
-                                data-bank-account-id="{{ income.bank_account_id }}"
-                            >
-                            Edit
-                            </button>
-                            <form action="{{ url_for('income.delete', id=income.id ) }}" method="post">
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-responsive overflow-y-auto border rounded-3 mt-1" style="max-height: 457px;">
+            <table class="table table-striped  table-hover">
+                <thead class="sticky-top">
+                    <tr>
+                    <th scope="col"># Id</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Is Cash</th>
+                    <th scope="col">Bank Account</th>
+                    <th scope="col">Create at</th>
+                    <th scope="col">Acctions</th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                  {% for income in incomes %}
+                    <tr>
+                        <th scope="row">{{ income.id }}</th>
+                        <td>{{ income.amount }}</td>
+                        <td>{{ income.is_cash }}</td>
+                        <td>{{ income.bank_account.nick_name }}</td>
+                        <td>{{ income.created_at }}</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button 
+                                    type="button" 
+                                    class="btn btn-success" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#edit-income"
+                                    data-income-id="{{ income.id }}"
+                                    data-amount="{{ income.amount }}"
+                                    data-is-cash="{{ income.is_cash }}"
+                                    data-bank-account-id="{{ income.bank_account_id }}"
+                                >
+                                Edit
+                                </button>
+                                <form action="{{ url_for('income.delete', id=income.id ) }}" method="post">
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
 <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">

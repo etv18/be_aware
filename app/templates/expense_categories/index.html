@@ -56,43 +56,44 @@
         </section>
 
         <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-expense-category">New Expense Category</button>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                <th scope="col"># Id</th>
-                <th scope="col">Name</th>
-                <th scope="col">Create at</th>
-                <th scope="col">Acctions</th>
-                </tr>
-            </thead>
-            
-            <tbody>
-                {% for expense_category in expense_categories %}                    
-                <tr>
-                    <th scope="row">{{ expense_category.id }}</th>
-                    <td>{{ expense_category.name }}</td>
-                    <td>{{ expense_category.created_at }}</td>
-                    <td>
-                        <div class="d-flex gap-2">
-                            <button 
-                                type="button" 
-                                class="btn btn-success" 
-                                data-bs-toggle="modal" 
-                                data-bs-target="#edit-expense-category"
-                                data-id="{{ expense_category.id }}"
-                                data-name="{{ expense_category.name }}"
-                            >
-                            Edit
-                            </button>
-                            <form action="{{ url_for('expense_category.delete', id=expense_category.id) }}" method="post">
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-responsive overflow-y-auto border rounded-3 mt-1" style="max-height: 457px;">
+            <table class="table table-striped  table-hover">
+                <thead class="sticky-top">
+                    <tr>
+                    <th scope="col"># Id</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Create at</th>
+                    <th scope="col">Acctions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for expense_category in expense_categories %}                    
+                    <tr>
+                        <th scope="row">{{ expense_category.id }}</th>
+                        <td>{{ expense_category.name }}</td>
+                        <td>{{ expense_category.created_at }}</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button 
+                                    type="button" 
+                                    class="btn btn-success" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#edit-expense-category"
+                                    data-id="{{ expense_category.id }}"
+                                    data-name="{{ expense_category.name }}"
+                                >
+                                Edit
+                                </button>
+                                <form action="{{ url_for('expense_category.delete', id=expense_category.id) }}" method="post">
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>   
     
     <script>

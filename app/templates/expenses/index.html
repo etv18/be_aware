@@ -193,11 +193,11 @@
                     </td>
                 </tr>
                 {% endfor %}
-               
+                
             </tbody>
         </table>
     </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const cCheckbox = document.getElementById("checkNativeSwitch");
@@ -284,7 +284,6 @@
             });
         })
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function createExpense(){
             const form = document.getElementById('create-expense-form');

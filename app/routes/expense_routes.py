@@ -56,7 +56,6 @@ def update(id):
             print(e)
             return jsonify({'error': str(e)}), 400
         raise e
-    
 
 @expense_bp.route('/delete/<int:id>', methods=['GET', 'POST'])
 def delete(id):
@@ -64,3 +63,8 @@ def delete(id):
     if expense:
         expense_controller.delete_expense(expense)
     return redirect(url_for('expense.index'))
+
+@expense_bp.route('/filter_by_time', methods=['GET'])
+def filter_by_time():
+    data = expense_controller.filter_by_time()
+    return jsonify(data)

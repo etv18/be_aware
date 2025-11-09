@@ -1,7 +1,8 @@
-from flask import request
+from flask import request, jsonify
 from sqlalchemy.exc import SQLAlchemyError
 
 from decimal import Decimal
+from datetime import datetime, timedelta
 
 from app.extensions import db
 from app.models.expense import Expense
@@ -116,6 +117,33 @@ def delete_expense(expense):
     if request.method == 'POST':
         db.session.delete(expense)
         db.session.commit()
+
+def filter_by_time():
+    data_from_database = []
+
+    try:
+
+        start = request.args.get('start')
+        end = request.args.get('end')
+
+        if not start or not end:
+            return jsonify({'error', 'Missing date range'}), 400
+        
+        start_date = datetime.strptime(start, '%Y-%m-%d')
+        end_date = datetime.strptime(end, '%Y-%m-%d')
+        end_date += timedelta(days=1)
+
+        expenses = Expense.query.filter(
+            Expense.created_at.between(start_date, end_date)
+        ).all()
+
+        for e in expenses:
+            data_from_database.append(e.to_dict())
+
+    except Exception as e:
+        print(e)
+    
+    return data_from_database
 
 #HELPER FUNCTIONS
 def update_bank_account_money_on_create(id, amount):

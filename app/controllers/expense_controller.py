@@ -3,6 +3,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from decimal import Decimal
 from datetime import datetime, timedelta
+import traceback
 
 from app.extensions import db
 from app.models.expense import Expense
@@ -68,8 +69,8 @@ def update_expense(expense):
         amount = Decimal(request.form['amount'])
         is_cash = request.form.get('is-cash') == 'on'
         expense_category_id = int(request.form['select-expense-category'])
-        credit_card_id = None
-        bank_account_id = None
+        new_credit_card_id = None
+        new_bank_account_id = None
         '''
         if the expense you are updating, you edit it as it wasnt made with
         cash then the program it'll save either the credit_card_id or 
@@ -87,16 +88,19 @@ def update_expense(expense):
 
 
             if selected_bank_account and selected_bank_account != 'none':
-                bank_account_id = int(request.form['select-bank-account'])
+                old_bank_account_id = expense.bank_account_id
+                new_bank_account_id = int(request.form['select-bank-account'])
+                print(f'old: {old_bank_account_id}')
+                print(f'new: {new_bank_account_id}')
                 old_amount = expense.amount #the expense object hasnt being assigned the newest amount
                 new_amount = amount #newest amount from the form the user submitted
-                update_bank_account_money_on_update(bank_account_id, old_amount, new_amount)
+                update_bank_account_money_on_update(is_cash, old_bank_account_id, new_bank_account_id, old_amount, new_amount)
 
         expense.amount = amount
         expense.is_cash = is_cash
         expense.expense_category_id = expense_category_id
-        expense.credit_card_id = credit_card_id
-        expense.bank_account_id = bank_account_id
+        expense.credit_card_id = new_credit_card_id
+        expense.bank_account_id = new_bank_account_id
 
         db.session.commit()
     except (
@@ -170,20 +174,29 @@ def update_credit_card_money_on_create(id, amount):
     
     credit_card.amount_available -= amount
 
-def update_bank_account_money_on_update(id, old_amount, new_amount):
-    bank_account = BankAccount.query.get(id)
+def update_bank_account_money_on_update(is_cash, old_ba_id, new_ba_id, old_amount, new_amount):
+    old_bank_account = None
+    try:
+        if old_ba_id:
+            old_bank_account = BankAccount.query.get(old_ba_id)
+            if not old_bank_account:
+                raise BankAccountDoesNotExists('Bank account does not exists.')   
+            old_bank_account.amount_available += old_amount; #refund the money used to the previous bank account
+ 
+        new_bank_account = BankAccount.query.get(new_ba_id)
 
-    if not bank_account:
-        raise BankAccountDoesNotExists('This bank account does not exists.')
-    
-    bank_account.amount_available += old_amount;
-
-    if bank_account.amount_available <= 0:
-        raise NoAvailableMoney('Bank Account does not have any money left.')
-    if bank_account.amount_available < new_amount:
-        raise AmountGreaterThanAvailableMoney('Insufficient founds.')
-    
-    bank_account.amount_available -= new_amount;
+        if not new_bank_account:
+            raise BankAccountDoesNotExists('Bank account does not exists.')
+        
+        if new_bank_account.amount_available <= 0:
+            raise NoAvailableMoney('Bank Account does not have any money left.')
+        if new_bank_account.amount_available < new_amount:
+            raise AmountGreaterThanAvailableMoney('Insufficient founds.')
+        
+        new_bank_account.amount_available -= new_amount;
+    except Exception as e:
+        print("Error message:", e)
+        traceback.print_exc(e)
     
 def update_credit_card_money_on_update(id, old_amount, new_amount):
     credit_card = CreditCard.query.get(id)

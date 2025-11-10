@@ -161,14 +161,14 @@
                 <input type="text" id="start-date-id" class="form-control w-100">
             </div>
             <div>
-                <button type="button" class="btn btn-outline-light">search</button>
+                <button type="button" class="btn btn-outline-light" id="btn-search-by-timeframe-id">search</button>
             </div>
         </div>
     </div>
 
 
     <div class="table-responsive overflow-y-auto border rounded-3 mt-1" style="max-height: 457px;">
-        <table class="table table-striped table-hover">
+        <table class="table table-striped table-hover" id="expenses-table">
             <thead class="sticky-top">
                 <tr>
                     <th scope="col"># Id</th>
@@ -181,7 +181,7 @@
                     <th scope="col">Acctions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="expenses-table-body">
                 {% for expense in expenses %}                
                 <tr>
                     <th scope="row">{{ expense.id }}</th>
@@ -286,8 +286,8 @@
                 document.getElementById("e-amount-id").value = amount;
                 document.getElementById("e-select-expense-category-id").value = expenseCategoryId;
                 eCheckbox.checked = isCash;
-                eSelectCreditCards.value = (creditCardId === "None") ? "none" : creditCardId;
-                eSelectBankAccounts.value = (bankAccountId === "None") ? "none" : bankAccountId;
+                eSelectCreditCards.value = (creditCardId === "None" || creditCardId === "null") ? "none" : creditCardId;
+                eSelectBankAccounts.value = (bankAccountId === "None" || bankAccountId === "null") ? "none" : bankAccountId;
 
                 if(isCash){
                     eSelectBankAccounts.value = "none";
@@ -304,6 +304,12 @@
                 //Will load the selected bank product enabled 
                 eSelectCreditCards.disabled = (eSelectBankAccounts.value != 'none');
                 eSelectBankAccounts.disabled = (eSelectCreditCards.value != 'none');
+
+                console.log(`BA: <${bankAccountId}> => ${typeof bankAccountId}`)
+                console.log(`CC <${creditCardId}> => ${typeof creditCardId}`)
+
+                console.log(`BA: <${eSelectBankAccounts}> => ${typeof eSelectBankAccounts}`)
+                console.log(`CC <${eSelectCreditCards}> => ${typeof eSelectCreditCards}`)
             });
         })
     </script>

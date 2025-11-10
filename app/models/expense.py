@@ -34,7 +34,7 @@ class Expense(db.Model):
             # Related external properties of credit_card, bank_account and expense_category
             # they will be needed to be shown in the table on expenses/index template dinamically
             # with js.
-            'credit_card_name': getattr(self.credit_card, 'name', None),
-            'bank_account_name': getattr(self.bank_account, 'name', None),
+            'credit_card_name': getattr(self.credit_card, 'nick_name', None),
+            'bank_account_name': getattr(self.bank_account, 'nick_name', None),
             'expense_category_name': getattr(self.expense_category, 'name', None)
         }

@@ -34,16 +34,6 @@ function renderExpensesTable(expenses){
         return;
     }
 
-    /**
-     *                     <th scope="row">{{ expense.id }}</th>
-                    <td>{{ expense.amount }}</td>
-                    <td>{{ expense.is_cash }}</td>
-                    <td>{{ expense.credit_card.nick_name }}</td>
-                    <td>{{ expense.bank_account.nick_name }}</td>
-                    <td>{{ expense.expense_category.name }}</td>
-                    <td>{{ expense.created_at }}</td>
-     */
-
     expenses.forEach(expense => {
         const tableRow = document.createElement('tr');
         tableRow.innerHTML = `

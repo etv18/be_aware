@@ -174,6 +174,7 @@
                     <th scope="col"># Id</th>
                     <th scope="col">Amount</th>
                     <th scope="col">Is Cash</th>
+                    <th scope="col">Description</th>
                     <th scope="col">Credit Card</th>
                     <th scope="col">Bank Account</th>
                     <th scope="col">Category</th>
@@ -187,6 +188,7 @@
                     <th scope="row">{{ expense.id }}</th>
                     <td>{{ expense.amount }}</td>
                     <td>{{ expense.is_cash }}</td>
+                    <td> - </td>
                     <td>{{ expense.credit_card.nick_name }}</td>
                     <td>{{ expense.bank_account.nick_name }}</td>
                     <td>{{ expense.expense_category.name }}</td>
@@ -217,6 +219,22 @@
             </tbody>
         </table>
     </div>
+    <section>
+        <div class="d-flex gap-2">
+            <div>
+                <label for="">WEELY BASIS -> </label>
+            </div>
+            <div>
+                <label for="">Limit: $0.00</label>
+            </div>
+            <div>
+                <label for="">Spent: $0.00</label>
+            </div>
+            <div>
+                <label for="">Left: $0.00</label>
+            </div>
+        </div>
+    </section>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -149,7 +149,49 @@ def filter_by_time():
     
     return data_from_database
 
+def weekly_basis_expenses_info():
+    start_date, end_date = get_current_week_range()
+    
+    expenses = (
+        Expense.query
+        .filter(Expense.created_at >= start_date)
+        .filter(Expense.created_at <= end_date)
+        .order_by(Expense.created_at.desc())
+        .all()
+    )
+
+    data = []
+    
+    for e in expenses:
+        data.append(e)
+    
+    return data
+
 #HELPER FUNCTIONS
+def get_current_week_range():
+    today = datetime.today()
+    start_of_week = today - timedelta(days=today.weekday())
+    end_of_week = start_of_week + timedelta(days=6)
+
+    return start_of_week.date(), end_of_week.date()
+
+def h_money_limit_spent_left_for_expenses(expenses):
+    spent = Decimal()
+    for e in expenses:
+        spent += e.amount
+
+    limit = Decimal(3300) #Right now the limit will be hard coded I need to add a new column to expense_category model so I can know the exact amount
+    
+    left = Decimal(limit - spent)
+
+    weekly = {
+        'limit': limit,
+        'spent': spent,
+        'left': left,
+    }
+
+    return weekly
+
 def update_bank_account_money_on_create(id, amount):
     bank_account = BankAccount.query.get(id)
 

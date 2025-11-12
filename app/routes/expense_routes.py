@@ -1,5 +1,7 @@
 from flask import request, redirect, url_for, render_template, Blueprint, jsonify
 
+from decimal import Decimal
+
 from app.extensions import db
 from app.models.expense import Expense
 from app.controllers import expense_controller
@@ -12,13 +14,15 @@ def index():
     credit_cards = credit_card.CreditCard.query.all()
     expense_categories = expense_category.ExpenseCategory.query.all()
     bank_accounts = bank_account.BankAccount.query.all()
-    expenses = expense.Expense.query.all()
+    expenses = expense_controller.weekly_basis_expenses_info()
+    weekly = h_money_limit_spent_left_for_expenses(expenses)
 
     context = {
         'credit_cards': credit_cards,
         'expense_categories': expense_categories,
         'bank_accounts': bank_accounts,
-        'expenses':expenses
+        'expenses':expenses,
+        'weekly': weekly,
     }
 
     return render_template('expenses/index.html', **context)
@@ -66,5 +70,7 @@ def delete(id):
 
 @expense_bp.route('/filter_by_time', methods=['GET'])
 def filter_by_time():
+
     data = expense_controller.filter_by_time()
     return jsonify(data)
+

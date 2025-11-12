@@ -38,8 +38,8 @@ function renderExpensesTable(expenses){
         const tableRow = document.createElement('tr');
         tableRow.innerHTML = `
             <th scope="row">${expense.id}</th>
-            <td>${expense.is_cash ? 'Yes' : 'No'}</td>
             <td>${expense.amount.toFixed(2)}</td>
+            <td>${expense.is_cash ? 'Yes' : 'No'}</td>
             <td>${expense.credit_card_name || '-'}</td>
             <td>${expense.bank_account_name || '-'}</td>
             <td>${expense.expense_category_name || '-'}</td>

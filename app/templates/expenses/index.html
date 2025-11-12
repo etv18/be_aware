@@ -39,6 +39,12 @@
                                 </select>
                                 <label for="select-expense-category-id" class="p-3">Category</label>
                             </div>
+
+                            <div class="form-floating mt-2">
+                                <input type="text" name="description" id="description-id" class="form-control"
+                                    placeholder="Description" required>
+                                <label for="description-id" class="p-3">Description</label>
+                            </div>
                         </div>
 
                         <div class="row" id="bank-products-id">
@@ -110,6 +116,12 @@
                                     {% endfor %}
                                 </select>
                                 <label for="e-select-expense-category-id" class="p-3">Category</label>
+                            </div>
+
+                            <div class="form-floating mt-2">
+                                <input type="text" name="e-description" id="e-description-id" class="form-control"
+                                    placeholder="Description" required>
+                                <label for="e-description-id" class="p-3">Description</label>
                             </div>
                         </div>
 
@@ -220,18 +232,20 @@
         </table>
     </div>
     <section>
-        <div class="d-flex gap-2">
+        <div class="d-flex flex-column">
             <div>
-                <label for="">WEELY BASIS -> </label>
+                <label for="">WEELY BASIS </label>
             </div>
-            <div>
-                <label for="">Limit: $0.00</label>
-            </div>
-            <div>
-                <label for="">Spent: $0.00</label>
-            </div>
-            <div>
-                <label for="">Left: $0.00</label>
+            <div class="d-flex gap-2">
+                <div>
+                    <label for="">Limit: {{ weekly.limit }}</label>
+                </div>
+                <div>
+                    <label for="">Spent: {{ weekly.spent }}</label>
+                </div>
+                <div>
+                    <label for="">Left: {{ weekly.left }}</label>
+                </div>
             </div>
         </div>
     </section>

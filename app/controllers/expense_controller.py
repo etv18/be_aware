@@ -122,13 +122,10 @@ def delete_expense(expense):
         db.session.delete(expense)
         db.session.commit()
 
-def filter_by_time():
+def filter_by_time(start, end):
     data_from_database = []
 
     try:
-
-        start = request.args.get('start')
-        end = request.args.get('end')
 
         if not start or not end:
             return jsonify({'error', 'Missing date range'}), 400
@@ -175,7 +172,7 @@ def get_current_week_range():
 
     return start_of_week.date(), end_of_week.date()
 
-def h_money_limit_spent_left_for_expenses(expenses):
+def money_limit_spent_left_for_expenses(expenses):
     spent = Decimal()
     for e in expenses:
         spent += e.amount

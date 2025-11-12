@@ -15,7 +15,7 @@ def index():
     expense_categories = expense_category.ExpenseCategory.query.all()
     bank_accounts = bank_account.BankAccount.query.all()
     expenses = expense_controller.weekly_basis_expenses_info()
-    weekly = h_money_limit_spent_left_for_expenses(expenses)
+    weekly = expense_controller.money_limit_spent_left_for_expenses(expenses)
 
     context = {
         'credit_cards': credit_cards,
@@ -70,7 +70,10 @@ def delete(id):
 
 @expense_bp.route('/filter_by_time', methods=['GET'])
 def filter_by_time():
+    #get start date and end date of expenses you want to see in a certain time frame
+    start = request.args.get('start') 
+    end = request.args.get('end')
 
-    data = expense_controller.filter_by_time()
+    data = expense_controller.filter_by_time(start, end)
     return jsonify(data)
 

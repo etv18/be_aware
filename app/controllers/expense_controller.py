@@ -81,10 +81,11 @@ def update_expense(expense):
             selected_bank_account = request.form.get('select-bank-account')
 
             if selected_credit_card and selected_credit_card != 'none':
-                credit_card_id = int(request.form['select-credit-card'])
+                old_credit_card_id = expense.credit_card_id
+                new_credit_card_id = int(request.form['select-credit-card'])
                 old_amount = expense.amount #the expense object hasnt being assigned the newest amount
                 new_amount = amount #newest amount from the form the user submitted
-                update_credit_card_money_on_update(credit_card_id, old_amount, new_amount)
+                update_credit_card_money_on_update(is_cash, old_credit_card_id, new_credit_card_id, old_amount, new_amount)
 
 
             if selected_bank_account and selected_bank_account != 'none':
@@ -215,18 +216,19 @@ def update_credit_card_money_on_create(id, amount):
 
 def update_bank_account_money_on_update(is_cash, old_ba_id, new_ba_id, old_amount, new_amount):
     old_bank_account = None
+    new_bank_account = None
+
     try:
-        if old_ba_id:
+        if old_ba_id: #if the bank account id is true it means it's bank account to bank account transaction
             old_bank_account = BankAccount.query.get(old_ba_id)
             if not old_bank_account:
                 raise BankAccountDoesNotExists('Bank account does not exists.')   
             old_bank_account.amount_available += old_amount; #refund the money used to the previous bank account
- 
+        
         new_bank_account = BankAccount.query.get(new_ba_id)
 
         if not new_bank_account:
             raise BankAccountDoesNotExists('Bank account does not exists.')
-        
         if new_bank_account.amount_available <= 0:
             raise NoAvailableMoney('Bank Account does not have any money left.')
         if new_bank_account.amount_available < new_amount:
@@ -237,17 +239,27 @@ def update_bank_account_money_on_update(is_cash, old_ba_id, new_ba_id, old_amoun
         print("Error message:", e)
         traceback.print_exc(e)
     
-def update_credit_card_money_on_update(id, old_amount, new_amount):
-    credit_card = CreditCard.query.get(id)
+def update_credit_card_money_on_update(is_cash, old_cc_id, new_cc_id, old_amount, new_amount):
+    old_credit_card = None
+    new_credit_card = None
 
-    if not credit_card:
-        raise CreditCardDoesNotExists('This credit card does not exists.')
+    try:
+        if old_cc_id:
+            old_credit_card = CreditCard.query.get(old_cc_id)
+            if not old_credit_card:
+                raise CreditCardDoesNotExists('This credit card does not exists.')
+            old_credit_card.amount_available += old_amount
     
-    credit_card.amount_available += old_amount
+        new_credit_card = CreditCard.query.get(new_cc_id)
 
-    if credit_card.amount_available <= 0:
-        raise NoAvailableMoney('Credit card does not have any money left.')
-    if credit_card.amount_available < new_amount:
-        raise AmountGreaterThanAvailableMoney('Insufficient founds.')
-    
-    credit_card.amount_available -= new_amount
+        if not new_credit_card:
+            raise CreditCardDoesNotExists('This credit card does not exists.')
+        if new_credit_card.amount_available <= 0:
+            raise NoAvailableMoney('Credit card does not have any money left.')
+        if new_credit_card.amount_available < new_amount:
+            raise AmountGreaterThanAvailableMoney('Insufficient founds.')
+        
+        new_credit_card.amount_available -= new_amount
+    except Exception as e:
+        print('Error message: ', e)
+        traceback.print_exc(e)

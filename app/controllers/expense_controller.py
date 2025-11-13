@@ -80,22 +80,33 @@ def update_expense(expense):
             selected_credit_card = request.form.get('select-credit-card')
             selected_bank_account = request.form.get('select-bank-account')
 
-            if selected_credit_card and selected_credit_card != 'none':
+            if expense.bank_account or expense.credit_card:
+
+                old_amount = expense.amount
+                new_amount = amount
+                update_credit_card_or_bank_account_money_when_you_update_from_one_to_another(selected_bank_account, selected_credit_card, expense ,old_amount, new_amount)
+
+            elif selected_credit_card and selected_credit_card != 'none':
+                print('---------------------------------------------------------->>>>> 1')
                 old_credit_card_id = expense.credit_card_id
                 new_credit_card_id = int(request.form['select-credit-card'])
                 old_amount = expense.amount #the expense object hasnt being assigned the newest amount
                 new_amount = amount #newest amount from the form the user submitted
                 update_credit_card_money_on_update(is_cash, old_credit_card_id, new_credit_card_id, old_amount, new_amount)
 
-
-            if selected_bank_account and selected_bank_account != 'none':
+            elif selected_bank_account and selected_bank_account != 'none':
+                print('---------------------------------------------------------->>>>> 2')
                 old_bank_account_id = expense.bank_account_id
                 new_bank_account_id = int(request.form['select-bank-account'])
-                print(f'old: {old_bank_account_id}')
-                print(f'new: {new_bank_account_id}')
                 old_amount = expense.amount #the expense object hasnt being assigned the newest amount
                 new_amount = amount #newest amount from the form the user submitted
                 update_bank_account_money_on_update(is_cash, old_bank_account_id, new_bank_account_id, old_amount, new_amount)
+
+            else:
+                print('---------------------------------------------------------->>>>> 3')
+                old_amount = expense.amount
+                new_amount = amount
+                update_credit_card_or_bank_account_money_when_you_update_from_one_to_another(expense, old_amount, new_amount)
 
         expense.amount = amount
         expense.is_cash = is_cash
@@ -236,7 +247,7 @@ def update_bank_account_money_on_update(is_cash, old_ba_id, new_ba_id, old_amoun
         
         new_bank_account.amount_available -= new_amount;
     except Exception as e:
-        print("Error message:", e)
+        print('Error message: ', e)
         traceback.print_exc(e)
     
 def update_credit_card_money_on_update(is_cash, old_cc_id, new_cc_id, old_amount, new_amount):
@@ -263,3 +274,27 @@ def update_credit_card_money_on_update(is_cash, old_cc_id, new_cc_id, old_amount
     except Exception as e:
         print('Error message: ', e)
         traceback.print_exc(e)
+
+def update_credit_card_or_bank_account_money_when_you_update_from_one_to_another(selected_bank_account, selected_credit_card, expense, old_amount, new_amount):
+        bank_account = None
+        credit_card = None
+        bank_account_id = 0
+        credit_card_id = 0
+
+        if selected_bank_account and selected_bank_account != 'none':
+            bank_account_id = int(request.form['select-bank-account'])
+            bank_account = BankAccount.query.get(bank_account_id)
+        else:
+            credit_card_id = int(request.form['select-credit-card'])
+            credit_card = CreditCard.query.get(credit_card_id)
+
+        try:
+            if expense.bank_account_id: #if its true it means the transaction was first made from a bank account and it'll be updated to be an expense made with a credit card
+                expense.bank_account.amount_available += old_amount
+                credit_card.amount_available -= new_amount
+            else: 
+                expense.credit_card.amount_available += old_amount
+                bank_account.amount_available -= new_amount
+        except Exception as e:
+            print('Error message: ')
+            traceback.print_exc(e)

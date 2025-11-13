@@ -87,7 +87,6 @@ def update_expense(expense):
                 update_credit_card_or_bank_account_money_when_you_update_from_one_to_another(selected_bank_account, selected_credit_card, expense ,old_amount, new_amount)
 
             elif selected_credit_card and selected_credit_card != 'none':
-                print('---------------------------------------------------------->>>>> 1')
                 old_credit_card_id = expense.credit_card_id
                 new_credit_card_id = int(request.form['select-credit-card'])
                 old_amount = expense.amount #the expense object hasnt being assigned the newest amount
@@ -95,7 +94,6 @@ def update_expense(expense):
                 update_credit_card_money_on_update(is_cash, old_credit_card_id, new_credit_card_id, old_amount, new_amount)
 
             elif selected_bank_account and selected_bank_account != 'none':
-                print('---------------------------------------------------------->>>>> 2')
                 old_bank_account_id = expense.bank_account_id
                 new_bank_account_id = int(request.form['select-bank-account'])
                 old_amount = expense.amount #the expense object hasnt being assigned the newest amount
@@ -103,7 +101,6 @@ def update_expense(expense):
                 update_bank_account_money_on_update(is_cash, old_bank_account_id, new_bank_account_id, old_amount, new_amount)
 
             else:
-                print('---------------------------------------------------------->>>>> 3')
                 old_amount = expense.amount
                 new_amount = amount
                 update_credit_card_or_bank_account_money_when_you_update_from_one_to_another(expense, old_amount, new_amount)
@@ -281,6 +278,19 @@ def update_credit_card_or_bank_account_money_when_you_update_from_one_to_another
         bank_account_id = 0
         credit_card_id = 0
 
+        '''
+        The logic of this function is that an expense lets say it was made with a bank account, 
+        obviously the credit card property of the expense object will have None as value.
+
+        So in order to retrieve the money used from the bank account we access it through the expense object,
+        on the other hand the credit card property will have None as value, so we'll have to take the id selected when
+        the expense info was being edited in the frontend by a user.
+
+        That way we query that credit card record using the selected id and then refund the money we took to the bank account
+        and then take it from the credit card.
+
+        Same process when an expense is changed from being made with a credit card to a bank account.
+        '''
         if selected_bank_account and selected_bank_account != 'none':
             bank_account_id = int(request.form['select-bank-account'])
             bank_account = BankAccount.query.get(bank_account_id)

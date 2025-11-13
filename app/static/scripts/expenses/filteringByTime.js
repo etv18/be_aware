@@ -68,9 +68,7 @@ function renderExpensesTable(expenses){
     });
 }
 
-async function getDataFilteredByTime(){
-    const start = timeRange.formatDate(startDate, 'Y-m-d');
-    const end = timeRange.formatDate(endDate, 'Y-m-d');
+async function getDataFilteredByTime(start, end){
     let data;
 
     try {
@@ -99,7 +97,9 @@ async function getDataFilteredByTime(){
 
 //Listeners
 btnSearchByTimeFrame.addEventListener('click',async () => {
-    const expenses = await getDataFilteredByTime();
+    const start = timeRange.formatDate(startDate, 'Y-m-d');
+    const end = timeRange.formatDate(endDate, 'Y-m-d');
+    const expenses = await getDataFilteredByTime(start, end);
     renderExpensesTable(expenses);
 });
 

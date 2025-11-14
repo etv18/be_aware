@@ -28,7 +28,7 @@ function renderExpensesTable(expenses){
     if(expenses.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="8" class="text-center text-muted">No expenses found for this date range.</td>
+                <td colspan="9" class="text-center text-muted">No expenses found for this date range.</td>
             </tr>  
         `;
         return;
@@ -40,6 +40,7 @@ function renderExpensesTable(expenses){
             <th scope="row">${expense.id}</th>
             <td>${expense.amount.toFixed(2)}</td>
             <td>${expense.is_cash ? 'Yes' : 'No'}</td>
+            <td>-</td>
             <td>${expense.credit_card_name || '-'}</td>
             <td>${expense.bank_account_name || '-'}</td>
             <td>${expense.expense_category_name || '-'}</td>

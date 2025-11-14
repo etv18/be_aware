@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import Blueprint, render_template, redirect, url_for, request, jsonify
 
 from decimal import Decimal
 
@@ -48,3 +48,11 @@ def delete(id):
         ba_controller.delete_bank_account(bank_account)
 
     return redirect(url_for('bank_account.index'))
+
+@bank_account_bp.route('/associated_expenses/<int:id>')
+def associated_expenses(id):
+    try:
+        return ba_controller.get_associated_expenses(id)
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400

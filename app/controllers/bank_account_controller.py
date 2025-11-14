@@ -1,6 +1,8 @@
-from flask import request
+from flask import request, jsonify
 
 from app.models.bank_account import BankAccount
+from app.models.expense import Expense
+from app.exceptions.bankProductsException import BankAccountDoesNotExists
 from app.extensions import db
 
 def create_bank_account():
@@ -35,3 +37,15 @@ def delete_bank_account(bank_account):
     if request.method == 'POST':
         db.session.delete(bank_account)
         db.session.commit()
+
+def get_associated_expenses(id):
+    data = []
+    try:    
+        expenses = Expense.query.filter(Expense.bank_account_id == id).all()
+        for e in expenses:
+            data.append(e.to_dict())
+    except BankAccountDoesNotExists as e:
+        raise BankAccountDoesNotExists('Bank account does not exists.')
+    except Exception as e:
+        raise e
+    return jsonify(data)

@@ -134,10 +134,9 @@
                     <th scope="col">Acctions</th>
                 </tr>
             </thead>
-
             <tbody>
                 {% for bank_account in bank_accounts %}
-                <tr>
+                <tr class="bank-row" data-bank-account-id = "{{ bank_account.id }}">
                     <th scope="row">{{ bank_account.id }}</th>
                     <td>{{ bank_account.account_number }}</td>
                     <td>{{ bank_account.nick_name }}</td>
@@ -172,6 +171,7 @@
     <div class="col-sm d-flex flex-row-reverse mt-2">
         <h5>Total Money: ${{ total_money }}</h5>
     </div>
+    <script src="../../static/scripts/bank_accounts/script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function(){
             const editBankAccountModal = document.getElementById('edit-bank-account');

@@ -33,10 +33,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const rows = document.querySelectorAll('.bank-row');
 
     rows.forEach(row => {
-        row.addEventListener('click', event => {
+        row.addEventListener('click', async event => {
             if(preventBtnClickWhenClickOnRow(event)) return;
-            getAssociatedExpenses(row)
-            .then(data => console.log(data));
+            data = await getAssociatedExpenses(row);
+            console.log(data);
         })
     });
 });

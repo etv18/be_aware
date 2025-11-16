@@ -14,6 +14,8 @@ class Expense(db.Model):
     bank_account_id = db.Column(db.Integer, db.ForeignKey('bank_accounts.id'))
     expense_category_id = db.Column(db.Integer, db.ForeignKey('expense_categories.id'))
 
+    description = db.Column(db.String(150), nullable=False)
+
     created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
     updated_at = db.Column(db.DateTime(timezone=True), onupdate=func.now())
 
@@ -24,13 +26,15 @@ class Expense(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'amount': float(self.amount),  # convert Decimal to float for JSON
+            'amount': float(self.amount),
             'is_cash': self.is_cash,
             'credit_card_id': self.credit_card_id,
             'bank_account_id': self.bank_account_id,
             'expense_category_id': self.expense_category_id,
+            'description': self.description,  
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+            
             # Related external properties of credit_card, bank_account and expense_category
             # they will be needed to be shown in the table on expenses/index template dinamically
             # with js.

@@ -58,8 +58,9 @@ function renderExpensesTable(expenses){
                         data-select-expense-category-id="${expense.expense_category_id}"
                         data-select-credit-card-id="${expense.credit_card_id}"
                         data-select-bank-account-id="${expense.bank_account_id}"
+                        data-description="${expense.description}"
                     >Edit</button>
-                    <form action="expenses/delete/${expense.id}" method="POST">
+                    <form action="delete/${expense.id}" method="POST">
                         <button type="submit" class="btn btn-danger">Delete</button>
                     </form>
                 </div>

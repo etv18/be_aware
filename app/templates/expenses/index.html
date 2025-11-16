@@ -119,7 +119,7 @@
                             </div>
 
                             <div class="form-floating mt-2">
-                                <input type="text" name="e-description" id="e-description-id" class="form-control"
+                                <input type="text" name="description" id="e-description-id" class="form-control"
                                     placeholder="Description" required>
                                 <label for="e-description-id" class="p-3">Description</label>
                             </div>
@@ -199,7 +199,7 @@
                     <th scope="row">{{ expense.id }}</th>
                     <td>{{ expense.amount }}</td>
                     <td>{{ expense.is_cash }}</td>
-                    <td> - </td>
+                    <td> {{ expense.description }} </td>
                     <td>{{ expense.credit_card.nick_name }}</td>
                     <td>{{ expense.bank_account.nick_name }}</td>
                     <td>{{ expense.expense_category.name }}</td>
@@ -217,6 +217,7 @@
                                 data-select-expense-category-id="{{ expense.expense_category_id }}"
                                 data-select-credit-card-id="{{ expense.credit_card_id }}"
                                 data-select-bank-account-id="{{ expense.bank_account_id }}"
+                                data-description="{{ expense.description }}"
                             >Edit
                             </button>
                             <form action="{{ url_for('expense.delete', id=expense.id) }}" method="POST">
@@ -312,10 +313,12 @@
                 const expenseCategoryId = button.getAttribute("data-select-expense-category-id");
                 const creditCardId = button.getAttribute("data-select-credit-card-id");
                 const bankAccountId = button.getAttribute("data-select-bank-account-id");
+                const description = button.getAttribute("data-description");
 
                 document.getElementById("e-expense-id").value = expenseId;
                 document.getElementById("e-amount-id").value = amount;
                 document.getElementById("e-select-expense-category-id").value = expenseCategoryId;
+                document.getElementById("e-description-id").value = description;
                 eCheckbox.checked = isCash;
                 eSelectCreditCards.value = (creditCardId === "None" || creditCardId === "null") ? "none" : creditCardId;
                 eSelectBankAccounts.value = (bankAccountId === "None" || bankAccountId === "null") ? "none" : bankAccountId;
@@ -348,7 +351,7 @@
         function createExpense(){
             const form = document.getElementById('create-expense-form');
             const formData = new FormData(form);
-
+            console.log(formData)
             fetch('/expenses/create', {
                 method: 'POST',
                 body: formData,

@@ -152,7 +152,7 @@ def filter_by_time(start, end):
 
         expenses = Expense.query.filter(
             Expense.created_at.between(start_date, end_date)
-        ).all()
+        ).order_by(Expense.created_at.desc()).all()
 
         for e in expenses:
             data_from_database.append(e.to_dict())

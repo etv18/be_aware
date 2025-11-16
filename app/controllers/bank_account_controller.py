@@ -1,4 +1,5 @@
 from flask import request, jsonify
+from sqlalchemy import func
 
 from decimal import Decimal
 
@@ -44,17 +45,18 @@ def delete_bank_account(bank_account):
 def get_associated_records(id):
     data = {}
     try:
-        bank_account = BankAccount.query.get(id)  
-        expenses = Expense.query.filter(Expense.bank_account_id == id).all()
+        bank_account = BankAccount.query.get(id) 
 
-        total_expenses = Decimal()
+        query = Expense.query.filter(Expense.bank_account_id == id)
+        expenses = query.all()
+        count_expenses = query.count()
+        total_expenses = query.with_entities(func.sum(Expense.amount)).scalar() or Decimal(0.00)
 
-        for e in expenses:
-            total_expenses += e.amount
         data = {
             'expenses': expenses,
             'bank_account': bank_account,
             'total_expenses': total_expenses,
+            'count_expenses': count_expenses,
         }
     except BankAccountDoesNotExists as e:
         raise BankAccountDoesNotExists('Bank account does not exists.')

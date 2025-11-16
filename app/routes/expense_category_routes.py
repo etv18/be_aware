@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import Blueprint, render_template, redirect, url_for, request, jsonify
 
 from app.controllers import expense_category_controller as ec_controller
 from app.models.expense_category import ExpenseCategory
@@ -33,3 +33,11 @@ def delete(id):
         ec_controller.delete_expense_category(expense_category)
 
     return redirect(url_for('expense_category.index'))
+
+@expense_category_bp.route('/associated_records/<int:category_id>')
+def show_associated_records(category_id):
+    try:
+        data = ec_controller.get_associated_records(category_id)
+        return render_template('expense_categories/associated_records.html', data=data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400

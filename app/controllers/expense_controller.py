@@ -17,6 +17,7 @@ def create_expense():
         amount = Decimal(request.form['amount'])
         is_cash = request.form.get('is-cash') == 'on'
         expense_category_id = int(request.form['select-expense-category'])
+        description = request.form.get('description')
         credit_card_id = None
         bank_account_id = None
         '''
@@ -44,7 +45,8 @@ def create_expense():
             is_cash=is_cash,
             expense_category_id=expense_category_id,
             credit_card_id=credit_card_id,
-            bank_account_id=bank_account_id
+            bank_account_id=bank_account_id,
+            description=description
         )
 
         db.session.add(expense)
@@ -69,6 +71,7 @@ def update_expense(expense):
         amount = Decimal(request.form['amount'])
         is_cash = request.form.get('is-cash') == 'on'
         expense_category_id = int(request.form['select-expense-category'])
+        description = request.form.get('description')
         print(f'value {expense_category_id} of {type(expense_category_id)}')
         new_credit_card_id = None
         new_bank_account_id = None
@@ -113,6 +116,7 @@ def update_expense(expense):
         expense.expense_category_id = expense_category_id
         expense.credit_card_id = new_credit_card_id
         expense.bank_account_id = new_bank_account_id
+        expense.description = description
 
         db.session.commit()
     except (
@@ -160,7 +164,7 @@ def filter_by_time(start, end):
 
 def weekly_basis_expenses_info():
     start_date, end_date = get_current_week_range()
-    
+    end_date += timedelta(days=1)
     expenses = (
         Expense.query
         .filter(Expense.created_at >= start_date)

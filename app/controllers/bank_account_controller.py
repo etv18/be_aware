@@ -1,5 +1,7 @@
 from flask import request, jsonify
 
+from decimal import Decimal
+
 from app.models.bank_account import BankAccount
 from app.models.expense import Expense
 from app.models.bank import Bank
@@ -44,9 +46,15 @@ def get_associated_records(id):
     try:
         bank_account = BankAccount.query.get(id)  
         expenses = Expense.query.filter(Expense.bank_account_id == id).all()
+
+        total_expenses = Decimal()
+
+        for e in expenses:
+            total_expenses += e.amount
         data = {
             'expenses': expenses,
             'bank_account': bank_account,
+            'total_expenses': total_expenses,
         }
     except BankAccountDoesNotExists as e:
         raise BankAccountDoesNotExists('Bank account does not exists.')

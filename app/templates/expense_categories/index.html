@@ -68,7 +68,7 @@
                 </thead>
                 <tbody>
                     {% for expense_category in expense_categories %}                    
-                    <tr>
+                    <tr class="expense-category-row" data-expense-category-id="{{expense_category.id}}">
                         <th scope="row">{{ expense_category.id }}</th>
                         <td>{{ expense_category.name }}</td>
                         <td>{{ expense_category.created_at }}</td>
@@ -95,7 +95,7 @@
             </table>
         </div>
     </div>   
-    
+    <script src="../../static/scripts/expense_category/script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const editExpenseCategory = document.getElementById('edit-expense-category');

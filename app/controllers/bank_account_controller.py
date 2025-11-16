@@ -2,6 +2,7 @@ from flask import request, jsonify
 
 from app.models.bank_account import BankAccount
 from app.models.expense import Expense
+from app.models.bank import Bank
 from app.exceptions.bankProductsException import BankAccountDoesNotExists
 from app.extensions import db
 
@@ -40,10 +41,12 @@ def delete_bank_account(bank_account):
 
 def get_associated_records(id):
     data = {}
-    try:    
+    try:
+        bank_account = BankAccount.query.get(id)  
         expenses = Expense.query.filter(Expense.bank_account_id == id).all()
         data = {
             'expenses': expenses,
+            'bank_account': bank_account,
         }
     except BankAccountDoesNotExists as e:
         raise BankAccountDoesNotExists('Bank account does not exists.')

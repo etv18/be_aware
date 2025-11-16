@@ -162,7 +162,7 @@ def filter_by_time(start, end):
     
     return data_from_database
 
-def weekly_basis_expenses_info():
+def filter_weekly_basis_expenses_info():
     start_date, end_date = get_current_week_range()
     end_date += timedelta(days=1)
     expenses = (
@@ -180,6 +180,8 @@ def weekly_basis_expenses_info():
     
     return data
 
+def filter_expenses_made_with_cash():
+    pass
 #HELPER FUNCTIONS
 def get_current_week_range():
     today = datetime.today()

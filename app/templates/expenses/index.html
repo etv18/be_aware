@@ -198,7 +198,7 @@
                 <tr>
                     <th scope="row">{{ expense.id }}</th>
                     <td>{{ expense.amount }}</td>
-                    <td>{{ expense.is_cash }}</td>
+                    <td><a href="/filter_expenses_by_cash">{{ expense.is_cash  }}</a></td>
                     <td> {{ expense.description }} </td>
                     <td>{{ expense.credit_card.nick_name }}</td>
                     <td>{{ expense.bank_account.nick_name }}</td>

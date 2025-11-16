@@ -42,12 +42,12 @@ def delete_bank_account(bank_account):
         db.session.delete(bank_account)
         db.session.commit()
 
-def get_associated_records(id):
+def get_associated_records(bank_account_id):
     data = {}
     try:
-        bank_account = BankAccount.query.get(id) 
+        bank_account = BankAccount.query.get(bank_account_id) 
 
-        query = Expense.query.filter(Expense.bank_account_id == id)
+        query = Expense.query.filter(Expense.bank_account_id == bank_account_id)
         expenses = query.all()
         count_expenses = query.count()
         total_expenses = query.with_entities(func.sum(Expense.amount)).scalar() or Decimal(0.00)

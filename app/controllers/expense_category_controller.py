@@ -23,3 +23,5 @@ def delete_expense_category(expense_category):
         db.session.delete(expense_category)
         db.session.commit()
 
+def get_associated_records(category_id):
+    pass

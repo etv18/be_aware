@@ -49,10 +49,10 @@ def delete(id):
 
     return redirect(url_for('bank_account.index'))
 
-@bank_account_bp.route('/associated_records/<int:id>')
-def associated_records(id):
+@bank_account_bp.route('/associated_records/<int:bank_account_id>')
+def associated_records(bank_account_id):
     try:
-        data = ba_controller.get_associated_records(id)
+        data = ba_controller.get_associated_records(bank_account_id)
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400

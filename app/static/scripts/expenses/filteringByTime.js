@@ -40,7 +40,7 @@ function renderExpensesTable(expenses){
             <th scope="row">${expense.id}</th>
             <td>${expense.amount.toFixed(2)}</td>
             <td>${expense.is_cash ? 'Yes' : 'No'}</td>
-            <td>-</td>
+            <td>${expense.description || '-'}</td>
             <td>${expense.credit_card_name || '-'}</td>
             <td>${expense.bank_account_name || '-'}</td>
             <td>${expense.expense_category_name || '-'}</td>

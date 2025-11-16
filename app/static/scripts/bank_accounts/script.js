@@ -29,15 +29,63 @@ async function getAssociatedExpenses(row){
     return data;
 }
 
+async function associatedExpensesCreateTable(data, container){
+    const table = document.createElement('table');
+
+    //get headers dynamically from the keys (column names)
+    const headers = Object.keys(data[0]);
+
+    //---- Create thead ----
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+
+    headers.forEach(h => {
+        //Create the th element tag
+        const th = document.createElement('th');
+
+        //Add the column names from h 
+        th.textContent = h.charAt(0).toUpperCase() + h.slice(1);
+
+        //Populate the row
+        headerRow.appendChild(th);
+    });
+
+    //add the populated row to the thead tag
+    thead.appendChild(headerRow);
+
+    //add the completed thead to the table
+    table.appendChild(thead);
+
+    //---- Create thead ----
+    const tbody = document.createElement('tbody');
+
+    data.forEach(item => {
+        const row = document.createElement('tr')
+
+        headers.forEach(h => {
+            const td = document.createElement('td');
+            td.textContent = item[h] //Get the column name
+            row.appendChild(td);
+        });
+
+        tbody.appendChild(row);
+    });
+
+    table.appendChild(tbody);
+    container.appendChild(table);
+}
+
 document.addEventListener('DOMContentLoaded', (event) => {
     const rows = document.querySelectorAll('.bank-row');
+    const expensesTableContainer = document.getElementById('expenses-table-container');
+
 
     rows.forEach(row => {
         row.addEventListener('click', async event => {
             if(preventBtnClickWhenClickOnRow(event)) return;
-            data = await getAssociatedExpenses(row);
-            console.log(data);
-        })
+            let bankAccountId = row.getAttribute('data-bank-account-id');
+            window.location.assign(`/bank_accounts/associated_records/${bankAccountId}`);
+        });
     });
 });
 

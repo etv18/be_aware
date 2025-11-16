@@ -38,14 +38,15 @@ def delete_bank_account(bank_account):
         db.session.delete(bank_account)
         db.session.commit()
 
-def get_associated_expenses(id):
-    data = []
+def get_associated_records(id):
+    data = {}
     try:    
         expenses = Expense.query.filter(Expense.bank_account_id == id).all()
-        for e in expenses:
-            data.append(e.to_dict())
+        data = {
+            'expenses': expenses,
+        }
     except BankAccountDoesNotExists as e:
         raise BankAccountDoesNotExists('Bank account does not exists.')
     except Exception as e:
         raise e
-    return jsonify(data)
+    return data

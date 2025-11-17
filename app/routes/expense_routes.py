@@ -77,7 +77,13 @@ def filter_by_time():
     data = expense_controller.filter_by_time(start, end)
     return jsonify(data)
 
-@expense_bp.route('filter_expenses_by_cash', methods=['GET'])
-def expenses_made_with_cash():
-    pass
+@expense_bp.route('/filter_expenses_by_cash/<int:is_cash>', methods=['GET'])
+def filter_expenses_by_cash(is_cash):
+    try: 
+        ic = bool(is_cash) #parse 1 or 0 to True or False
+        print(ic)
+        return expense_controller.filter_expenses_by_is_cash(ic)
+    except Exception as e:
+      raise e
+
 

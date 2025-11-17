@@ -1,5 +1,6 @@
 from flask import request, jsonify
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import func
 
 from decimal import Decimal
 from datetime import datetime, timedelta
@@ -180,8 +181,27 @@ def filter_weekly_basis_expenses_info():
     
     return data
 
-def filter_expenses_made_with_cash():
-    pass
+def filter_expenses_by_is_cash(is_cash):
+    data = {}
+
+    try:
+        expenses = Expense.query.filter(Expense.is_cash == is_cash).all()
+        count = Expense.query.filter(Expense.is_cash == is_cash).count()
+        total = Expense.query.filter(Expense.is_cash == is_cash).with_entities(func.sum(Expense.amount)).scalar() or Decimal(0.00)
+
+        expenses_to_dict = []
+        for e in expenses:
+            expenses_to_dict.append(e.to_dict()) 
+        data = {
+            'expenses': expenses_to_dict,
+            'count': count,
+            'total': total,
+        }
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+    return jsonify(data)
+
 #HELPER FUNCTIONS
 def get_current_week_range():
     today = datetime.today()

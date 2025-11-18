@@ -21,7 +21,7 @@ const timeRange = flatpickr('#start-date-id', {
     },
 });
 
-function renderExpensesTable(expenses){
+export function renderExpensesTable(expenses){
     const tbody = document.getElementById('expenses-table-body');
     tbody.innerHTML = ''; //first you must clear previous rows
 

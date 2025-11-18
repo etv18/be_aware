@@ -198,7 +198,7 @@
                 <tr>
                     <th scope="row">{{ expense.id }}</th>
                     <td>{{ expense.amount }}</td>
-                    <td><a href="/filter_expenses_by_cash">{{ expense.is_cash  }}</a></td>
+                    <td><a id="filter-by-cash" class="filter_link" data-is-cash-value="{{ expense.is_cash }}">{{ expense.is_cash  }}</a></td>
                     <td> {{ expense.description }} </td>
                     <td>{{ expense.credit_card.nick_name }}</td>
                     <td>{{ expense.bank_account.nick_name }}</td>
@@ -234,17 +234,17 @@
     <section>
         <div class="d-flex flex-column">
             <div>
-                <label for="">WEELY BASIS </label>
+                <label for="" id="weekly-title">WEELY BASIS </label>
             </div>
             <div class="d-flex gap-2">
                 <div>
-                    <label for="">Limit: {{ weekly.limit }}</label>
+                    <label for="" id="weekly-limit">Limit: {{ weekly.limit }}</label>
                 </div>
                 <div>
-                    <label for="">Spent: {{ weekly.spent }}</label>
+                    <label for="" id="weekly-spent">Spent: {{ weekly.spent }}</label>
                 </div>
                 <div>
-                    <label for="">Left: {{ weekly.left }}</label>
+                    <label for="" id="weekly-left">Left: {{ weekly.left }}</label>
                 </div>
             </div>
         </div>
@@ -252,7 +252,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="../../static/scripts/expenses/filteringByTime.js"></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/expenses/filteringByTime.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/expenses/filterByCash.js') }}"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const cCheckbox = document.getElementById("checkNativeSwitch");

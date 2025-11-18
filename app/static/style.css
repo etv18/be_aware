@@ -1,0 +1,10 @@
+.filter_link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.filter_link:hover{
+    text-decoration: underline;
+    color: rgb(39, 125, 255);
+    cursor: pointer;
+}

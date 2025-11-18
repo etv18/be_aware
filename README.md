@@ -8,4 +8,4 @@ Installation
 4. go to /project/requirements
 5. run "pip install -r requirements.txt"
 6. go to /project
-7. run this command 'flask run'
+7. run this command "flask run"

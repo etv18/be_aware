@@ -111,7 +111,7 @@ def update_expense(expense):
                 old_amount = expense.amount #the expense object hasnt being assigned the newest amount
                 new_amount = amount #newest amount from the form the user submitted
                 update_bank_account_money_on_update(is_cash, old_bank_account_id, new_bank_account_id, old_amount, new_amount)
-
+ 
         expense.amount = amount
         expense.is_cash = is_cash
         expense.expense_category_id = expense_category_id
@@ -136,6 +136,7 @@ def update_expense(expense):
 
 def delete_expense(expense):
     if request.method == 'POST':
+        return_money(expense)
         db.session.delete(expense)
         db.session.commit()
 
@@ -343,3 +344,9 @@ def update_credit_card_or_bank_account_money_when_you_update_from_one_to_another
         except Exception as e:
             print('Error message: ')
             traceback.print_exc()
+
+def return_money(expense):
+    if expense.bank_account:
+        expense.bank_account.amount_available += expense.amount
+    else:
+        expense.credit_card.amount_available += expense.amount

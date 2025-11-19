@@ -7,9 +7,15 @@ home_bp = Blueprint('home', __name__,url_prefix='/home')
 def index():
     return render_template('home/index.html')
 
-@home_bp.route('/populate_expense_and_income_chart', methods=['GET'])
-def populate_expense_and_income_chart():
-    data = home_controller.get_income_and_expense_data()
+@home_bp.route('/populate/monthly/expense_and_income_chart', methods=['GET'])
+def populate_monthly_expense_and_income_chart():
+    data = home_controller.get_monthly_income_and_expense_data()
+    
+    return jsonify(data)
+
+@home_bp.route('/populate/yearly/expense_and_income_chart', methods=['GET'])
+def populate_yearly_and_income_chart():
+    data = home_controller.get_yearly_income_and_expense_data()
     
     return jsonify(data)
 

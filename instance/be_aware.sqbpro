@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="be_aware.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="1"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="3178"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="bank_accounts" custom_title="0" dock_id="1" table="4,13:mainbank_accounts"/><dock_state state="000000ff00000000fd00000001000000020000043c000002b6fc0100000001fb000000160064006f0063006b00420072006f007700730065003101000000000000043c0000011800ffffff000002580000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="alembic_version" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="101"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="bank_accounts" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="29"/><column index="2" value="163"/><column index="3" value="107"/><column index="4" value="58"/><column index="5" value="102"/><column index="6" value="55"/><column index="7" value="156"/><column index="8" value="156"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="banks" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="29"/><column index="2" value="101"/><column index="3" value="156"/><column index="4" value="156"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="credit_cards" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="29"/><column index="2" value="69"/><column index="3" value="107"/><column index="4" value="33"/><column index="5" value="58"/><column index="6" value="55"/><column index="7" value="68"/><column index="8" value="72"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="expense_categories" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="29"/><column index="2" value="78"/><column index="3" value="156"/><column index="4" value="156"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="expenses" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="29"/><column index="2" value="51"/><column index="3" value="50"/><column index="4" value="91"/><column index="5" value="106"/><column index="6" value="129"/><column index="7" value="70"/><column index="8" value="68"/><column index="9" value="72"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="incomes" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="29"/><column index="2" value="51"/><column index="3" value="50"/><column index="4" value="106"/><column index="5" value="68"/><column index="6" value="72"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1*">
+INSERT INTO banks (id, name, created_at, updated_at) VALUES
+(5,'Ban Reservas','2025-10-15 22:19:09','2025-10-15 22:19:53'),
+(6,'BHD','2025-10-16 19:06:49','2025-10-16 19:07:12'),
+(7,'Santa Cruz','2025-10-16 19:10:16',NULL),
+(8,'Popular','2025-11-16 10:02:17',NULL);
+
+INSERT INTO expense_categories
+(id, name, created_at, updated_at) VALUES
+(1,'Uber','2025-10-27 20:14:12','2025-10-27 21:19:45'),
+(3,'Colmado','2025-10-27 21:19:51',NULL),
+(4,'Comida','2025-11-06 15:03:48',NULL),
+(8,'Needs','2025-11-08 18:54:30',NULL),
+(9,'Loan','2025-11-08 18:54:37',NULL),
+(10,'Fast Food','2025-11-16 09:55:36',NULL);
+
+
+INSERT INTO bank_accounts 
+(id, nick_name, amount_available, is_active, bank_id, created_at, updated_at, account_number) VALUES
+(2,'BHD ahorro',54360.78,1,6,'2025-10-17 01:09:39','2025-11-17 19:20:26',1010),
+(3,'Nomina STC',5857.21,1,7,'2025-10-17 01:28:06','2025-11-07 16:09:09',3907),
+(5,'Ahorros Ban Reservas',29235.16,1,5,'2025-10-20 20:52:30','2025-11-16 09:58:02',4836),
+(19,'Popular Nomina',3384.66,1,8,'2025-11-16 10:02:02','2025-11-16 23:28:06',4533);
+
+INSERT INTO credit_cards
+(id, nick_name, amount_available, limit, is_active, bank_id, created_at, updated_at) VALUES
+(3,'Montraaa',80.00,3550.00,1,5,'2025-10-21 00:21:37','2025-11-12 21:56:06'),
+(4,'CC Test',100.00,50000.00,1,6,'2025-11-04 14:58:11','2025-11-12 21:09:52');
+
+INSERT INTO expenses
+(id, amount, is_cash, credit_card_id, bank_account_id, expense_category_id, created_at, updated_at, description) VALUES
+(38,4150.00,0,NULL,2,8,'2025-11-08 18:53:25','2025-11-08 19:07:01',''),
+(40,1292.58,0,NULL,2,1,'2025-11-08 18:59:16',NULL,''),
+(41,5000.00,0,NULL,2,9,'2025-11-08 19:00:15',NULL,''),
+(42,2800.00,0,NULL,5,8,'2025-11-09 02:25:27','2025-11-09 20:19:38',''),
+(43,131.68,0,NULL,2,1,'2025-11-09 02:26:46','2025-11-09 20:33:33',''),
+(47,4000.00,0,NULL,2,8,'2025-11-10 15:27:37',NULL,''),
+(48,1469.34,0,NULL,2,8,'2025-11-10 23:32:52',NULL,''),
+(57,1000.00,0,NULL,5,8,'2025-11-14 19:38:43','2025-11-16 09:54:54',''),
+(58,120.00,0,NULL,5,10,'2025-11-16 09:56:15',NULL,''),
+(59,118.00,0,NULL,5,8,'2025-11-16 09:57:12',NULL,''),
+(60,600.00,0,NULL,5,10,'2025-11-16 09:58:02',NULL,''),
+(61,300.00,0,NULL,19,3,'2025-11-16 10:05:46',NULL,''),
+(65,848.62,0,NULL,19,1,'2025-11-16 23:25:21',NULL,'Ole'),
+(66,917.72,0,NULL,19,1,'2025-11-16 23:25:59',NULL,'Ole'),
+(67,120.00,0,NULL,19,1,'2025-11-16 23:28:06',NULL,'Helados Bon Ron pasas'),
+(68,161.99,0,NULL,2,1,'2025-11-17 19:20:08',NULL,'Weekend alice'),
+(69,200.46,0,NULL,2,1,'2025-11-17 19:20:26',NULL,'Weekend alice');
+
+
+
+INSERT INTO incomes
+(id, amount, is_cash, bank_account_id, created_at, updated_at) VALUES
+(12,475.00,0,5,'2025-11-12 19:06:07',NULL);
+
+</sql><current_tab id="0"/></tab_sql></sqlb_project>

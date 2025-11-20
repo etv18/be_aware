@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 414fa305b588
+Revision ID: 7fb044072ae9
 Revises: 
-Create Date: 2025-10-13 20:42:36.644708
+Create Date: 2025-11-18 23:15:50.392727
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '414fa305b588'
+revision = '7fb044072ae9'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,25 +21,25 @@ def upgrade():
     op.create_table('banks',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=False),
-    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('expense_categories',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=False),
-    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('bank_accounts',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('code', sa.String(length=50), nullable=False),
     sa.Column('nick_name', sa.String(length=120), nullable=True),
     sa.Column('amount_available', sa.Numeric(precision=10, scale=2), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=True),
+    sa.Column('account_number', sa.Integer(), nullable=True),
     sa.Column('bank_id', sa.Integer(), nullable=True),
-    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.ForeignKeyConstraint(['bank_id'], ['banks.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -51,7 +51,7 @@ def upgrade():
     sa.Column('limit', sa.Numeric(precision=10, scale=2), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=True),
     sa.Column('bank_id', sa.Integer(), nullable=False),
-    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.ForeignKeyConstraint(['bank_id'], ['banks.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -63,7 +63,8 @@ def upgrade():
     sa.Column('credit_card_id', sa.Integer(), nullable=True),
     sa.Column('bank_account_id', sa.Integer(), nullable=True),
     sa.Column('expense_category_id', sa.Integer(), nullable=True),
-    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('description', sa.String(length=150), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.ForeignKeyConstraint(['bank_account_id'], ['bank_accounts.id'], ),
     sa.ForeignKeyConstraint(['credit_card_id'], ['credit_cards.id'], ),
@@ -75,7 +76,7 @@ def upgrade():
     sa.Column('amount', sa.Numeric(precision=10, scale=2), nullable=False),
     sa.Column('is_cash', sa.Boolean(), nullable=False),
     sa.Column('bank_account_id', sa.Integer(), nullable=True),
-    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.ForeignKeyConstraint(['bank_account_id'], ['bank_accounts.id'], ),
     sa.PrimaryKeyConstraint('id')

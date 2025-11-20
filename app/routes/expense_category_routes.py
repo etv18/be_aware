@@ -41,3 +41,11 @@ def show_associated_records(category_id):
         return render_template('expense_categories/associated_records.html', data=data)
     except Exception as e:
         return jsonify({'error': str(e)}), 400
+
+@expense_category_bp.route('/monthly/chart')
+def populate_monthly_chart():
+    try:
+        data = ec_controller.get_monthly_data()
+        return jsonify({'data': data}), 200
+    except Exception as e:
+        raise e

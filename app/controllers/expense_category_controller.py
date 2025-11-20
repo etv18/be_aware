@@ -1,7 +1,8 @@
 from flask import request
-from sqlalchemy import func 
+from sqlalchemy import func, extract
 
 from decimal import Decimal 
+from datetime import datetime
 
 from app.extensions import db
 from app.models.expense_category import ExpenseCategory
@@ -45,4 +46,35 @@ def get_associated_records(category_id):
         raise e
     return data
 
+def get_monthly_data():
+    now = datetime.now()
+
+    data = {}
+    category_names = ExpenseCategory.query.with_entities(ExpenseCategory.name).all()
+    ids = ExpenseCategory.query.with_entities(ExpenseCategory.id).all()
+    total_per_category = []
+
+    category_names_list = []
+    for item in category_names:
+        category_names_list.append(item[0])
+
+    ids_list = []
+    for item in ids:
+        ids_list.append(item[0])
+
+    for category_id in ids_list:
+        amount = (
+            Expense.query
+            .with_entities(func.sum(Expense.amount))
+            .filter(Expense.expense_category_id == category_id)
+            .filter(
+                extract('year', Expense.created_at) == now.year,
+                extract('month', Expense.created_at) == now.month
+            )
+            .scalar() or Decimal(0.00)
+        )
+        total_per_category.append(amount)
+    
+    print(f'======>  {total_per_category}')
+    print(f'======>  {category_names_list}')
 

@@ -122,7 +122,7 @@ def update_expense(expense):
                 update_bank_account_money_on_update(is_cash, old_bank_account_id, new_bank_account_id, old_amount, new_amount)
                 print('%%%%%%%%%%%%%%%%%%%%%%%%%======> 3')
 
-        else: 
+        elif expense.credit_card or expense.bank_account: 
             return_money(expense)
  
         expense.amount = amount
@@ -149,7 +149,8 @@ def update_expense(expense):
 
 def delete_expense(expense):
     if request.method == 'POST':
-        return_money(expense, expense.is_cash)
+        if expense.credit_card or expense.bank_account:
+            return_money(expense)
         db.session.delete(expense)
         db.session.commit()
 

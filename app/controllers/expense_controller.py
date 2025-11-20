@@ -76,6 +76,7 @@ def update_expense(expense):
         print(f'value {expense_category_id} of {type(expense_category_id)}')
         new_credit_card_id = None
         new_bank_account_id = None
+
         '''
         if the expense you are updating, you edit it as it wasnt made with
         cash then the program it'll save either the credit_card_id or 
@@ -88,7 +89,6 @@ def update_expense(expense):
             #Current expense object
             current_has_bank_acnt = expense.bank_account is not None 
             current_has_credit_card = expense.credit_card is not None
-
             #Update for expense object 
             update_has_bank_acnt = selected_bank_account and selected_bank_account != 'none'
             update_has_credit_card = selected_credit_card and selected_credit_card != 'none'
@@ -96,7 +96,15 @@ def update_expense(expense):
             if (current_has_bank_acnt and not update_has_bank_acnt) or (current_has_credit_card and not update_has_credit_card):
                 old_amount = expense.amount
                 new_amount = amount
+
+                #assign the new bankproduct id so the swap between each bank products can be register into the database
+                if not current_has_bank_acnt:
+                    new_bank_account_id = int(request.form['select-bank-account'])
+                else:
+                    new_credit_card_id = int(request.form['select-credit-card'])
+
                 update_credit_card_or_bank_account_money_when_you_update_from_one_to_another(selected_bank_account, selected_credit_card, expense ,old_amount, new_amount)
+                print('%%%%%%%%%%%%%%%%%%%%%%%%%======> 1')
 
             elif selected_credit_card and selected_credit_card != 'none':
                 old_credit_card_id = expense.credit_card_id
@@ -104,6 +112,7 @@ def update_expense(expense):
                 old_amount = expense.amount #the expense object hasnt being assigned the newest amount
                 new_amount = amount #newest amount from the form the user submitted
                 update_credit_card_money_on_update(is_cash, old_credit_card_id, new_credit_card_id, old_amount, new_amount)
+                print('%%%%%%%%%%%%%%%%%%%%%%%%%======> 2')
 
             elif selected_bank_account and selected_bank_account != 'none':
                 old_bank_account_id = expense.bank_account_id
@@ -111,6 +120,10 @@ def update_expense(expense):
                 old_amount = expense.amount #the expense object hasnt being assigned the newest amount
                 new_amount = amount #newest amount from the form the user submitted
                 update_bank_account_money_on_update(is_cash, old_bank_account_id, new_bank_account_id, old_amount, new_amount)
+                print('%%%%%%%%%%%%%%%%%%%%%%%%%======> 3')
+
+        else: 
+            return_money(expense)
  
         expense.amount = amount
         expense.is_cash = is_cash
@@ -136,7 +149,7 @@ def update_expense(expense):
 
 def delete_expense(expense):
     if request.method == 'POST':
-        return_money(expense)
+        return_money(expense, expense.is_cash)
         db.session.delete(expense)
         db.session.commit()
 
@@ -346,6 +359,7 @@ def update_credit_card_or_bank_account_money_when_you_update_from_one_to_another
             traceback.print_exc()
 
 def return_money(expense):
+
     if expense.bank_account:
         expense.bank_account.amount_available += expense.amount
     else:

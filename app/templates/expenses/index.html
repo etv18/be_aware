@@ -404,6 +404,7 @@
                 headers: {'X-Requested-With': 'XMLHttpRequest'}
             })
             .then(async response => {
+                console.log(formData.get('is-cash'));
                 const data = await response.json();
                 if(!response.ok){
                     console.log(response.json());

@@ -14,6 +14,8 @@ def create_income():
             is_cash = request.form.get('is-cash') == 'on'
             bank_account_id = None
 
+            if(amount <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
+
             if not is_cash:
                 bank_account_id = int(request.form.get('select-bank-account'))
                 update_bank_account_money_on_create(bank_account_id, amount)
@@ -44,6 +46,8 @@ def update_income(income):
         income.is_cash = request.form.get('is-cash') == 'on'
         income.bank_account_id = None
         selected_bank_account = request.form.get('select-bank-account')
+
+        if(income.amount <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
 
         if not income.is_cash and selected_bank_account != None:
             income.bank_account_id = int(selected_bank_account)

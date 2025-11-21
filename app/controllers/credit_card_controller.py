@@ -1,14 +1,19 @@
 from flask import request
 
+from decimal import Decimal
+
 from app.models.credit_card import CreditCard
 from app.extensions import db
+from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero
 
 def create_credit_card():
     if request.method == 'POST':
         nick_name = request.form['nick-name']
-        amount_available = request.form['amount-available']
+        amount_available = Decimal(request.form['amount-available'])
         limit = request.form['limit']
         bank_id = request.form['select-banks']
+
+        if(amount_available <= 0 or limit <= 0): return
 
         credit_card = CreditCard(
             nick_name=nick_name,
@@ -23,8 +28,11 @@ def create_credit_card():
 def update_credit_card(credit_card):
     if request.method == 'POST':
         credit_card.nick_name = request.form['e-nick-name']
-        credit_card.limit = request.form['e-limit']
-        credit_card.amount_available = request.form['e-amount-available']
+        credit_card.limit = Decimal(request.form['e-limit'])
+        credit_card.amount_available = Decimal(request.form['e-amount-available'])
+
+        if(credit_card.amount_available <= 0 or credit_card.limit <= 0): return
+
         
         bank_id = request.form['e-select-banks']
         credit_card.bank_id = int(bank_id)

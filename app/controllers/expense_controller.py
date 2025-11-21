@@ -21,6 +21,9 @@ def create_expense():
         description = request.form.get('description')
         credit_card_id = None
         bank_account_id = None
+
+        if(amount <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
+
         '''
             this conditional will save either a credit_card_id or a bank_account_id
             only if you marked the expense as it wasn't made with cash, in other words...
@@ -76,6 +79,8 @@ def update_expense(expense):
         print(f'value {expense_category_id} of {type(expense_category_id)}')
         new_credit_card_id = None
         new_bank_account_id = None
+
+        if(amount <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
 
         '''
         if the expense you are updating, you edit it as it wasnt made with

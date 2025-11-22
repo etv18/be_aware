@@ -48,6 +48,7 @@ async function generateMontlyChart(canvas, type, data) {
                     y: {beginAtZero: true}
                 }
             }
+            
         });
     } catch (error) {
         console.error(error)

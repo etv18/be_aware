@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 
     rows.forEach(row => {
-        row.addEventListener('click', async event => {
+        row.addEventListener('dblclick', async event => {
             if(preventBtnClickWhenClickOnRow(event)) return;
             let bankAccountId = row.getAttribute('data-bank-account-id');
             window.location.assign(`/bank_accounts/associated_records/${bankAccountId}`);

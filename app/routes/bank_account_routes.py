@@ -37,13 +37,19 @@ def create():
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
-@bank_account_bp.route('/update', methods=['GET', 'POST'])
+@bank_account_bp.route('/update', methods=['PUT'])
 def update():
-    bank_account_id = request.form['id']
-    bank_account = BankAccount.query.get(int(bank_account_id))
-    if bank_account:
-        ba_controller.update_bank_account(bank_account)
-    return redirect(url_for('bank_account.index'))
+    try:
+        bank_account_id = request.form['id']
+        bank_account = BankAccount.query.get(int(bank_account_id))
+
+        if bank_account:
+            ba_controller.update_bank_account(bank_account)
+            
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'message': 'Bank account edited successfully!'}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
 @bank_account_bp.route('/delete/<int:id>', methods=['GET', 'POST'])
 def delete(id):

@@ -18,7 +18,7 @@ def create_bank_account():
             account_number = request.form['account-number']
             bank_id = int(request.form['select-banks'])
 
-            if(amount_available <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
+            if(amount_available <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce valid number bigger than 0')
 
             bank_account = BankAccount(
                 nick_name=nick_name,
@@ -37,15 +37,24 @@ def create_bank_account():
         raise e
 
 def update_bank_account(bank_account):
-    if request.method == 'POST':
-        bank_account.nick_name = request.form['e-nick-name'];
-        bank_account.account_number = request.form['e-account-number'];
-        bank_account.amount_available = request.form['e-amount-available'];
+    try:
+        if request.method == 'PUT':
+            bank_account.nick_name = request.form['e-nick-name'];
+            bank_account.account_number = request.form['e-account-number'];
+            bank_account.amount_available = float(request.form['e-amount-available']) or 0;
 
-        bank_id = request.form['e-select-banks'];
-        bank_account.bank_id = int(bank_id)
+            if(bank_account.amount_available <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce valid number bigger than 0')
 
-        db.session.commit()
+            bank_id = request.form['e-select-banks'];
+            bank_account.bank_id = int(bank_id)
+
+            db.session.commit()
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        raise e
+    except Exception as e:
+        db.session.rollback()
+        raise e
 
 def delete_bank_account(bank_account):
     if request.method == 'POST':

@@ -58,7 +58,7 @@
         </form>
     </section>
     <section class="modal fade" tabindex="-1" id="edit-bank-account">
-        <form action="{{ url_for('bank_account.update') }}" method="post">
+        <form action="{{ url_for('bank_account.update') }}" method="post" id="edit-bank-account-form">
             <input type="hidden" name="id" id="e-bank_account-id">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -105,7 +105,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-primary" id="btn-edit-bank-account">Save</button>
                     </div>
                 </div>
             </div>

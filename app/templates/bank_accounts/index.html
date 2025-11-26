@@ -5,7 +5,7 @@
 {% block content %}
     <h2>Bank Accounts</h2>
     <section class="modal fade" tabindex="-1" id="create-bank-account">
-        <form action="{{ url_for('bank_account.create' ) }}" method="POST">
+        <form action="{{ url_for('bank_account.create' ) }}" method="POST" id="create-bank-account-form">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -51,7 +51,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-primary" id="btnSaveBankAccount">Save</button>
                     </div>
                 </div>
             </div>
@@ -171,6 +171,8 @@
     <div class="col-sm d-flex flex-row-reverse mt-2">
         <h5>Total Money: ${{ total_money }}</h5>
     </div>
+    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../../static/scripts/bank_accounts/script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function(){

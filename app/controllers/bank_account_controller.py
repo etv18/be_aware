@@ -1,30 +1,40 @@
 from flask import request, jsonify
 from sqlalchemy import func
+from sqlalchemy.exc import SQLAlchemyError
 
 from decimal import Decimal
 
 from app.models.bank_account import BankAccount
 from app.models.expense import Expense
 from app.models.bank import Bank
-from app.exceptions.bankProductsException import BankAccountDoesNotExists
+from app.exceptions.bankProductsException import BankAccountDoesNotExists, AmountIsLessThanOrEqualsToZero
 from app.extensions import db
 
 def create_bank_account():
-    if request.method == 'POST':
-        nick_name = request.form['nick-name']
-        amount_available = request.form['amount-available']
-        account_number = request.form['account-number']
-        bank_id = int(request.form['select-banks'])
+    try:
+        if request.method == 'POST':
+            nick_name = request.form['nick-name']
+            amount_available = float(request.form['amount-available']) or 0
+            account_number = request.form['account-number']
+            bank_id = int(request.form['select-banks'])
 
-        bank_account = BankAccount(
-            nick_name=nick_name,
-            amount_available=amount_available,
-            account_number=account_number,
-            bank_id=bank_id
-        )
+            if(amount_available <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
 
-        db.session.add(bank_account)
-        db.session.commit()
+            bank_account = BankAccount(
+                nick_name=nick_name,
+                amount_available=amount_available,
+                account_number=account_number,
+                bank_id=bank_id
+            )
+
+            db.session.add(bank_account)
+            db.session.commit()
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        raise e
+    except Exception as e:
+        db.session.rollback()
+        raise e
 
 def update_bank_account(bank_account):
     if request.method == 'POST':

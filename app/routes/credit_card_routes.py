@@ -25,14 +25,19 @@ def create():
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
-@credit_card_bp.route('/update', methods=['POST'])
+@credit_card_bp.route('/update', methods=['PUT'])
 def update():
-    credit_card_id = request.form['id']
-    credit_card = CreditCard.query.get(int(credit_card_id))
+    try:
+        credit_card_id = request.form['id']
+        credit_card = CreditCard.query.get(int(credit_card_id))
 
-    if credit_card:
-        cc_controller.update_credit_card(credit_card)
-    return redirect(url_for('credit_card.index'))
+        if credit_card:
+            cc_controller.update_credit_card(credit_card)
+
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'message': 'Credit card created successfully!'}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
 @credit_card_bp.route('/delete/<int:id>', methods=['POST'])
 def delete(id):

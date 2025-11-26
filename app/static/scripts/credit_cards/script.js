@@ -32,5 +32,42 @@ async function createCreditCard(){
     }
 }
 
-const btnCreate = document.getElementById('btn-create-credit-card');
-btnCreate.addEventListener('click', async e => createCreditCard());
+async function editCreditCard(){
+    const form = document.getElementById('edit-credit-card-form');
+    const formData = new FormData(form);
+
+    try {
+        const response = await fetch('/credit_cards/update', {
+            method: 'PUT',
+            body: formData,
+            headers: {'X-Requested-With': 'XMLHttpRequest'}
+        });
+
+        const data = await response.json();
+
+        if(!response.ok){
+            console.log(response.json());
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.error || 'Something went wrong while editing the credit cards.'
+            });
+            return;           
+        }
+
+        location.reload();
+    } catch (error) {
+        console.error('Fetch error: ', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Network Error',
+            text: error.message || 'Could not connect to server.'
+        });  
+    }
+}
+
+const btnCreateCreditCard = document.getElementById('btn-create-credit-card');
+btnCreateCreditCard.addEventListener('click', async e => createCreditCard());
+
+const btnEditCreditCard = document.getElementById('btn-edit-credit-card');
+btnEditCreditCard.addEventListener('click', async e => editCreditCard());

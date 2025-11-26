@@ -34,18 +34,25 @@ def create_credit_card():
         raise e
 
 def update_credit_card(credit_card):
-    if request.method == 'POST':
-        credit_card.nick_name = request.form['e-nick-name']
-        credit_card.limit = Decimal(request.form['e-limit'])
-        credit_card.amount_available = Decimal(request.form['e-amount-available'])
+    try:
+        if request.method == 'PUT':
+            credit_card.nick_name = request.form['e-nick-name']
+            credit_card.limit = Decimal(request.form['e-limit'])
+            credit_card.amount_available = Decimal(request.form['e-amount-available'])
 
-        if(credit_card.amount_available <= 0 or credit_card.limit <= 0): return
+            if(credit_card.amount_available <= 0 or credit_card.limit <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a valid number bigger than 0')
 
-        
-        bank_id = request.form['e-select-banks']
-        credit_card.bank_id = int(bank_id)
 
-        db.session.commit()
+            bank_id = request.form['e-select-banks']
+            credit_card.bank_id = int(bank_id)
+
+            db.session.commit()
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        raise e
+    except Exception as e:
+        db.session.rollback()
+        raise e
 
 def delete_credit_card(credit_card):
     if request.method == 'POST':

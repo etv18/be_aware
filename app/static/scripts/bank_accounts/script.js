@@ -1,3 +1,5 @@
+const btnSaveBankAccoun = document.getElementById('btnSaveBankAccount');
+
 function preventBtnClickWhenClickOnRow(event){
     return event.target.closest('button') || event.target.closest('form');
 }
@@ -75,6 +77,41 @@ async function associatedExpensesCreateTable(data, container){
     container.appendChild(table);
 }
 
+async function createBankAccount(){
+    const form = document.getElementById('create-bank-account-form');
+    const formData = new FormData(form);
+
+    try {
+        const response = await fetch('/bank_accounts/create', {
+            method: 'POST',
+            body: formData,
+            headers: {'X-Requested-With': 'XMLHttpRequest'}
+        });
+
+        const data = await response.json();
+
+        if(!response.ok){
+            console.log(response.json());
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.error || 'Something went wrong while creating the bank account.'
+            });
+            return;           
+        }
+
+        location.reload();
+        
+    } catch (error) {
+        console.error('Fetch error: ', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Network Error',
+            text: error.message || 'Could not connect to server.'
+        });
+    }
+}
+
 document.addEventListener('DOMContentLoaded', (event) => {
     const rows = document.querySelectorAll('.bank-row');
     const expensesTableContainer = document.getElementById('expenses-table-container');
@@ -89,3 +126,4 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
 });
 
+btnSaveBankAccoun.addEventListener('click', e => createBankAccount());

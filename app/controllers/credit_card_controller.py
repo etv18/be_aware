@@ -11,8 +11,8 @@ def create_credit_card():
     try:
         if request.method == 'POST':
             nick_name = request.form['nick-name']
-            amount_available = Decimal(request.form['amount-available'])
-            limit = request.form['limit']
+            amount_available = Decimal(request.form['amount-available']) or 0
+            limit = Decimal(request.form['limit']) or 0
             bank_id = request.form['select-banks']
 
             if(amount_available <= 0 or limit <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a valid number bigger than 0')

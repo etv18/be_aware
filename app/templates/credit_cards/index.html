@@ -5,7 +5,7 @@
 {% block content %}
     <h2>Credit Cards</h2>
     <section class="modal fade" tabindex="-1" id="create-credit-card">
-        <form action="{{ url_for('credit_card.create' ) }}" method="POST">
+        <form action="{{ url_for('credit_card.create' ) }}" method="POST" id="create-credit-card-form">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -51,7 +51,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-primary" id="btn-create-credit-card">Save</button>
                     </div>
                 </div>
             </div>
@@ -162,7 +162,10 @@
         </tbody>
             </table>
         </div>
-
+    
+    <script src="../../static/scripts/credit_cards/script.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const editCreditCard = document.getElementById('edit-credit-card');

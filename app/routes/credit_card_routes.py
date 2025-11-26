@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import Blueprint, render_template, redirect, url_for, request, jsonify
 
 from app.controllers import credit_card_controller as cc_controller
 from app.models.credit_card import CreditCard
@@ -18,9 +18,12 @@ def index():
 
 @credit_card_bp.route('/create', methods=['POST'])
 def create():
-    cc_controller.create_credit_card()
-
-    return redirect(url_for('credit_card.index'))
+    try:
+        cc_controller.create_credit_card()
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'message': 'Credit card created successfully!'}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
 @credit_card_bp.route('/update', methods=['POST'])
 def update():

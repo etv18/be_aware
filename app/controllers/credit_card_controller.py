@@ -1,4 +1,5 @@
 from flask import request
+from sqlalchemy.exc import SQLAlchemyError
 
 from decimal import Decimal
 
@@ -7,23 +8,30 @@ from app.extensions import db
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero
 
 def create_credit_card():
-    if request.method == 'POST':
-        nick_name = request.form['nick-name']
-        amount_available = Decimal(request.form['amount-available'])
-        limit = request.form['limit']
-        bank_id = request.form['select-banks']
+    try:
+        if request.method == 'POST':
+            nick_name = request.form['nick-name']
+            amount_available = Decimal(request.form['amount-available'])
+            limit = request.form['limit']
+            bank_id = request.form['select-banks']
 
-        if(amount_available <= 0 or limit <= 0): return
+            if(amount_available <= 0 or limit <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a valid number bigger than 0')
 
-        credit_card = CreditCard(
-            nick_name=nick_name,
-            amount_available=amount_available,
-            limit=limit,
-            bank_id=bank_id
-        )
+            credit_card = CreditCard(
+                nick_name=nick_name,
+                amount_available=amount_available,
+                limit=limit,
+                bank_id=bank_id
+            )
 
-        db.session.add(credit_card)
-        db.session.commit()
+            db.session.add(credit_card)
+            db.session.commit()
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        raise e
+    except Exception as e:
+        db.session.rollback()
+        raise e
 
 def update_credit_card(credit_card):
     if request.method == 'POST':

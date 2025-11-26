@@ -30,8 +30,12 @@ def index():
 
 @bank_account_bp.route('/create', methods=['GET', 'POST'])
 def create():
-    ba_controller.create_bank_account()
-    return redirect(url_for('bank_account.index'))
+    try:
+        ba_controller.create_bank_account()
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'message': 'Bank account created successfully!'}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
 @bank_account_bp.route('/update', methods=['GET', 'POST'])
 def update():

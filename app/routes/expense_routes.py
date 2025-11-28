@@ -61,12 +61,19 @@ def update(id):
             return jsonify({'error': str(e)}), 400
         raise e
 
-@expense_bp.route('/delete/<int:id>', methods=['GET', 'POST'])
+@expense_bp.route('/delete/<int:id>', methods=['DELETE'])
 def delete(id):
-    expense = Expense.query.get(id)
-    if expense:
-        expense_controller.delete_expense(expense)
-    return redirect(url_for('expense.index'))
+    try:
+        expense = Expense.query.get(id)
+        if expense:
+            expense_controller.delete_expense(expense)
+
+        return jsonify({'message': 'Expense deleted successfully!'}), 200
+    
+    except Exception as e:
+        db.session.rollback()
+        print(e)
+        return jsonify({'error': str(e)}), 400
 
 @expense_bp.route('/filter_by_time', methods=['GET'])
 def filter_by_time():

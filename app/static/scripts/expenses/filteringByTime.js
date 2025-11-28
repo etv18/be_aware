@@ -60,9 +60,7 @@ export function renderExpensesTable(expenses){
                         data-select-bank-account-id="${expense.bank_account_id}"
                         data-description="${expense.description}"
                     >Edit</button>
-                    <form action="delete/${expense.id}" method="POST">
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
+                    <a href="/expenses/delete/${expense.id}" class="btn btn-danger">Delete</a>
                 </div>
             </td>
         `;

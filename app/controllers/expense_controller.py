@@ -153,11 +153,18 @@ def update_expense(expense):
         raise e 
 
 def delete_expense(expense):
-    if request.method == 'POST':
+    try:
         if expense.credit_card or expense.bank_account:
             return_money(expense)
+            
         db.session.delete(expense)
         db.session.commit()
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        raise Exception('Database error occurred: ' + str(e))
+    except Exception as e:
+        db.session.rollback()
+        raise e 
 
 def filter_by_time(start, end):
     data_from_database = []

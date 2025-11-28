@@ -56,9 +56,16 @@ def update(id):
             print(e)
             return jsonify({'error': str(e)}), 400
 
-@income_bp.route('/delete/<int:id>', methods=['POST'])
+@income_bp.route('/delete/<int:id>', methods=['DELETE'])
 def delete(id):
-    income = Income.query.get(id)
-    if income:
-        income_controller.delete_income(income)
+    try:
+        income = Income.query.get(id)
+        if income:
+            income_controller.delete_income(income)
+
+        return jsonify({'message': 'Expense deleted successfully!'}), 200
+    except Exception as e:
+        db.session.rollback()
+        print(e)
+        return jsonify({'error': str(e)}), 400
     return redirect(url_for('income.index'))

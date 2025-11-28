@@ -24,9 +24,15 @@ def update_expense_category(expense_category):
         db.session.commit()
 
 def delete_expense_category(expense_category):
-    if request.method == 'POST':
+    try:
         db.session.delete(expense_category)
         db.session.commit()
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        raise Exception('Database error occurred: ' + str(e))
+    except Exception as e:
+        db.session.rollback()
+        raise e
 
 def get_associated_records(category_id):
     data = {}

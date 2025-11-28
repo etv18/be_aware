@@ -26,13 +26,19 @@ def update():
 
     return redirect(url_for('expense_category.index'))
 
-@expense_category_bp.route('/delete/<int:id>', methods=['GET', 'POST'])
+@expense_category_bp.route('/delete/<int:id>', methods=['DELETE'])
 def delete(id):
-    expense_category = ExpenseCategory.query.get(id)
-    if expense_category:
-        ec_controller.delete_expense_category(expense_category)
+    try:
+        expense_category = ExpenseCategory.query.get(id)
+        if expense_category:
+            ec_controller.delete_expense_category(expense_category)
 
-    return redirect(url_for('expense_category.index'))
+            return jsonify({'message': 'Expense deleted successfully!'}), 200
+    except Exception as e:
+        db.session.rollback()
+        print(e)
+        return jsonify({'error': str(e)}), 400
+    return redirect(url_for('income.index'))
 
 @expense_category_bp.route('/associated_records/<int:category_id>')
 def show_associated_records(category_id):

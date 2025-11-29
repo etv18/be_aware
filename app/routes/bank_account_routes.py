@@ -51,13 +51,16 @@ def update():
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
-@bank_account_bp.route('/delete/<int:id>', methods=['GET', 'POST'])
+@bank_account_bp.route('/delete/<int:id>', methods=['DELETE'])
 def delete(id):
-    bank_account = BankAccount.query.get(id)
-    if bank_account:
-        ba_controller.delete_bank_account(bank_account)
+    try:
+        bank_account = BankAccount.query.get(id)
+        if bank_account:
+            ba_controller.delete_bank_account(bank_account)
 
-    return redirect(url_for('bank_account.index'))
+        return jsonify({'message': 'Bank account edited successfully!'}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
 @bank_account_bp.route('/associated_records/<int:bank_account_id>')
 def associated_records(bank_account_id):

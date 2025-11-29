@@ -158,9 +158,7 @@
                                 data-bank-id="{{ bank_account.bank.id }}"
                             >Edit
                             </button>
-                            <form action="{{ url_for('bank_account.delete', id=bank_account.id) }}" method="POST">
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                            </form>
+                            <a href="{{ url_for('bank_account.delete', id=bank_account.id) }}" class="btn btn-danger">Delete</a>
                         </div>
                     </td>
                 </tr>
@@ -174,6 +172,8 @@
     <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../../static/scripts/bank_accounts/script.js"></script>
+    <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function(){
             const editBankAccountModal = document.getElementById('edit-bank-account');

@@ -57,9 +57,15 @@ def update_bank_account(bank_account):
         raise e
 
 def delete_bank_account(bank_account):
-    if request.method == 'POST':
+    try:        
         db.session.delete(bank_account)
         db.session.commit()
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        raise e
+    except Exception as e:
+        db.session.rollback()
+        raise e
 
 def get_associated_records(bank_account_id):
     data = {}

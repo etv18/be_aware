@@ -55,6 +55,12 @@ def update_credit_card(credit_card):
         raise e
 
 def delete_credit_card(credit_card):
-    if request.method == 'POST':
+    try:
         db.session.delete(credit_card)
         db.session.commit()
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        raise e
+    except Exception as e:
+        db.session.rollback()
+        raise e

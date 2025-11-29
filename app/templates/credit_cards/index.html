@@ -152,9 +152,7 @@
                             data-bank-id="{{ credit_card.bank.id }}"
                         >Edit
                         </button>
-                        <form action="{{ url_for('credit_card.delete', id=credit_card.id ) }}" method="POST">
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
+                        <a href="{{ url_for('credit_card.delete', id=credit_card.id ) }}" class="btn btn-danger">Delete</a>
                     </div>
                 </td>
             </tr>
@@ -166,6 +164,8 @@
     <script src="../../static/scripts/credit_cards/script.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const editCreditCard = document.getElementById('edit-credit-card');

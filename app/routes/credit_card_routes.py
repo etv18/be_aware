@@ -39,10 +39,15 @@ def update():
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
-@credit_card_bp.route('/delete/<int:id>', methods=['POST'])
+@credit_card_bp.route('/delete/<int:id>', methods=['DELETE'])
 def delete(id):
-    credit_card = CreditCard.query.get(id)
-    if credit_card:
-        cc_controller.delete_credit_card(credit_card)
+    try:
+        credit_card = CreditCard.query.get(id)
+        if credit_card:
+            cc_controller.delete_credit_card(credit_card)
+            
+        return jsonify({'message': 'Credit card created successfully!'}), 201
 
-    return redirect(url_for('credit_card.index'))
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+

@@ -3,7 +3,7 @@ const yearlyIncomesAndExpensesChart = document.getElementById('incomes-and-expen
 
 async function getMonthlyIncomeAndExpenseData(){
     try {
-        const response = await fetch('/home/populate/monthly/expense_and_income_chart');
+        const response = await fetch('/populate/monthly/expense_and_income_chart');
         if(!response.ok) {
             console.log(response.json());
             return;
@@ -19,7 +19,7 @@ async function getMonthlyIncomeAndExpenseData(){
 
 async function getYearlyIncomeAndExpenseData(){
     try {
-        response = await fetch('/home/populate/yearly/expense_and_income_chart');
+        response = await fetch('/populate/yearly/expense_and_income_chart');
         if(!response.ok) {
             console.log(response.json());
             return;

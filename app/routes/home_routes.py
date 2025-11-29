@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, request, jsonify
 
 from app.controllers import home_controller
-home_bp = Blueprint('home', __name__,url_prefix='/home')
+home_bp = Blueprint('home', __name__)
 
-@home_bp.route('/index', methods=['GET'])
+@home_bp.route('/', methods=['GET'])
 def index():
     return render_template('home/index.html')
 

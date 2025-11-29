@@ -68,9 +68,15 @@ def update_income(income):
         raise e
 
 def delete_income(income):
-    if request.method == 'POST':
+    try:
         db.session.delete(income)
         db.session.commit()
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        raise Exception('Database error occurred: ' + str(e))
+    except Exception as e:
+        db.session.rollback()
+        raise e 
 
 def update_bank_account_money_on_create(id, amount):
     bank_account = BankAccount.query.get(id)

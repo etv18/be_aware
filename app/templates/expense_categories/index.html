@@ -87,9 +87,7 @@
                                             </button>
                                         </div>
                                         <div class="col-sm my-1">
-                                            <form action="{{ url_for('expense_category.delete', id=expense_category.id) }}" method="post">
-                                                <button type="submit" class="btn btn-danger">Delete</button>
-                                            </form>
+                                            <a href="{{ url_for('expense_category.delete', id=expense_category.id) }}" class="btn btn-danger">Delete</a>
                                         </div>
                                     </div>
                                 </td>
@@ -108,8 +106,12 @@
     </div> 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../../static/scripts/expense_category/script.js"></script>
     <script src="../../static/scripts/expense_category/stats.js"></script>
+    <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const editExpenseCategory = document.getElementById('edit-expense-category');

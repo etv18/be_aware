@@ -1,5 +1,7 @@
 from flask import request
 
+from sqlalchemy.exc import SQLAlchemyError
+
 from app.models.bank import Bank
 from app.extensions import db
 
@@ -19,6 +21,13 @@ def update_bank(bank):
         db.session.commit()
 
 def delete_bank(bank):
-    if request.method == 'POST':
+    try:
         db.session.delete(bank)
         db.session.commit()
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        raise e
+    except Exception as e:
+        db.session.rollback()
+        raise e
+    

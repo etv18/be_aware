@@ -1,6 +1,10 @@
 from flask import Flask
 from flask_migrate import Migrate
 
+import os
+import logging
+from logging.handlers import RotatingFileHandler
+
 from app.config import Config
 from app.extensions import db
 from app.routes import home_routes, bank_routes, bank_account_routes, credit_card_routes, expense_category_routes, expense_routes, income_routes
@@ -11,6 +15,8 @@ def create_app():
 
     register_extensions(app)
     register_resources(app)
+
+    create_error_logger(app)
 
     from app import models
 
@@ -28,4 +34,27 @@ def register_resources(app):
     app.register_blueprint(expense_category_routes.expense_category_bp)
     app.register_blueprint(expense_routes.expense_bp)
     app.register_blueprint(income_routes.income_bp)
+
+def create_error_logger(app):
+    if not os.path.exists('logs'):
+        os.makedirs('logs')
     
+    log_file = os.path.join('logs', 'error.log')
+    
+    handler = RotatingFileHandler(
+        log_file,
+        maxBytes=10240, #The file will store data up 10KB
+        backupCount=10 #There will be a maximum of 10 backup files of errors
+    )
+
+    formatter = logging.Formatter(
+        "\n\n"
+        "=======================================================================================\n"
+        "%(asctime)s [%(levelname)s] %(message)s in %(pathname)s:%(lineno)d\n"
+    )
+
+    handler.setFormatter(formatter)
+    handler.setLevel(logging.ERROR)
+
+    app.logger.addHandler(handler)
+    app.logger.setLevel(logging.ERROR)

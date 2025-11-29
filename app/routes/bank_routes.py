@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import Blueprint, render_template, redirect, url_for, request, jsonify
 
 from app.controllers import bank_controller
 from app.models.bank import Bank
@@ -26,11 +26,15 @@ def update():
     
     return redirect(url_for('bank.index'))
 
-@bank_bp.route('/delete/<int:id>', methods=['GET', 'POST'])
+@bank_bp.route('/delete/<int:id>', methods=['DELETE'])
 def delete(id):
-    bank = Bank.query.get(id)
-    if bank:
-        bank_controller.delete_bank(bank)
+    try:
+        bank = Bank.query.get(id)
+        if bank:
+            bank_controller.delete_bank(bank)
+            
+        return jsonify({'message': 'Bank account edited successfully!'}), 201
 
-    return redirect(url_for('bank.index'))    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 

@@ -12,5 +12,5 @@ class LoanPayment(db.Model):
     created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
     updated_at = db.Column(db.DateTime(timezone=True), onupdate=func.now())  
 
-    loan = relationship('Loan', back_populates='loan') 
+    loan = relationship('Loan', back_populates='loan_payments') 
 

@@ -8,8 +8,13 @@ class Loan(db.Model):
     person_name = db.Column(db.String(100), nullable=False)
     amount = db.Column(db.Numeric(10, 2), nullable=False)
     is_active = db.Column(db.Boolean, default=True)
+    is_cash = db.Column(db.Boolean)
+
+    bank_account_id = db.Column(db.Integer, db.ForeignKey('bank_accounts.id'))
+    
     created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
-    updated_at = db.Column(db.DateTime(timezone=True), onupdate=func.now())   
+    updated_at = db.Column(db.DateTime(timezone=True), onupdate=func.now())
+    description = db.Column(db.String(200))
 
     loan_payments = relationship('LoanPayment', back_populates='loan')
 

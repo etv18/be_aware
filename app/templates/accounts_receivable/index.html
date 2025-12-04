@@ -173,7 +173,7 @@
                                 >
                                 Edit
                                 </button>
-                                <a href="#" class="btn btn-danger">Delete</a>
+                                <a href="{{ url_for('accounts_receivable.delete_loan', loan_id=loan.id) }}" class="btn btn-danger">Delete</a>
                             </div>
                         </td>
                     </tr>

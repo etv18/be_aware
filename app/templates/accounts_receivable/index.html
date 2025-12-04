@@ -65,9 +65,9 @@
                 </div>
             </form>
         </section>
-        <section class="modal fade" tabindex="-1" id="edit-income">
-            <form id="edit-income-form">
-                <input type="hidden" name="income_id" id="income-id">
+        <section class="modal fade" tabindex="-1" id="edit-account-receivable">
+            <form id="edit-account-receivable-form">
+                <input type="hidden" name="loan_id" id="e-loan-id">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -93,6 +93,18 @@
                                 </div>
                             </div>
                             <div class="row">
+                                <div class="form-floating mt-2">
+                                    <input type="text" name="person-name" id="e-person-name-id" class="form-control"
+                                        placeholder="Person Name" required>
+                                    <label for="amount-id" class="p-3">Person Name</label>
+                                </div>
+
+                                <div class="form-floating mt-2">
+                                    <input type="text" name="description" id="e-description-id" class="form-control"
+                                        placeholder="Description" required>
+                                    <label for="description-id" class="p-3">Description</label>
+                                </div>
+
                                 <div class="form-floating mt-2">
                                     <select name="select-bank-account" id="e-select-bank-account-id" class="form-select">
                                         <option value="none">...Select...</option>
@@ -148,10 +160,15 @@
                                     type="button" 
                                     class="btn btn-success" 
                                     data-bs-toggle="modal" 
-                                    data-bs-target="#edit-loan"
+                                    data-bs-target="#edit-account-receivable"
                                     data-loan-id="{{ loan.id }}"
                                     data-amount="{{ loan.amount }}"
                                     data-is-cash="{{ loan.is_cash }}"
+
+                                    data-is-active="{{ loan.is_active }}"
+                                    data-description="{{ loan.description }}"
+                                    data-person-name="{{ loan.person_name }}"
+
                                     data-bank-account-id="{{ loan.bank_account_id }}"
                                 >
                                 Edit
@@ -172,8 +189,8 @@
 
 <script> 
     document.addEventListener('DOMContentLoaded', () => {
-        const createIncomeModal = document.getElementById('create-account-receivable');
-        const editIncomeModal = document.getElementById('edit-income');
+        const createAccountReceivableModal = document.getElementById('create-account-receivable');
+        const editAccountReceivableModal = document.getElementById('edit-account-receivable');
 
         function toggleBankAccount(checkbox, select){
             if(checkbox.checked) {
@@ -195,17 +212,17 @@
             }
         }
         
-        createIncomeModal.addEventListener('show.bs.modal', () => {
+        createAccountReceivableModal.addEventListener('show.bs.modal', () => {
             const isCash = document.getElementById('is-cash-id');
             const bankAccountsSelect = document.getElementById('select-bank-account-id');
 
             toggleBankAccount(isCash, bankAccountsSelect);
             isCash.addEventListener('change', () => toggleBankAccount(isCash, bankAccountsSelect));
         });
-        editIncomeModal.addEventListener('show.bs.modal', (event) => {
+        editAccountReceivableModal.addEventListener('show.bs.modal', (event) => {
             const button = event.relatedTarget;
             const btnSubmitEdition = document.getElementById('btn-submit-edition');
-            const editIncomeForm = document.getElementById('edit-income-form');
+            const editAccountReceivableForm = document.getElementById('edit-account-receivable-form');
             const editIsCash = document.getElementById('e-is-cash-id');
             const editBankAccountsSelect = document.getElementById('e-select-bank-account-id');
             const editAmount = document.getElementById('e-amount');
@@ -213,20 +230,25 @@
             const oldIsCash = button.getAttribute('data-is-cash') === 'True';
             const oldBankAccountId = button.getAttribute('data-bank-account-id');
             const oldAmount = button.getAttribute('data-amount');
-            const incomeId = button.getAttribute('data-income-id');
+            const loanId = button.getAttribute('data-loan-id');
+            const isActive = button.getAttribute('data-is-active');
+            const description = button.getAttribute('data-description');
+            const personName = button.getAttribute('data-person-name');
 
             document.getElementById('e-amount-id').value = oldAmount;
             document.getElementById('e-is-cash-id').checked = oldIsCash;
-            document.getElementById('income-id').value = incomeId;
+            document.getElementById('e-loan-id').value = loanId;
             document.getElementById('e-select-bank-account-id').value = oldBankAccountId; //If on the db its value it's Null flask will convert it into 'None' which the browser interprets it as String value in js
             if(oldBankAccountId === 'None') {
                 document.getElementById('e-select-bank-account-id').value = 'none';
             }
+            document.getElementById('e-person-name-id').value = personName;
+            document.getElementById('e-description-id').value = description;
             
             toggleBankAccount(editIsCash, editBankAccountsSelect);
             editIsCash.addEventListener('change', () => toggleBankAccount(editIsCash, editBankAccountsSelect));
 
-            editIncomeForm.addEventListener('submit', (event) => {
+            editAccountReceivableForm.addEventListener('submit', (event) => {
                 selectBankAccountOption(editIsCash, editBankAccountsSelect, event);
             });
 
@@ -270,15 +292,14 @@
     }
 
     async function editIncome(){
-        const incomeId = document.getElementById('income-id').value;
-        const form = document.getElementById('edit-income-form');
+        const loanId = document.getElementById('e-loan-id').value;
+        const form = document.getElementById('edit-account-receivable-form');
         const formData = new FormData(form);
 
         try {
-            const response = await fetch(`/incomes/update/${incomeId}`, {
+            const response = await fetch(`/accounts_receivable/update/${loanId}`, {
                 method: 'PUT',
                 body: formData,
-                headers: {'X-Requested-With': 'XMLHttpRequest'}
             });
 
             const data = await response.json();

@@ -18,3 +18,4 @@ class BankAccount(db.Model):
     bank = relationship('Bank', back_populates='bank_accounts')
     expenses = relationship('Expense', back_populates='bank_account')
     incomes = relationship('Income', back_populates='bank_account')
+    loans = relationship('Loan', back_populates='bank_account')

@@ -17,4 +17,5 @@ class Loan(db.Model):
     description = db.Column(db.String(200))
 
     loan_payments = relationship('LoanPayment', back_populates='loan')
+    bank_account = relationship('BankAccount', back_populates='loans')
 

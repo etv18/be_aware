@@ -58,7 +58,8 @@ def update_loan(loan):
         else:
             #if the loan is updated from a loan made with a bank account to a loan made with cash
             #this code will return the money which was used before.
-            loan.bank_account.amount_available += loan.amount 
+            return_money_to_bank_account(loan)
+             
 
         loan.amount = amount
         loan.is_cash = is_cash
@@ -68,6 +69,8 @@ def update_loan(loan):
     
         db.session.commit()
 
+        return jsonify({'data': 'Loan updated successfully'}), 200
+    
     except SQLAlchemyError as e:
         print(f'Error on update_loan handler: {e}')
         db.session.rollback()
@@ -76,8 +79,33 @@ def update_loan(loan):
         print(f'Error on update_loan handler: {e}')
         db.session.rollback()
         raise e
+
+
+def delete_loan(loan):
+    try:
+        if not loan:
+            return jsonify({'error': 'Loan record was not found'}), 400
+        
+        #if the loan is deleted and it was made with a bank account
+        #this code will return the money which was used before.
+        if loan.bank_account:
+            return_money_to_bank_account(loan)
+        
+        db.session.delete(loan)
+        db.session.commit()
+        
+        return jsonify({'message': 'Loan deleted successfully'}), 200
+
+    except SQLAlchemyError as e:
+        print(f'Error on delete_loan handler: {e}')
+        db.session.rollback()
+        raise e
+    except Exception as e:
+        print(f'Error on delete_loan handler: {e}')
+        db.session.rollback()
+        raise e
     
-    return jsonify({'data': 'Loan updated successfully'}), 201
-
-
 #HELPERS
+def return_money_to_bank_account(loan):
+    loan.bank_account.amount_available += loan.amount
+

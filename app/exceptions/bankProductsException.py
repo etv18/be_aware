@@ -12,3 +12,6 @@ class CreditCardDoesNotExists(Exception):
 
 class AmountIsLessThanOrEqualsToZero(Exception):
     pass
+
+class NoBankProductSelected(Exception):
+    pass

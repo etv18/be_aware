@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    <div class="container w-75">
+    <div class="container w-100">
 
         <h2>Accounts Receivable</h2>
         <section class="modal fade" tabindex="-1" id="create-account-receivable">
@@ -118,37 +118,45 @@
                 <thead class="sticky-top">
                     <tr>
                     <th scope="col"># Id</th>
+                    <th scope="col">Name</th>
                     <th scope="col">Amount</th>
+                    <th scope="col">Remaining</th>
                     <th scope="col">Is Cash</th>
                     <th scope="col">Bank Account</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Status</th>
                     <th scope="col">Create at</th>
                     <th scope="col">Acctions</th>
                     </tr>
                 </thead>
                 
                 <tbody>
-                  {% for income in incomes %}
+                  {% for loan in loans %}
                     <tr>
-                        <th scope="row">{{ income.id }}</th>
-                        <td>{{ income.amount }}</td>
-                        <td>{{ income.is_cash }}</td>
-                        <td>{{ income.bank_account.nick_name }}</td>
-                        <td>{{ income.created_at }}</td>
+                        <th scope="row">{{ loan.id }}</th>
+                        <td>{{ loan.person_name }}</td>
+                        <td>{{ loan.amount }}</td>
+                        <td> - </td>
+                        <td>{{ loan.is_cash }}</td>
+                        <td>{{ loan.bank_account.nick_name }}</td>
+                        <td>{{ loan.description }}</td>
+                        <td>{{ loan.is_active }}</td>
+                        <td>{{ loan.created_at }}</td>
                         <td>
                             <div class="d-flex gap-2">
                                 <button 
                                     type="button" 
                                     class="btn btn-success" 
                                     data-bs-toggle="modal" 
-                                    data-bs-target="#edit-income"
-                                    data-income-id="{{ income.id }}"
-                                    data-amount="{{ income.amount }}"
-                                    data-is-cash="{{ income.is_cash }}"
-                                    data-bank-account-id="{{ income.bank_account_id }}"
+                                    data-bs-target="#edit-loan"
+                                    data-loan-id="{{ loan.id }}"
+                                    data-amount="{{ loan.amount }}"
+                                    data-is-cash="{{ loan.is_cash }}"
+                                    data-bank-account-id="{{ loan.bank_account_id }}"
                                 >
                                 Edit
                                 </button>
-                                <a href="{{ url_for('income.delete', id=income.id ) }}" class="btn btn-danger">Delete</a>
+                                <a href="#" class="btn btn-danger">Delete</a>
                             </div>
                         </td>
                     </tr>

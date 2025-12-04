@@ -124,7 +124,7 @@ def update_expense(expense):
                 new_bank_account_id = int(request.form['select-bank-account'])
                 old_amount = expense.amount #the expense object hasnt being assigned the newest amount
                 new_amount = amount #newest amount from the form the user submitted
-                update_bank_account_money_on_update(is_cash, old_bank_account_id, new_bank_account_id, old_amount, new_amount)
+                update_bank_account_money_on_update(old_bank_account_id, new_bank_account_id, old_amount, new_amount)
                 print('%%%%%%%%%%%%%%%%%%%%%%%%%======> 3')
 
         elif expense.credit_card or expense.bank_account: 
@@ -278,7 +278,7 @@ def update_credit_card_money_on_create(id, amount):
     
     credit_card.amount_available -= amount
 
-def update_bank_account_money_on_update(is_cash, old_ba_id, new_ba_id, old_amount, new_amount):
+def update_bank_account_money_on_update(old_ba_id, new_ba_id, old_amount, new_amount):
     if (old_ba_id == new_ba_id) and (old_amount == new_amount): return
 
     old_bank_account = None

@@ -1,39 +1,73 @@
-{% extends "layout.html" %}
+{% extends 'layout.html' %}
 
 {% block title %}Accounts Receivable{% endblock %}
 
 {% block content %}
-    
+
     <div class="container w-75">
+
         <h2>Accounts Receivable</h2>
-        <section class="modal fade" tabindex="-1" id="create-bank">
-            <form action="{{ url_for('bank.create' ) }}" method="post">
+        <section class="modal fade" tabindex="-1" id="create-account-receivable">
+            <form id="create-account-receivable-form">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">New Bank</h5>
+                            <h5 class="modal-title">New Accounts Receivable</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <div class="col-sm">
-                                <div class="form-floating mt-2 w-">
-                                    <input type="text" name="name" id="name" class="form-control" placeholder="Bank name" required>
-                                    <label for="name">Bank name</label>
+                            <div class="row">
+                                <div class="col-sm">
+                                    <div class="form-floating mt-2">
+                                        <input type="text" name="amount" id="amount-id" class="form-control"
+                                            placeholder="Amount" required>
+                                        <label for="amount-id">Amount</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-check form-switch mt-2">
+                                        <input class="form-check-input" type="checkbox" name="is-cash" id="is-cash-id" switch checked>
+                                        <label class="form-check-label" for="checkNativeSwitch">
+                                            Cash
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-floating mt-2">
+                                    <input type="text" name="person-name" id="person-name-id" class="form-control"
+                                        placeholder="Person Name" required>
+                                    <label for="amount-id" class="p-3">Person Name</label>
+                                </div>
+
+                                <div class="form-floating mt-2">
+                                    <input type="text" name="description" id="description-id" class="form-control"
+                                        placeholder="Description" required>
+                                    <label for="description-id" class="p-3">Description</label>
+                                </div>
+
+                                <div class="form-floating mt-2">
+                                    <select name="select-bank-account" id="select-bank-account-id" class="form-select">
+                                        <option value="none">...Select...</option>
+                                        {% for ba in bank_accounts %}
+                                        <option value="{{ ba.id }}">{{ ba.nick_name }}</option>                                        
+                                        {% endfor %}
+                                    </select>
+                                    <label for="e-select-bank-account-id" class="p-3">Bank Account</label>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-primary" onclick="createIncome()">Save</button>
                         </div>
                     </div>
                 </div>
             </form>
         </section>
-
-        <section class="modal fade" tabindex="-1" id="edit-bank">
-            <form action="{{ url_for('bank.update') }}" method="post">
-                <input type="hidden" name="id" id="bank-id-input">
+        <section class="modal fade" tabindex="-1" id="edit-income">
+            <form id="edit-income-form">
+                <input type="hidden" name="income_id" id="income-id">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -41,84 +75,228 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <div class="col-sm">
-                                <div class="form-floating mt-2 w-">
-                                    <input type="text" name="name" id="bank-name" class="form-control" placeholder="Bank name" required>
-                                    <label for="bank-name">Bank name</label>
+                            <div class="row">
+                                <div class="col-sm">
+                                    <div class="form-floating mt-2">
+                                        <input type="text" name="amount" id="e-amount-id" class="form-control"
+                                            placeholder="Amount" required>
+                                        <label for="amount-id">Amount</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-check form-switch mt-2">
+                                        <input class="form-check-input" type="checkbox" name="is-cash" id="e-is-cash-id" switch checked>
+                                        <label class="form-check-label" for="checkNativeSwitch">
+                                            Cash
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-floating mt-2">
+                                    <select name="select-bank-account" id="e-select-bank-account-id" class="form-select">
+                                        <option value="none">...Select...</option>
+                                        {% for ba in bank_accounts %}
+                                        <option value="{{ ba.id }}">{{ ba.nick_name }}</option>                                        
+                                        {% endfor %}
+                                    </select>
+                                    <label for="e-select-bank-account-id" class="p-3">Bank Account</label>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Save changes</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="btn-submit-edition" onclick="editIncome()">Save</button>
                         </div>
                     </div>
                 </div>
             </form>
         </section>
-
-        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-bank">New Bank</button>
+        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-account-receivable">New Account Receivable</button>
         <div class="table-responsive overflow-y-auto border rounded-3 mt-1" style="max-height: 457px;">
             <table class="table table-striped  table-hover">
                 <thead class="sticky-top">
                     <tr>
                     <th scope="col"># Id</th>
-                    <th scope="col">Bank</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Is Cash</th>
+                    <th scope="col">Bank Account</th>
                     <th scope="col">Create at</th>
                     <th scope="col">Acctions</th>
                     </tr>
                 </thead>
                 
                 <tbody>
-                    {% for bank in banks %}                    
+                  {% for income in incomes %}
                     <tr>
-                        <th scope="row">{{ bank.id }}</th>
-                        <td>{{ bank.name }}</td>
-                        <td>{{ bank.created_at }}</td>
+                        <th scope="row">{{ income.id }}</th>
+                        <td>{{ income.amount }}</td>
+                        <td>{{ income.is_cash }}</td>
+                        <td>{{ income.bank_account.nick_name }}</td>
+                        <td>{{ income.created_at }}</td>
                         <td>
                             <div class="d-flex gap-2">
                                 <button 
                                     type="button" 
                                     class="btn btn-success" 
                                     data-bs-toggle="modal" 
-                                    data-bs-target="#edit-bank"
-                                    data-id="{{ bank.id }}"
-                                    data-name="{{ bank.name }}"
+                                    data-bs-target="#edit-income"
+                                    data-income-id="{{ income.id }}"
+                                    data-amount="{{ income.amount }}"
+                                    data-is-cash="{{ income.is_cash }}"
+                                    data-bank-account-id="{{ income.bank_account_id }}"
                                 >
                                 Edit
                                 </button>
-                                <a href="{{ url_for('bank.delete', id=bank.id ) }}" class="btn btn-danger">Delete</a>
+                                <a href="{{ url_for('income.delete', id=income.id ) }}" class="btn btn-danger">Delete</a>
                             </div>
                         </td>
                     </tr>
-                    {% endfor %}
+                  {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
+    <input type="hidden" value="{{ url_for('accounts_receivable.create_loan') }}" id="createEndPoint">
+<link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
 
-    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
+<script> 
+    document.addEventListener('DOMContentLoaded', () => {
+        const createIncomeModal = document.getElementById('create-account-receivable');
+        const editIncomeModal = document.getElementById('edit-income');
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        function toggleBankAccount(checkbox, select){
+            if(checkbox.checked) {
+                select.disabled = checkbox.checked;
+                select.value = "none";
+            } else {
+                select.disabled = checkbox.checked;
+            }
+        }
+        function selectBankAccountOption(checkbox, select, event){
+            if(!checkbox.checked && select.value == 'none') {
+                event.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'No selected bank account',
+                    text: 'If you transaction was not made in cash you must select a bank account.'
+                });
+                return;
+            }
+        }
+        
+        createIncomeModal.addEventListener('show.bs.modal', () => {
+            const isCash = document.getElementById('is-cash-id');
+            const bankAccountsSelect = document.getElementById('select-bank-account-id');
 
-            const editBankModal = document.getElementById('edit-bank');
-
-            editBankModal.addEventListener('show.bs.modal', function (event) {
-                
-                // Button that triggered the modal
-                const button = event.relatedTarget;
-
-                // Extract info from data-* attributes
-                const bankId = button.getAttribute('data-id');
-                const bankName = button.getAttribute('data-name');
-
-                // Update the modal's fields
-                document.getElementById('bank-name').value = bankName;
-                document.getElementById('bank-id-input').value = bankId
-            });
+            toggleBankAccount(isCash, bankAccountsSelect);
+            isCash.addEventListener('change', () => toggleBankAccount(isCash, bankAccountsSelect));
         });
-    </script>
+        editIncomeModal.addEventListener('show.bs.modal', (event) => {
+            const button = event.relatedTarget;
+            const btnSubmitEdition = document.getElementById('btn-submit-edition');
+            const editIncomeForm = document.getElementById('edit-income-form');
+            const editIsCash = document.getElementById('e-is-cash-id');
+            const editBankAccountsSelect = document.getElementById('e-select-bank-account-id');
+            const editAmount = document.getElementById('e-amount');
+
+            const oldIsCash = button.getAttribute('data-is-cash') === 'True';
+            const oldBankAccountId = button.getAttribute('data-bank-account-id');
+            const oldAmount = button.getAttribute('data-amount');
+            const incomeId = button.getAttribute('data-income-id');
+
+            document.getElementById('e-amount-id').value = oldAmount;
+            document.getElementById('e-is-cash-id').checked = oldIsCash;
+            document.getElementById('income-id').value = incomeId;
+            document.getElementById('e-select-bank-account-id').value = oldBankAccountId; //If on the db its value it's Null flask will convert it into 'None' which the browser interprets it as String value in js
+            if(oldBankAccountId === 'None') {
+                document.getElementById('e-select-bank-account-id').value = 'none';
+            }
+            
+            toggleBankAccount(editIsCash, editBankAccountsSelect);
+            editIsCash.addEventListener('change', () => toggleBankAccount(editIsCash, editBankAccountsSelect));
+
+            editIncomeForm.addEventListener('submit', (event) => {
+                selectBankAccountOption(editIsCash, editBankAccountsSelect, event);
+            });
+
+        });
+    })
+</script>
+<script>
+    async function createIncome(){
+        const createEndPoint = document.getElementById('createEndPoint').value;
+        const form = document.getElementById('create-account-receivable-form');
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch(createEndPoint, {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if(!response.ok){
+                console.log(response.json());
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error || 'Something went wrong while creating the income.'
+                });
+                return;
+            }
+            location.reload();//Reload the current page to see the new added income
+        
+        } catch (error) {
+            console.error('Fetch error:', error);
+
+            Swal.fire({
+            icon: 'error',
+            title: 'Network Error',
+            text: error.message || 'Could not connect to server.'
+            });
+        }        
+    }
+
+    async function editIncome(){
+        const incomeId = document.getElementById('income-id').value;
+        const form = document.getElementById('edit-income-form');
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch(`/incomes/update/${incomeId}`, {
+                method: 'PUT',
+                body: formData,
+                headers: {'X-Requested-With': 'XMLHttpRequest'}
+            });
+
+            const data = await response.json();
+
+            if(!response.ok){
+                console.log(response.json())
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error || 'Something went wrong while creating the expense.'
+                });
+                return;
+            }
+
+            location.reload();
+
+        } catch (error) {
+            console.error('Fetch error:', error);
+
+            Swal.fire({
+            icon: 'error',
+            title: 'Network Error',
+            text: error.message || 'Could not connect to server.'
+            });
+        }
+    }
+</script>
+
 {% endblock %}

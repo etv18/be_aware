@@ -12,6 +12,7 @@ def create_loan():
         amount = Decimal(request.form.get('amount'))
         is_cash = request.form.get('is-cash') == 'on'
         person_name = request.form.get('person-name')
+        description = request.form.get('description')
         bank_account_id = None
         if(amount <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
         if not is_cash:
@@ -21,7 +22,8 @@ def create_loan():
             amount=amount,
             is_cash=is_cash,
             person_name=person_name,
-            bank_account_id=bank_account_id
+            bank_account_id=bank_account_id,
+            description=description
         )
 
         db.session.add(loan)

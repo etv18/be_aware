@@ -2,8 +2,8 @@ from flask import Blueprint, render_template, redirect, url_for, request, jsonif
 
 from app.controllers import loan_controller
 from app.models.loan import Loan
+from app.models.loan_payment import LoanPayment
 from app.models.bank_account import BankAccount
-from app.extensions import db
 
 accounts_receivable_bp = Blueprint('accounts_receivable', __name__, url_prefix='/accounts_receivable')
 
@@ -26,7 +26,7 @@ def create_loan():
         print(e)
         return jsonify({'error': str(e)}), 400
     
-@accounts_receivable_bp.route('/update/<int:loan_id>', methods=['PUT'])
+@accounts_receivable_bp.route('/update_loan/<int:loan_id>', methods=['PUT'])
 def update_loan(loan_id):
     try:
         loan = Loan.query.get(loan_id)

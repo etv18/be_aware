@@ -7,7 +7,7 @@ from decimal import Decimal
 from app.extensions import db
 from app.models.loan import Loan
 from app.controllers.expense_controller import update_bank_account_money_on_create, update_bank_account_money_on_update
-from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero
+from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero, NoBankProductSelected
 def create_loan():
     try:
         amount = Decimal(request.form.get('amount'))
@@ -50,16 +50,18 @@ def update_loan(loan):
         person_name = request.form.get('person-name')
         description = request.form.get('description')
         bank_account_id = None
-        if(amount <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
+        if amount <= 0: raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
+        
+        selected_bank_account_id = request.form.get('select-bank-account')
         
         if not is_cash:
-            bank_account_id = int(request.form.get('select-bank-account'))
+            if selected_bank_account_id == 'none' or not selected_bank_account_id:
+                raise NoBankProductSelected('No bank product was selected for this loan')
+            
+            bank_account_id = int(selected_bank_account_id)
             update_bank_account_money_on_update(loan.bank_account_id, bank_account_id, loan.amount, amount)
-        else:
-            #if the loan is updated from a loan made with a bank account to a loan made with cash
-            #this code will return the money which was used before.
+        elif is_cash and loan.bank_account_id:
             return_money_to_bank_account(loan)
-             
 
         loan.amount = amount
         loan.is_cash = is_cash

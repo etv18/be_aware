@@ -20,7 +20,16 @@ def index():
 def create_loan():
     try:
         loan_controller.create_loan()
-        return jsonify({'message': 'Accounts receivable created successfully'}), 201
+        return jsonify({'message': 'Loan created successfully'}), 201
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400
+    
+@accounts_receivable_bp.route('/update/<int:loan_id>', methods=['PUT'])
+def update_loan(loan_id):
+    try:
+        loan = Loan.query.get(loan_id)
+        return loan_controller.update_loan(loan)
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400

@@ -71,6 +71,7 @@ def update_income(income):
 
 def delete_income(income):
     try:
+        update_bank_account_money_on_delete(income.bank_account, income.amount)
         db.session.delete(income)
         db.session.commit()
     except SQLAlchemyError as e:
@@ -99,3 +100,9 @@ def update_bank_account_money_on_update(old_bank_account, new_bank_account, old_
     
     old_bank_account.amount_available -= old_amount #Subtract the old amount from the previous bank account
     new_bank_account.amount_available += new_amount
+
+def update_bank_account_money_on_delete(bank_account, amount):
+    if not bank_account:
+        raise BankAccountDoesNotExists('The bank account does not exists.')
+    
+    bank_account.amount_available -= amount

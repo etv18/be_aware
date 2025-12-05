@@ -66,8 +66,8 @@ def delete(id):
 def associated_records(bank_account_id):
     try:
         data = ba_controller.get_associated_records(bank_account_id)
+        return render_template('bank_accounts/associated_records.html', data=data)
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400
     
-    return render_template('bank_accounts/associated_records.html', data=data)

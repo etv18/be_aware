@@ -191,7 +191,7 @@
                 
                 <tbody>
                   {% for loan in loans %}
-                    <tr>
+                    <tr class="loan-row" data-loan-id="{{ loan.id }}" data-url-associated-records = "{{ url_for('accounts_receivable.associated_records', loan_id=loan.id) }}">
                         <th scope="row">{{ loan.id }}</th>
                         <td>{{ loan.person_name }}</td>
                         <td>{{ loan.amount }}</td>
@@ -242,6 +242,7 @@
 <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
+<script src="{{ url_for('static', filename='scripts/accounts_receivable/script.js') }}"></script>
 
 <script> 
     document.addEventListener('DOMContentLoaded', () => {

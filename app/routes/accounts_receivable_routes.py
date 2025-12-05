@@ -49,10 +49,13 @@ def delete_loan(loan_id):
 def associated_records(loan_id):
     try:
         loan = Loan.query.get(loan_id)
+        bank_accounts = BankAccount.query.all()
+
         if not loan:
             return jsonify({'error': 'Loan record was not found'}), 400
         context = {
             'loan': loan,
+            'bank_accounts': bank_accounts,
         }
         return render_template('accounts_receivable/associated_records.html', **context)
     except Exception as e:

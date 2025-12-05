@@ -22,12 +22,14 @@ class Loan(db.Model):
     bank_account = relationship('BankAccount', back_populates='loans')
 
     def total_payments(self):
+        db.session.refresh(self) 
         total = Decimal(0.0)
         for payment in self.loan_payments:
             total += payment.amount
         return total
 
     def remaining_amount(self):
+        db.session.refresh(self) 
         remaining = self.amount - self.total_payments()
         if remaining < 0:
             return Decimal("0.00")

@@ -48,7 +48,13 @@ def delete_loan(loan_id):
 @accounts_receivable_bp.route('associated_records/<int:loan_id>', methods=['GET'])
 def associated_records(loan_id):
     try:
-        return render_template('accounts_receivable/associated_records.html')
+        loan = Loan.query.get(loan_id)
+        if not loan:
+            return jsonify({'error': 'Loan record was not found'}), 400
+        context = {
+            'loan': loan,
+        }
+        return render_template('accounts_receivable/associated_records.html', **context)
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400

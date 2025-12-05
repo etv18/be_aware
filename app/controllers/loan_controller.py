@@ -87,7 +87,6 @@ def update_loan(loan):
         db.session.rollback()
         raise e
 
-
 def delete_loan(loan):
     try:
         if not loan:

@@ -8,7 +8,7 @@ from app.extensions import db
 from app.models.bank_account import BankAccount
 from app.models.loan import Loan
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero
-from app.controllers.income_controller import update_bank_account_money_on_create, update_bank_account_money_on_update
+from app.controllers.income_controller import update_bank_account_money_on_create, update_bank_account_money_on_update, update_bank_account_money_on_delete
 from app.models.loan_payment import LoanPayment
 
 def create_loan_payment():
@@ -90,8 +90,31 @@ def update_loan_payment(loan_payment):
         db.session.commit()
 
         update_loan_is_active(loan)
-        
+
         return jsonify({'message': 'Loan payment created successfully'}), 201
+
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        raise e
+    except Exception as e:
+        db.session.rollback()
+        raise e
+    
+def delete_loan_payment(loan_payment):
+    try:
+        if not loan_payment:
+            return jsonify({'error': 'Loan payment record was not found'}), 400
+        
+        loan = loan_payment.loan
+        if loan_payment.bank_account:
+            update_bank_account_money_on_delete(loan_payment.bank_account, loan_payment.amount)
+
+        db.session.delete(loan_payment)
+        db.session.commit()
+
+        update_loan_is_active(loan)
+
+        return jsonify({'message': 'Loan payment deleted successfully'}), 201
 
     except SQLAlchemyError as e:
         db.session.rollback()

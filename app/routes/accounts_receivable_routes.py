@@ -45,6 +45,14 @@ def delete_loan(loan_id):
         print(e)
         return jsonify({'error': str(e)}), 400
     
+@accounts_receivable_bp.route('associated_records/<int:loan_id>', methods=['GET'])
+def associated_records(loan_id):
+    try:
+        return render_template('accounts_receivable/associated_records.html')
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400
+    
 @accounts_receivable_bp.route('/create_loan_payment', methods=['POST'])
 def create_loan_payment():
     try:

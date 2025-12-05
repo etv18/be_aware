@@ -78,3 +78,12 @@ def update_loan_payment(loan_payment_id):
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400
+    
+@accounts_receivable_bp.route('/delete_loan_payment/<int:loan_payment_id>', methods=['DELETE'])
+def delete_loan_payment(loan_payment_id):
+    try:
+        loan_payment = LoanPayment.query.get(loan_payment_id)
+        return loan_payment_controller.delete_loan_payment(loan_payment)
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400

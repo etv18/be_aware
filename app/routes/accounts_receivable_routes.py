@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, jsonify
 
 from app.controllers import loan_controller
+from app.controllers import loan_payment_controller
 from app.models.loan import Loan
 from app.models.loan_payment import LoanPayment
 from app.models.bank_account import BankAccount
@@ -40,6 +41,14 @@ def delete_loan(loan_id):
     try:
         loan = Loan.query.get(loan_id)
         return loan_controller.delete_loan(loan)
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400
+    
+@accounts_receivable_bp.route('/create_loan_payment', methods=['POST'])
+def create_loan_payment():
+    try:
+        return loan_payment_controller.create_loan_payment()
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400

@@ -6,7 +6,7 @@ class LoanPayment(db.Model):
     __tablename__ = 'loan_payment'
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Numeric(10,2), nullable=False)
-    
+    is_cash = db.Column(db.Boolean, nullable=False)
     loan_id = db.Column(db.Integer, db.ForeignKey('loans.id'))
     bank_account_id = db.Column(db.Integer, db.ForeignKey('bank_accounts.id', name='bank_account_id'))
 
@@ -15,4 +15,3 @@ class LoanPayment(db.Model):
 
     loan = relationship('Loan', back_populates='loan_payments')
     bank_account = relationship('BankAccount', back_populates='loan_payments')
-

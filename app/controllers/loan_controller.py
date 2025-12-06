@@ -6,8 +6,10 @@ from decimal import Decimal
 
 from app.extensions import db
 from app.models.loan import Loan
+from app.models.bank_account import BankAccount
 from app.controllers.expense_controller import update_bank_account_money_on_create, update_bank_account_money_on_update
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero, NoBankProductSelected
+
 def create_loan():
     try:
         amount = Decimal(request.form.get('amount'))
@@ -111,7 +113,27 @@ def delete_loan(loan):
         db.session.rollback()
         raise e
     
+
+def filter_loans_by_field(query):
+    loans_list = []
+    q = f'%{query}%'
+
+    loans = (
+        Loan.query
+        .join(Loan.bank_account, isouter=True) # allow loans without bank accounts
+        .filter(
+            (Loan.person_name.ilike(q)) |
+            (Loan.amount.ilike(q)) |
+            (BankAccount.nickname.ilike(q))
+        ).all()
+    )
 #HELPERS
 def return_money_to_bank_account(loan):
     loan.bank_account.amount_available += loan.amount
+
+def covertQueryToBoolean(query):
+    q = query.lower()
+    if q == 'active' or q == 'yes':
+        return True
+    return False
 

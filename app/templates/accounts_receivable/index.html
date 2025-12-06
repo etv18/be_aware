@@ -171,8 +171,32 @@
                 </div>
             </form>
         </section>
-        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-account-receivable">New Account Receivable</button>
-        <div class="table-responsive overflow-y-auto border rounded-3 mt-1" style="max-height: 457px;">
+
+        <div class="d-flex justify-content-start gap-2 flex-wrap flex-md-nowrap">
+            <button type="button" 
+                    class="btn btn-outline-primary me-auto me-md-auto w-100 w-md-auto" 
+                    style="max-width: 200px;"
+                    data-bs-toggle="modal" 
+                    data-bs-target="#create-account-receivable">
+                New Account Receivable
+            </button>
+
+            <div class="w-100 w-md-auto mt-md-0" style="max-width: 350px;">
+                <select class="form-select">
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                </select>
+            </div>
+
+            <div class="d-flex gap-1 w-100" style="max-width: 350px;">
+                <div class="w-100 w-md-auto mt-md-0">
+                    <input type="text" class="form-control" id="exampleFormControlInput1">
+                </div>
+                <button type="button" class="btn btn-outline-success">Q</button>
+            </div>
+        </div>
+
+        <div class="table-responsive overflow-y-auto border rounded-3 mt-2" style="max-height: 457px;">
             <table class="table table-striped  table-hover">
                 <thead class="sticky-top">
                     <tr>

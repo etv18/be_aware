@@ -87,3 +87,12 @@ def delete_loan_payment(loan_payment_id):
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400
+    
+@accounts_receivable_bp.route('/fiter_loans_by_field', methods=['GET'])
+def fiter_loans_by_field():
+    try:
+        query = request.args.get('query', '')
+        return loan_controller.filter_loans_by_field(query)
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400

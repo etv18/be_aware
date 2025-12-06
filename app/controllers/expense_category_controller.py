@@ -1,5 +1,6 @@
 from flask import request, jsonify
 from sqlalchemy import func, extract
+from sqlalchemy.exc import SQLAlchemyError
 
 from decimal import Decimal 
 from datetime import datetime

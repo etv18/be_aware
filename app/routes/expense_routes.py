@@ -42,6 +42,7 @@ def create():
             return jsonify({'error': str(e)}), 400
         
         raise e
+
 @expense_bp.route('/update/<int:id>', methods=['GET', 'PUT'])
 def update(id):
     try:

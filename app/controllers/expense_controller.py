@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import func
+from sqlalchemy import func, or_
 
 from decimal import Decimal
 from datetime import datetime, timedelta
@@ -8,6 +8,7 @@ import traceback
 
 from app.extensions import db
 from app.models.expense import Expense
+from app.models.expense_category import ExpenseCategory
 from app.models.bank_account import BankAccount
 from app.models.credit_card import CreditCard
 from app.exceptions.bankProductsException import *
@@ -229,6 +230,45 @@ def filter_expenses_by_is_cash(is_cash):
 
     return jsonify(data)
 
+def filter_by_field(query):
+    try:
+        is_cash = evaluate_boolean_columns(query, 'yes', 'no')    
+        q = f'%{query}%'
+        expenses_list = []
+
+        filters = [
+            CreditCard.nick_name.ilike(q),
+            BankAccount.nick_name.ilike(q),
+            ExpenseCategory.name.ilike(q),
+            Expense.description.ilike(q),
+            Expense.amount.ilike(q)
+        ]
+
+        if is_cash is not None:
+            filters.append(Expense.is_cash == is_cash)
+
+        expenses = (
+            Expense.query
+            .outerjoin(Expense.bank_account) #allows to show expense without a bank account
+            .outerjoin(Expense.credit_card) #allows to show expense without a credit card
+            .outerjoin(Expense.expense_category) #allows to show expense without an expense category
+            .filter(or_(*filters))
+            .order_by(Expense.created_at.desc())
+            .all()
+        )
+
+        for expense in expenses:
+            expenses_list.append(expense.to_dict())
+
+        return jsonify({
+            'expenses': expenses_list,
+            'count': len(expenses_list)
+        }), 200
+    
+    except Exception as e:
+        db.session.rollback()
+        raise e
+
 #HELPER FUNCTIONS
 def get_current_week_range():
     today = datetime.today()
@@ -377,3 +417,11 @@ def return_money(expense):
         expense.bank_account.amount_available += expense.amount
     else:
         expense.credit_card.amount_available += expense.amount
+
+def evaluate_boolean_columns(query, reference_for_true, reference_for_false):
+    q = query.lower()
+    if q == reference_for_true.lower():
+        return True
+    if q == reference_for_false.lower():
+        return False
+    return None

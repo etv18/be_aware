@@ -10,7 +10,7 @@ accounts_receivable_bp = Blueprint('accounts_receivable', __name__, url_prefix='
 
 @accounts_receivable_bp.route('/index', methods=['GET'])
 def index():
-    loans = Loan.query.all()
+    loans = Loan.query.order_by(Loan.created_at.desc()).all()
     bank_accounts = BankAccount.query.all()
     context = {
         'loans': loans,

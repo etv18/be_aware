@@ -137,6 +137,7 @@ def filter_loans_by_field(query):
             Loan.query
             .join(Loan.bank_account, isouter=True) # allow loans without bank accounts
             .filter(or_(*filters))
+            .order_by(Loan.created_at.desc())
             .all()
         )
 

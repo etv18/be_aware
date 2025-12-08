@@ -3,13 +3,19 @@ function preventBtnClickWhenClickOnRow(event){
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
-    const rows = document.querySelectorAll('.loan-row');
-    rows.forEach(row => {
-        row.addEventListener('dblclick', e => {
-            if(preventBtnClickWhenClickOnRow(e)) return;
-            const loanId = row.getAttribute('data-loan-id');
-            const url = row.getAttribute('data-url-associated-records');
-            window.location.href = url;
-        });
+    const tbody = document.getElementById('loans-table-body-id');
+   
+    //This block of code allows me to make the dblclick event even though
+    //when the content of the table is re-render dynamically with js in the
+    //frontend
+    tbody.addEventListener('dblclick', e => {
+        if(preventBtnClickWhenClickOnRow(e)) return;
+        
+        const row = e.target.closest('.loan-row');
+        if (!row) return; 
+        
+        const url = row.getAttribute('data-url-associated-records');
+        window.location.href = url;
     });
+ 
 });

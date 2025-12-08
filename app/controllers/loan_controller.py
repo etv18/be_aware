@@ -116,9 +116,9 @@ def delete_loan(loan):
     
 def filter_loans_by_field(query):
     try:
-        q = f'%{query}%'
         is_active = evaluate_boolean_columns(query, 'active', 'paid')
         is_cash = evaluate_boolean_columns(query, 'yes', 'no')
+        q = f'%{query}%'
         loans_list = []
         filters = [
             (Loan.person_name.ilike(q)),

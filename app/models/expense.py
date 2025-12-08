@@ -8,7 +8,7 @@ class Expense(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Numeric(10,2), nullable=False)
-    is_cash = db.Column(db.Boolean, nullable=False, default=True)
+    is_cash = db.Column(db.Boolean, nullable=False)
 
     credit_card_id = db.Column(db.Integer, db.ForeignKey('credit_cards.id'))
     bank_account_id = db.Column(db.Integer, db.ForeignKey('bank_accounts.id'))
@@ -26,7 +26,7 @@ class Expense(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'amount': float(self.amount),
+            'amount': str(self.amount),
             'is_cash': self.is_cash,
             'credit_card_id': self.credit_card_id,
             'bank_account_id': self.bank_account_id,

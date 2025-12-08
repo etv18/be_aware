@@ -20,48 +20,53 @@ function renderDataTable(loans){
 
     loans.forEach(loan => {
         const tableRow = document.createElement('tr');
+
+        tableRow.classList.add('loan-row');
+
+        tableRow.setAttribute('data-loan-id', loan.id)
+        tableRow.setAttribute('data-url-associated-records', `/accounts_receivable/associated_records/${loan.id}`);
+
         tableRow.innerHTML = `
-            <tr class="loan-row" data-loan-id="${loan.id}" data-url-associated-records = "/accounts_receivable/associated_records/${loan.id}">
-                <th scope="row">${loan.id}</th>
-                <td>${loan.person_name}</td>
-                <td>${loan.amount}</td>
-                <td> ${loan.remaining_amount} </td>
-                <td>${loan.is_active ? 'ACTIVE' : 'PAID'}</td>
-                <td>${loan.description}</td>
-                <td>${loan.is_cash ? 'YES' : 'NO'}</td>
-                <td>${loan.bank_account_nick_name}</td>
-                <td>${loan.created_at}</td>
-                <td>
-                    <div class="d-flex gap-2">
-                        <button 
-                            id=""
-                            type="button"
-                            data-bs-toggle="modal" 
-                            data-bs-target="#pay-account-receivable"
-                            class="btn btn-outline-light" 
-                            data-loan-id="${loan.id}"
-                        >
-                        Pay
-                        </button>
-                        <button 
-                            type="button" 
-                            class="btn btn-success" 
-                            data-bs-toggle="modal" 
-                            data-bs-target="#edit-account-receivable"
-                            data-loan-id="${loan.id}"
-                            data-amount="${loan.amount}"
-                            data-is-cash="${loan.is_cash}"
-                            data-is-active="${loan.is_active}"
-                            data-description="${loan.description}"
-                            data-person-name="${loan.person_name}"
-                            data-bank-account-id="${loan.bank_account_id}"
-                        >
-                        Edit
-                        </button>
-                        <a href="/accounts_receivable/delete/${loan.id}" class="btn btn-danger">Delete</a>
-                    </div>
-                </td>
-            </tr>
+            <th scope="row">${loan.id}</th>
+            <td>${loan.person_name}</td>
+            <td>${loan.amount}</td>
+            <td> ${loan.remaining_amount} </td>
+            <td>${loan.is_active ? 'ACTIVE' : 'PAID'}</td>
+            <td>${loan.description}</td>
+            <td>${loan.is_cash ? 'YES' : 'NO'}</td>
+            <td>${loan.bank_account_nick_name}</td>
+            <td>${loan.created_at}</td>
+            <td>
+                <div class="d-flex gap-2">
+                    <button 
+                        id=""
+                        type="button"
+                        data-bs-toggle="modal" 
+                        data-bs-target="#pay-account-receivable"
+                        class="btn btn-outline-light" 
+                        data-loan-id="${loan.id}"
+                    >
+                    Pay
+                    </button>
+                    <button 
+                        type="button" 
+                        class="btn btn-success" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#edit-account-receivable"
+                        data-loan-id="${loan.id}"
+                        data-amount="${loan.amount}"
+                        data-is-cash="${loan.is_cash}"
+                        data-is-active="${loan.is_active}"
+                        data-description="${loan.description}"
+                        data-person-name="${loan.person_name}"
+                        data-bank-account-id="${loan.bank_account_id}"
+                    >
+                    Edit
+                    </button>
+                    <a href="/accounts_receivable/delete/${loan.id}" class="btn btn-danger">Delete</a>
+                </div>
+            </td>
+
         `;
         tbody.appendChild(tableRow);
     });

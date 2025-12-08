@@ -97,12 +97,12 @@ def filter_loans_by_field():
         print(e)
         return jsonify({'error': str(e)}), 400
     
-@accounts_receivable_bp.route('/fiter_loans_by_timeframe', methods=['GET'])
-def fiter_loans_by_timeframe():
+@accounts_receivable_bp.route('/filter_loans_by_timeframe', methods=['GET'])
+def filter_loans_by_timeframe():
     try:
         start = request.args.get('start')
         end = request.args.get('end')
-        return loan_controller.fiter_loans_by_timeframe(start, end)
+        return loan_controller.filter_loans_by_timeframe(start, end)
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400

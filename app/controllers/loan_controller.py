@@ -1,5 +1,5 @@
 from flask import request, jsonify
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from sqlalchemy.exc import SQLAlchemyError
 
 from decimal import Decimal
@@ -113,27 +113,50 @@ def delete_loan(loan):
         db.session.rollback()
         raise e
     
-
 def filter_loans_by_field(query):
-    loans_list = []
-    q = f'%{query}%'
+    try:
+        q = f'%{query}%'
+        is_active = evaluate_boolean_columns(query, 'active', 'paid')
+        is_cash = evaluate_boolean_columns(query, 'yes', 'no')
+        loans_list = []
+        filters = [
+            (Loan.person_name.ilike(q)),
+            (Loan.amount.ilike(q)),
+            (Loan.description.ilike(q)),
+            (BankAccount.nick_name.ilike(q))
+        ]
 
-    loans = (
-        Loan.query
-        .join(Loan.bank_account, isouter=True) # allow loans without bank accounts
-        .filter(
-            (Loan.person_name.ilike(q)) |
-            (Loan.amount.ilike(q)) |
-            (BankAccount.nickname.ilike(q))
-        ).all()
-    )
+        if is_active is not None:
+            filters.append(Loan.is_active == is_active)
+
+        if is_cash is not None:
+            filters.append(Loan.is_cash == is_cash)
+
+        loans = (
+            Loan.query
+            .join(Loan.bank_account, isouter=True) # allow loans without bank accounts
+            .filter(or_(*filters))
+            .all()
+        )
+
+        for loan in loans:
+            loans_list.append(loan.to_dict())
+
+        return jsonify({'loans': loans_list})
+    except Exception as e:
+        db.session.rollback()
+        raise e
+
 #HELPERS
 def return_money_to_bank_account(loan):
     loan.bank_account.amount_available += loan.amount
 
-def covertQueryToBoolean(query):
+def evaluate_boolean_columns(query, reference_for_true, reference_for_false):
     q = query.lower()
-    if q == 'active' or q == 'yes':
+    if q == reference_for_true.lower():
         return True
-    return False
+    if q == reference_for_false.lower():
+        return False
+    return None
+
 

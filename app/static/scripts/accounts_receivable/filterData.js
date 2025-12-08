@@ -2,8 +2,8 @@ const selectFilterType = document.getElementById('select-filter-type-id');
 const filterInput = document.getElementById('filter-input-id');
 const btnSearch = document.getElementById('btn-search-id');
 let timePicker = null;
-let startDate;
-let endDate;
+let startDate = null;
+let endDate = null;
 
 function renderDataTable(loans){
     const tbody = document.getElementById('loans-table-body-id');
@@ -99,6 +99,36 @@ async function getData(url){
     return data;
 }
 
+async function filterData(){
+    let url = '';
+
+    if(selectFilterType.value == 'field'){
+        url = `/accounts_receivable/filter_loans_by_field?query=${filterInput.value}`;
+    } else {
+        if(startDate === null || endDate === null){ 
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'You need to select two dates.'
+            });
+            return;
+        }  
+        const start = timePicker.formatDate(startDate, 'Y-m-d');      
+        const end = timePicker.formatDate(endDate, 'Y-m-d'); 
+
+        console.log(start)
+        console.log(end)
+        url = `/accounts_receivable/filter_loans_by_timeframe?start=${start}&end=${end}`;
+    }
+
+    const data = await getData(url);
+
+    renderDataTable(data.loans);
+
+    startDate = null;
+    endDate = null;
+}
+
 selectFilterType.addEventListener('change', (e) => {
     if(e.target.value === 'time'){
         timePicker = flatpickr(filterInput, {
@@ -127,7 +157,6 @@ selectFilterType.addEventListener('change', (e) => {
 });
 
 btnSearch.addEventListener('click', async e => {
-    const data = await getData(`/accounts_receivable/fiter_loans_by_field?query=${filterInput.value}`);
-    renderDataTable(data.loans);
+    filterData();
 });
 

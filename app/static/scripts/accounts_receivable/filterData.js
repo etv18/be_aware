@@ -127,6 +127,8 @@ async function filterData(){
 
     startDate = null;
     endDate = null;
+    
+    filterInput.value = "";
 }
 
 selectFilterType.addEventListener('change', (e) => {

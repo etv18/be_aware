@@ -3,6 +3,7 @@ from sqlalchemy import func, or_
 from sqlalchemy.exc import SQLAlchemyError
 
 from decimal import Decimal
+from datetime import datetime, timedelta
 
 from app.extensions import db
 from app.models.loan import Loan
@@ -142,7 +143,34 @@ def filter_loans_by_field(query):
         for loan in loans:
             loans_list.append(loan.to_dict())
 
-        return jsonify({'loans': loans_list})
+        return jsonify({'loans': loans_list}), 200
+    except Exception as e:
+        db.session.rollback()
+        raise e
+
+def filter_loans_by_timeframe(start, end):
+    try:
+        if not start or not end:
+            return jsonify({'error': 'Missing data range.'})
+
+        start_date = datetime.strptime(start, '%Y-%m-%d')
+        end_date = datetime.strptime(end, '%Y-%m-%d')
+        end_date += timedelta(days=1)
+
+        loans_list = []
+
+        loans = (
+            Loan.query
+            .filter(Loan.created_at.between(start_date, end_date))
+            .order_by(Loan.created_at.desc())
+            .all()
+
+        )
+
+        for loan in loans:
+            loans_list.append(loan.to_dict())
+
+        return jsonify({'loans': loans_list}), 200
     except Exception as e:
         db.session.rollback()
         raise e
@@ -158,5 +186,3 @@ def evaluate_boolean_columns(query, reference_for_true, reference_for_false):
     if q == reference_for_false.lower():
         return False
     return None
-
-

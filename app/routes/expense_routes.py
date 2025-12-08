@@ -94,4 +94,11 @@ def filter_expenses_by_cash(is_cash):
     except Exception as e:
       raise e
 
-
+@expense_bp.route('/filter_by_field', methods=['GET'])
+def filter_by_field():
+    try:
+        query = request.args.get('query')
+        return expense_controller.filter_by_field(query)
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400

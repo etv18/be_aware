@@ -29,9 +29,9 @@ class Loan(db.Model):
             'is_active': self.is_active,
             'is_cash': self.is_cash,
             'bank_account_id': self.bank_account_id,
-            'bank_account_nickname': self.bank_account.nickname if self.bank_account else None,
-            'created_at': self.created_at.isoformat() if self.created_at else None,
-            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+            'bank_account_nick_name': self.bank_account.nick_name if self.bank_account else '-',
+            'created_at': self.created_at.isoformat() if self.created_at else '-',
+            'updated_at': self.updated_at.isoformat() if self.updated_at else '-',
             'description': self.description,
             'total_payments': str(self.total_payments()),
             'remaining_amount': str(self.remaining_amount())

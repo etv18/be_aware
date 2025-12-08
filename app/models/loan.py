@@ -21,6 +21,23 @@ class Loan(db.Model):
     loan_payments = relationship('LoanPayment', back_populates='loan')
     bank_account = relationship('BankAccount', back_populates='loans')
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'person_name': self.person_name,
+            'amount': str(self.amount),
+            'is_active': self.is_active,
+            'is_cash': self.is_cash,
+            'bank_account_id': self.bank_account_id,
+            'bank_account_nickname': self.bank_account.nickname if self.bank_account else None,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+            'description': self.description,
+            'total_payments': str(self.total_payments()),
+            'remaining_amount': str(self.remaining_amount())
+        }
+
+
     def total_payments(self):
         db.session.refresh(self) 
         total = Decimal(0.0)
@@ -32,5 +49,5 @@ class Loan(db.Model):
         db.session.refresh(self) 
         remaining = self.amount - self.total_payments()
         if remaining < 0:
-            return Decimal("0.00")
-        return remaining.quantize(Decimal("0.00"))
+            return Decimal('0.00')
+        return remaining.quantize(Decimal('0.00'))

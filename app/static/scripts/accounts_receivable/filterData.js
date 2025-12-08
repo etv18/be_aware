@@ -92,8 +92,8 @@ async function getData(url){
     return data;
 }
 
-selectFilterType.addEventListener('change', () => {
-    if(this.value === 'time'){
+selectFilterType.addEventListener('change', (e) => {
+    if(e.target.value === 'time'){
         timePicker = flatpickr(filterInput, {
             mode: 'range',
             altInput: true,
@@ -108,7 +108,7 @@ selectFilterType.addEventListener('change', () => {
         });
         return;
     }
-    
+
     if(timePicker){
         timePicker.destroy();
         timePicker = null;

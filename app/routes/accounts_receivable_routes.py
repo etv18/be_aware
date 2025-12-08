@@ -88,11 +88,21 @@ def delete_loan_payment(loan_payment_id):
         print(e)
         return jsonify({'error': str(e)}), 400
     
-@accounts_receivable_bp.route('/fiter_loans_by_field', methods=['GET'])
-def fiter_loans_by_field():
+@accounts_receivable_bp.route('/filter_loans_by_field', methods=['GET'])
+def filter_loans_by_field():
     try:
-        query = request.args.get('query', '')
+        query = request.args.get('query')
         return loan_controller.filter_loans_by_field(query)
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400
+    
+@accounts_receivable_bp.route('/fiter_loans_by_timeframe', methods=['GET'])
+def fiter_loans_by_timeframe():
+    try:
+        start = request.args.get('start')
+        end = request.args.get('end')
+        return loan_controller.fiter_loans_by_timeframe(start, end)
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400

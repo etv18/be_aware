@@ -5,8 +5,13 @@ if (typeof yourVariable === 'undefined') {...}
 
 const btnSearchByTimeFrame = document.getElementById('btn-search-by-timeframe-id');
 
-let startDate;
-let endDate;
+const selectFilterType = document.getElementById('select-filter-type-id');
+const filterInput = document.getElementById('filter-input-id');
+const btnSearch = document.getElementById('btn-search-id');
+
+let timePicker = null;
+let startDate = null;
+let endDate = null;
 
 const timeRange = flatpickr('#start-date-id', {
     mode: 'range',
@@ -101,5 +106,31 @@ btnSearchByTimeFrame.addEventListener('click',async () => {
     const end = timeRange.formatDate(endDate, 'Y-m-d');
     const expenses = await getDataFilteredByTime(start, end);
     renderExpensesTable(expenses);
+});
+
+selectFilterType.addEventListener('change', e => {
+    if(e.target.value == 'time'){
+        timePicker = flatpickr(filterInput, {
+            mode: 'range',
+            altInput: true,
+            altFormat: 'M j, Y',
+            dateFormat: 'Y-m-d',
+            onChange: (selectedDates, dateStr, instance) => {
+                if(selectedDates.length === 2){
+                    startDate = selectedDates[0];
+                    endDate = selectedDates[1];
+                }
+            }
+        });
+        return;  
+    }
+
+    if(timePicker){
+        timePicker.destroy();
+        timePicker = null;
+    }
+
+    filterInput.type = "text";
+    filterInput.value = "";
 });
 

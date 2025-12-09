@@ -8,7 +8,8 @@ credit_card_payment_bp = Blueprint('credit_card_payment', __name__, url_prefix='
 @credit_card_payment_bp.route('/create', methods=['POST'])
 def create():
     try:
-        return credit_card_payment_controller.create_credit_card_payment()
+        credit_card_payment_controller.create_credit_card_payment()
+        return jsonify({'message': 'Credit card payment created successfully'}), 200
     except Exception as e:
         print(e)
-        raise e 
+        return jsonify({'error': str(e)}), 400

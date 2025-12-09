@@ -21,7 +21,7 @@ def create_credit_card_payment():
         if not credit_card: raise CreditCardDoesNotExists('Credit card record was not found.')
         
         bank_account = BankAccount.query.get(bank_account_id)
-        if not bank_account: raise BankAccountDoesNotExists('Bank account record was not found.')
+        if not bank_account: raise BankAccountDoesNotExists('You need to select a bank account.')
 
         credit_card_payment = CreditCardPayment(
             amount=amount,
@@ -33,8 +33,6 @@ def create_credit_card_payment():
 
         db.session.add(credit_card_payment)
         db.session.commit()
-
-        return jsonify({'message': 'Credit card payment created successfully'}), 200
 
     except Exception as e:
         db.session.rollback()

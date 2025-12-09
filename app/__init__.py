@@ -36,7 +36,6 @@ def register_resources(app):
     app.register_blueprint(income_routes.income_bp)
     app.register_blueprint(accounts_receivable_routes.accounts_receivable_bp)
     app.register_blueprint(credit_card_payment_routes.credit_card_payment_bp)
-    
 def create_error_logger(app):
     if not os.path.exists('logs'):
         os.makedirs('logs')

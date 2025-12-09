@@ -5,6 +5,7 @@ from app.models.credit_card import CreditCard
 from app.models.expense import Expense
 from app.models.bank import Bank
 from app.models.bank_account import BankAccount
+from app.models.credit_card_payment import CreditCardPayment
 
 credit_card_bp = Blueprint('credit_card', __name__, url_prefix='/credit_cards')
 
@@ -65,9 +66,11 @@ def associated_records(id):
         .all()
     )
     bank_accounts = BankAccount.query.all()
+    payments = CreditCardPayment.query.filter(CreditCardPayment.id == id).all
     context = {
         'expenses': expenses,
         'bank_accounts': bank_accounts,
+        'payments': payments,
     }
 
     return render_template('/credit_cards/associated_records.html', **context)

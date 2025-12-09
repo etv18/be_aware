@@ -13,18 +13,18 @@ let timePicker = null;
 let startDate = null;
 let endDate = null;
 
-const timeRange = flatpickr('#start-date-id', {
-    mode: 'range',
-    altInput: true,
-    altFormat: 'M j, Y',
-    dateFormat: 'Y-m-d',
-    onChange: (selectedDates, dateStr, instance) => {
-        if(selectedDates.length === 2){
-            startDate = selectedDates[0];
-            endDate = selectedDates[1];
-        }
-    },
-});
+// const timeRange = flatpickr('#start-date-id', {
+//     mode: 'range',
+//     altInput: true,
+//     altFormat: 'M j, Y',
+//     dateFormat: 'Y-m-d',
+//     onChange: (selectedDates, dateStr, instance) => {
+//         if(selectedDates.length === 2){
+//             startDate = selectedDates[0];
+//             endDate = selectedDates[1];
+//         }
+//     },
+// });
 
 export function renderExpensesTable(expenses){
     const tbody = document.getElementById('expenses-table-body');
@@ -107,6 +107,11 @@ btnSearchByTimeFrame.addEventListener('click',async () => {
     const expenses = await getDataFilteredByTime(start, end);
     renderExpensesTable(expenses);
 });
+
+async function filterData(){
+    let url = null
+
+}
 
 selectFilterType.addEventListener('change', e => {
     if(e.target.value == 'time'){

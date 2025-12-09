@@ -4,6 +4,7 @@ from app.controllers import credit_card_controller as cc_controller
 from app.models.credit_card import CreditCard
 from app.models.expense import Expense
 from app.models.bank import Bank
+from app.models.bank_account import BankAccount
 
 credit_card_bp = Blueprint('credit_card', __name__, url_prefix='/credit_cards')
 
@@ -11,9 +12,12 @@ credit_card_bp = Blueprint('credit_card', __name__, url_prefix='/credit_cards')
 def index():
     banks = Bank.query.all()
     credit_cards = CreditCard.query.all()
+    bank_accounts = BankAccount.query.all()
+
     context = {
         'banks': banks,
-        'credit_cards': credit_cards
+        'credit_cards': credit_cards,
+        'bank_accounts': bank_accounts,
     }
     return render_template('credit_cards/index.html', **context)
 
@@ -60,9 +64,10 @@ def associated_records(id):
         .order_by(Expense.created_at.desc())
         .all()
     )
-
+    bank_accounts = BankAccount.query.all()
     context = {
         'expenses': expenses,
+        'bank_accounts': bank_accounts,
     }
 
     return render_template('/credit_cards/associated_records.html', **context)

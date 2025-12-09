@@ -130,7 +130,7 @@
 
         <tbody>
             {% for credit_card in credit_cards %}
-            <tr>
+            <tr class="credit-card-rows" data-url-associated-records="{{ url_for('credit_card.associated_records', id=credit_card.id) }}">
                 <th scope="row">{{ credit_card.id }}</th>
                 <td>{{ credit_card.nick_name }}</td>
                 <td>{{ credit_card.bank.name }}</td>

@@ -83,7 +83,7 @@ def filter_by_time():
     end = request.args.get('end')
 
     data = expense_controller.filter_by_time(start, end)
-    return jsonify(data)
+    return jsonify({'expenses': data}), 200
 
 @expense_bp.route('/filter_expenses_by_cash/<int:is_cash>', methods=['GET'])
 def filter_expenses_by_cash(is_cash):

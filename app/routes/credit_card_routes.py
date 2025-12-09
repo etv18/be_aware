@@ -66,7 +66,7 @@ def associated_records(id):
         .all()
     )
     bank_accounts = BankAccount.query.all()
-    payments = CreditCardPayment.query.filter(CreditCardPayment.id == id).all
+    payments = CreditCardPayment.query.filter(CreditCardPayment.credit_card_id == id).all()
     context = {
         'expenses': expenses,
         'bank_accounts': bank_accounts,

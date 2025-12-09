@@ -3,8 +3,6 @@ best way to compare to undifined values, it only matches expecifically undefined
 if (typeof yourVariable === 'undefined') {...}
 */
 
-const btnSearchByTimeFrame = document.getElementById('btn-search-by-timeframe-id');
-
 const selectFilterType = document.getElementById('select-filter-type-id');
 const filterInput = document.getElementById('filter-input-id');
 const btnSearch = document.getElementById('btn-search-id');
@@ -12,19 +10,6 @@ const btnSearch = document.getElementById('btn-search-id');
 let timePicker = null;
 let startDate = null;
 let endDate = null;
-
-// const timeRange = flatpickr('#start-date-id', {
-//     mode: 'range',
-//     altInput: true,
-//     altFormat: 'M j, Y',
-//     dateFormat: 'Y-m-d',
-//     onChange: (selectedDates, dateStr, instance) => {
-//         if(selectedDates.length === 2){
-//             startDate = selectedDates[0];
-//             endDate = selectedDates[1];
-//         }
-//     },
-// });
 
 export function renderExpensesTable(expenses){
     const tbody = document.getElementById('expenses-table-body');
@@ -43,7 +28,7 @@ export function renderExpensesTable(expenses){
         const tableRow = document.createElement('tr');
         tableRow.innerHTML = `
             <th scope="row">${expense.id}</th>
-            <td>${expense.amount.toFixed(2)}</td>
+            <td>${expense.amount}</td>
             <td>${expense.is_cash ? 'Yes' : 'No'}</td>
             <td>${expense.description || '-'}</td>
             <td>${expense.credit_card_name || '-'}</td>
@@ -73,11 +58,11 @@ export function renderExpensesTable(expenses){
     });
 }
 
-async function getDataFilteredByTime(start, end){
+async function getData(url){
     let data;
 
     try {
-        const response = await fetch(`/expenses/filter_by_time?start=${start}&end=${end}`);
+        const response = await fetch(url);
         if(!response.ok) {
             console.log(response.json());
             Swal.fire({
@@ -100,19 +85,34 @@ async function getDataFilteredByTime(start, end){
     return data;
 }
 
-//Listeners
-btnSearchByTimeFrame.addEventListener('click',async () => {
-    const start = timeRange.formatDate(startDate, 'Y-m-d');
-    const end = timeRange.formatDate(endDate, 'Y-m-d');
-    const expenses = await getDataFilteredByTime(start, end);
-    renderExpensesTable(expenses);
-});
-
 async function filterData(){
-    let url = null
+    let url = '';
+    if(selectFilterType.value === 'field'){
+        url = `/expenses/filter_by_field?query=${filterInput.value}`;
+    } else {
+        if(startDate === null || endDate === null){ 
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'You need to select two dates.'
+            });
+            return;
+        }  
+        const start = timePicker.formatDate(startDate, 'Y-m-d');      
+        const end = timePicker.formatDate(endDate, 'Y-m-d'); 
 
+        url = `/expenses/filter_by_time?start=${start}&end=${end}`;
+    }
+
+    const data = await getData(url);
+
+    renderExpensesTable(data.expenses);
+
+    startDate = null;
+    endDate = null;
 }
 
+//LISTENERS
 selectFilterType.addEventListener('change', e => {
     if(e.target.value == 'time'){
         timePicker = flatpickr(filterInput, {
@@ -139,3 +139,6 @@ selectFilterType.addEventListener('change', e => {
     filterInput.value = "";
 });
 
+btnSearch.addEventListener('click', e => {
+    filterData();
+});

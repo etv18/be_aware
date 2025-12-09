@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, jsonif
 
 from app.controllers import credit_card_controller as cc_controller
 from app.models.credit_card import CreditCard
+from app.models.expense import Expense
 from app.models.bank import Bank
 
 credit_card_bp = Blueprint('credit_card', __name__, url_prefix='/credit_cards')
@@ -50,4 +51,19 @@ def delete(id):
 
     except Exception as e:
         return jsonify({'error': str(e)}), 400
+    
+@credit_card_bp.route('/associated_records/<int:id>', methods=['GET'])
+def associated_records(id):
+    expenses = (
+        Expense.query
+        .filter(Expense.credit_card_id == id)
+        .order_by(Expense.created_at.desc())
+        .all()
+    )
+
+    context = {
+        'expenses': expenses,
+    }
+
+    return render_template('/credit_cards/associated_records.html', **context)
 

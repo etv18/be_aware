@@ -242,9 +242,6 @@
                 const creditCardId = button.getAttribute('data-credit-card-id');
                 document.getElementById('p-credit-card-id').value = creditCardId; //Set the loan id to the hidden input so backend can process it as part of the form
                 const bankAccountsSelect = document.getElementById('p-select-bank-account-id');
-
-                toggleBankAccount(isCash, bankAccountsSelect);
-                isCash.addEventListener('change', () => toggleBankAccount(isCash, bankAccountsSelect));
             });
         });
     </script>

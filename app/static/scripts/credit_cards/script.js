@@ -66,6 +66,21 @@ async function editCreditCard(){
     }
 }
 
+function preventBtnClickWhenClickOnRow(event){
+    return event.target.closest('button') || event.target.closest('form');
+}
+
+document.addEventListener('DOMContentLoaded', e => {
+    const rows = document.querySelectorAll('.credit-card-rows');
+    rows.forEach(row => {
+        row.addEventListener('dblclick', e => {
+            if(preventBtnClickWhenClickOnRow(e)) return;
+            let url = row.getAttribute('data-url-associated-records');
+            window.location.assign(url);
+        });
+    }); 
+});
+
 const btnCreateCreditCard = document.getElementById('btn-create-credit-card');
 btnCreateCreditCard.addEventListener('click', async e => createCreditCard());
 

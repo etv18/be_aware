@@ -7,7 +7,7 @@ from logging.handlers import RotatingFileHandler
 
 from app.config import Config
 from app.extensions import db
-from app.routes import home_routes, bank_routes, bank_account_routes, credit_card_routes, expense_category_routes, expense_routes, income_routes, accounts_receivable_routes
+from app.routes import home_routes, bank_routes, bank_account_routes, credit_card_routes, expense_category_routes, expense_routes, income_routes, accounts_receivable_routes, credit_card_payment_routes
 
 def create_app():
     app = Flask(__name__)
@@ -35,7 +35,8 @@ def register_resources(app):
     app.register_blueprint(expense_routes.expense_bp)
     app.register_blueprint(income_routes.income_bp)
     app.register_blueprint(accounts_receivable_routes.accounts_receivable_bp)
-
+    app.register_blueprint(credit_card_payment_routes.credit_card_payment_bp)
+    
 def create_error_logger(app):
     if not os.path.exists('logs'):
         os.makedirs('logs')

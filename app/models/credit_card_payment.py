@@ -14,3 +14,4 @@ class CreditCardPayment(db.Model):
     updated_at = db.Column(db.DateTime(timezone=True), onupdate=func.now())
 
     credit_card = relationship('CreditCard', back_populates='payments')
+    bank_account = relationship('BankAccount', back_populates='credit_card_payments')

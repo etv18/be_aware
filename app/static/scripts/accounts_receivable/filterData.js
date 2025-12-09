@@ -102,7 +102,7 @@ async function getData(url){
 async function filterData(){
     let url = '';
 
-    if(selectFilterType.value == 'field'){
+    if(selectFilterType.value === 'field'){
         url = `/accounts_receivable/filter_loans_by_field?query=${filterInput.value}`;
     } else {
         if(startDate === null || endDate === null){ 

@@ -13,3 +13,12 @@ def create():
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400
+    
+@credit_card_payment_bp.route('/update/<int:id>', methods=['PUT'])
+def update(id):
+    try:
+        credit_card_payment_controller.update_credit_card_payment(id)
+        return jsonify({'message': 'Credit card payment updated successfully'}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400

@@ -38,7 +38,7 @@ def create_expense():
             selected_credit_card = request.form.get('select-credit-card')
             selected_bank_account = request.form.get('select-bank-account')
 
-            if (not selected_credit_card or selected_credit_card == 'none') or (not selected_bank_account or selected_bank_account == 'none'):
+            if (not selected_credit_card or selected_credit_card == 'none') and (not selected_bank_account or selected_bank_account == 'none'):
                 raise NoBankProductSelected('You must select either a credit card or bank account.')
 
             if selected_credit_card and selected_credit_card != 'none':

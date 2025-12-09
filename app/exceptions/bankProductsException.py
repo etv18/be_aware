@@ -15,3 +15,6 @@ class AmountIsLessThanOrEqualsToZero(Exception):
 
 class NoBankProductSelected(Exception):
     pass
+
+class CreditCardPaymentDoesNotExists(Exception):
+    pass

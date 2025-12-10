@@ -74,6 +74,21 @@ def update_credit_card_payment(id):
     except Exception as e:
         db.session.rollback()
         raise e
+    
+
+def delete_credit_card_payment(id):
+    try:
+        payment = CreditCardPayment.query.get(id)
+        if not payment: raise CreditCardPaymentDoesNotExists('This credit card payment was not found.')
+        
+        payment.bank_account.amount_available += payment.amount #return the money used to the bank account
+        payment.credit_card.amount_available -= payment.amount #reduce the amount available of the credit card 'cause you are deleting the payment
+
+        db.session.delete(payment)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        raise e  
 
 #HELPERS
 def h_update_bank_account_money_on_create(id, amount):

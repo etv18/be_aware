@@ -1,8 +1,12 @@
 from app.extensions import db
+from sqlalchemy import event
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
 from decimal import Decimal
+
+from app.utils.code_generator import generate_montly_sequence
+from app.utils import prefixes
 
 class Loan(db.Model):
     __tablename__ = 'loans'
@@ -11,6 +15,7 @@ class Loan(db.Model):
     amount = db.Column(db.Numeric(10, 2), nullable=False)
     is_active = db.Column(db.Boolean, default=True)
     is_cash = db.Column(db.Boolean)
+    code = db.Column(db.String(50), nullable=False)
 
     bank_account_id = db.Column(db.Integer, db.ForeignKey('bank_accounts.id'))
     
@@ -20,6 +25,13 @@ class Loan(db.Model):
 
     loan_payments = relationship('LoanPayment', back_populates='loan')
     bank_account = relationship('BankAccount', back_populates='loans')
+
+    @event.listens_for(db.session, 'before_flush')
+    def assign_code(session, flush_context, instances=None):
+        for obj in session.new:
+            if isinstance(obj, Loan):
+                if not obj.code:
+                    obj.code = generate_montly_sequence(prefixes.LOAN, Loan)    
 
     def to_dict(self):
         return {

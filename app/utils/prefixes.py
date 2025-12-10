@@ -1,0 +1,2 @@
+WITHDRAWAL = 'WDR'
+LOAN = 'LOAN'

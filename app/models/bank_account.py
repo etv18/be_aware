@@ -21,3 +21,4 @@ class BankAccount(db.Model):
     loans = relationship('Loan', back_populates='bank_account')
     loan_payments = relationship('LoanPayment', back_populates='bank_account')
     credit_card_payments = relationship('CreditCardPayment', back_populates='bank_account')
+    withdrawals = relationship('Withdrawal', back_populates='bank_account')

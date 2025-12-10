@@ -24,3 +24,21 @@ def create():
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400
+
+@withdrawal_bp.route('/update/<int:id>', methods=['PUT'])
+def update(id):
+    try:
+        withdrawal_controller.update_withdrawal(id)
+        return jsonify({'message': 'Withdrawal updated successfully'}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400
+    
+@withdrawal_bp.route('/delete/<int:id>', methods=['DELETE'])
+def delete(id):
+    try:
+        withdrawal_controller.delete_withdrawal(id)
+        return jsonify({'message': 'Withdrawal deleted successfully'}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400

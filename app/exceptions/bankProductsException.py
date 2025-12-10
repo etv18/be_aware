@@ -18,3 +18,6 @@ class NoBankProductSelected(Exception):
 
 class CreditCardPaymentDoesNotExists(Exception):
     pass
+
+class CreditAmountAvailableGreaterThanLimit(Exception):
+    pass

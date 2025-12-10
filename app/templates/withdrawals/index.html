@@ -17,19 +17,18 @@
                         </div>
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-sm">
+                                <div class="">
                                     <div class="form-floating mt-2">
                                         <input type="text" name="amount" id="amount-id" class="form-control"
                                             placeholder="Amount" required>
                                         <label for="amount-id">Amount</label>
                                     </div>
                                 </div>
-                                <div class="col-sm">
-                                    <div class="form-check form-switch mt-2">
-                                        <input class="form-check-input" type="checkbox" name="is-cash" id="is-cash-id" switch checked>
-                                        <label class="form-check-label" for="checkNativeSwitch">
-                                            Cash
-                                        </label>
+                                <div class="">
+                                    <div class="form-floating mt-2">
+                                        <input type="text" name="description" id="description-id" class="form-control"
+                                            placeholder="Description" required>
+                                        <label for="description-id">Description</label>
                                     </div>
                                 </div>
                             </div>
@@ -47,7 +46,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" onclick="createIncome()">Save</button>
+                            <button type="button" class="btn btn-primary" onclick="createWithdrawal()">Save</button>
                         </div>
                     </div>
                 </div>
@@ -115,13 +114,13 @@
                 </thead>
                 
                 <tbody>
-                  {% for income in incomes %}
+                  {% for withdrawal in withdrawals %}
                     <tr>
-                        <th scope="row">{{ income.id }}</th>
-                        <td>{{ income.amount }}</td>
-                        <td>{{ income.is_cash }}</td>
-                        <td>{{ income.bank_account.nick_name }}</td>
-                        <td>{{ income.created_at }}</td>
+                        <th scope="row">{{ withdrawal.id }}</th>
+                        <td>{{ withdrawal.amount }}</td>
+                        <td>{{ withdrawal.description if withdrawal.description else '-'}}</td>
+                        <td>{{ withdrawal.bank_account.nick_name }}</td>
+                        <td>{{ withdrawal.created_at }}</td>
                         <td>
                             <div class="d-flex gap-2">
                                 <button 
@@ -129,14 +128,13 @@
                                     class="btn btn-success" 
                                     data-bs-toggle="modal" 
                                     data-bs-target="#edit-withdrawal-model"
-                                    data-income-id="{{ income.id }}"
-                                    data-amount="{{ income.amount }}"
-                                    data-is-cash="{{ income.is_cash }}"
-                                    data-bank-account-id="{{ income.bank_account_id }}"
+                                    data-withdrawal-id="{{ withdrawal.id }}"
+                                    data-amount="{{ withdrawal.amount }}"
+                                    data-bank-account-id="{{ withdrawal.bank_account_id }}"
                                 >
                                 Edit
                                 </button>
-                                <a href="{{ url_for('income.delete', id=income.id ) }}" class="btn btn-danger">Delete</a>
+                                <a href="" class="btn btn-danger">Delete</a>
                             </div>
                         </td>
                     </tr>
@@ -189,7 +187,7 @@
     })
 </script>
 <script>
-    async function createIncome(){
+    async function createWithdrawal(){
         const form = document.getElementById('create-withdrawal-form');
         const formData = new FormData(form);
 

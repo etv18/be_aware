@@ -1,6 +1,10 @@
-from app.extensions import db
-from sqlalchemy.orm import relationship
+from sqlalchemy import event
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
+
+from app.extensions import db
+from app.utils.code_generator import generate_montly_sequence
+from app.utils import prefixes
 
 class Withdrawal(db.Model):
     __tablename__ = 'withdrawals'
@@ -15,3 +19,10 @@ class Withdrawal(db.Model):
     updated_at = db.Column(db.DateTime(timezone=True), onupdate=func.now())
 
     bank_account = relationship('BankAccount', back_populates='withdrawals')
+
+    @event.listens_for(db.session, 'before_flush')
+    def assign_code(session, flush_context, instances=None):
+        for obj in session.new:
+            if isinstance(obj, Withdrawal):
+                if not obj.code:
+                    obj.code = generate_montly_sequence(prefixes.WITHDRAWAL, Withdrawal)

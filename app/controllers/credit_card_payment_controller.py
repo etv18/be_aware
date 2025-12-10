@@ -30,6 +30,8 @@ def create_credit_card_payment():
             credit_card_id=credit_card_id,
         )
 
+        credit_card.amount_available += amount
+
         h_update_bank_account_money_on_create(bank_account_id, amount)
 
         db.session.add(credit_card_payment)
@@ -57,6 +59,12 @@ def update_credit_card_payment(id):
             bank_account_id,
             payment.amount,
             amount
+        )
+
+        h_update_credit_card_amount_available_on_update(
+            credit_card=payment.credit_card, 
+            old_amount=payment.amount, 
+            new_amount=amount
         )
 
         payment.amount=amount
@@ -107,3 +115,7 @@ def h_update_bank_account_money_on_update(old_ba_id, new_ba_id, old_amount, new_
     except Exception as e:
         traceback.print_exc()
         raise e
+        
+def h_update_credit_card_amount_available_on_update(credit_card, old_amount, new_amount):
+    credit_card.amount_available -= old_amount
+    credit_card.amount_available += new_amount

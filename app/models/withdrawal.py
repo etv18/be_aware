@@ -7,7 +7,8 @@ class Withdrawal(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Numeric(10,2), nullable=False, default=0.00)
     description = db.Column(db.String(255))
-
+    code = db.Column(db.String(50), nullable=False)
+    
     bank_account_id = db.Column(db.Integer, db.ForeignKey('bank_accounts.id'))
 
     created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())

@@ -63,19 +63,18 @@
                         </div>
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-sm">
+                                <div class="">
                                     <div class="form-floating mt-2">
                                         <input type="text" name="amount" id="e-amount-id" class="form-control"
                                             placeholder="Amount" required>
                                         <label for="amount-id">Amount</label>
                                     </div>
                                 </div>
-                                <div class="col-sm">
-                                    <div class="form-check form-switch mt-2">
-                                        <input class="form-check-input" type="checkbox" name="is-cash" id="e-is-cash-id" switch checked>
-                                        <label class="form-check-label" for="checkNativeSwitch">
-                                            Cash
-                                        </label>
+                                <div class="">
+                                    <div class="form-floating mt-2">
+                                        <input type="text" name="description" id="e-description-id" class="form-control"
+                                            placeholder="Description" required>
+                                        <label for="e-description-id">Description</label>
                                     </div>
                                 </div>
                             </div>
@@ -129,12 +128,13 @@
                                     data-bs-toggle="modal" 
                                     data-bs-target="#edit-withdrawal-model"
                                     data-withdrawal-id="{{ withdrawal.id }}"
+                                    data-description="{{ withdrawal.description }}"
                                     data-amount="{{ withdrawal.amount }}"
                                     data-bank-account-id="{{ withdrawal.bank_account_id }}"
                                 >
                                 Edit
                                 </button>
-                                <a href="" class="btn btn-danger">Delete</a>
+                                <a href="{{ url_for('withdrawal.delete', id=withdrawal.id) }}" class="btn btn-danger">Delete</a>
                             </div>
                         </td>
                     </tr>
@@ -167,17 +167,19 @@
         
         editIncomeModal.addEventListener('show.bs.modal', (event) => {
             const button = event.relatedTarget;
+
             const btnSubmitEdition = document.getElementById('btn-submit-edition');
             const editIncomeForm = document.getElementById('edit-income-form');
             const editBankAccountsSelect = document.getElementById('e-select-bank-account-id');
-            const editAmount = document.getElementById('e-amount');
 
             const oldBankAccountId = button.getAttribute('data-bank-account-id');
             const oldAmount = button.getAttribute('data-amount');
-            const incomeId = button.getAttribute('data-income-id');
+            const oldDescription = button.getAttribute('data-description');
+            const withdrawalId = button.getAttribute('data-withdrawal-id');
 
+            document.getElementById('withdrawal-id').value = withdrawalId;
             document.getElementById('e-amount-id').value = oldAmount;
-            document.getElementById('income-id').value = incomeId;
+            document.getElementById('e-description-id').value = oldDescription;
             document.getElementById('e-select-bank-account-id').value = oldBankAccountId; //If on the db its value it's Null flask will convert it into 'None' which the browser interprets it as String value in js
             if(oldBankAccountId === 'None') {
                 document.getElementById('e-select-bank-account-id').value = 'none';
@@ -224,7 +226,7 @@
 
     async function editIncome(){
         const withdrawalId = document.getElementById('withdrawal-id').value;
-        const form = document.getElementById('create-withdrawal-form');
+        const form = document.getElementById('edit-withdrawal-form');
         const formData = new FormData(form);
 
         try {

@@ -22,3 +22,12 @@ def update(id):
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400
+    
+@credit_card_payment_bp.route('/delete/<int:id>', methods=['DELETE'])
+def delete(id):
+    try:
+        credit_card_payment_controller.delete_credit_card_payment(id)
+        return jsonify({'message': 'Credit card payment updated successfully'}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400

@@ -4,7 +4,7 @@ LOAN_PAYMENT = 'LPMT'
 INCOME = 'INC'
 EXPENSE = 'EXP'
 
-def get_all():
+def get_prefixes():
     return (
         WITHDRAWAL,
         LOAN,

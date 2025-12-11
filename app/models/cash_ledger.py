@@ -41,8 +41,8 @@ class CashLedger(db.Model):
             print('Error on cash ledger file: ', e)
             traceback.print_exc()
             db.session.rollback()
-            raise
-
+            raise e
+        
     @staticmethod
     def update(transaction):
         try:
@@ -52,17 +52,57 @@ class CashLedger(db.Model):
             amount = transaction.amount
             if isinstance(transaction, (transactional_classes.Expense, transactional_classes.Loan)):
                 amount = -amount
-            
-            ledger = CashLedger.query.filter_by(reference_code=transaction.code).one_or_404()
 
-            ledger.amount = amount
-
-            db.session.commit()
+            ledger = CashLedger.query.filter_by(reference_code=transaction.code).first()
+            if ledger:
+                ledger.amount = amount
+                db.session.commit()
+            else:
+                CashLedger.create(transaction)
         except Exception as e:
             print('Error on cash ledger file: ', e)
             traceback.print_exc()
             db.session.rollback()
-            raise
+            raise e
 
-        
+    @staticmethod
+    def delete(transaction):
+        try:
+            if not isinstance(transaction, transactional_classes.get_all()):
+                return
+            
+            ledger = CashLedger.query.filter_by(reference_code=transaction.code).first()
 
+            if ledger:
+                db.session.delete(ledger)
+                db.session.commit()
+        except Exception as e:
+            print('Error on cash ledger file: ', e)
+            traceback.print_exc()
+            db.session.rollback()
+            raise e  
+
+    @staticmethod
+    def update_or_delete(transaction, delete_ledger=False):
+        try:
+            if not isinstance(transaction, transactional_classes.get_all()):
+                return
+            
+            if delete_ledger:
+                CashLedger.delete(transaction)
+                return
+            
+            if isinstance(transaction, transactional_classes.Withdrawal): # is instance of Withdrawal
+                CashLedger.update(transaction)
+                return
+            
+            if transaction.is_cash:
+                CashLedger.update(transaction)
+            else:
+                CashLedger.delete(transaction)
+
+        except Exception as e:
+            print('Error on cash ledger file: ', e)
+            traceback.print_exc()
+            db.session.rollback()
+            raise e

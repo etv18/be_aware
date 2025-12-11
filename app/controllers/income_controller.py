@@ -5,6 +5,7 @@ from decimal import Decimal, ConversionSyntax
 
 from app.models.income import Income
 from app.models.bank_account import BankAccount
+from app.models.cash_ledger import CashLedger
 from app.exceptions.bankProductsException import BankAccountDoesNotExists, AmountIsLessThanOrEqualsToZero, NoBankProductSelected
 from app.extensions import db
 from app.utils.is_numeric_type import is_numeric_type
@@ -32,6 +33,8 @@ def create_income():
             db.session.add(income)
             db.session.commit()
 
+            CashLedger.create(income)
+
         except (AmountIsLessThanOrEqualsToZero, BankAccountDoesNotExists) as e:
             db.session.rollback()
             raise e
@@ -57,7 +60,7 @@ def update_income(income):
             new_bank_account = BankAccount.query.get(new_bank_account_id)
             if not new_bank_account: raise NoBankProductSelected('You must select a bank account')
             update_bank_account_money_on_update(income.bank_account, new_bank_account, income.amount, amount)
-        else:
+        elif income.bank_account:
             income.bank_account.amount_available -= income.amount
 
         income.amount = amount
@@ -65,6 +68,8 @@ def update_income(income):
         income.bank_account_id = new_bank_account_id
 
         db.session.commit()
+
+        CashLedger.update_or_delete(income)
 
     except (AmountIsLessThanOrEqualsToZero, BankAccountDoesNotExists) as e:
         db.session.rollback()
@@ -80,6 +85,9 @@ def delete_income(income):
     try:
         if income.bank_account:
             update_bank_account_money_on_delete(income.bank_account, income.amount)
+
+        CashLedger.update_or_delete(income, delete_ledger=True)
+
         db.session.delete(income)
         db.session.commit()
     except SQLAlchemyError as e:

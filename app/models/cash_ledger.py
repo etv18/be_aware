@@ -22,7 +22,7 @@ class CashLedger(db.Model):
     @staticmethod
     def create(transaction):
         try:
-            if not isinstance(transaction, transactional_classes.get_transactional_classes()):
+            if not isinstance(transaction, transactional_classes.get_all()):
                 return
             
             amount = transaction.amount

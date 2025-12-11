@@ -6,13 +6,14 @@ from decimal import Decimal
 from app.models.credit_card import CreditCard
 from app.extensions import db
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero
+from app.utils.numeric_casting import is_decimal_type
 
 def create_credit_card():
     try:
         if request.method == 'POST':
             nick_name = request.form['nick-name']
-            amount_available = Decimal(request.form['amount-available']) or 0
-            limit = Decimal(request.form['limit']) or 0
+            amount_available = Decimal(request.form['amount-available']) if is_decimal_type(request.form['amount-available']) else Decimal('0')
+            limit = Decimal(request.form['limit']) if is_decimal_type(request.form['limit']) else Decimal('0')
             bank_id = request.form['select-banks']
 
             if(amount_available <= 0 or limit <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a valid number bigger than 0')
@@ -37,8 +38,8 @@ def update_credit_card(credit_card):
     try:
         if request.method == 'PUT':
             credit_card.nick_name = request.form['e-nick-name']
-            credit_card.limit = Decimal(request.form['e-limit'])
-            credit_card.amount_available = Decimal(request.form['e-amount-available'])
+            credit_card.limit = Decimal(request.form['e-limit']) if is_decimal_type(request.form['e-limit']) else Decimal('0')
+            credit_card.amount_available = Decimal(request.form['e-amount-available']) if is_decimal_type(request.form['e-amount-available']) else Decimal('0')
 
             if(credit_card.amount_available <= 0 or credit_card.limit <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a valid number bigger than 0')
 

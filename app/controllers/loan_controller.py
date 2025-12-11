@@ -11,10 +11,11 @@ from app.models.bank_account import BankAccount
 from app.models.cash_ledger import CashLedger
 from app.controllers.expense_controller import update_bank_account_money_on_create, update_bank_account_money_on_update
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero, NoBankProductSelected
+from app.utils.numeric_casting import is_decimal_type
 
 def create_loan():
     try:
-        amount = Decimal(request.form.get('amount'))
+        amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else Decimal('0')
         is_cash = request.form.get('is-cash') == 'on'
         person_name = request.form.get('person-name')
         description = request.form.get('description')
@@ -56,7 +57,7 @@ def update_loan(loan):
         if not loan:
             return jsonify({'error': 'Loan record was not found'}), 400
         
-        amount = Decimal(request.form.get('amount'))
+        amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else Decimal('0')
         is_cash = request.form.get('is-cash') == 'on'
         person_name = request.form.get('person-name')
         description = request.form.get('description')

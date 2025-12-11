@@ -11,10 +11,11 @@ from app.models.loan import Loan
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero
 from app.controllers.income_controller import update_bank_account_money_on_create, update_bank_account_money_on_update, update_bank_account_money_on_delete
 from app.models.loan_payment import LoanPayment
+from app.utils.numeric_casting import is_decimal_type
 
 def create_loan_payment():
     try:
-        amount = Decimal(request.form['amount'])
+        amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else Decimal('0')
         is_cash = request.form.get('is-cash') == 'on'
         bank_account_id = None
         loan_id = int(request.form['loan-id'])
@@ -61,7 +62,8 @@ def update_loan_payment(loan_payment):
         if not loan_payment:
             return jsonify({'error': 'Loan payment record was not found'}), 400
         
-        new_amount = Decimal(request.form['amount'])
+        new_amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else Decimal('0')
+ 
         new_bank_account_id = None
         is_cash = request.form.get('is-cash') == 'on'
         selected_bank_account = request.form.get('select-bank-account')

@@ -7,6 +7,7 @@ from decimal import Decimal
 from app.models.bank_account import BankAccount
 from app.models.expense import Expense
 from app.models.bank import Bank
+from app.utils.numeric_casting import is_decimal_type
 from app.exceptions.bankProductsException import BankAccountDoesNotExists, AmountIsLessThanOrEqualsToZero
 from app.extensions import db
 
@@ -14,7 +15,7 @@ def create_bank_account():
     try:
         if request.method == 'POST':
             nick_name = request.form['nick-name']
-            amount_available = float(request.form['amount-available']) or 0
+            amount_available = Decimal(request.form['amount-available']) if is_decimal_type(request.form['amount-available']) else Decimal('0')
             account_number = request.form['account-number']
             bank_id = int(request.form['select-banks'])
 
@@ -41,7 +42,7 @@ def update_bank_account(bank_account):
         if request.method == 'PUT':
             bank_account.nick_name = request.form['e-nick-name'];
             bank_account.account_number = request.form['e-account-number'];
-            bank_account.amount_available = float(request.form['e-amount-available']) or 0;
+            bank_account.amount_available = Decimal(request.form['e-amount-available']) if is_decimal_type(request.form['e-amount-available']) else Decimal('0')
 
             if(bank_account.amount_available <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce valid number bigger than 0')
 

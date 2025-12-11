@@ -11,11 +11,12 @@ from app.models.cash_ledger import CashLedger
 from app.models.bank_account import BankAccount
 from app.exceptions.bankProductsException import *
 from app.exceptions.generic import *
-
+from app.utils.numeric_casting import is_decimal_type
 
 def create_withdrawal():
     try: 
-        amount = Decimal(request.form.get('amount'))
+        amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else Decimal('0')
+
         description = request.form.get('description')
         bank_account_id = None
         
@@ -47,7 +48,7 @@ def update_withdrawal(id):
         withdrawal = Withdrawal.query.get(id)
         if not withdrawal: raise NotRecordFound('No withdrawal record was found')
 
-        amount = Decimal(request.form.get('amount'))
+        amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else Decimal('0')
         description = request.form.get('description')
         bank_account_id = None
         bank_account_id = request.form.get('select-bank-account')

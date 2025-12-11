@@ -13,11 +13,12 @@ from app.models.bank_account import BankAccount
 from app.models.credit_card import CreditCard
 from app.models.cash_ledger import CashLedger
 from app.exceptions.bankProductsException import *
+from app.utils.numeric_casting import is_decimal_type
 
 #HANDLERS
 def create_expense():
     try:
-        amount = Decimal(request.form['amount'])
+        amount = Decimal(request.form['amount']) if is_decimal_type(request.form['amount']) else Decimal('0')
         is_cash = request.form.get('is-cash') == 'on'
         expense_category_id = int(request.form['select-expense-category'])
         description = request.form.get('description')
@@ -82,7 +83,7 @@ def create_expense():
 
 def update_expense(expense):
     try:
-        amount = Decimal(request.form['amount'])
+        amount = Decimal(request.form['amount']) if is_decimal_type(request.form['amount']) else Decimal('0')
         is_cash = request.form.get('is-cash') == 'on'
         expense_category_id = int(request.form['select-expense-category'])
         description = request.form.get('description')

@@ -9,10 +9,13 @@ from app.models.credit_card_payment import CreditCardPayment
 from app.models.credit_card import CreditCard
 from app.models.bank_account import BankAccount
 from app.exceptions.bankProductsException import *
+from app.utils.numeric_casting import is_decimal_type
+
 
 def create_credit_card_payment():
     try:
-        amount = Decimal(request.form.get('amount'))
+        amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else Decimal('0')
+
         credit_card_id = request.form.get('credit-card-id') 
         bank_account_id = request.form.get('select-bank-account')
 
@@ -46,7 +49,7 @@ def update_credit_card_payment(id):
         payment = CreditCardPayment.query.get(id)
         if not payment: raise CreditCardPaymentDoesNotExists('This credit card payment was not found.')
 
-        amount = Decimal(request.form.get('amount'))
+        amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else Decimal('0')
         bank_account_id = request.form.get('select-bank-account')
 
         if(amount <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')

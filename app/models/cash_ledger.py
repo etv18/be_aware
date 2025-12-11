@@ -38,8 +38,31 @@ class CashLedger(db.Model):
             db.session.add(ledger)
             db.session.commit()
         except Exception as e:
-            print('Error message: ', e)
+            print('Error on cash ledger file: ', e)
             traceback.print_exc()
             db.session.rollback()
             raise
+
+    @staticmethod
+    def update(transaction):
+        try:
+            if not isinstance(transaction, transactional_classes.get_all()):
+                return
+            
+            amount = transaction.amount
+            if isinstance(transaction, (transactional_classes.Expense, transactional_classes.Loan)):
+                amount = -amount
+            
+            ledger = CashLedger.query.filter_by(reference_code=transaction.code).one_or_404()
+
+            ledger.amount = amount
+
+            db.session.commit()
+        except Exception as e:
+            print('Error on cash ledger file: ', e)
+            traceback.print_exc()
+            db.session.rollback()
+            raise
+
+        
 

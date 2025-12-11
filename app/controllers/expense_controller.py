@@ -160,6 +160,9 @@ def update_expense(expense):
         expense.description = description
 
         db.session.commit()
+
+        CashLedger.update_or_delete(expense, delete_ledger=False)
+        
     except (
         AmountGreaterThanAvailableMoney,
         BankAccountDoesNotExists,
@@ -178,7 +181,8 @@ def delete_expense(expense):
     try:
         if expense.credit_card or expense.bank_account:
             return_money(expense)
-            
+
+        CashLedger.update_or_delete(expense, delete_ledger=True)
         db.session.delete(expense)
         db.session.commit()
     except SQLAlchemyError as e:

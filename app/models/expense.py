@@ -1,7 +1,10 @@
-from app.extensions import db
-from sqlalchemy.orm import relationship
+from sqlalchemy import event
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 
+from app.extensions import db
+from app.utils.code_generator import generate_montly_sequence
+from app.utils import prefixes
 class Expense(db.Model):
 
     __tablename__ = 'expenses'
@@ -13,7 +16,7 @@ class Expense(db.Model):
     credit_card_id = db.Column(db.Integer, db.ForeignKey('credit_cards.id'))
     bank_account_id = db.Column(db.Integer, db.ForeignKey('bank_accounts.id'))
     expense_category_id = db.Column(db.Integer, db.ForeignKey('expense_categories.id'))
-
+    code = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(150), nullable=False)
 
     created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
@@ -22,6 +25,13 @@ class Expense(db.Model):
     credit_card = relationship('CreditCard', back_populates='expenses')
     bank_account = relationship('BankAccount', back_populates='expenses')
     expense_category = relationship('ExpenseCategory', back_populates='expenses')
+
+    @event.listens_for(db.session, 'before_flush')
+    def assign_code(session, flush_context, instances=None):
+        for obj in session.new:
+            if isinstance(obj, Expense):
+                if not obj.code:
+                    obj.code = generate_montly_sequence(prefixes.EXPENSE, Expense)
 
     def to_dict(self):
         return {

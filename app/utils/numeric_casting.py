@@ -1,6 +1,6 @@
 from decimal import Decimal, InvalidOperation
 
-def is_numeric_type(value: str) -> bool:
+def is_decimal_type(value: str) -> bool:
     try:
         Decimal(value)
         return True

@@ -8,11 +8,11 @@ from app.models.bank_account import BankAccount
 from app.models.cash_ledger import CashLedger
 from app.exceptions.bankProductsException import BankAccountDoesNotExists, AmountIsLessThanOrEqualsToZero, NoBankProductSelected
 from app.extensions import db
-from app.utils.is_numeric_type import is_numeric_type
+from app.utils.numeric_casting import is_decimal_type
 
 def create_income():
         try:
-            amount = Decimal(request.form['amount']) if is_numeric_type(request.form['amount']) else Decimal('0')
+            amount = Decimal(request.form['amount']) if is_decimal_type(request.form['amount']) else Decimal('0')
             is_cash = request.form.get('is-cash') == 'on'
             bank_account_id = None
 
@@ -47,7 +47,7 @@ def create_income():
 
 def update_income(income):
     try:
-        amount = Decimal(request.form['amount']) if is_numeric_type(request.form['amount']) else Decimal('0')
+        amount = Decimal(request.form['amount']) if is_decimal_type(request.form['amount']) else Decimal('0')
         is_cash = request.form.get('is-cash') == 'on'
         new_bank_account_id = None
         selected_bank_account = request.form.get('select-bank-account')

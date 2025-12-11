@@ -64,13 +64,7 @@ def create_expense():
         db.session.add(expense)
         db.session.commit()
 
-        if expense.is_cash:
-            '''
-                This MUST BE AFTER db.session.add(obj) & db.session.commit() due to 'code' attribute is 
-                generated when the obj is about to be flushed into the database otherwise it'll throw an
-                exception for try to create a record with a null on 'reference_code' in *cash_ledger* table
-            '''
-            CashLedger.create(expense)
+        CashLedger.create(expense)
 
     except (
         AmountGreaterThanAvailableMoney,

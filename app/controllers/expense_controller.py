@@ -11,6 +11,7 @@ from app.models.expense import Expense
 from app.models.expense_category import ExpenseCategory
 from app.models.bank_account import BankAccount
 from app.models.credit_card import CreditCard
+from app.models.cash_ledger import CashLedger
 from app.exceptions.bankProductsException import *
 
 #HANDLERS
@@ -49,6 +50,7 @@ def create_expense():
                 bank_account_id = int(request.form['select-bank-account'])
                 update_bank_account_money_on_create(bank_account_id, amount)
 
+
         expense = Expense(
             amount=amount,
             is_cash=is_cash,
@@ -58,8 +60,17 @@ def create_expense():
             description=description
         )
 
+
         db.session.add(expense)
         db.session.commit()
+
+        if expense.is_cash:
+            '''
+                This MUST BE AFTER db.session.add(obj) & db.session.commit() due to 'code' attribute is 
+                generated when the obj is about to be flushed into the database otherwise it'll throw an
+                exception for try to create a record with a null on 'reference_code' in *cash_ledger* table
+            '''
+            CashLedger.create(expense)
 
     except (
         AmountGreaterThanAvailableMoney,

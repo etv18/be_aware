@@ -6,6 +6,7 @@ from decimal import Decimal
 
 from app.extensions import db
 from app.models.bank_account import BankAccount
+from app.models.cash_ledger import CashLedger
 from app.models.loan import Loan
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero
 from app.controllers.income_controller import update_bank_account_money_on_create, update_bank_account_money_on_update, update_bank_account_money_on_delete
@@ -42,6 +43,8 @@ def create_loan_payment():
         )
         db.session.add(loan_payment)
         db.session.commit()
+        
+        CashLedger.create(loan_payment)
 
         update_loan_is_active(loan)
         return jsonify({'message': 'Loan payment created successfully'}), 201
@@ -89,8 +92,9 @@ def update_loan_payment(loan_payment):
 
         db.session.commit()
 
-        update_loan_is_active(loan)
+        CashLedger.update_or_delete(loan_payment)
 
+        update_loan_is_active(loan)
         return jsonify({'message': 'Loan payment created successfully'}), 201
 
     except SQLAlchemyError as e:
@@ -108,6 +112,8 @@ def delete_loan_payment(loan_payment):
         loan = loan_payment.loan
         if loan_payment.bank_account:
             update_bank_account_money_on_delete(loan_payment.bank_account, loan_payment.amount)
+
+        CashLedger.update_or_delete(loan_payment, delete_ledger=True)
 
         db.session.delete(loan_payment)
         db.session.commit()

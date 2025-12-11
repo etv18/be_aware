@@ -117,8 +117,7 @@ async function editBankAccount(){
     try {
         const response = await fetch('/bank_accounts/update', {
             method: 'PUT',
-            body: formData,
-            headers: {'X-Requested-With': 'XMLHttpRequest'}
+            body: formData
         });
 
         const data = await response.json();

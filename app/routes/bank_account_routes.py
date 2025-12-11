@@ -32,8 +32,7 @@ def index():
 def create():
     try:
         ba_controller.create_bank_account()
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return jsonify({'message': 'Bank account created successfully!'}), 201
+        return jsonify({'message': 'Bank account created successfully!'}), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
@@ -46,8 +45,7 @@ def update():
         if bank_account:
             ba_controller.update_bank_account(bank_account)
             
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return jsonify({'message': 'Bank account edited successfully!'}), 201
+        return jsonify({'message': 'Bank account edited successfully!'}), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 

@@ -103,8 +103,11 @@ def update_expense(expense):
             update_has_bank_acnt = selected_bank_account and selected_bank_account != 'none'
             update_has_credit_card = selected_credit_card and selected_credit_card != 'none'
 
-            if not update_has_credit_card or not update_has_bank_acnt:
-                raise  NoBankProductSelected('You must select either a credit card or bank account.')
+            print(f'bank account {update_has_bank_acnt} {type(update_has_bank_acnt)}')
+            print(f'credit card {update_has_credit_card} {type(update_has_credit_card)}')
+
+            if not update_has_credit_card and not update_has_bank_acnt:
+                raise NoBankProductSelected('You must select either a credit card or bank account.')
 
             if (current_has_bank_acnt and not update_has_bank_acnt) or (current_has_credit_card and not update_has_credit_card):
                 old_amount = expense.amount

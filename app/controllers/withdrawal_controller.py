@@ -7,6 +7,7 @@ import traceback
 
 from app.extensions import db
 from app.models.withdrawal import Withdrawal
+from app.models.cash_ledger import CashLedger
 from app.models.bank_account import BankAccount
 from app.exceptions.bankProductsException import *
 from app.exceptions.generic import *
@@ -34,6 +35,9 @@ def create_withdrawal():
 
         db.session.add(withdrawal)
         db.session.commit()
+
+        CashLedger.create(withdrawal)
+
     except Exception as e:
         db.session.rollback()
         raise e
@@ -65,6 +69,8 @@ def update_withdrawal(id):
         withdrawal.bank_account_id = bank_account_id
         
         db.session.commit()
+
+        CashLedger.update_or_delete(withdrawal)
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
@@ -79,6 +85,9 @@ def delete_withdrawal(id):
 
         db.session.delete(withdrawal)
         db.session.commit()
+
+        CashLedger.update_or_delete(withdrawal, delete_ledger=True)
+
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()

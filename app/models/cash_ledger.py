@@ -25,18 +25,24 @@ class CashLedger(db.Model):
             if not isinstance(transaction, transactional_classes.get_all()):
                 return
             
-            amount = transaction.amount
-            if isinstance(transaction, (transactional_classes.Expense, transactional_classes.Loan)):
-                amount = -amount
-            
-            ledger = CashLedger(
-                amount=amount,
-                type=transaction.__class__.__tablename__,
-                reference_code=transaction.code
-            )
+            '''
+            this if statement checks if a transaction can be arithmetically operated with CashLedger model, in 
+            other words make sure only objects from Withdrawal or Models which have an is_cash=True property can
+            be saved into cash_ledger table in the database
+            '''
+            if isinstance(transaction, transactional_classes.Income) or transaction.is_cash:
+                amount = transaction.amount
+                if isinstance(transaction, (transactional_classes.Expense, transactional_classes.Loan)):
+                    amount = -amount
+                
+                ledger = CashLedger(
+                    amount=amount,
+                    type=transaction.__class__.__tablename__,
+                    reference_code=transaction.code
+                )
 
-            db.session.add(ledger)
-            db.session.commit()
+                db.session.add(ledger)
+                db.session.commit()
         except Exception as e:
             print('Error on cash ledger file: ', e)
             traceback.print_exc()
@@ -51,7 +57,7 @@ class CashLedger(db.Model):
             
             amount = transaction.amount
             if isinstance(transaction, (transactional_classes.Expense, transactional_classes.Loan)):
-                amount = -amount
+                amount = -amount #If a transaction is instance of Expense or Loan the amount must be negative
 
             ledger = CashLedger.query.filter_by(reference_code=transaction.code).first()
             if ledger:

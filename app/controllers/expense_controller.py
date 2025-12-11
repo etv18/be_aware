@@ -177,6 +177,7 @@ def delete_expense(expense):
             return_money(expense)
 
         CashLedger.update_or_delete(expense, delete_ledger=True)
+        
         db.session.delete(expense)
         db.session.commit()
     except SQLAlchemyError as e:

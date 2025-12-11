@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from app.extensions import db
 from app.models.loan import Loan
 from app.models.bank_account import BankAccount
+from app.models.cash_ledger import CashLedger
 from app.controllers.expense_controller import update_bank_account_money_on_create, update_bank_account_money_on_update
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero, NoBankProductSelected
 
@@ -40,6 +41,8 @@ def create_loan():
 
         db.session.add(loan)
         db.session.commit()
+
+        CashLedger.create(loan)
 
     except SQLAlchemyError as e:
         db.session.rollback()
@@ -79,6 +82,7 @@ def update_loan(loan):
     
         db.session.commit()
 
+        CashLedger.update_or_delete(loan)
         return jsonify({'data': 'Loan updated successfully'}), 200
     
     except SQLAlchemyError as e:
@@ -103,6 +107,7 @@ def delete_loan(loan):
         db.session.delete(loan)
         db.session.commit()
         
+        CashLedger.update_or_delete(loan, delete_ledger=True)
         return jsonify({'message': 'Loan deleted successfully'}), 200
 
     except SQLAlchemyError as e:

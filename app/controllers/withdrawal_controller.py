@@ -3,6 +3,7 @@ from sqlalchemy import func, or_
 from sqlalchemy.exc import SQLAlchemyError
 
 from decimal import Decimal
+from datetime import datetime, timedelta
 import traceback
 
 from app.extensions import db
@@ -112,6 +113,33 @@ def filter_withdrawals_by_field(query):
         )
 
         withdrawals_list = []
+        for w in withdrawals:
+            withdrawals_list.append(w.to_dict())
+
+        return withdrawals_list
+    except Exception as e:
+        db.session.rollback()
+        traceback.print_exc()
+        raise e
+    
+def filter_withdrawals_by_timeframe(start, end):
+    try:
+        if not start or not end:
+            return jsonify({'error': 'Missing data range.'})
+        
+        start_date = datetime.strptime(start, '%Y-%m-%d')
+        end_date = datetime.strptime(end, '%Y-%m-%d')
+        end_date += timedelta(days=1)
+
+        withdrawals_list = []
+
+        withdrawals = (
+            Withdrawal.query
+            .filter(Withdrawal.created_at.between(start_date, end_date))
+            .order_by(Withdrawal.created_at.desc())
+            .all()
+        )
+
         for w in withdrawals:
             withdrawals_list.append(w.to_dict())
 

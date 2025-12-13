@@ -42,3 +42,14 @@ def delete(id):
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400
+    
+@withdrawal_bp.route('/filter_withdrawals_by_field', methods=['GET'])
+def filter_withdrawals_by_field():
+    try:
+        query = request.args.get('query')
+        print(query)
+        withdrawals = withdrawal_controller.filter_withdrawals_by_field(query)
+        return jsonify({'withdrawals': withdrawals}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400

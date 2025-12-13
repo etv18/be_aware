@@ -2,6 +2,8 @@ from flask import request
 from sqlalchemy.exc import SQLAlchemyError
 
 from decimal import Decimal, ConversionSyntax
+from datetime import datetime, timedelta
+import traceback
 
 from app.models.income import Income
 from app.models.bank_account import BankAccount
@@ -96,6 +98,19 @@ def delete_income(income):
     except Exception as e:
         db.session.rollback()
         raise e 
+    
+
+def filter_incomes_by_field(query):
+    try:
+        q = f'%{query}%'
+        filters = [
+            (Income.amount.ilike(q)),
+            (BankAccount.nick_name.ilike(q))
+        ]
+    except Exception as e:
+        db.session.rollback()
+        traceback.print_exc()
+        raise e
 
 def update_bank_account_money_on_create(id, amount):
     bank_account = BankAccount.query.get(id)

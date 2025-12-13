@@ -13,6 +13,7 @@ class Income(db.Model):
     amount = db.Column(db.Numeric(10,2), nullable=False, default=0.00)
     is_cash = db.Column(db.Boolean, nullable=False, default=False)
     code = db.Column(db.String(50), nullable=False, server_default='TEMP')
+    description = db.Column(db.String(255))
 
     bank_account_id = db.Column(db.Integer, db.ForeignKey('bank_accounts.id'))
 

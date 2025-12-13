@@ -68,4 +68,13 @@ def delete(id):
         db.session.rollback()
         print(e)
         return jsonify({'error': str(e)}), 400
-    return redirect(url_for('income.index'))
+    
+@income_bp.route('/filter/incomes/by/field', methods=['GET'])
+def filter_incomes_by_field():
+    try:
+        query = request.args.get('query')
+        incomes = income_controller.filter_incomes_by_field(query)
+        return jsonify({'incomes': incomes}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400

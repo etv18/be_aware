@@ -100,8 +100,8 @@ async function filterData(){
 
     renderDataTable(data.withdrawals);
 
-    startDate = null;
-    endDate = null;
+    //startDate = null;
+    //endDate = null;
 }
 
 selectFilterType.addEventListener('change', (e) => {

@@ -53,3 +53,14 @@ def filter_withdrawals_by_field():
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400
+    
+@withdrawal_bp.route('/filter/withdrawals/by/timeframe', methods=['GET'])
+def filter_withdrawals_by_timeframe():
+    try:
+        start = request.args.get('start')
+        end =request.args.get('end')
+        withdrawals = withdrawal_controller.filter_withdrawals_by_timeframe(start, end)
+        return jsonify({'withdrawals': withdrawals}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400

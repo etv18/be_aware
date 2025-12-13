@@ -93,7 +93,36 @@ def delete_withdrawal(id):
         db.session.rollback()
         traceback.print_exc()
         raise e
+    
+def filter_withdrawals_by_field(query):
+    try:
+        q = f'%{query}%'
+        filters = [
+            (Withdrawal.amount.ilike(q)),
+            (Withdrawal.description.ilike(q)),
+            (BankAccount.nick_name.ilike(q))
+        ]
 
+        withdrawals = (
+            Withdrawal.query
+            .outerjoin(Withdrawal.bank_account)
+            .filter(or_(*filters))
+            .order_by(Withdrawal.created_at.desc())
+            .all()
+        )
+
+        withdrawals_list = []
+        for w in withdrawals:
+            withdrawals_list.append(w.to_dict())
+
+        return withdrawals_list
+    except Exception as e:
+        db.session.rollback()
+        traceback.print_exc()
+        raise e
+    
+
+'''HELPERS'''
 def h_update_bank_account_money_on_create(bank_account, amount):
 
     if not bank_account:

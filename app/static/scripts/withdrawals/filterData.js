@@ -1,56 +1,47 @@
-/*
-best way to compare to undifined values, it only matches expecifically undefined values
-if (typeof yourVariable === 'undefined') {...}
-*/
-
 const selectFilterType = document.getElementById('select-filter-type-id');
 const filterInput = document.getElementById('filter-input-id');
 const btnSearch = document.getElementById('btn-search-id');
-
 let timePicker = null;
 let startDate = null;
 let endDate = null;
 
-export function renderExpensesTable(expenses){
-    const tbody = document.getElementById('expenses-table-body');
-    tbody.innerHTML = ''; //first you must clear previous rows
+function renderDataTable(withdrawals){
+    const tbody = document.getElementById('withdrawals-table-body-id');
+    tbody.innerHTML = '';
 
-    if(expenses.length === 0) {
+    if(withdrawals.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="9" class="text-center text-muted">No expenses found for this date range.</td>
+                <td colspan="6" class="text-center text-muted">No results found.</td>
             </tr>  
         `;
         return;
     }
 
-    expenses.forEach(expense => {
+    withdrawals.forEach(withdrawal => {
         const tableRow = document.createElement('tr');
+        
         tableRow.innerHTML = `
-            <th scope="row">${expense.id}</th>
-            <td>${expense.amount}</td>
-            <td>${expense.is_cash ? 'Yes' : 'No'}</td>
-            <td>${expense.description || '-'}</td>
-            <td>${expense.credit_card_name || '-'}</td>
-            <td>${expense.bank_account_name || '-'}</td>
-            <td>${expense.expense_category_name || '-'}</td>
-            <td>${new Date(expense.created_at).toLocaleString()}</td>
+            <th scope="row">${ withdrawal.id }</th>
+            <td>${ withdrawal.amount }</td>
+            <td>${ withdrawal.description ? withdrawal.description : '-'}</td>
+            <td>${ withdrawal.bank_account_nick_name }</td>
+            <td>${ withdrawal.created_at }</td>
             <td>
                 <div class="d-flex gap-2">
                     <button 
-                        type="button"
-                        class="btn btn-success"
-                        data-bs-toggle="modal"
-                        data-bs-target="#edit-expense"
-                        data-expense-id="${expense.id}"
-                        data-amount-id="${expense.amount}"
-                        data-is-cash="${expense.is_cash}"
-                        data-select-expense-category-id="${expense.expense_category_id}"
-                        data-select-credit-card-id="${expense.credit_card_id}"
-                        data-select-bank-account-id="${expense.bank_account_id}"
-                        data-description="${expense.description}"
-                    >Edit</button>
-                    <a href="/expenses/delete/${expense.id}" class="btn btn-danger">Delete</a>
+                        type="button" 
+                        class="btn btn-outline-success" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#edit-withdrawal-model"
+                        data-withdrawal-id="${ withdrawal.id }"
+                        data-description="${ withdrawal.description }"
+                        data-amount="${ withdrawal.amount }"
+                        data-bank-account-id="${ withdrawal.bank_account_id }"
+                    >
+                    <i class="bi bi-pen"></i>
+                    </button>
+                    <a href="/withdrawals/delete/${withdrawal.id}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
                 </div>
             </td>
         `;
@@ -87,8 +78,9 @@ async function getData(url){
 
 async function filterData(){
     let url = '';
+
     if(selectFilterType.value === 'field'){
-        url = `/expenses/filter_by_field?query=${filterInput.value}`;
+        url = `/withdrawals/filter_withdrawals_by_field?query=${filterInput.value}`;
     } else {
         if(startDate === null || endDate === null){ 
             Swal.fire({
@@ -101,20 +93,19 @@ async function filterData(){
         const start = timePicker.formatDate(startDate, 'Y-m-d');      
         const end = timePicker.formatDate(endDate, 'Y-m-d'); 
 
-        url = `/expenses/filter_by_time?start=${start}&end=${end}`;
+        url = `/withdrawals/filter/withdrawals/by/timeframe?start=${start}&end=${end}`;
     }
 
     const data = await getData(url);
 
-    renderExpensesTable(data.expenses);
+    renderDataTable(data.withdrawals);
 
     startDate = null;
     endDate = null;
 }
 
-//LISTENERS
-selectFilterType.addEventListener('change', e => {
-    if(e.target.value == 'time'){
+selectFilterType.addEventListener('change', (e) => {
+    if(e.target.value === 'time'){
         timePicker = flatpickr(filterInput, {
             mode: 'range',
             altInput: true,
@@ -127,7 +118,7 @@ selectFilterType.addEventListener('change', e => {
                 }
             }
         });
-        return;  
+        return;
     }
 
     if(timePicker){
@@ -137,8 +128,9 @@ selectFilterType.addEventListener('change', e => {
 
     filterInput.type = "text";
     filterInput.value = "";
+    
 });
 
-btnSearch.addEventListener('click', e => {
+btnSearch.addEventListener('click', async e => {
     filterData();
 });

@@ -92,7 +92,7 @@ async function getData(url){
         Swal.fire({
             icon: 'error',
             title: 'Network Error',
-            text: err.message || 'Could not connect to server.'
+            text: error.message || 'Could not connect to server.'
         });
     }
 
@@ -116,8 +116,7 @@ async function filterData(){
         const start = timePicker.formatDate(startDate, 'Y-m-d');      
         const end = timePicker.formatDate(endDate, 'Y-m-d'); 
 
-        console.log(start)
-        console.log(end)
+
         url = `/accounts_receivable/filter_loans_by_timeframe?start=${start}&end=${end}`;
     }
 

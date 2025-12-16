@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, jsonify
 from sqlalchemy.exc import SQLAlchemyError
 
 from decimal import Decimal, ConversionSyntax
@@ -105,8 +105,24 @@ def filter_incomes_by_field(query):
         q = f'%{query}%'
         filters = [
             (Income.amount.ilike(q)),
-            (BankAccount.nick_name.ilike(q))
+            (BankAccount.nick_name.ilike(q)),
+            (Income.description.ilike(q))
         ]
+
+        incomes = (
+            Income.query
+            .outerjoin(Income.bank_account)
+            .filter(db.or_(*filters))
+            .order_by(Income.created_at.desc())
+            .all()
+        )
+        
+        incomes_list = []
+        for i in incomes:
+            incomes_list.append(i.to_dict())
+
+        return jsonify({'incomes': incomes_list}), 200
+
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()

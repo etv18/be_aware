@@ -28,3 +28,16 @@ class Income(db.Model):
             if isinstance(obj, Income):
                 if not obj.code:
                     obj.code = generate_montly_sequence(prefixes.INCOME, Income)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'amount': float(self.amount) if self.amount is not None else 0.0,
+            'is_cash': self.is_cash,
+            'code': self.code,
+            'description': self.description,
+            'bank_account_id': self.bank_account_id,
+            'bank_nick_name': self.bank_account.nick_name if self.bank_account.nick_name else '-',
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+        }

@@ -34,6 +34,13 @@
                                 </div>
                             </div>
                             <div class="row">
+                                <div class="">
+                                    <div class="form-floating mt-2">
+                                        <input type="text" name="description" id="description-id" class="form-control"
+                                            placeholder="Description" required>
+                                        <label for="description-id">Description</label>
+                                    </div>
+                                </div>
                                 <div class="form-floating mt-2">
                                     <select name="select-bank-account" id="select-bank-account-id" class="form-select">
                                         <option value="none">...Select...</option>
@@ -81,6 +88,13 @@
                                 </div>
                             </div>
                             <div class="row">
+                                <div class="">
+                                    <div class="form-floating mt-2">
+                                        <input type="text" name="description" id="e-description-id" class="form-control"
+                                            placeholder="Description" required>
+                                        <label for="description-id">Description</label>
+                                    </div>
+                                </div>
                                 <div class="form-floating mt-2">
                                     <select name="select-bank-account" id="e-select-bank-account-id" class="form-select">
                                         <option value="none">...Select...</option>
@@ -100,7 +114,6 @@
                 </div>
             </form>
         </section>
-        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-income">New Income</button>
         <div class="d-flex justify-content-start gap-1 flex-wrap flex-md-nowrap mt-2">
             <button 
                 type="button"
@@ -137,6 +150,7 @@
                     <th scope="col"># Id</th>
                     <th scope="col">Amount</th>
                     <th scope="col">Is Cash</th>
+                    <th scope="col">Description</th>
                     <th scope="col">Bank Account</th>
                     <th scope="col">Create at</th>
                     <th scope="col">Acctions</th>
@@ -149,6 +163,7 @@
                         <th scope="row">{{ income.id }}</th>
                         <td>{{ income.amount }}</td>
                         <td>{{ income.is_cash }}</td>
+                        <td>{{ income.description if income.description else '-'}}</td>
                         <td>{{ income.bank_account.nick_name }}</td>
                         <td>{{ income.created_at }}</td>
                         <td>
@@ -161,6 +176,7 @@
                                     data-income-id="{{ income.id }}"
                                     data-amount="{{ income.amount }}"
                                     data-is-cash="{{ income.is_cash }}"
+                                    data-description="{{ income.description if income.description else '' }}"
                                     data-bank-account-id="{{ income.bank_account_id }}"
                                 >
                                 Edit
@@ -177,7 +193,12 @@
 
 <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
+<script src="{{ url_for('static', filename='scripts/incomes/filterData.js' ) }}"></script>
 
 <script> 
     document.addEventListener('DOMContentLoaded', () => {
@@ -218,15 +239,18 @@
             const editIsCash = document.getElementById('e-is-cash-id');
             const editBankAccountsSelect = document.getElementById('e-select-bank-account-id');
             const editAmount = document.getElementById('e-amount');
+            const editDescription = document.getElementById('e-description-id');
 
             const oldIsCash = button.getAttribute('data-is-cash') === 'True';
             const oldBankAccountId = button.getAttribute('data-bank-account-id');
             const oldAmount = button.getAttribute('data-amount');
             const incomeId = button.getAttribute('data-income-id');
+            const oldDescription = button.getAttribute('data-description');
 
             document.getElementById('e-amount-id').value = oldAmount;
             document.getElementById('e-is-cash-id').checked = oldIsCash;
             document.getElementById('income-id').value = incomeId;
+            document.getElementById('e-description-id').value = oldDescription;
             document.getElementById('e-select-bank-account-id').value = oldBankAccountId; //If on the db its value it's Null flask will convert it into 'None' which the browser interprets it as String value in js
             if(oldBankAccountId === 'None') {
                 document.getElementById('e-select-bank-account-id').value = 'none';

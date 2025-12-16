@@ -16,6 +16,7 @@ def create_income():
         try:
             amount = Decimal(request.form['amount']) if is_decimal_type(request.form['amount']) else Decimal('0')
             is_cash = request.form.get('is-cash') == 'on'
+            description = request.form.get('description')
             bank_account_id = None
 
             if(amount <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
@@ -29,7 +30,8 @@ def create_income():
             income = Income(
                 amount=amount,
                 is_cash=is_cash,
-                bank_account_id=bank_account_id
+                bank_account_id=bank_account_id,
+                description=description
             )
 
             db.session.add(income)
@@ -51,6 +53,7 @@ def update_income(income):
     try:
         amount = Decimal(request.form['amount']) if is_decimal_type(request.form['amount']) else Decimal('0')
         is_cash = request.form.get('is-cash') == 'on'
+        description = request.form.get('description')
         new_bank_account_id = None
         selected_bank_account = request.form.get('select-bank-account')
         
@@ -66,6 +69,7 @@ def update_income(income):
             income.bank_account.amount_available -= income.amount
 
         income.amount = amount
+        income.description = description
         income.is_cash = is_cash
         income.bank_account_id = new_bank_account_id
 

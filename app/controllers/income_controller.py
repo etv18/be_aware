@@ -127,6 +127,33 @@ def filter_incomes_by_field(query):
         db.session.rollback()
         traceback.print_exc()
         raise e
+    
+def filter_incomes_by_time(start, end):
+    try:
+        if not start or not end:
+            return jsonify({'error': 'Missing data range.'})
+
+        start_date = datetime.strptime(start, '%Y-%m-%d')
+        end_date = datetime.strptime(end, '%Y-%m-%d')
+        end_date += timedelta(days=1)
+
+        incomes = (
+            Income.query
+            .filter(Income.created_at.between(start_date, end_date))
+            .order_by(Income.created_at.desc())
+            .all()
+        )
+
+        incomes_list = []
+        for i in incomes:
+            incomes_list.append(i.to_dict())
+
+        return jsonify({'incomes': incomes_list}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        traceback.print_exc()
+        raise e
 
 def update_bank_account_money_on_create(id, amount):
     bank_account = BankAccount.query.get(id)

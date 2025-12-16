@@ -77,3 +77,13 @@ def filter_incomes_by_field():
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400
+    
+@income_bp.route('/filter/incomes/by/time', methods=['GET'])
+def filter_incomes_by_time():
+    try:
+        start = request.args.get('start')
+        end = request.args.get('end')
+        return income_controller.filter_incomes_by_time(start, end)
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400

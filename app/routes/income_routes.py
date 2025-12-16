@@ -73,8 +73,7 @@ def delete(id):
 def filter_incomes_by_field():
     try:
         query = request.args.get('query')
-        incomes = income_controller.filter_incomes_by_field(query)
-        return jsonify({'incomes': incomes}), 200
+        return income_controller.filter_incomes_by_field(query)
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400

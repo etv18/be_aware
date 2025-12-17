@@ -6,6 +6,7 @@ import traceback
 from decimal import Decimal
 
 from app.utils import transactional_classes
+from app.utils.normalize_string import normalize_string
 
 class CashLedger(db.Model):
     __tablename__ = 'cash_ledger' 
@@ -47,7 +48,7 @@ class CashLedger(db.Model):
                 
                 ledger = CashLedger(
                     amount=amount,
-                    type=transaction.__class__.__tablename__,
+                    type=normalize_string(transaction.__class__.__tablename__),
                     reference_code=transaction.code
                 )
 

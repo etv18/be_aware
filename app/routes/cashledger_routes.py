@@ -15,3 +15,20 @@ def index():
         'sum_result': sum_result,
     }
     return render_template('cashledger/index.html', **context)
+
+@cashlegder_bp.route('/filter/cashledger/by/field')
+def filter_by_field():
+    try:
+       query = request.args.get('query') 
+       return cashledger_controller.filter_by_field(query)
+    except Exception as e:
+        raise e
+    
+@cashlegder_bp.route('/filter/cashledger/by/time')
+def filter_by_time():
+    try:
+       start = request.args.get('start')
+       end = request.args.get('end')
+       return cashledger_controller.filter_by_time(start, end)
+    except Exception as e:
+        raise e

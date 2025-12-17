@@ -19,6 +19,16 @@ class CashLedger(db.Model):
     created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
     updated_at = db.Column(db.DateTime(timezone=True), onupdate=func.now())
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "amount": float(self.amount) if isinstance(self.amount, Decimal) else self.amount,
+            "type": self.type,
+            "reference_code": self.reference_code,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+        }
+
     @staticmethod
     def create(transaction):
         try:

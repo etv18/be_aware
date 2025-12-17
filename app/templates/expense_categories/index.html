@@ -3,7 +3,7 @@
 {% block title %}Expense Categories{% endblock %}
 
 {% block content %}
-    <div class="container w-75">
+    <div class="container w-100">
         <h2>Expense Categories</h2>
         <section class="modal fade" tabindex="-1" id="create-expense-category">
             <form action="{{ url_for('expense_category.create' ) }}" method="post">
@@ -54,10 +54,19 @@
                 </div>
             </form>
         </section>
-
-        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-expense-category">New Expense Category</button>
         <div class="row">
             <div class="col-sm">
+                <div class="row" style="height: 200px;">
+                    <div class="d-flex justify-content-center">
+                        <h4>Monthly Basis</h4>
+                    </div>
+                    <div class=" p-4">
+                        <canvas id="totals-per-category"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm">
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-expense-category">New Expense Category</button>
                 <div class="table-responsive overflow-y-auto border rounded-3 mt-1" style="max-height: 457px;">
                     <table class="table table-striped  table-hover">
                         <thead class="sticky-top">
@@ -95,11 +104,6 @@
                             {% endfor %}
                         </tbody>
                     </table>
-                </div>
-            </div>
-            <div class="col-sm">
-                <div>
-                    <canvas id="totals-per-category"></canvas>
                 </div>
             </div>
         </div>

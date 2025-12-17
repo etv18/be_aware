@@ -3,7 +3,7 @@ const filterInput = document.getElementById('filter-input-id');
 const btnSearch = document.getElementById('btn-search-id');
 let timePicker = null;
 let startDate = null;
-let endDate = null
+let endDate = null;
 
 function renderDataTable(incomes){
     const tbody = document.getElementById('incomes-table-body-id');

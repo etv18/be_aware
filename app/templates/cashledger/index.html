@@ -1,0 +1,48 @@
+{% extends 'layout.html' %}
+
+{% block title %}Cash Ledger{% endblock %}
+
+{% block content %}
+
+    <div class="container w-75">
+
+        <h2>Cash Ledger</h2>
+        
+        <div class="table-responsive overflow-y-auto border rounded-3 mt-1" style="max-height: 457px;">
+            <table class="table table-striped  table-hover">
+                <thead class="sticky-top">
+                    <tr>
+                    <th scope="col"># Id</th>
+                    <th scope="col">Ref. Code</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Create at</th>
+                    </tr>
+                </thead>
+                
+                <tbody id="incomes-table-body-id">
+                  {% for ledger in ledgers %}
+                    <tr>
+                        <th scope="row">{{ ledger.id }}</th>
+                        <td>{{ ledger.reference_code }}</td>
+                        <td>{{ ledger.type.replace('_', ' ').capitalize() }}</td>
+                        <td>{{ ledger.amount }}</td>
+                        <td>{{ ledger.created_at }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <p>Available Cash: {{ sum_result }}</p>
+    </div>
+
+<link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
+
+{% endblock %}

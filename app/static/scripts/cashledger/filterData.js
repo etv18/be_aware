@@ -5,11 +5,11 @@ let timePicker = null;
 let startDate = null;
 let endDate = null;
 
-function renderDataTable(incomes){
+function renderDataTable(ledgers){
     const tbody = document.getElementById('cashledger-table-body-id');
     tbody.innerHTML = '';
 
-    if(incomes.length === 0){
+    if(ledgers.length === 0){
         tbody.innerHTML = `
             <tr>
                 <td colspan="5" class="text-center text-muted">No results found.</td>
@@ -18,11 +18,15 @@ function renderDataTable(incomes){
         return;
     }
 
-    incomes.forEach(income => {
+    ledgers.forEach(ledger => {
         const tableRow = document.createElement('tr');
 
         tableRow.innerHTML = `
-
+            <th scope="row">${ ledger.id }</th>
+            <td>${ ledger.reference_code }</td>
+            <td>${ ledger.type }</td>
+            <td>${ ledger.amount }</td>
+            <td>${ ledger.created_at }</td>
         `;
 
         tbody.appendChild(tableRow);
@@ -60,7 +64,7 @@ async function filterData(){
     let url = '';
 
     if(selectFilterType.value === 'field'){
-        url = `/incomes/filter/incomes/by/field?query=${filterInput.value}`;
+        url = `/cashledger/filter/cashledger/by/field?query=${filterInput.value}`;
     } else {
         if(startDate === null || endDate === null){ 
             Swal.fire({
@@ -73,12 +77,12 @@ async function filterData(){
         const start = timePicker.formatDate(startDate, 'Y-m-d');      
         const end = timePicker.formatDate(endDate, 'Y-m-d'); 
 
-        url = `/incomes/filter/incomes/by/time?start=${start}&end=${end}`;
+        url = `/cashledger/filter/cashledger/by/time?start=${start}&end=${end}`;
     }
 
     const data = await getData(url);
 
-    renderDataTable(data.incomes);
+    renderDataTable(data.ledgers);
 }
 
 selectFilterType.addEventListener('change', (e) => {

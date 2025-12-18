@@ -11,4 +11,7 @@ def total_amount(obj_list):
         total = Decimal()
         for o in obj_list:
             total += o.amount
-        return f'DOP {total:,.2f}'
+        return format_amount(total)
+
+def format_amount(value):
+    return f'{value:,.2f}'

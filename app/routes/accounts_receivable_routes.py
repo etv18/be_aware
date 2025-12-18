@@ -5,6 +5,7 @@ from app.controllers import loan_payment_controller
 from app.models.loan import Loan
 from app.models.loan_payment import LoanPayment
 from app.models.bank_account import BankAccount
+from app.utils.numeric_casting import format_amount, total_amount
 
 accounts_receivable_bp = Blueprint('accounts_receivable', __name__, url_prefix='/accounts_receivable')
 
@@ -56,6 +57,8 @@ def associated_records(loan_id):
         context = {
             'loan': loan,
             'bank_accounts': bank_accounts,
+            'format_amount': format_amount,
+            'total_amount': total_amount,
         }
         return render_template('accounts_receivable/associated_records.html', **context)
     except Exception as e:

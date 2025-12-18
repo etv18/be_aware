@@ -18,6 +18,7 @@
                     <tr class="table-danger">
                         <th scope="col"># Id</th>
                         <th scope="col" class="text-start">Amount</th>
+                        <th scope="col">Is Cash</th>
                         <th scope="col" class="text-start">Description</th>
                         <th scope="col">Credit Card</th>
                         <th scope="col">Bank Account</th>
@@ -30,6 +31,7 @@
                     <tr>
                         <th scope="row">{{ expense.id }}</th>
                         <td class="text-start">{{ format_amount(expense.amount) }}</td>
+                        <td>{{ 'YES' if expense.is_cash else 'NO' }}</td>
                         <td class="text-start"> {{ expense.description or '-' }} </td>
                         <td>{{ expense.credit_card.nick_name or '-' }}</td>
                         <td>{{ expense.bank_account.nick_name }}</td>

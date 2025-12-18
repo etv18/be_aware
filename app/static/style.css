@@ -8,3 +8,12 @@
     color: rgb(39, 125, 255);
     cursor: pointer;
 }
+
+.chart-container {
+    height: 457px; /* same as table max-height */
+}
+
+.chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+}

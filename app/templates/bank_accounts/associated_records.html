@@ -7,15 +7,15 @@
 {% block content %}
     <h3>{{ bank_account.nick_name }}</h3>
     <a href="{{ url_for('bank_account.index') }}" class="btn btn-light fs-5"><i class="bi bi-arrow-return-left"></i> Go back</a>
-    <div class="my-3">
-        <div id="expenses-table-container" class="table-responsive overflow-y-auto border rounded-3 mt-1" style="max-height: 322px;">
-            <h4 class="d-flex justify-content-center">Expenses</h4>
+    <div class="my-3 border rounded-3">
+        <h4 class="d-flex justify-content-center">Expenses</h4>
+        <div id="expenses-table-container" class="table-responsive overflow-y-auto mt-1" style="max-height: 322px;">
             <table class="table table-borderless table-hover" id="expenses-table">
                 <thead class="sticky-top" >
                     <tr class="table-danger">
                         <th scope="col" class="text-center"># Id</th>
                         <th scope="col" class="text-center">Amount</th>
-                        <th scope="col" class="">Description</th>
+                        <th scope="col">Description</th>
                         <th scope="col" class="text-center">Credit Card</th>
                         <th scope="col" class="text-center">Bank Account</th>
                         <th scope="col" class="text-center">Category</th>
@@ -38,20 +38,22 @@
                 </tbody>
             </table>
         </div>
-        <p class="fs-6 fw-bold">Total: {{ total_amount(bank_account.expenses) }}</p>
+        <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
+            <p class="fs-6 fw-bold">Total: {{ total_amount(bank_account.expenses) }}</p>
+        </div>
     </div>
 
 
-    <div class="my-5">
-        <div class="table-responsive overflow-y-auto border rounded-3 mt-1" style="max-height: 322px;">
-            <h4 class="d-flex justify-content-center">Incomes</h4>
+    <div class="my-5 border rounded-3">
+        <h4 class="d-flex justify-content-center">Incomes</h4>
+        <div id="incomes-table-container" class="table-responsive overflow-y-auto mt-1" style="max-height: 322px;">
             <table class="table table-borderless table-hover">
                 <thead class="sticky-top">
                     <tr class="table-info">
                         <th scope="col" class="text-center"># Id</th>
                         <th scope="col" class="text-center">Amount</th>
                         <th scope="col" class="text-center">Is Cash</th>
-                        <th scope="col" class="">Description</th>
+                        <th scope="col">Description</th>
                         <th scope="col" class="text-center">Bank Account</th>
                         <th scope="col" class="text-center">Create at</th>
                     </tr>
@@ -63,7 +65,7 @@
                         <th scope="row" class="text-center">{{ income.id }}</th>
                         <td class="text-center">{{ income.amount }}</td>
                         <td class="text-center">{{ income.is_cash }}</td>
-                        <td class="">{{ income.description if income.description else '-'}}</td>
+                        <td>{{ income.description if income.description else '-'}}</td>
                         <td class="text-center">{{ income.bank_account.nick_name }}</td>
                         <td class="text-center">{{ income.created_at }}</td>
                     </tr>
@@ -71,10 +73,72 @@
                 </tbody>
             </table>
         </div>
-        <p class="fs-6 fw-bold">Total: {{ total_amount(bank_account.incomes) }}</p>
+        <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
+            <p class="fs-6 fw-bold">Total: {{ total_amount(bank_account.incomes) }}</p>
+        </div>
     </div>
 
-    <div class="my-5">
-        
+    <div class="my-5 border rounded-3">
+        <h4 class="d-flex justify-content-center">Loans</h4>
+        <div id="expenses-table-container" class="table-responsive overflow-y-auto mt-2" style="max-height: 457px;">
+            <table class="table table-borderless  table-hover">
+                <thead class="sticky-top">
+                    <tr class="table-warning">
+                    <th scope="col"># Id</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Remaining</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Is Cash</th>
+                    <th scope="col">Bank Account</th>
+                    <th scope="col">Create at</th>
+                    </tr>
+                </thead>
+                
+                <tbody id="loans-table-body-id">
+                  {% for loan in bank_account.loans %}
+                    <tr class="loan-row" data-loan-id="{{ loan.id }}" data-url-associated-records = "{{ url_for('accounts_receivable.associated_records', loan_id=loan.id) }}">
+                        <th scope="row">{{ loan.id }}</th>
+                        <td>{{ loan.person_name }}</td>
+                        <td>{{ loan.amount }}</td>
+                        <td> {{ loan.remaining_amount() }} </td>
+                        <td>{{ 'ACTIVE' if loan.is_active else 'PAID'  }}</td>
+                        <td>{{ loan.description }}</td>
+                        <td>{{ 'YES' if loan.is_cash else 'NO'  }}</td>
+                        <td>{{ loan.bank_account.nick_name }}</td>
+                        <td>{{ loan.created_at }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
+            <p class="fs-6 fw-bold mx-2">Total: {{ total_amount(bank_account.loans) }}</p>
+        </div>
+    </div>
+
+    <div class="my-5 border rounded-3">
+        <h4 class="d-flex justify-content-center">Loans Payments</h4>
+
+        <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
+            <p class="fs-6 fw-bold mx-2">Total: {{ total_amount(bank_account.loan_payments) }}</p>
+        </div>
+    </div>
+
+    <div class="my-5 border rounded-3">
+        <h4 class="d-flex justify-content-center">Credit Card Payments</h4>
+
+        <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
+            <p class="fs-6 fw-bold mx-2">Total: {{ total_amount(bank_account.credit_card_payments) }}</p>
+        </div>
+    </div>
+
+    <div class="my-5 border rounded-3">
+        <h4 class="d-flex justify-content-center">Withdrawals</h4>
+
+        <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
+            <p class="fs-6 fw-bold mx-2">Total: {{ total_amount(bank_account.withdrawals) }}</p>
+        </div>
     </div>
 {% endblock %}

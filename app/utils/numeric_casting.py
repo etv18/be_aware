@@ -7,7 +7,7 @@ def is_decimal_type(value: str) -> bool:
     except (InvalidOperation, ValueError):
         return False
 
-def total_amount(obj_list):
+def total_amount(obj_list: list):
         total = Decimal()
         for o in obj_list:
             total += o.amount

@@ -69,23 +69,15 @@ def delete_bank_account(bank_account):
         raise e
 
 def get_associated_records(bank_account_id):
-    data = {}
     try:
+        data = {}
         bank_account = BankAccount.query.get(bank_account_id) 
-
-        query = Expense.query.filter(Expense.bank_account_id == bank_account_id)
-        expenses = query.order_by(Expense.created_at.desc()).all()
-        count_expenses = query.count()
-        total_expenses = query.with_entities(func.sum(Expense.amount)).scalar() or Decimal(0.00)
-
         data = {
             'bank_account': bank_account,
-            'count_expenses': count_expenses,
-            'total_expenses': total_expenses,
             'total_amount': total_amount,
         }
+        return data
     except BankAccountDoesNotExists as e:
         raise BankAccountDoesNotExists('Bank account does not exists.')
     except Exception as e:
         raise e
-    return data

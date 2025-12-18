@@ -8,7 +8,7 @@ from app.models.bank_account import BankAccount
 from app.models.expense import Expense
 from app.models.bank import Bank
 from app.models.loan_payment import LoanPayment
-from app.utils.numeric_casting import is_decimal_type, total_amount
+from app.utils.numeric_casting import is_decimal_type, total_amount, format_amount
 from app.exceptions.bankProductsException import BankAccountDoesNotExists, AmountIsLessThanOrEqualsToZero
 from app.extensions import db
 
@@ -76,6 +76,7 @@ def get_associated_records(bank_account_id):
         data = {
             'bank_account': bank_account,
             'total_amount': total_amount, #this the utility function to transfor decimal objects into a readable currency string
+            'format_amount': format_amount,
         }
         return data
     except BankAccountDoesNotExists as e:

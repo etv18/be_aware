@@ -3,19 +3,42 @@
 {% block title %}home{% endblock %}
 
 {% block content %}
-    <h5>Home</h5>
-    <div class="container row">
-        <div class="col-sm">
-            <div class="container" style="width: 60%;">
-                <canvas id="incomes-and-expenses-monthly"></canvas>
-            </div>
-        </div>
-        <div class="col-sm">
-            <div>
-                <canvas id="incomes-and-expenses-yearly"></canvas>
-            </div>
+<style>
+    .chart-box {
+        width: 100%;
+        max-width: 600px;      /* optional: keeps charts from getting huge */
+        height: 350px;         /* SAME HEIGHT for both charts */
+    }
+
+    .chart-box canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    /* Mobile */
+    @media (max-width: 576px) {
+        .chart-box {
+            height: 280px;
+        }
+    }
+</style>
+
+<h5>Home</h5>
+<div class="row align-items-stretch">
+    <!-- MONTHLY -->
+    <div class="col-sm d-flex justify-content-center">
+        <div class="chart-box">
+            <canvas id="incomes-and-expenses-monthly"></canvas>
         </div>
     </div>
+    <!-- YEARLY -->
+    <div class="col-sm d-flex justify-content-center">
+        <div class="chart-box">
+            <canvas id="incomes-and-expenses-yearly"></canvas>
+        </div>
+    </div>
+</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="../../static/scripts/home/stats.js"></script>

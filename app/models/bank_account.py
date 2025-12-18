@@ -16,9 +16,10 @@ class BankAccount(db.Model):
     updated_at = db.Column(db.DateTime(timezone=True), onupdate=func.now())
 
     bank = relationship('Bank', back_populates='bank_accounts')
-    expenses = relationship('Expense', back_populates='bank_account')
-    incomes = relationship('Income', back_populates='bank_account')
-    loans = relationship('Loan', back_populates='bank_account')
-    loan_payments = relationship('LoanPayment', back_populates='bank_account')
-    credit_card_payments = relationship('CreditCardPayment', back_populates='bank_account')
-    withdrawals = relationship('Withdrawal', back_populates='bank_account')
+    expenses = relationship('Expense', back_populates='bank_account', order_by='desc(Expense.created_at)')
+    incomes = relationship('Income', back_populates='bank_account', order_by='desc(Income.created_at)')
+    loans = relationship('Loan', back_populates='bank_account', order_by='desc(Loan.created_at)')
+    loan_payments = relationship('LoanPayment', back_populates='bank_account', order_by='desc(LoanPayment.created_at)')
+    credit_card_payments = relationship('CreditCardPayment', back_populates='bank_account', order_by='desc(CreditCardPayment.created_at)')
+    withdrawals = relationship('Withdrawal', back_populates='bank_account', order_by='desc(Withdrawal.created_at)')
+

@@ -5,8 +5,8 @@
 {% endblock %}
 
 {% block content %}
-    <a href="{{ url_for('expense_category.index') }}" class="btn btn-light fs-6"><i class="bi bi-arrow-return-left"></i> Go back</a>
     <h3>{{ category.name }}</h3>
+    <a href="{{ url_for('expense_category.index') }}" class="btn btn-light fs-6"><i class="bi bi-arrow-return-left"></i> Go back</a>
     <div class="my-3 border rounded-3">
         <div class=" rounded-top d-flex align-items-center justify-content-center" style="height: 50px; background-color: #ff0000;">
             <h4 class="d-flex justify-content-center">Expenses</h4>
@@ -33,7 +33,7 @@
                         <td>{{ 'YES' if expense.credit_card.is_cash else 'NO' }}</td>
                         <td class="text-start"> {{ expense.description or '-' }} </td>
                         <td>{{ expense.credit_card.nick_name or '-' }}</td>
-                        <td>{{ expense.bank_account.nick_name }}</td>
+                        <td>{{ expense.bank_account.nick_name or '-' }}</td>
                         <td class="text-start">{{ expense.expense_category.name }}</td>
                         <td>{{ expense.created_at }}</td>
                     </tr>

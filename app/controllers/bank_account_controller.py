@@ -7,7 +7,7 @@ from decimal import Decimal
 from app.models.bank_account import BankAccount
 from app.models.expense import Expense
 from app.models.bank import Bank
-from app.utils.numeric_casting import is_decimal_type
+from app.utils.numeric_casting import is_decimal_type, total_amount
 from app.exceptions.bankProductsException import BankAccountDoesNotExists, AmountIsLessThanOrEqualsToZero
 from app.extensions import db
 
@@ -79,10 +79,10 @@ def get_associated_records(bank_account_id):
         total_expenses = query.with_entities(func.sum(Expense.amount)).scalar() or Decimal(0.00)
 
         data = {
-            'expenses': expenses,
             'bank_account': bank_account,
-            'total_expenses': total_expenses,
             'count_expenses': count_expenses,
+            'total_expenses': total_expenses,
+            'total_amount': total_amount,
         }
     except BankAccountDoesNotExists as e:
         raise BankAccountDoesNotExists('Bank account does not exists.')

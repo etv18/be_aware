@@ -35,8 +35,12 @@ function generateMontlyChart(canvas, type, data) {
                 }]
             },
             options: {
+                responsive: true,
+                maintainAspectRatio: false, //this fixes the height
                 scales: {
-                    y: {beginAtZero: true}
+                    y: {
+                        beginAtZero: true
+                    }
                 }
             }
         });

@@ -68,4 +68,11 @@ def associated_records(bank_account_id):
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400
+
+@bank_account_bp.route('/associated/records/json/<int:bank_account_id>')
+def get_associated_records_in_json(bank_account_id):
+    try:
+        return ba_controller.get_associated_records_in_json(bank_account_id)
+    except Exception as e:
+        raise e
     

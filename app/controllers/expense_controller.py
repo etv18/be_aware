@@ -303,7 +303,7 @@ def money_limit_spent_left_for_expenses(expenses):
     for e in expenses:
         spent += e.amount
 
-    limit = Decimal(3300) #Right now the limit will be hard coded I need to add a new column to expense_category model so I can know the exact amount
+    limit = ExpenseCategory.query.filter(ExpenseCategory is not None).with_entities(func.sum(ExpenseCategory.limit)).scalar() or Decimal(0.00)
     
     left = Decimal(limit - spent)
 

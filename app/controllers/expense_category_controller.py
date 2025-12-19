@@ -4,26 +4,54 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from decimal import Decimal 
 from datetime import datetime
+import traceback
 
 from app.extensions import db
 from app.models.expense_category import ExpenseCategory
+from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero
 from app.models.expense import Expense
-from app.utils.numeric_casting import format_amount, total_amount
+from app.utils.numeric_casting import format_amount, total_amount, is_decimal_type
 
 def create_expense_category():
-    if request.method == 'POST':
-        name = request.form['name']
+    try:
+        name = request.form.get('name')
+        limit = Decimal(request.form.get('limit')) if is_decimal_type(request.form.get('limit')) else Decimal('0')
+        
+        validName(name)
+        if(limit <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a valid number bigger than 0')
 
-        expense_category = ExpenseCategory(name=name)
+        expense_category = ExpenseCategory(
+            name=name.upper(),
+            limit=limit
+        )
 
         db.session.add(expense_category)
         db.session.commit()
 
+        return jsonify({'message': 'Expense category created successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 400
+
 def update_expense_category(expense_category):
-    if request.method == 'POST':
-        expense_category.name = request.form['name']
+    try:
+        name = request.form.get('name')
+        limit = Decimal(request.form.get('limit')) if is_decimal_type(request.form.get('limit')) else Decimal('0')
+        
+        validName(name)
+        if(limit <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a valid number bigger than 0')
+
+        expense_category.name = name
+        expense_category.limit = limit
 
         db.session.commit()
+
+        return jsonify({'message': 'Expense category updated successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 400
 
 def delete_expense_category(expense_category):
     try:
@@ -87,5 +115,7 @@ def get_monthly_data():
         return jsonify({'error': str(e)}), 400
 
 
-
+def validName(name: str):
+    if not name or len(name) < 4:
+        raise Exception('Category Name must have for characters or more')
 

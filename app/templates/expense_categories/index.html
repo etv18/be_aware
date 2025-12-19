@@ -6,7 +6,7 @@
     <div class="w-100">
         <h2>Expense Categories</h2>
         <section class="modal fade" tabindex="-1" id="create-expense-category">
-            <form action="{{ url_for('expense_category.create' ) }}" method="post">
+            <form id="create-expense-category-form">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -29,32 +29,38 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-primary" onclick="createExpenseCategory()">Save</button>
                         </div>
                     </div>
                 </div>
             </form>
         </section>
         <section class="modal fade" tabindex="-1" id="edit-expense-category">
-            <form action="{{ url_for('expense_category.update' ) }}" method="post">
+            <form id="edit-expense-category-form">
                 <input type="hidden" name="id" id="expense-category-id-input">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">Edit</h5>
+                            <h5 class="modal-title" id="modal-title-id">Edit</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <div class="col-sm">
+                            <div class="">
                                 <div class="form-floating mt-2 w-">
                                     <input type="text" name="name" id="expense-category-name" class="form-control" placeholder="Bank name" required>
                                     <label for="name">Category name</label>
                                 </div>
                             </div>
+                            <div class="">
+                                <div class="form-floating mt-2 w-">
+                                    <input type="text" name="limit" id="e-limit-id" class="form-control" placeholder="Limit" required>
+                                    <label for="limit-id">Limit</label>
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-primary" onclick="updateExpenseCategory()">Save</button>
                         </div>
                     </div>
                 </div>
@@ -79,6 +85,7 @@
                             <tr>
                             <th scope="col"># Id</th>
                             <th scope="col">Name</th>
+                            <th scope="col">Limit</th>
                             <th scope="col">Acctions</th>
                             </tr>
                         </thead>
@@ -86,7 +93,8 @@
                             {% for expense_category in expense_categories %}                    
                             <tr class="expense-category-row" data-expense-category-id="{{expense_category.id}}">
                                 <th scope="row">{{ expense_category.id }}</th>
-                                <td>{{ expense_category.name }}</td>
+                                <td>{{ expense_category.name.lower().capitalize() }}</td>
+                                <td>{{ format_amount(expense_category.limit) or '-' }}</td>
                                 <td>
                                     <div class="d-flex gap-1">
                                         <div class="">
@@ -96,7 +104,8 @@
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#edit-expense-category"
                                                 data-id="{{ expense_category.id }}"
-                                                data-name="{{ expense_category.name }}"
+                                                data-name="{{ expense_category.name.lower().capitalize() }}"
+                                                data-limit="{{ expense_category.limit }}"
                                             >
                                             Edit
                                             </button>
@@ -114,6 +123,10 @@
             </div>
         </div>
     </div> 
+
+    <p id="create-endpoint-id" class="d-none">{{ url_for('expense_category.create' ) }}</p>
+    <p id="update-endpoint-id" class="d-none">{{ url_for('expense_category.update' ) }}</p>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -131,10 +144,12 @@
 
                 const exepenseCategoryId = button.getAttribute('data-id');
                 const expenseCategoryName = button.getAttribute('data-name');
+                const expenseCategoryLimit = button.getAttribute('data-limit');
 
                 document.getElementById('expense-category-id-input').value = exepenseCategoryId;
                 document.getElementById('expense-category-name').value = expenseCategoryName;
-                document.getElementById('modal-title').textContent = 'Edit '+expenseCategoryName;
+                document.getElementById('e-limit-id').value = expenseCategoryLimit;
+                document.getElementById('modal-title-id').textContent = `Edit '${expenseCategoryName}'`;
             });
         })
     </script>

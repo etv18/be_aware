@@ -3,29 +3,39 @@ from flask import Blueprint, render_template, redirect, url_for, request, jsonif
 from app.controllers import expense_category_controller as ec_controller
 from app.models.expense_category import ExpenseCategory
 from app.extensions import db
+from app.utils.numeric_casting import format_amount, total_amount
 
 expense_category_bp = Blueprint('expense_category',__name__, url_prefix='/expense_categories')
 
 @expense_category_bp.route('/index', methods=['GET'])
 def index():
-    expense_categories = ExpenseCategory.query.all()
+    expense_categories = ExpenseCategory.query.order_by(ExpenseCategory.name).all()
+    context = {
+        'expense_categories': expense_categories,
+        'format_amount': format_amount,
+        'total_amount': total_amount,
+    }
 
-    return render_template('expense_categories/index.html', expense_categories=expense_categories)
+    return render_template('expense_categories/index.html', **context)
 
-@expense_category_bp.route('/create', methods=['GET', 'POST'])
+@expense_category_bp.route('/create', methods=['POST'])
 def create():
-    ec_controller.create_expense_category()
+    try:
+        return ec_controller.create_expense_category()
+    except Exception as e:
+        raise e
+        
 
-    return redirect(url_for('expense_category.index'))
-
-@expense_category_bp.route('/update', methods=['GET', 'POST'])
+@expense_category_bp.route('/update', methods=['PUT'])
 def update():
-    expense_category_id = request.form['id']
-    expense_category = ExpenseCategory.query.get(expense_category_id)
-    if expense_category:
-        ec_controller.update_expense_category(expense_category)
-
-    return redirect(url_for('expense_category.index'))
+    try:
+        expense_category_id = request.form['id']
+        expense_category = ExpenseCategory.query.get(expense_category_id)
+        if expense_category:
+            return ec_controller.update_expense_category(expense_category)
+        return jsonify({'error': 'Expense category record not found.'})
+    except Exception as e:
+        raise e
 
 @expense_category_bp.route('/delete/<int:id>', methods=['DELETE'])
 def delete(id):

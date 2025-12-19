@@ -18,20 +18,24 @@ def index():
 
     return render_template('expense_categories/index.html', **context)
 
-@expense_category_bp.route('/create', methods=['GET', 'POST'])
+@expense_category_bp.route('/create', methods=['POST'])
 def create():
-    ec_controller.create_expense_category()
+    try:
+        return ec_controller.create_expense_category()
+    except Exception as e:
+        raise e
+        
 
-    return redirect(url_for('expense_category.index'))
-
-@expense_category_bp.route('/update', methods=['GET', 'POST'])
+@expense_category_bp.route('/update', methods=['PUT'])
 def update():
-    expense_category_id = request.form['id']
-    expense_category = ExpenseCategory.query.get(expense_category_id)
-    if expense_category:
-        ec_controller.update_expense_category(expense_category)
-
-    return redirect(url_for('expense_category.index'))
+    try:
+        expense_category_id = request.form['id']
+        expense_category = ExpenseCategory.query.get(expense_category_id)
+        if expense_category:
+            return ec_controller.update_expense_category(expense_category)
+        return jsonify({'error': 'Expense category record not found.'})
+    except Exception as e:
+        raise e
 
 @expense_category_bp.route('/delete/<int:id>', methods=['DELETE'])
 def delete(id):

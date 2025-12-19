@@ -6,7 +6,7 @@
     <div class="w-100">
         <h2>Expense Categories</h2>
         <section class="modal fade" tabindex="-1" id="create-expense-category">
-            <form action="{{ url_for('expense_category.create' ) }}" method="post">
+            <form id="create-expense-category-form">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -29,14 +29,14 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-primary" onclick="createExpenseCategory()">Save</button>
                         </div>
                     </div>
                 </div>
             </form>
         </section>
         <section class="modal fade" tabindex="-1" id="edit-expense-category">
-            <form action="{{ url_for('expense_category.update' ) }}" method="post">
+            <form id="edit-expense-category-form">
                 <input type="hidden" name="id" id="expense-category-id-input">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -60,7 +60,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-primary" onclick="updateExpenseCategory()">Save</button>
                         </div>
                     </div>
                 </div>
@@ -93,7 +93,7 @@
                             {% for expense_category in expense_categories %}                    
                             <tr class="expense-category-row" data-expense-category-id="{{expense_category.id}}">
                                 <th scope="row">{{ expense_category.id }}</th>
-                                <td>{{ expense_category.name }}</td>
+                                <td>{{ expense_category.name.lower().capitalize() }}</td>
                                 <td>{{ format_amount(expense_category.limit) or '-' }}</td>
                                 <td>
                                     <div class="d-flex gap-1">
@@ -104,7 +104,7 @@
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#edit-expense-category"
                                                 data-id="{{ expense_category.id }}"
-                                                data-name="{{ expense_category.name }}"
+                                                data-name="{{ expense_category.name.lower().capitalize() }}"
                                                 data-limit="{{ expense_category.limit }}"
                                             >
                                             Edit
@@ -123,6 +123,10 @@
             </div>
         </div>
     </div> 
+
+    <p id="create-endpoint-id" class="d-none">{{ url_for('expense_category.create' ) }}</p>
+    <p id="update-endpoint-id" class="d-none">{{ url_for('expense_category.update' ) }}</p>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>

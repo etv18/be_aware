@@ -12,16 +12,21 @@ from app.utils.numeric_casting import format_amount, total_amount
 
 def create_expense_category():
     if request.method == 'POST':
-        name = request.form['name']
-
-        expense_category = ExpenseCategory(name=name)
+        name = request.form.get('name')
+        limit = request.form.get('limit')
+        
+        expense_category = ExpenseCategory(
+            name=name,
+            limit=limit
+        )
 
         db.session.add(expense_category)
         db.session.commit()
 
 def update_expense_category(expense_category):
     if request.method == 'POST':
-        expense_category.name = request.form['name']
+        expense_category.name = request.form.get('name')
+        expense_category.limit = request.form.get('limit')
 
         db.session.commit()
 

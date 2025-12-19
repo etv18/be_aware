@@ -6,6 +6,7 @@ from app.extensions import db
 from app.models.expense import Expense
 from app.controllers import expense_controller
 from app.models import credit_card, expense_category, bank_account, expense
+from app.utils.numeric_casting import format_amount, total_amount
 
 expense_bp = Blueprint('expense', __name__, url_prefix='/expenses')
 
@@ -23,6 +24,8 @@ def index():
         'bank_accounts': bank_accounts,
         'expenses':expenses,
         'weekly': weekly,
+        'format_amount': format_amount, #function
+        'total_amount': total_amount, #function
     }
 
     return render_template('expenses/index.html', **context)

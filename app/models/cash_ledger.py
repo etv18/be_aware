@@ -5,7 +5,7 @@ from sqlalchemy.sql import func
 import traceback
 from decimal import Decimal
 
-from app.utils import transactional_classes
+from app.utils import cash_transactional_classes
 from app.utils.normalize_string import normalize_string
 
 class CashLedger(db.Model):
@@ -33,7 +33,7 @@ class CashLedger(db.Model):
     @staticmethod
     def create(transaction):
         try:
-            if not isinstance(transaction, transactional_classes.get_all()):
+            if not isinstance(transaction, cash_transactional_classes.get_all()):
                 return
             
             '''
@@ -41,9 +41,9 @@ class CashLedger(db.Model):
             other words make sure only objects from Withdrawal or Models which have an is_cash=True property can
             be saved into cash_ledger table in the database
             '''
-            if isinstance(transaction, transactional_classes.Withdrawal) or transaction.is_cash:
+            if isinstance(transaction, cash_transactional_classes.Withdrawal) or transaction.is_cash:
                 amount = transaction.amount
-                if isinstance(transaction, (transactional_classes.Expense, transactional_classes.Loan)):
+                if isinstance(transaction, (cash_transactional_classes.Expense, cash_transactional_classes.Loan)):
                     amount = -amount
                 
                 ledger = CashLedger(
@@ -63,11 +63,11 @@ class CashLedger(db.Model):
     @staticmethod
     def update(transaction):
         try:
-            if not isinstance(transaction, transactional_classes.get_all()):
+            if not isinstance(transaction, cash_transactional_classes.get_all()):
                 return
             
             amount = transaction.amount
-            if isinstance(transaction, (transactional_classes.Expense, transactional_classes.Loan)):
+            if isinstance(transaction, (cash_transactional_classes.Expense, cash_transactional_classes.Loan)):
                 amount = -amount #If a transaction is instance of Expense or Loan the amount must be negative
 
             ledger = CashLedger.query.filter_by(reference_code=transaction.code).first()
@@ -85,7 +85,7 @@ class CashLedger(db.Model):
     @staticmethod
     def delete(transaction):
         try:
-            if not isinstance(transaction, transactional_classes.get_all()):
+            if not isinstance(transaction, cash_transactional_classes.get_all()):
                 return
             
             ledger = CashLedger.query.filter_by(reference_code=transaction.code).first()
@@ -102,14 +102,14 @@ class CashLedger(db.Model):
     @staticmethod
     def update_or_delete(transaction, delete_ledger=False):
         try:
-            if not isinstance(transaction, transactional_classes.get_all()):
+            if not isinstance(transaction, cash_transactional_classes.get_all()):
                 return
             
             if delete_ledger:
                 CashLedger.delete(transaction)
                 return
             
-            if isinstance(transaction, transactional_classes.Withdrawal): # is instance of Withdrawal
+            if isinstance(transaction, cash_transactional_classes.Withdrawal): # is instance of Withdrawal
                 CashLedger.update(transaction)
                 return
             

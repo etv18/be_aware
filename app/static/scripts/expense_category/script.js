@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', event => {
     });
 });
 
-async function createIncome(){
+async function createExpenseCategory(){
     const url = document.getElementById('create-endpoint-id').textContent;
     const form = document.getElementById('create-expense-category-form');
     const formData = new FormData(form);
@@ -45,3 +45,32 @@ async function createIncome(){
     }        
 }
 
+async function updateExpenseCategory(){
+    const form = document.getElementById('edit-expense-category-form');
+    const formData = new FormData(form);
+    const url = document.getElementById('update-endpoint-id').textContent;
+    try {
+        const response = await fetch(url, {
+            method: 'PUT',
+            body: formData,
+        });
+        const data = await response.json();
+        if(!response.ok){
+            console.log(response.json())
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.error || 'Something went wrong while creating the expense.'
+            });
+            return;
+        }
+        location.reload();
+    } catch (error) {
+        console.error('Fetch error:', error);
+        Swal.fire({
+        icon: 'error',
+        title: 'Network Error',
+        text: error.message || 'Could not connect to server.'
+        });
+    }
+}

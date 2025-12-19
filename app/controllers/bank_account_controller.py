@@ -3,6 +3,7 @@ from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError
 
 from decimal import Decimal
+import traceback
 
 from app.models.bank_account import BankAccount
 from app.models.expense import Expense
@@ -83,3 +84,38 @@ def get_associated_records(bank_account_id):
         raise BankAccountDoesNotExists('Bank account does not exists.')
     except Exception as e:
         raise e
+    
+def get_associated_records_in_json(bank_account_id):
+    try:
+        bank_account = BankAccount.query.get(bank_account_id)
+        if not bank_account: 
+            return jsonify({'error': 'Bank account not found'}), 404
+
+        associations = [
+            bank_account.expenses,
+            bank_account.incomes,
+            bank_account.loans,
+            bank_account.loan_payments,
+            bank_account.credit_card_payments,
+            bank_account.withdrawals,
+        ]
+        data = {}
+        for a in associations:
+            if a:
+                table_name = a[0].__class__.__tablename__; '''access the first element to get its table name'''
+                data[table_name] = h_get_data_as_dictionary(a); '''set the table name as the key and use the function to  get all elements of the list in dictionary format'''
+        
+        return jsonify({'data': data}), 200
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 400
+        
+
+def h_get_data_as_dictionary(elems: list) -> list:
+    if not elems: return
+
+    container = []
+    for e in elems:
+        container.append(e.to_dict())
+    return container
+

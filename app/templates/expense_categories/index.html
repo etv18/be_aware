@@ -41,14 +41,20 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">Edit</h5>
+                            <h5 class="modal-title" id="modal-title-id">Edit</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <div class="col-sm">
+                            <div class="">
                                 <div class="form-floating mt-2 w-">
                                     <input type="text" name="name" id="expense-category-name" class="form-control" placeholder="Bank name" required>
                                     <label for="name">Category name</label>
+                                </div>
+                            </div>
+                            <div class="">
+                                <div class="form-floating mt-2 w-">
+                                    <input type="text" name="limit" id="e-limit-id" class="form-control" placeholder="Limit" required>
+                                    <label for="limit-id">Limit</label>
                                 </div>
                             </div>
                         </div>
@@ -79,6 +85,7 @@
                             <tr>
                             <th scope="col"># Id</th>
                             <th scope="col">Name</th>
+                            <th scope="col">Limit</th>
                             <th scope="col">Acctions</th>
                             </tr>
                         </thead>
@@ -87,6 +94,7 @@
                             <tr class="expense-category-row" data-expense-category-id="{{expense_category.id}}">
                                 <th scope="row">{{ expense_category.id }}</th>
                                 <td>{{ expense_category.name }}</td>
+                                <td>{{ format_amount(expense_category.limit) or '-' }}</td>
                                 <td>
                                     <div class="d-flex gap-1">
                                         <div class="">
@@ -97,6 +105,7 @@
                                                 data-bs-target="#edit-expense-category"
                                                 data-id="{{ expense_category.id }}"
                                                 data-name="{{ expense_category.name }}"
+                                                data-limit="{{ expense_category.limit }}"
                                             >
                                             Edit
                                             </button>
@@ -131,10 +140,12 @@
 
                 const exepenseCategoryId = button.getAttribute('data-id');
                 const expenseCategoryName = button.getAttribute('data-name');
+                const expenseCategoryLimit = button.getAttribute('data-limit');
 
                 document.getElementById('expense-category-id-input').value = exepenseCategoryId;
                 document.getElementById('expense-category-name').value = expenseCategoryName;
-                document.getElementById('modal-title').textContent = 'Edit '+expenseCategoryName;
+                document.getElementById('e-limit-id').value = expenseCategoryLimit;
+                document.getElementById('modal-title-id').textContent = `Edit '${expenseCategoryName}'`;
             });
         })
     </script>

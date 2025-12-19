@@ -65,7 +65,7 @@
                     </tr>
                 </thead>
                 
-                <tbody id="incomes-table-body-id">
+                <tbody id="incomes-table-body">
                   {% for income in bank_account.incomes %}
                     <tr>
                         <th scope="row">{{ income.id }}</th>
@@ -101,7 +101,7 @@
                     </tr>
                 </thead>
                 
-                <tbody  id="withdrawals-table-body-id">
+                <tbody  id="withdrawals-table-body">
                   {% for withdrawal in bank_account.withdrawals %}
                     <tr>
                         <th scope="row">{{ withdrawal.id }}</th>
@@ -140,7 +140,7 @@
                     </tr>
                 </thead>
                 
-                <tbody id="loans-table-body-id">
+                <tbody id="loans-table-body">
                   {% for loan in bank_account.loans %}
                     <tr class="loan-row" data-loan-id="{{ loan.id }}" data-url-associated-records = "{{ url_for('accounts_receivable.associated_records', loan_id=loan.id) }}">
                         <th scope="row">{{ loan.id }}</th>
@@ -178,7 +178,7 @@
                         <th scope="col">Create at</th>
                     </tr>
                 </thead>
-                <tbody id="expenses-table-body">
+                <tbody id="loan-payment-table-body">
                     {% for payment in bank_account.loan_payments %}                
                     <tr>
                         <th scope="row">{{ payment.id }}</th>
@@ -213,7 +213,7 @@
                             <th scope="col">Create at</th>
                         </tr>
                     </thead>
-                    <tbody id="payments-table-body">
+                    <tbody id="credit-card-payment-table-body">
                         {% for payment in bank_account.credit_card_payments %}                
                         <tr>
                             <th scope="row">{{ payment.id }}</th>

@@ -8,10 +8,13 @@ def is_decimal_type(value: str) -> bool:
         return False
 
 def total_amount(obj_list: list):
-        total = Decimal()
-        for o in obj_list:
-            total += o.amount
-        return format_amount(total)
+    total = Decimal()
+    for o in obj_list:
+        total += o.amount
+    return format_amount(total)
 
 def format_amount(value):
-    return f'{value:,.2f}'
+    try:
+        return f'{value:,.2f}';
+    except Exception as e:
+        return None

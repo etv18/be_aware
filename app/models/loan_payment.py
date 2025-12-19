@@ -22,6 +22,19 @@ class LoanPayment(db.Model):
     loan = relationship('Loan', back_populates='loan_payments')
     bank_account = relationship('BankAccount', back_populates='loan_payments')
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'amount': self.amount,
+            'is_cash': self.is_cash,
+            'loan_id': self.loan_id,
+            'bank_account_id': self.bank_account_id,
+            'bank_nick_name': self.bank_account.nick_name if self.bank_account.nick_name else '-',
+            'code': self.code,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
+        }
+
     @event.listens_for(db.session, 'before_flush')
     def assign_code(session, flush_context, instances=None):
         for obj in session.new:

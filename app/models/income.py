@@ -32,7 +32,7 @@ class Income(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'amount': float(self.amount) if self.amount is not None else 0.0,
+            'amount': self.amount,
             'is_cash': self.is_cash,
             'code': self.code,
             'description': self.description,

@@ -3,14 +3,20 @@ from flask import Blueprint, render_template, redirect, url_for, request, jsonif
 from app.controllers import expense_category_controller as ec_controller
 from app.models.expense_category import ExpenseCategory
 from app.extensions import db
+from app.utils.numeric_casting import format_amount, total_amount
 
 expense_category_bp = Blueprint('expense_category',__name__, url_prefix='/expense_categories')
 
 @expense_category_bp.route('/index', methods=['GET'])
 def index():
-    expense_categories = ExpenseCategory.query.all()
+    expense_categories = ExpenseCategory.query.order_by(ExpenseCategory.name).all()
+    context = {
+        'expense_categories': expense_categories,
+        'format_amount': format_amount,
+        'total_amount': total_amount,
+    }
 
-    return render_template('expense_categories/index.html', expense_categories=expense_categories)
+    return render_template('expense_categories/index.html', **context)
 
 @expense_category_bp.route('/create', methods=['GET', 'POST'])
 def create():

@@ -94,7 +94,7 @@
                             <tr class="expense-category-row" data-expense-category-id="{{expense_category.id}}">
                                 <th scope="row">{{ expense_category.id }}</th>
                                 <td>{{ expense_category.name.lower().capitalize() }}</td>
-                                <td>{{ format_amount(expense_category.limit) or '-' }}</td>
+                                <td>{{ format_amount(expense_category.limit) if expense_category.limit > 0 else '-' }}</td>
                                 <td>
                                     <div class="d-flex gap-1">
                                         <div class="">

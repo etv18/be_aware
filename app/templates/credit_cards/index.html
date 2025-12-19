@@ -161,6 +161,7 @@
                 <th scope="col">Bank</th>
                 <th scope="col">Limit</th>
                 <th scope="col">Amount Available</th>
+                <th scope="col">Used</th>
                 <th scope="col">Status</th>
                 <th scope="col">Create at</th>
                 <th scope="col">Acctions</th>
@@ -173,8 +174,9 @@
                 <th scope="row">{{ credit_card.id }}</th>
                 <td>{{ credit_card.nick_name }}</td>
                 <td>{{ credit_card.bank.name }}</td>
-                <td>{{ credit_card.limit }}</td>
-                <td>{{ credit_card.amount_available }}</td>
+                <td>{{ format_amount(credit_card.limit) }}</td>
+                <td>{{ format_amount(credit_card.amount_available) }}</td>
+                <td>{{ format_amount(money_used(credit_card)) }}</td>
                 <td>{{ credit_card.is_active }}</td>
                 <td>{{ credit_card.created_at }}</td>
                 <td>

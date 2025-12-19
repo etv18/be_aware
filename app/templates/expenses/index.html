@@ -207,12 +207,12 @@
                 {% for expense in expenses %}                
                 <tr>
                     <th scope="row">{{ expense.id }}</th>
-                    <td>{{ expense.amount }}</td>
-                    <td><a id="filter-by-cash" class="filter_link" data-is-cash-value="{{ expense.is_cash }}">{{ expense.is_cash  }}</a></td>
-                    <td> {{ expense.description }} </td>
-                    <td>{{ expense.credit_card.nick_name }}</td>
-                    <td>{{ expense.bank_account.nick_name }}</td>
-                    <td>{{ expense.expense_category.name }}</td>
+                    <td>{{ format_amount(expense.amount) or '-' }}</td>
+                    <td><a id="filter-by-cash" class="filter_link" data-is-cash-value="{{ expense.is_cash }}">{{ 'YES' if expense.is_cash else 'NO' }}</a></td>
+                    <td> {{ expense.description or '-' }} </td>
+                    <td>{{ expense.credit_card.nick_name or '-' }}</td>
+                    <td>{{ expense.bank_account.nick_name or '-' }}</td>
+                    <td>{{ expense.expense_category.name or '-' }}</td>
                     <td>{{ expense.created_at }}</td>
                     <td>
                         <div class="d-flex gap-2">

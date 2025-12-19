@@ -65,3 +65,6 @@ def delete_credit_card(credit_card):
     except Exception as e:
         db.session.rollback()
         raise e
+    
+def h_get_money_used_on_credit_card(cc):
+    return cc.limit - cc.amount_available

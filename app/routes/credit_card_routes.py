@@ -20,6 +20,9 @@ def index():
         'banks': banks,
         'credit_cards': credit_cards,
         'bank_accounts': bank_accounts,
+        'money_used': cc_controller.h_get_money_used_on_credit_card, #function
+        'format_amount': format_amount, #function
+        'total_amount': total_amount, #function
     }
     return render_template('credit_cards/index.html', **context)
 

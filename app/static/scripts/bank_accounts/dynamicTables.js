@@ -1,9 +1,20 @@
+//TABLE BODIES
 const tBodyExpense = document.getElementById('expenses-table-body');
 const tBodyIncome = document.getElementById('incomes-table-body');
 const tBodyWithdrawal = document.getElementById('withdrawals-table-body');
 const tBodyLoan = document.getElementById('loans-table-body');
 const tBodyLoanPayment = document.getElementById('loan-payment-table-body');
 const tBodyCreditCard = document.getElementById('credit-card-payment-table-body');
+
+//FILTER INPUTS
+const expenseFilterInput = document.getElementById('filter-input-expense-id');
+const incomeFilterInput = document.getElementById('filter-input-income-id');
+const withdrawalFilterInput = document.getElementById('filter-input-withdrawal-id');
+const loanFilterInput = document.getElementById('filter-input-loan-id');
+const loanPaymentFilterInput = document.getElementById('filter-input-loanpayment-id');
+const creditCardPaymentFilterInput = document.getElementById('filter-input-ccpayment-id');
+
+const associatedRecordsInJsonEndpoint = document.getElementById('associated-records-url-id').textContent;
 
 let expenses;
 let incomes;
@@ -21,7 +32,7 @@ const colSpan = {
     creditCardPayments: 5
 }
 
-const tdHtmlExpenses = (expense) => `
+const expensesTemplateFn = (expense) => `
     <th scope="row">${expense.id}</th>
     <td>${expense.amount}</td>
     <td>${expense.is_cash ? 'YES' : 'NO'}</td>
@@ -32,7 +43,7 @@ const tdHtmlExpenses = (expense) => `
     <td>${expense.created_at}</td>
 `;
 
-const tdHtmlIncomes = (income) => `
+const incomesTemplateFn = (income) => `
     <th scope="row">${ income.id }</th>
     <td>${ income.amount }</td>
     <td>${ income.is_cash ? 'YES' : 'NO'}</td>
@@ -41,7 +52,7 @@ const tdHtmlIncomes = (income) => `
     <td>${ income.created_at }</td>
 `;
 
-const tdHtmlWithdrawals = (withdrawal) => `
+const withdrawalsTemplateFn = (withdrawal) => `
     <th scope="row">${ withdrawal.id }</th>
     <td>${ withdrawal.amount }</td>
     <td>${ withdrawal.description ?? '-'}</td>
@@ -49,7 +60,7 @@ const tdHtmlWithdrawals = (withdrawal) => `
     <td>${ withdrawal.created_at }</td>
 `;
 
-const tdHtmlLoans = (loan) => `
+const loansTemplateFn = (loan) => `
     <th scope="row">${loan.id}</th>
     <td>${loan.person_name ?? '-'}</td>
     <td>${loan.amount}</td>
@@ -61,7 +72,7 @@ const tdHtmlLoans = (loan) => `
     <td>${loan.created_at}</td>
 `;
 
-const tdHtmlLoanPayments = (loanPayment) => `
+const loanPaymentsTemplateFn = (loanPayment) => `
     <th scope="row">${ loanPayment.id }</th>
     <td class="text-start">${ loanPayment.amount }</td>
     <td>${ loanPayment.is_cash ? 'YES' : 'NO' }</td>
@@ -69,7 +80,7 @@ const tdHtmlLoanPayments = (loanPayment) => `
     <td>${ loanPayment.created_at }</td>
 `;
 
-const tdHtmlCreditCardPayments = (creditCardPayment) => `
+const creditCardPaymentsTemplateFn = (creditCardPayment) => `
     <th scope="row">${ creditCardPayment.id }</th>
     <td class="text-start">${ creditCardPayment.amount }</td>
     <td>${ creditCardPayment.credit_card_nick_name ?? '-' }</td>
@@ -94,12 +105,16 @@ async function getData(url){
         data = await response.json();
         console.log(data);
         
-        expenses = data?.expenses ?? [];
+        console.log('%%%%%%%%% => $', data.data?.expenses ?? [])
+        expenses = data.data?.expenses ?? []
         incomes = data?.incomes ?? [];
+        console.log('+++++ => $', data.data?.incomes ?? [])
         withdrawals = data?.withdrawals ?? [];
         loans = data?.loans ?? [];
         loanPayments = data?.loanPayments ?? [];
         creditCardPayments = data?.creditCardPayments ?? [];
+        
+        return data
         
     } catch (error) {
         Swal.fire({
@@ -113,7 +128,7 @@ async function getData(url){
 function renderDataTable(objList, tbody, templateFunction, colspanValue){
     tbody.innerHTML = '';
 
-    if(!objList || objList.length === 0) {
+    if(!objList || objList.length === 0 || objList === undefined) {
         tbody.innerHTML = `
             <tr>
                 <td colspan="${colspanValue}" class="text-center text-muted">No results found.</td>
@@ -121,7 +136,7 @@ function renderDataTable(objList, tbody, templateFunction, colspanValue){
         `;
         return;
     }
-
+    console.log( `${objList}`);
     objList.forEach(obj => {
         const tableRow = document.createElement('tr');
         tableRow.innerHTML = templateFunction(obj);
@@ -136,7 +151,7 @@ function filterTableData(dataSet, query){
 
     var fields = getKeysFromDataSet(dataSet);
 
-    if(fields.length === 0) return;
+    if(fields.length === 0) return dataSet;
 
     var term = query.toLowerCase(); //User input
 
@@ -170,6 +185,33 @@ function getKeysFromDataSet(dataSet){
     if(!Array.isArray(dataSet) || dataSet.length === 0){
         return [];
     }
-
-    return Object.key(dataSet[0]);
+    console.log('===> MMMMMMM $',JSON.parse(JSON.stringify(dataSet)));
+    return Object.keys(dataSet[0]);
 }
+
+function debounce(fn, delay = 300) {
+    let timeout;
+    return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fn(...args), delay);
+    };
+}
+
+
+document.addEventListener('DOMContentLoaded', async e => {
+    await getData(associatedRecordsInJsonEndpoint);
+});
+
+expenseFilterInput.addEventListener('input', debounce(async e => {
+        var query = expenseFilterInput.value;
+        filteredList = filterTableData(expenses, query);
+        console.log(`Expenses ===> ${expenses}`)
+        console.log('==> expenseFilterInput.addEventListener', expenses, query);
+        renderDataTable(
+            filteredList, 
+            tBodyExpense,
+            expensesTemplateFn,
+            colSpan.expenses
+        );
+    })
+);

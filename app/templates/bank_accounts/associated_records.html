@@ -9,8 +9,15 @@
     <a href="{{ url_for('bank_account.index') }}" class="btn btn-light fs-5"><i class="bi bi-arrow-return-left"></i> Go back</a>
 
     <div class="my-3 border rounded-3">
-        <div class=" rounded-top d-flex align-items-center justify-content-center" style="height: 50px; background-color: #ff0000;">
-            <h4 class="d-flex justify-content-center">Expenses</h4>
+        <div class=" rounded-top d-flex align-items-center justify-content-center p-2" style="height: 50px; background-color: #ff0000;">
+            <div class="me-auto">
+                <h4 class="d-flex justify-content-center">Expenses</h4>
+            </div>
+            <div class="w-100" style="max-width: 217px;">
+                <input type="text" name="filter-input-expense" id="filter-input-expense-id" class="form-control"
+                    placeholder="Search...">
+            </div>
+
         </div>
         <div id="expenses-table-container" class="table-responsive overflow-y-auto" style="max-height: 322px;">
             <table class="table table-borderless table-hover text-center" id="expenses-table">
@@ -233,4 +240,6 @@
         </div>
     </div>
 
+    <p id="associated-records-url-id">{{ url_for('bank_account.get_associated_records_in_json', bank_account_id=bank_account.id) }}</p>
+    <script src="{{ url_for('static', filename='scripts/bank_accounts/dynamicTables.js') }}"></script>
 {% endblock %}

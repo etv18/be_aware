@@ -129,4 +129,35 @@ function renderDataTable(objList, tbody, templateFunction, colspanValue){
     });
 }
 
+function filterTableData(dataSet, query, fields){
+    if(query === null || query === undefined || query === '') {
+        return dataSet;
+    }
 
+    var term = query.toLowerCase(); //User input
+
+    var filteredList = [];
+
+    dataSet.forEach(item => {
+        var itemMatches = false;
+
+        for(var i = 0; i < fields.length; i++){
+            var key = fields[i];
+            var value = item[key]; //Looking in the js object
+
+            if(value === null || value === undefined){
+                continue;
+            }
+
+            var valueAsString = String(value).toLowerCase(); //Value of the data set
+
+            if(valueAsString.indexOf(term) !== -1){
+                itemMatches = true;
+                break;
+            }
+        }
+        if(itemMatches) filteredList.push(item);
+    });
+
+    return filteredList;
+}

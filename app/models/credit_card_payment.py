@@ -23,7 +23,7 @@ class CreditCardPayment(db.Model):
             'credit_card_id': self.credit_card_id,
             'bank_account_id': self.bank_account_id,
             'credit_card_nick_name': self.credit_card.nick_name if self.credit_card.nick_name else '-',
-            'bank_nick_name': self.bank_account.nick_name if self.bank_account.nick_name else '-',
+            'bank_account_nick_name': self.bank_account.nick_name if self.bank_account.nick_name else '-',
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }

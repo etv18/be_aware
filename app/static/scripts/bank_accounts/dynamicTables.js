@@ -129,10 +129,14 @@ function renderDataTable(objList, tbody, templateFunction, colspanValue){
     });
 }
 
-function filterTableData(dataSet, query, fields){
+function filterTableData(dataSet, query){
     if(query === null || query === undefined || query === '') {
         return dataSet;
     }
+
+    var fields = getKeysFromDataSet(dataSet);
+
+    if(fields.length === 0) return;
 
     var term = query.toLowerCase(); //User input
 
@@ -160,4 +164,12 @@ function filterTableData(dataSet, query, fields){
     });
 
     return filteredList;
+}
+
+function getKeysFromDataSet(dataSet){
+    if(!Array.isArray(dataSet) || dataSet.length === 0){
+        return [];
+    }
+
+    return Object.key(dataSet[0]);
 }

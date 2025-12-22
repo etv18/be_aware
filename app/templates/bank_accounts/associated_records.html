@@ -51,7 +51,7 @@
             </table>
         </div>
         <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
-            <p class="fs-6 fw-bold">TOTAL: {{ total_amount(bank_account.expenses) }}</p>
+            <p class="fs-6 fw-bold" id="total-amounts-expenses-id">TOTAL: {{ total_amount(bank_account.expenses) }}</p>
         </div>
     </div>
 
@@ -240,6 +240,6 @@
         </div>
     </div>
 
-    <p id="associated-records-url-id">{{ url_for('bank_account.get_associated_records_in_json', bank_account_id=bank_account.id) }}</p>
+    <p id="associated-records-url-id" class="d-none">{{ url_for('bank_account.get_associated_records_in_json', bank_account_id=bank_account.id) }}</p>
     <script src="{{ url_for('static', filename='scripts/bank_accounts/dynamicTables.js') }}"></script>
 {% endblock %}

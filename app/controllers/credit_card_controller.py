@@ -1,12 +1,14 @@
-from flask import request
+from flask import request, jsonify
 from sqlalchemy.exc import SQLAlchemyError
 
 from decimal import Decimal
+import traceback
 
 from app.models.credit_card import CreditCard
 from app.extensions import db
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero
 from app.utils.numeric_casting import is_decimal_type
+from app.utils.parse_structures import get_data_as_dictionary
 
 def create_credit_card():
     try:
@@ -68,3 +70,24 @@ def delete_credit_card(credit_card):
     
 def h_get_money_used_on_credit_card(cc):
     return cc.limit - cc.amount_available
+
+def associated_records_in_json(id):
+    try:
+        credit_card = CreditCard.query.get(id)
+        if not credit_card: 
+            return jsonify({'error': 'Bank account not found'}), 404
+
+        associations = [
+            credit_card.expenses,
+            credit_card.payments,
+        ]
+        data = {}
+        for a in associations:
+            if a:
+                table_name = a[0].__class__.__tablename__; '''access the first element to get its table name'''
+                data[table_name] = get_data_as_dictionary(a); '''set the table name as the key and use the function to  get all elements of the list in dictionary format'''
+        
+        return jsonify({'records': data}), 200
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 400

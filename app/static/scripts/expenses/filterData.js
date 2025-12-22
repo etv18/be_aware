@@ -139,11 +139,12 @@ selectFilterType.addEventListener('change', e => {
     filterInput.value = "";
 });
 
+
 btnSearch.addEventListener('click', async e => {
     await filterData();
 });
 
-filterInput.addEventListener('keydown', async e => {
+filterInput.addEventListener('keydown', debounce(async e => {
     if(selectFilterType.value !== 'field' && e.key !== 'Enter') return;
     await filterData();
-})
+}));

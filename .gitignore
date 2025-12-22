@@ -3,3 +3,4 @@ __pycache__
 logs
 error.log
 migrations
+app_structure.txt

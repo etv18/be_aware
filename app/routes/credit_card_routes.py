@@ -72,3 +72,9 @@ def associated_records(id):
 
     return render_template('/credit_cards/associated_records.html', **context)
 
+@credit_card_bp.route('/associated/records/in/json/<int:id>', methods=['GET'])
+def associated_records_in_json(id):
+    try:
+        cc_controller.associated_records_in_json(id)
+    except Exception as e:
+        raise e

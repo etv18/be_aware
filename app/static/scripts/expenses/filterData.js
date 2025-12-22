@@ -1,3 +1,6 @@
+import { getTotalSumOfAmounts, formatNumber } from "../utils/numericHandling.js";
+import { debounce } from "../utils/asyncHanlding.js";
+
 /*
 best way to compare to undifined values, it only matches expecifically undefined values
 if (typeof yourVariable === 'undefined') {...}
@@ -28,13 +31,13 @@ export function renderExpensesTable(expenses){
         const tableRow = document.createElement('tr');
         tableRow.innerHTML = `
             <th scope="row">${expense.id}</th>
-            <td>${expense.amount}</td>
+            <td>${formatNumber(expense.amount)}</td>
             <td>${expense.is_cash ? 'Yes' : 'No'}</td>
             <td>${expense.description || '-'}</td>
             <td>${expense.credit_card_name || '-'}</td>
             <td>${expense.bank_account_name || '-'}</td>
             <td>${expense.expense_category_name || '-'}</td>
-            <td>${new Date(expense.created_at).toLocaleString()}</td>
+            <td>${expense.created_at}</td>
             <td>
                 <div class="d-flex gap-2">
                     <button 
@@ -138,7 +141,6 @@ selectFilterType.addEventListener('change', e => {
     filterInput.type = "text";
     filterInput.value = "";
 });
-
 
 btnSearch.addEventListener('click', async e => {
     await filterData();

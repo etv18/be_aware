@@ -132,7 +132,7 @@
         </div>
 
         <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
-            <p class="fs-6 fw-bold mx-2">TOTAL: {{ total_amount(bank_account.withdrawals) }}</p>
+            <p class="fs-6 fw-bold mx-2" id="total-amounts-withdrawal-id">TOTAL: {{ total_amount(bank_account.withdrawals) }}</p>
         </div>
     </div>
 
@@ -179,7 +179,7 @@
             </table>
         </div>
         <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
-            <p class="fs-6 fw-bold mx-2">TOTAL: {{ total_amount(bank_account.loans) }}</p>
+            <p class="fs-6 fw-bold mx-2" id="total-amounts-loans-id">TOTAL: {{ total_amount(bank_account.loans) }}</p>
         </div>
     </div>
 
@@ -219,7 +219,7 @@
         </div>
 
         <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
-            <p class="fs-6 fw-bold mx-2">TOTAL: {{ total_amount(bank_account.loan_payments) }}</p>
+            <p class="fs-6 fw-bold mx-2" id="total-amounts-loans-payments-id">TOTAL: {{ total_amount(bank_account.loan_payments) }}</p>
         </div>
     </div>
 
@@ -260,10 +260,12 @@
             </div>
 
         <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
-            <p class="fs-6 fw-bold mx-2">TOTAL: {{ total_amount(bank_account.credit_card_payments) }}</p>
+            <p class="fs-6 fw-bold mx-2" id="total-amounts-credit-card-payments-id">TOTAL: {{ total_amount(bank_account.credit_card_payments) }}</p>
         </div>
     </div>
 
     <p id="associated-records-url-id" class="d-none">{{ url_for('bank_account.get_associated_records_in_json', bank_account_id=bank_account.id) }}</p>
-    <script src="{{ url_for('static', filename='scripts/bank_accounts/dynamicTables.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/bank_accounts/dynamicTables.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/utils/numericHandling.js' ) }}"></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/utils/asyncHanlding.js' ) }}"></script>
 {% endblock %}

@@ -1,10 +1,13 @@
+import { getTotalSumOfAmounts, formatNumber } from "../utils/numericHandling.js";
+import { debounce } from "../utils/asyncHanlding.js";
+
 //TABLE BODIES
 const tBodyExpense = document.getElementById('expenses-table-body');
 const tBodyIncome = document.getElementById('incomes-table-body');
 const tBodyWithdrawal = document.getElementById('withdrawals-table-body');
 const tBodyLoan = document.getElementById('loans-table-body');
 const tBodyLoanPayment = document.getElementById('loan-payment-table-body');
-const tBodyCreditCard = document.getElementById('credit-card-payment-table-body');
+const tBodyCreditCardPayment = document.getElementById('credit-card-payment-table-body');
 
 //FILTER INPUTS
 const expenseFilterInput = document.getElementById('filter-input-expense-id');
@@ -34,7 +37,7 @@ const colSpan = {
 
 const expensesTemplateFn = (expense) => `
     <th scope="row">${expense.id}</th>
-    <td class="text-start">${expense.amount.toLocaleString()}</td>
+    <td class="text-start">${formatNumber(expense.amount)}</td>
     <td>${expense.is_cash ? 'YES' : 'NO'}</td>
     <td class="text-start">${expense.description ?? '-'}</td>
     <td>${expense.credit_card_name ?? '-'}</td>
@@ -45,16 +48,16 @@ const expensesTemplateFn = (expense) => `
 
 const incomesTemplateFn = (income) => `
     <th scope="row">${ income.id }</th>
-    <td>${ income.amount }</td>
+    <td class="text-start">${ formatNumber(income.amount) }</td>
     <td>${ income.is_cash ? 'YES' : 'NO'}</td>
-    <td>${ income.description ?? '-' }</td>
+    <td class="text-start">${ income.description ?? '-' }</td>
     <td>${ income.bank_nick_name ?? '-'}</td>
     <td>${ income.created_at }</td>
 `;
 
 const withdrawalsTemplateFn = (withdrawal) => `
     <th scope="row">${ withdrawal.id }</th>
-    <td>${ withdrawal.amount }</td>
+    <td>${ formatNumber(withdrawal.amount) }</td>
     <td>${ withdrawal.description ?? '-'}</td>
     <td>${ withdrawal.bank_account_nick_name ?? '-' }</td>
     <td>${ withdrawal.created_at }</td>
@@ -62,12 +65,12 @@ const withdrawalsTemplateFn = (withdrawal) => `
 
 const loansTemplateFn = (loan) => `
     <th scope="row">${loan.id}</th>
+    <td class="text-start">${loan.amount}</td>
+    <td>${loan.is_cash ? 'YES' : 'NO'}</td>
     <td>${loan.person_name ?? '-'}</td>
-    <td>${loan.amount}</td>
     <td> ${loan.remaining_amount} </td>
     <td>${loan.is_active ? 'ACTIVE' : 'PAID'}</td>
-    <td>${loan.description ?? '-'}</td>
-    <td>${loan.is_cash ? 'YES' : 'NO'}</td>
+    <td class="text-start">${loan.description ?? '-'}</td>
     <td>${loan.bank_account_nick_name ?? '-'}</td>
     <td>${loan.created_at}</td>
 `;
@@ -115,8 +118,8 @@ async function getData(url){
         incomes = data.records?.incomes ?? [];
         withdrawals = data.records?.withdrawals ?? [];
         loans = data.records?.loans ?? [];
-        loanPayments = data.records?.loanPayments ?? [];
-        creditCardPayments = data.records?.creditCardPayments ?? [];
+        loanPayments = data.records?.loan_payment ?? [];
+        creditCardPayments = data.records?.credit_card_payments ?? [];
         
         return data
         
@@ -193,27 +196,6 @@ function getKeysFromDataSet(dataSet){
     return Object.keys(dataSet[0]);
 }
 
-function debounce(fn, delay=270) {
-    let timeout;
-    return (...args) => {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => fn(...args), delay);
-    };
-}
-
-function getTotalSumOfAmounts(transactions){
-    var r = 0.0;
-    transactions.forEach(tran => {
-        r += Number(tran.amount || 0);
-    });
-    return r;
-}
-
-function formatNumber(value){
-    const numberValue = Number(value || 0);
-    return numberValue.toLocaleString('en-US');
-}
-
 document.addEventListener('DOMContentLoaded', async e => {
     await getData(associatedRecordsInJsonEndpoint);
 });
@@ -233,9 +215,51 @@ incomeFilterInput.addEventListener('input', debounce(async e => {
         var query = incomeFilterInput.value;
 
         const filteredList = filterTableData(incomes, query);
-        console.log('raw incomes list ', incomes)
-        console.log('filtered list ', filteredList)
         renderDataTable(filteredList, tBodyIncome, incomesTemplateFn, colSpan.incomes);
-        totatAmounts.textContent = formatNumber(getTotalSumOfAmounts(filteredList));
+        totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
+    })
+);
+
+withdrawalFilterInput.addEventListener('input', debounce(async e => {
+        const totatAmounts = document.getElementById('total-amounts-withdrawal-id');
+        var query = withdrawalFilterInput.value;
+
+        const filteredList = filterTableData(withdrawals, query);
+        renderDataTable(filteredList, tBodyWithdrawal, withdrawalsTemplateFn, colSpan.withdrawals);
+        totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
+    })
+);
+
+loanFilterInput.addEventListener('input', debounce(async e => {
+        const totatAmounts = document.getElementById('total-amounts-loans-id');
+        var query = loanFilterInput.value;
+
+        const filteredList = filterTableData(loans, query);
+        renderDataTable(filteredList, tBodyLoan, loansTemplateFn, colSpan.loans);
+        totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
+    })
+);
+
+loanPaymentFilterInput.addEventListener('input', debounce(async e => {
+        const totatAmounts = document.getElementById('total-amounts-loans-payments-id');
+        var query = loanPaymentFilterInput.value;
+
+        const filteredList = filterTableData(loanPayments, query);
+        console.log('raw list: ', loanPayments);
+        console.log('filtered list: ', filteredList);
+        renderDataTable(filteredList, tBodyLoanPayment, loanPaymentsTemplateFn, colSpan.loanPayments);
+        totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
+    })
+);
+
+creditCardPaymentFilterInput.addEventListener('input', debounce(async e => {
+        const totatAmounts = document.getElementById('total-amounts-credit-card-payments-id');
+        var query = creditCardPaymentFilterInput.value;
+
+        const filteredList = filterTableData(creditCardPayments, query);
+        console.log('raw list: ', creditCardPayments);
+        console.log('filtered list: ', creditCardPayments);
+        renderDataTable(filteredList, tBodyCreditCardPayment, creditCardPaymentsTemplateFn, colSpan.creditCardPayments);
+        totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
     })
 );

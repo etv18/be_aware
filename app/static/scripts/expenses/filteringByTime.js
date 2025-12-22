@@ -108,8 +108,8 @@ async function filterData(){
 
     renderExpensesTable(data.expenses);
 
-    startDate = null;
-    endDate = null;
+    //startDate = null;
+    //endDate = null;
 }
 
 //LISTENERS

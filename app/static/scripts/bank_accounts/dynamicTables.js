@@ -11,8 +11,8 @@ const expenseFilterInput = document.getElementById('filter-input-expense-id');
 const incomeFilterInput = document.getElementById('filter-input-income-id');
 const withdrawalFilterInput = document.getElementById('filter-input-withdrawal-id');
 const loanFilterInput = document.getElementById('filter-input-loan-id');
-const loanPaymentFilterInput = document.getElementById('filter-input-loanpayment-id');
-const creditCardPaymentFilterInput = document.getElementById('filter-input-ccpayment-id');
+const loanPaymentFilterInput = document.getElementById('filter-input-loan-payment-id');
+const creditCardPaymentFilterInput = document.getElementById('filter-input-credit-card-payment-id');
 
 const associatedRecordsInJsonEndpoint = document.getElementById('associated-records-url-id').textContent;
 
@@ -105,14 +105,18 @@ async function getData(url){
         data = await response.json();
         console.log(data);
         
-        console.log('%%%%%%%%% => $', data.data?.expenses ?? [])
-        expenses = data.data?.expenses ?? []
-        incomes = data?.incomes ?? [];
-        console.log('+++++ => $', data.data?.incomes ?? [])
-        withdrawals = data?.withdrawals ?? [];
-        loans = data?.loans ?? [];
-        loanPayments = data?.loanPayments ?? [];
-        creditCardPayments = data?.creditCardPayments ?? [];
+        /*
+            The ? operator allows me to access a property and in case is null or undefined it wont throw an error
+
+            ?? (nullish operator) it throws true for null or undefined values. so here it says if it's .expenses is 
+            null or undefined assign an empty list.
+        */
+        expenses = data.records?.expenses ?? []; 
+        incomes = data.records?.incomes ?? [];
+        withdrawals = data.records?.withdrawals ?? [];
+        loans = data.records?.loans ?? [];
+        loanPayments = data.records?.loanPayments ?? [];
+        creditCardPayments = data.records?.creditCardPayments ?? [];
         
         return data
         
@@ -218,8 +222,20 @@ expenseFilterInput.addEventListener('input', debounce(async e => {
         const totatAmounts = document.getElementById('total-amounts-expenses-id');
         var query = expenseFilterInput.value;
 
-        filteredList = filterTableData(expenses, query);
+        const filteredList = filterTableData(expenses, query);
         renderDataTable(filteredList, tBodyExpense, expensesTemplateFn, colSpan.expenses);
+        totatAmounts.textContent = formatNumber(getTotalSumOfAmounts(filteredList));
+    })
+);
+
+incomeFilterInput.addEventListener('input', debounce(async e => {
+        const totatAmounts = document.getElementById('total-amounts-incomes-id');
+        var query = incomeFilterInput.value;
+
+        const filteredList = filterTableData(incomes, query);
+        console.log('raw incomes list ', incomes)
+        console.log('filtered list ', filteredList)
+        renderDataTable(filteredList, tBodyIncome, incomesTemplateFn, colSpan.incomes);
         totatAmounts.textContent = formatNumber(getTotalSumOfAmounts(filteredList));
     })
 );

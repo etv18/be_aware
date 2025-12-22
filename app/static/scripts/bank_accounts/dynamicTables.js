@@ -36,10 +36,10 @@ const expensesTemplateFn = (expense) => `
     <th scope="row">${expense.id}</th>
     <td>${expense.amount}</td>
     <td>${expense.is_cash ? 'YES' : 'NO'}</td>
-    <td>${expense.description ?? '-'}</td>
+    <td class="text-start">${expense.description ?? '-'}</td>
     <td>${expense.credit_card_name ?? '-'}</td>
     <td>${expense.bank_account_name ?? '-'}</td>
-    <td>${expense.expense_category_name ?? '-'}</td>
+    <td class="text-start">${expense.expense_category_name ?? '-'}</td>
     <td>${expense.created_at}</td>
 `;
 

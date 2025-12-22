@@ -189,7 +189,7 @@ function getKeysFromDataSet(dataSet){
     return Object.keys(dataSet[0]);
 }
 
-function debounce(fn, delay=300) {
+function debounce(fn, delay=270) {
     let timeout;
     return (...args) => {
         clearTimeout(timeout);

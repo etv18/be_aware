@@ -1,4 +1,4 @@
-function getTotalSumOfAmounts(transactions){
+export function getTotalSumOfAmounts(transactions){
     var r = 0.0;
     transactions.forEach(tran => {
         r += Number(tran.amount || 0);
@@ -6,7 +6,11 @@ function getTotalSumOfAmounts(transactions){
     return r;
 }
 
-function formatNumber(value){
+export function formatNumber(value){
     const numberValue = Number(value || 0);
-    return numberValue.toLocaleString('en-US');
+    
+    return numberValue.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
 }

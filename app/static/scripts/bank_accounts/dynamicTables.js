@@ -34,7 +34,7 @@ const colSpan = {
 
 const expensesTemplateFn = (expense) => `
     <th scope="row">${expense.id}</th>
-    <td>${expense.amount}</td>
+    <td class="text-start">${expense.amount.toLocaleString()}</td>
     <td>${expense.is_cash ? 'YES' : 'NO'}</td>
     <td class="text-start">${expense.description ?? '-'}</td>
     <td>${expense.credit_card_name ?? '-'}</td>
@@ -189,7 +189,7 @@ function getKeysFromDataSet(dataSet){
     return Object.keys(dataSet[0]);
 }
 
-function debounce(fn, delay = 300) {
+function debounce(fn, delay=300) {
     let timeout;
     return (...args) => {
         clearTimeout(timeout);
@@ -197,21 +197,29 @@ function debounce(fn, delay = 300) {
     };
 }
 
+function getTotalSumOfAmounts(transactions){
+    var r = 0.0;
+    transactions.forEach(tran => {
+        r += Number(tran.amount || 0);
+    });
+    return r;
+}
+
+function formatNumber(value){
+    const numberValue = Number(value || 0);
+    return numberValue.toLocaleString('en-US');
+}
 
 document.addEventListener('DOMContentLoaded', async e => {
     await getData(associatedRecordsInJsonEndpoint);
 });
 
 expenseFilterInput.addEventListener('input', debounce(async e => {
+        const totatAmounts = document.getElementById('total-amounts-expenses-id');
         var query = expenseFilterInput.value;
+
         filteredList = filterTableData(expenses, query);
-        console.log(`Expenses ===> ${expenses}`)
-        console.log('==> expenseFilterInput.addEventListener', expenses, query);
-        renderDataTable(
-            filteredList, 
-            tBodyExpense,
-            expensesTemplateFn,
-            colSpan.expenses
-        );
+        renderDataTable(filteredList, tBodyExpense, expensesTemplateFn, colSpan.expenses);
+        totatAmounts.textContent = formatNumber(getTotalSumOfAmounts(filteredList));
     })
 );

@@ -9,7 +9,7 @@
     <a href="{{ url_for('bank_account.index') }}" class="btn btn-light fs-5"><i class="bi bi-arrow-return-left"></i> Go back</a>
 
     <div class="my-3 border rounded-3">
-        <div class=" rounded-top d-flex align-items-center justify-content-center p-2" style="height: 50px; background-color: #ff0000;">
+        <div class="rounded-top d-flex align-items-center justify-content-center p-2" style="height: 60px; background-color: #ff0000;">
             <div class="me-auto">
                 <h4 class="d-flex justify-content-center">Expenses</h4>
             </div>
@@ -17,7 +17,6 @@
                 <input type="text" name="filter-input-expense" id="filter-input-expense-id" class="form-control"
                     placeholder="Search...">
             </div>
-
         </div>
         <div id="expenses-table-container" class="table-responsive overflow-y-auto" style="max-height: 322px;">
             <table class="table table-borderless table-hover text-center" id="expenses-table">
@@ -56,8 +55,13 @@
     </div>
 
     <div class="my-5 border rounded-3">
-        <div class="bg-primary rounded-top d-flex align-items-center justify-content-center" style="height: 50px;">
-            <h4 class="d-flex justify-content-center">Incomes</h4>
+        <div class="bg-primary rounded-top d-flex align-items-center justify-content-center p-2" style="height: 60px;">
+            <div class="me-auto">
+                <h4 class="d-flex justify-content-center">Incomes</h4>
+            </div>                
+            <div class="w-100" style="max-width: 217px;">
+                <input type="text" name="filter-input-income" id="filter-input-income-id" class="form-control"placeholder="Search...">
+            </div>
         </div>
         <div id="incomes-table-container" class="table-responsive overflow-y-auto" style="max-height: 322px;">
             <table class="table table-borderless table-hover text-center">
@@ -87,13 +91,18 @@
             </table>
         </div>
         <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
-            <p class="fs-6 fw-bold">TOTAL: {{ total_amount(bank_account.incomes) }}</p>
+            <p class="fs-6 fw-bold" id="total-amounts-incomes-id">TOTAL: {{ total_amount(bank_account.incomes) }}</p>
         </div>
     </div>
 
     <div class="my-5 border rounded-3">
-        <div class="rounded-top d-flex align-items-center justify-content-center" style="height: 50px; background-color: #000000bb;">
-            <h4 class="d-flex justify-content-center">Withdrawals</h4>
+        <div class="rounded-top d-flex align-items-center justify-content-center p-2" style="height: 60px; background-color: #000000bb;">
+            <div class="me-auto">
+                <h4 class="d-flex justify-content-center">Withdrawals</h4>
+            </div>                
+            <div class="w-100" style="max-width: 217px;">
+                <input type="text" name="filter-input-withdrawal" id="filter-input-withdrawal-id" class="form-control"placeholder="Search...">
+            </div>
         </div>
 
         <div class="table-responsive overflow-y-auto" style="max-height: 322px;">
@@ -128,8 +137,13 @@
     </div>
 
     <div class="my-5 border rounded-3">
-        <div class="bg-warning rounded-top d-flex align-items-center justify-content-center" style="height: 50px; color: #4a3b00;">
-            <h4 class="d-flex justify-content-center fw-bold">Loans</h4>
+        <div class="bg-warning rounded-top d-flex align-items-center justify-content-center p-2" style="height: 60px; color: #4a3b00;">
+            <div class="me-auto">
+                <h4 class="d-flex justify-content-center">Loans</h4>
+            </div>                
+            <div class="w-100" style="max-width: 217px;">
+                <input type="text" name="filter-input-loan" id="filter-input-loan-id" class="form-control"placeholder="Search...">
+            </div>
         </div>
         <div id="expenses-table-container" class="table-responsive overflow-y-auto" style="max-height: 322px;">
             <table class="table table-borderless text-center  table-hover">
@@ -170,8 +184,13 @@
     </div>
 
     <div class="my-5 border rounded-3">
-        <div class="bg-success rounded-top d-flex align-items-center justify-content-center" style="height: 50px;">
-            <h4 class="d-flex justify-content-center">Loan Payments</h4>
+        <div class="bg-success rounded-top d-flex align-items-center justify-content-center p-2" style="height: 60px;">
+            <div class="me-auto">
+                <h4 class="d-flex justify-content-center">Loan Payments</h4>
+            </div>                
+            <div class="w-100" style="max-width: 217px;">
+                <input type="text" name="filter-input-loan-payment" id="filter-input-loan-payment-id" class="form-control"placeholder="Search...">
+            </div>
         </div>
 
         <div id="expenses-table-container" class="table-responsive overflow-y-auto" style="max-height: 322px;">
@@ -205,8 +224,13 @@
     </div>
 
     <div class="my-5 border rounded-3">
-        <div class="bg-secondary rounded-top d-flex align-items-center justify-content-center" style="height: 50px;">
-            <h4 class="d-flex justify-content-center">Credit Card Payments</h4>
+        <div class="bg-secondary rounded-top d-flex align-items-center justify-content-center p-2" style="height: 60px;">
+            <div class="me-auto">
+                <h4 class="d-flex justify-content-center">Credit Card Payments</h4>
+            </div>                
+            <div class="w-100" style="max-width: 217px;">
+                <input type="text" name="filter-input-credit-card-payment" id="filter-input-credit-card-payment-id" class="form-control"placeholder="Search...">
+            </div>
         </div>
 
             <div id="payments-table-container" class="table-responsive overflow-y-auto" style="max-height: 322px;">

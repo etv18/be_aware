@@ -31,9 +31,11 @@ document.addEventListener('DOMContentLoaded', async e => {
 expenseFilterInput.addEventListener('input', debounce(async e => {
         const totatAmounts = document.getElementById('total-amounts-expenses-id');
         var query = expenseFilterInput.value;
+        const totalCount = document.getElementById('total-count-expenses-id');
 
         const filteredList = filterTableData(data.records.expenses ?? [], query);
         renderDataTable(filteredList, tBodyExpense, expensesTemplateFn, colSpan.EXPENSES);
-        totatAmounts.textContent = formatNumber(getTotalSumOfAmounts(filteredList));
+        totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`);
+        totalCount.textContent = `RECORDS: ${filteredList.length}`;
     })
 );

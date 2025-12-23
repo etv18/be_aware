@@ -89,7 +89,7 @@
             </table>
         </div>
         <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
-            <p class="fs-6 fw-bold">TOTAL: {{ total_amount(credit_card.expenses) }}</p>
+            <p class="fs-6 fw-bold" id="total-amounts-expenses-id">TOTAL: {{ total_amount(credit_card.expenses) }}</p>
         </div>
     </div>
 
@@ -128,9 +128,12 @@
             <p class="fs-6 fw-bold mx-2">TOTAL: {{ total_amount(credit_card.payments) }}</p>
         </div>
     </div>
+    <p class="d-none" id="associated-records-endpoint-id">{{ url_for('credit_card.associated_records_in_json', id=credit_card.id ) }}</p>
     <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
+    <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script> 
+    <script type="module" src="{{ url_for('static', filename='scripts/utils/dynamicTables.js' ) }}"></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/credit_cards/filterAssociatedRecords.js' ) }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', e => {
             const editCreditCardPaymentModal = document.getElementById('edit-credit-card-payment');

@@ -11,6 +11,7 @@ from app.models.expense_category import ExpenseCategory
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero
 from app.models.expense import Expense
 from app.utils.numeric_casting import format_amount, total_amount, is_decimal_type
+from app.utils.parse_structures import get_data_as_dictionary
 
 def create_expense_category():
     try:
@@ -76,6 +77,26 @@ def get_associated_records(category_id):
     except Exception as e:
         raise e
     return data
+    
+def associated_records_in_json(id):
+    try:
+        category = ExpenseCategory.query.get(id)
+        if not category: 
+            return jsonify({'error': 'Expense category not found'}), 404
+
+        associations = [
+            category.expenses,
+        ]
+        data = {}
+        for a in associations:
+            if a:
+                table_name = a[0].__class__.__tablename__; '''access the first element to get its table name'''
+                data[table_name] = get_data_as_dictionary(a); '''set the table name as the key and use the function to  get all elements of the list in dictionary format'''
+        
+        return jsonify({'records': data}), 200
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 400
 
 def get_monthly_data():
     now = datetime.now()
@@ -113,7 +134,6 @@ def get_monthly_data():
         return data
     except Exception as e:
         return jsonify({'error': str(e)}), 400
-
 
 def validName(name: str):
     if not name or len(name) < 4:

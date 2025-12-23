@@ -1,6 +1,3 @@
-import { getTotalSumOfAmounts, formatNumber } from "../utils/numericHandling.js";
-import { debounce } from "../utils/asyncHanlding.js";
-
 const btnCreateCreditCard = document.getElementById('btn-create-credit-card');
 const btnEditCreditCard = document.getElementById('btn-edit-credit-card');
 const btnCreateCreditCardPayment = document.getElementById('btn-credit-card-payment');

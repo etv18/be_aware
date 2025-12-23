@@ -75,7 +75,7 @@ def associated_records_in_json(id):
     try:
         credit_card = CreditCard.query.get(id)
         if not credit_card: 
-            return jsonify({'error': 'Bank account not found'}), 404
+            return jsonify({'error': 'Credit card not found'}), 404
 
         associations = [
             credit_card.expenses,

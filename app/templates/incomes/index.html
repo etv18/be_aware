@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    <div class="container w-75">
+    <div class="container w-100">
 
         <h2>Incomes</h2>
         <section class="modal fade" tabindex="-1" id="create-income">
@@ -170,7 +170,7 @@
                             <div class="d-flex gap-2">
                                 <button 
                                     type="button" 
-                                    class="btn btn-success" 
+                                    class="btn btn-outline-success" 
                                     data-bs-toggle="modal" 
                                     data-bs-target="#edit-income"
                                     data-income-id="{{ income.id }}"
@@ -179,9 +179,9 @@
                                     data-description="{{ income.description if income.description else '' }}"
                                     data-bank-account-id="{{ income.bank_account_id }}"
                                 >
-                                Edit
+                                    <i class="bi bi-pen"></i>
                                 </button>
-                                <a href="{{ url_for('income.delete', id=income.id ) }}" class="btn btn-danger">Delete</a>
+                                <a href="{{ url_for('income.delete', id=income.id ) }}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
                             </div>
                         </td>
                     </tr>

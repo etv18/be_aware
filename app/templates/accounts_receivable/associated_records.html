@@ -66,14 +66,14 @@
             </div>
         </div>
 
-        <div id="expenses-table-container" class="table-responsive overflow-y-auto" style="max-height: 322px;">
+        <div id="loan-payments-table-container" class="table-responsive overflow-y-auto" style="max-height: 322px;">
             <table class="table table-borderless table-hover text-center" id="expenses-table">
                 <thead class="sticky-top">
                     <tr class="table-success">
                         <th scope="col"># Id</th>
                         <th scope="col" class="text-start">Amount</th>
                         <th scope="col">Is Cash</th>
-                        <th scope="col">Bank Account</th>
+                        <th scope="col" class="text-start">Bank Account</th>
                         <th scope="col">Actions</th>
                         <th scope="col">Create at</th>
                     </tr>
@@ -84,7 +84,7 @@
                         <th scope="row">{{ payment.id }}</th>
                         <td class="text-start">{{ format_amount(payment.amount) }}</td>
                         <td>{{ 'YES' if payment.is_cash else 'NO' }}</td>
-                        <td>{{ payment.bank_account.nick_name }}</td>
+                        <td class="text-start">{{ payment.bank_account.nick_name if payment.bank_account else '-' }}</td>
                         <td>{{ payment.created_at }}</td>
                         <td>
                             <div class="d-flex gap-2 justify-content-center">
@@ -116,7 +116,7 @@
         </div>
     </div>
 
-    <p id="associated-records-endpoint-id">{{ url_for('accounts_receivable.associated_records_in_json', id=loan.id ) }}</p>
+    <p class="d-none" id="associated-records-endpoint-id">{{ url_for('accounts_receivable.associated_records_in_json', id=loan.id ) }}</p>
 
     <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -131,6 +131,7 @@
             } else {
                 select.disabled = checkbox.checked;
             }
+            console.log('its running')
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -141,7 +142,7 @@
                 const loanPaymentId = button.getAttribute('data-loan-payment-id');
 
                 const oldAmount = button.getAttribute('data-amount');
-                const oldIsCash = button.getAttribute('data-is-cash') === 'True';
+                const oldIsCash = button.getAttribute('data-is-cash').toLowerCase() === 'true';
                 const oldBankAccountId = button.getAttribute('data-bank-account-id');
 
                 document.getElementById('p-loan-id').value = loanId;
@@ -154,7 +155,7 @@
                 bankAccountSelect.value = bankAccountSelect === 'None' ? 'none' : oldBankAccountId;
                 console.log('Old Bank Account ID:', oldBankAccountId);
 
-                toggleBankAccount(isCashCheckbox, bankAccountSelect);  
+                toggleBankAccount(isCashCheckbox, bankAccountSelect);
                 isCashCheckbox.addEventListener('change', () => {
                     toggleBankAccount(isCashCheckbox, bankAccountSelect);
                 });

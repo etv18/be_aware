@@ -3,21 +3,23 @@ import { debounce } from "../utils/asyncHanlding.js";
 import {renderDataTable, filterTableData, colSpan, creditCardPaymentsTemplateFn, expensesTemplateFn} from '../utils/dynamicTables.js'
 
 const expenseFilterInput = document.getElementById('filter-input-expense-id');
+const creditCardPaymentFilterInput = document.getElementById('filter-input-credit-card-payment-id');
+const tBodyCreditCardPayment = document.getElementById('credit-card-payment-table-body');
 const tBodyExpense = document.getElementById('expenses-table-body');
 
-let records;
+let data;
 
 async function getAssociatedRecords() {
     const endpoint = document.getElementById('associated-records-endpoint-id').textContent;
     try {
         const response = await fetch(endpoint);
-        const data = await response.json();
-
+        
         if(!response.ok){
             console.log(response.json());
             return;           
         }
-
+        const data = await response.json();
+        console.log(data);
         return data;
     } catch (error) {
         console.error('Fetch error: ', error);  
@@ -25,16 +27,27 @@ async function getAssociatedRecords() {
 }
 
 document.addEventListener('DOMContentLoaded', async e => {
-    records = await getAssociatedRecords();
+    data = await getAssociatedRecords();
 });
 
 expenseFilterInput.addEventListener('input', debounce(async e => {
         const totatAmounts = document.getElementById('total-amounts-expenses-id');
         var query = expenseFilterInput.value;
 
-        const filteredList = filterTableData(records.expenses, query);
+        const filteredList = filterTableData(data.records.expenses ?? [], query);
         renderDataTable(filteredList, tBodyExpense, expensesTemplateFn, colSpan.EXPENSES);
         totatAmounts.textContent = formatNumber(getTotalSumOfAmounts(filteredList));
+    })
+);
+
+creditCardPaymentFilterInput.addEventListener('input', debounce(async e => {
+        const totatAmounts = document.getElementById('total-amounts-credit-card-payments-id');
+        var query = creditCardPaymentFilterInput.value;
+
+        const filteredList = filterTableData(data.records.credit_card_payments, query);
+
+        renderDataTable(filteredList, tBodyCreditCardPayment, creditCardPaymentsTemplateFn, colSpan.CREDIT_CARD_PAYMENTS);
+        totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
     })
 );
 

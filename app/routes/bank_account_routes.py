@@ -24,6 +24,7 @@ def index():
         'banks': banks,
         'bank_accounts': bank_accounts,
         'total_money': total_money_formatted,
+        'len': len
     }
 
     return render_template('bank_accounts/index.html', **context)

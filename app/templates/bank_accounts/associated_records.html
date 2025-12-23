@@ -49,8 +49,11 @@
                 </tbody>
             </table>
         </div>
-        <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
-            <p class="fs-6 fw-bold" id="total-amounts-expenses-id">TOTAL: {{ total_amount(bank_account.expenses) }}</p>
+        <div class="p-2 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
+            <div class="row text-center">
+                <p class="fs-6 fw-bold" id="total-amounts-expenses-id">TOTAL: {{ total_amount(bank_account.expenses) }}</p>
+                <p class="fs-6 fw-bold" id="total-count-expenses-id">RECORDS: {{ bank_account.expenses | length }}</p>
+            </div>
         </div>
     </div>
 
@@ -91,7 +94,10 @@
             </table>
         </div>
         <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
-            <p class="fs-6 fw-bold" id="total-amounts-incomes-id">TOTAL: {{ total_amount(bank_account.incomes) }}</p>
+            <div class="row text-center">
+                <p class="fs-6 fw-bold" id="total-amounts-incomes-id">TOTAL: {{ total_amount(bank_account.incomes) }}</p>
+                <p class="fs-6 fw-bold" id="total-count-incomes-id">RECORDS: {{ bank_account.incomes | length }}</p>
+            </div>
         </div>
     </div>
 
@@ -132,7 +138,10 @@
         </div>
 
         <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
-            <p class="fs-6 fw-bold mx-2" id="total-amounts-withdrawal-id">TOTAL: {{ total_amount(bank_account.withdrawals) }}</p>
+            <div class="row text-center">
+                <p class="fs-6 fw-bold" id="total-amounts-withdrawal-id">TOTAL: {{ total_amount(bank_account.withdrawals) }}</p>
+                <p class="fs-6 fw-bold" id="total-count-withdrawal-id">RECORDS: {{ bank_account.withdrawals | length }}</p>
+            </div>
         </div>
     </div>
 
@@ -179,7 +188,10 @@
             </table>
         </div>
         <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
-            <p class="fs-6 fw-bold mx-2" id="total-amounts-loans-id">TOTAL: {{ total_amount(bank_account.loans) }}</p>
+            <div class="row text-center">
+                <p class="fs-6 fw-bold" id="total-amounts-loans-id">TOTAL: {{ total_amount(bank_account.loans) }}</p>
+                <p class="fs-6 fw-bold" id="total-count-loans-id">RECORDS: {{ bank_account.loans | length }}</p>
+            </div>
         </div>
     </div>
 
@@ -219,7 +231,10 @@
         </div>
 
         <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
-            <p class="fs-6 fw-bold mx-2" id="total-amounts-loans-payments-id">TOTAL: {{ total_amount(bank_account.loan_payments) }}</p>
+            <div class="row text-center">
+                <p class="fs-6 fw-bold" id="total-amounts-loans-payments-id">TOTAL: {{ total_amount(bank_account.loan_payments) }}</p>
+                <p class="fs-6 fw-bold" id="total-count-loans-payments-id">RECORDS: {{ bank_account.loan_payments | length }}</p>
+            </div>
         </div>
     </div>
 
@@ -260,7 +275,10 @@
         </div>
 
         <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
-            <p class="fs-6 fw-bold mx-2" id="total-amounts-credit-card-payments-id">TOTAL: {{ total_amount(bank_account.credit_card_payments) }}</p>
+            <div class="row text-center">
+                <p class="fs-6 fw-bold" id="total-amounts-credit-card-payments-id">TOTAL: {{ total_amount(bank_account.credit_card_payments) }}</p>
+                <p class="fs-6 fw-bold" id="total-count-credit-card-payments-id">RECORDS: {{ bank_account.credit_card_payments | length }}</p>
+            </div>
         </div>
     </div>
 

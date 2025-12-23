@@ -205,7 +205,7 @@ expenseFilterInput.addEventListener('input', debounce(async e => {
 
         const filteredList = filterTableData(expenses, query);
         renderDataTable(filteredList, tBodyExpense, expensesTemplateFn, colSpan.expenses);
-        totatAmounts.textContent = formatNumber(getTotalSumOfAmounts(filteredList));
+        totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
     })
 );
 

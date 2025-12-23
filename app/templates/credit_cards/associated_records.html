@@ -130,7 +130,7 @@
                                     class="btn btn-success" 
                                     data-bs-toggle="modal" 
                                     data-bs-target="#edit-credit-card-payment"
-                                    data-endpoint="{{ url_for('accounts_receivable.update_loan_payment', loan_payment_id=payment.id) }}"
+                                    data-endpoint="{{ url_for('credit_card_payment.update', id=payment.id) }}"
                                     data-credit-card-payment-id="{{ payment.id }}"
                                     data-amount="{{ payment.amount }}"
                                     data-credit-card-id="{{ payment.credit_card_id }}"

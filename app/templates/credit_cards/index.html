@@ -189,11 +189,11 @@
                             class="btn btn-outline-light" 
                             data-credit-card-id="{{ credit_card.id }}"
                         >
-                        Pay
+                            <i class="bi bi-cash"></i></i>
                         </button>
                         <button 
                             type="button" 
-                            class="btn btn-success" 
+                            class="btn btn-outline-success" 
                             data-bs-toggle="modal"
                             data-bs-target="#edit-credit-card" 
                             data-credit-card-id="{{ credit_card.id }}"
@@ -201,9 +201,10 @@
                             data-nick-name="{{ credit_card.nick_name }}"
                             data-amount-available="{{ credit_card.amount_available }}"
                             data-bank-id="{{ credit_card.bank.id }}"
-                        >Edit
+                        >
+                            <i class="bi bi-pen"></i>
                         </button>
-                        <a href="{{ url_for('credit_card.delete', id=credit_card.id ) }}" class="btn btn-danger">Delete</a>
+                        <a href="{{ url_for('credit_card.delete', id=credit_card.id ) }}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
                     </div>
                 </td>
             </tr>

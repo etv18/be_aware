@@ -1,3 +1,4 @@
+import { formatNumber } from './numericHandling.js';
 
 export {
     expensesTemplateFn,
@@ -88,7 +89,7 @@ function renderDataTable(objList, tbody, templateFunction, colspanValue){
         `;
         return;
     }
-    console.log( `${objList}`);
+    
     objList.forEach(obj => {
         const tableRow = document.createElement('tr');
         tableRow.innerHTML = templateFunction(obj);
@@ -138,6 +139,6 @@ function getKeysFromDataSet(dataSet){
     if(!Array.isArray(dataSet) || dataSet.length === 0){
         return [];
     }
-    console.log('===> MMMMMMM $',JSON.parse(JSON.stringify(dataSet)));
+    
     return Object.keys(dataSet[0]);
 }

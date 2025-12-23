@@ -192,7 +192,6 @@ function getKeysFromDataSet(dataSet){
     if(!Array.isArray(dataSet) || dataSet.length === 0){
         return [];
     }
-    console.log('===> MMMMMMM $',JSON.parse(JSON.stringify(dataSet)));
     return Object.keys(dataSet[0]);
 }
 
@@ -245,8 +244,7 @@ loanPaymentFilterInput.addEventListener('input', debounce(async e => {
         var query = loanPaymentFilterInput.value;
 
         const filteredList = filterTableData(loanPayments, query);
-        console.log('raw list: ', loanPayments);
-        console.log('filtered list: ', filteredList);
+
         renderDataTable(filteredList, tBodyLoanPayment, loanPaymentsTemplateFn, colSpan.loanPayments);
         totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
     })

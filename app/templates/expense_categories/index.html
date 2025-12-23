@@ -100,18 +100,18 @@
                                         <div class="">
                                             <button 
                                                 type="button" 
-                                                class="btn btn-success" 
+                                                class="btn btn-outline-success" 
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#edit-expense-category"
                                                 data-id="{{ expense_category.id }}"
                                                 data-name="{{ expense_category.name.lower().capitalize() }}"
                                                 data-limit="{{ expense_category.limit }}"
                                             >
-                                            Edit
+                                                <i class="bi bi-pen"></i>
                                             </button>
                                         </div>
                                         <div class="">
-                                            <a href="{{ url_for('expense_category.delete', id=expense_category.id) }}" class="btn btn-danger">Delete</a>
+                                            <a href="{{ url_for('expense_category.delete', id=expense_category.id) }}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
                                         </div>
                                     </div>
                                 </td>

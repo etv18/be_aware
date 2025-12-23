@@ -239,11 +239,11 @@
                                     class="btn btn-outline-light" 
                                     data-loan-id="{{ loan.id }}"
                                 >
-                                Pay
+                                    <i class="bi bi-cash-coin"></i>
                                 </button>
                                 <button 
                                     type="button" 
-                                    class="btn btn-success" 
+                                    class="btn btn-outline-success" 
                                     data-bs-toggle="modal" 
                                     data-bs-target="#edit-account-receivable"
                                     data-loan-id="{{ loan.id }}"
@@ -254,9 +254,9 @@
                                     data-person-name="{{ loan.person_name }}"
                                     data-bank-account-id="{{ loan.bank_account_id }}"
                                 >
-                                Edit
+                                    <i class="bi bi-pen"></i>
                                 </button>
-                                <a href="{{ url_for('accounts_receivable.delete_loan', loan_id=loan.id) }}" class="btn btn-danger">Delete</a>
+                                <a href="{{ url_for('accounts_receivable.delete_loan', loan_id=loan.id) }}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
                             </div>
                         </td>
                     </tr>
@@ -318,7 +318,7 @@
             const editBankAccountsSelect = document.getElementById('e-select-bank-account-id');
             const editAmount = document.getElementById('e-amount');
 
-            const oldIsCash = button.getAttribute('data-is-cash') === 'True';
+            const oldIsCash = button.getAttribute('data-is-cash').toLowerCase() === 'true';
             const oldBankAccountId = button.getAttribute('data-bank-account-id');
             const oldAmount = button.getAttribute('data-amount');
             const loanId = button.getAttribute('data-loan-id');

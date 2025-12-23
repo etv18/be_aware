@@ -1,3 +1,17 @@
+
+export {
+    expensesTemplateFn,
+    incomesTemplateFn,
+    withdrawalsTemplateFn,
+    loansTemplateFn,
+    loanPaymentsTemplateFn,
+    creditCardPaymentsTemplateFn,
+    renderDataTable,
+    filterTableData,
+    colSpan,
+    getKeysFromDataSet
+};
+
 const expensesTemplateFn = (expense) => `
     <th scope="row">${expense.id}</th>
     <td class="text-start">${formatNumber(expense.amount)}</td>
@@ -54,7 +68,7 @@ const creditCardPaymentsTemplateFn = (creditCardPayment) => `
     <td>${ creditCardPayment.created_at }</td>
 `;
 
-const colspan = {
+const colSpan = {
     EXPENSES: 7,
     INCOMES: 6,
     WITHDRAWALS: 5,
@@ -118,4 +132,12 @@ function filterTableData(dataSet, query){
     });
 
     return filteredList;
+}
+
+function getKeysFromDataSet(dataSet){
+    if(!Array.isArray(dataSet) || dataSet.length === 0){
+        return [];
+    }
+    console.log('===> MMMMMMM $',JSON.parse(JSON.stringify(dataSet)));
+    return Object.keys(dataSet[0]);
 }

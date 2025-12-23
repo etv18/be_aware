@@ -89,7 +89,10 @@
             </table>
         </div>
         <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
-            <p class="fs-6 fw-bold" id="total-amounts-expenses-id">TOTAL: {{ total_amount(credit_card.expenses) }}</p>
+            <div class="row text-center">
+                <p class="fs-6 fw-bold" id="total-amounts-expenses-id">TOTAL: {{ total_amount(credit_card.expenses) }}</p>
+                <p class="fs-6 fw-bold" id="total-count-expenses-id">RECORDS: {{ credit_card.expenses | length }}</p>
+            </div>
         </div>
     </div>
 
@@ -149,7 +152,10 @@
         </div>
 
         <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
-            <p class="fs-6 fw-bold mx-2" id="total-amounts-credit-card-payments-id">TOTAL: {{ total_amount(credit_card.payments) }}</p>
+            <div class="row text-center">
+                <p class="fs-6 fw-bold" id="total-amounts-credit-card-payments-id">TOTAL: {{ total_amount(credit_card.payments) }}</p>
+                <p class="fs-6 fw-bold" id="total-count-credit-card-payments-id">RECORDS: {{ credit_card.payments | length }}</p>
+            </div>
         </div>
     </div>
     <p class="d-none" id="associated-records-endpoint-id">{{ url_for('credit_card.associated_records_in_json', id=credit_card.id ) }}</p>

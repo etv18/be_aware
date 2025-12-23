@@ -212,10 +212,10 @@
             </table>
         </div>
     
-    <script src="../../static/scripts/credit_cards/script.js"></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/credit_cards/script.js' ) }}"></script>
+    <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
     <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

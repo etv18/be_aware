@@ -57,6 +57,7 @@
             </div>
         </form>
     </section>
+
     <section class="modal fade" tabindex="-1" id="edit-bank-account">
         <form action="{{ url_for('bank_account.update') }}" method="post" id="edit-bank-account-form">
             <input type="hidden" name="id" id="e-bank_account-id">
@@ -148,7 +149,7 @@
                         <div class="d-flex gap-2">
                             <button 
                                 type="button" 
-                                class="btn btn-success" 
+                                class="btn btn-outline-success" 
                                 data-bs-toggle="modal"
                                 data-bs-target="#edit-bank-account" 
                                 data-bank-account-id="{{ bank_account.id }}"
@@ -156,9 +157,10 @@
                                 data-nick-name="{{ bank_account.nick_name }}"
                                 data-amount-available="{{ bank_account.amount_available }}"
                                 data-bank-id="{{ bank_account.bank.id }}"
-                            >Edit
+                            >
+                                <i class="bi bi-pen"></i>
                             </button>
-                            <a href="{{ url_for('bank_account.delete', id=bank_account.id) }}" class="btn btn-danger">Delete</a>
+                            <a href="{{ url_for('bank_account.delete', id=bank_account.id) }}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
                         </div>
                     </td>
                 </tr>

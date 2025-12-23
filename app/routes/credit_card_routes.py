@@ -64,8 +64,10 @@ def delete(id):
 @credit_card_bp.route('/associated_records/<int:id>', methods=['GET'])
 def associated_records(id):
     credit_card = CreditCard.query.get(id)
+    bank_accounts = BankAccount.query.all() 
     context = {
         'credit_card': credit_card,
+        'bank_accounts': bank_accounts,
         'format_amount': format_amount, #function
         'total_amount': total_amount, #function
     }

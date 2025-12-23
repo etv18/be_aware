@@ -65,6 +65,38 @@ def associated_records(loan_id):
         print(e)
         return jsonify({'error': str(e)}), 400
     
+@accounts_receivable_bp.route('loans/associated/records/in/json/<int:id>', methods=['GET'])
+def associated_records_in_json(id):
+    try:
+        return loan_controller.associated_records_in_json(id)
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400
+    
+
+@accounts_receivable_bp.route('/filter_loans_by_field', methods=['GET'])
+def filter_loans_by_field():
+    try:
+        query = request.args.get('query')
+        return loan_controller.filter_loans_by_field(query)
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400
+    
+@accounts_receivable_bp.route('/filter_loans_by_timeframe', methods=['GET'])
+def filter_loans_by_timeframe():
+    try:
+        start = request.args.get('start')
+        end = request.args.get('end')
+        return loan_controller.filter_loans_by_timeframe(start, end)
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400
+    
+
+
+'''LOAN PAYMENTS ENDPOINTS'''
+
 @accounts_receivable_bp.route('/create_loan_payment', methods=['POST'])
 def create_loan_payment():
     try:
@@ -91,21 +123,3 @@ def delete_loan_payment(loan_payment_id):
         print(e)
         return jsonify({'error': str(e)}), 400
     
-@accounts_receivable_bp.route('/filter_loans_by_field', methods=['GET'])
-def filter_loans_by_field():
-    try:
-        query = request.args.get('query')
-        return loan_controller.filter_loans_by_field(query)
-    except Exception as e:
-        print(e)
-        return jsonify({'error': str(e)}), 400
-    
-@accounts_receivable_bp.route('/filter_loans_by_timeframe', methods=['GET'])
-def filter_loans_by_timeframe():
-    try:
-        start = request.args.get('start')
-        end = request.args.get('end')
-        return loan_controller.filter_loans_by_timeframe(start, end)
-    except Exception as e:
-        print(e)
-        return jsonify({'error': str(e)}), 400

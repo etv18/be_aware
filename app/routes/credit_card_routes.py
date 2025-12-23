@@ -75,6 +75,6 @@ def associated_records(id):
 @credit_card_bp.route('/associated/records/in/json/<int:id>', methods=['GET'])
 def associated_records_in_json(id):
     try:
-        cc_controller.associated_records_in_json(id)
+        return cc_controller.associated_records_in_json(id)
     except Exception as e:
         raise e

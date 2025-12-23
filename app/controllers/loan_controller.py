@@ -4,6 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from decimal import Decimal
 from datetime import datetime, timedelta
+import traceback
 
 from app.extensions import db
 from app.models.loan import Loan
@@ -12,6 +13,7 @@ from app.models.cash_ledger import CashLedger
 from app.controllers.expense_controller import update_bank_account_money_on_create, update_bank_account_money_on_update
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero, NoBankProductSelected
 from app.utils.numeric_casting import is_decimal_type
+from app.utils.parse_structures import get_data_as_dictionary
 
 def create_loan():
     try:
@@ -181,6 +183,26 @@ def filter_loans_by_timeframe(start, end):
     except Exception as e:
         db.session.rollback()
         raise e
+    
+def associated_records_in_json(id):
+    try:
+        loan = Loan.query.get(id)
+        if not loan: 
+            return jsonify({'error': 'Loan not found'}), 404
+
+        associations = [
+            loan.loan_payments,
+        ]
+        data = {}
+        for a in associations:
+            if a:
+                table_name = a[0].__class__.__tablename__; '''access the first element to get its table name'''
+                data[table_name] = get_data_as_dictionary(a); '''set the table name as the key and use the function to  get all elements of the list in dictionary format'''
+        
+        return jsonify({'records': data}), 200
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 400
 
 #HELPERS
 def return_money_to_bank_account(loan):

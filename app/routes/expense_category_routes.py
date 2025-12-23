@@ -66,3 +66,10 @@ def populate_monthly_chart():
         return jsonify(data), 200
     except Exception as e:
         raise e
+
+@expense_category_bp.route('/associated/records/in/json/<int:id>', methods=['GET'])
+def associated_records_in_json(id):
+    try: 
+       return ec_controller.associated_records_in_json(id)
+    except Exception as e:
+        raise e

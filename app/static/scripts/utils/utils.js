@@ -16,7 +16,7 @@ document.addEventListener('click', async e => {
         confirmButtonText: "Yes, delete it!"
     }).then(async (result) => {
         if (result.isConfirmed) {
-            res = await fetch(deleteUrl, {
+            const res = await fetch(deleteUrl, {
                 method: 'DELETE'
             });
             console.log(res.json());

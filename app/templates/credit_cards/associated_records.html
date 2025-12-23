@@ -111,6 +111,7 @@
                         <th scope="col" class="text-start">Amount</th>
                         <th scope="col">Credit Card</th>
                         <th scope="col">Bank Account</th>
+                        <th scope="col">Actions</th>
                         <th scope="col">Create at</th>
                     </tr>
                 </thead>
@@ -122,6 +123,24 @@
                         <td>{{ payment.credit_card.nick_name or '-' }}</td>
                         <td>{{ payment.bank_account.nick_name or '-' }}</td>
                         <td>{{ payment.created_at }}</td>
+                        <td class="d-flex justify-content-center">
+                            <div class="d-flex gap-2">
+                                <button 
+                                    type="button" 
+                                    class="btn btn-success" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#edit-credit-card-payment"
+                                    data-endpoint="{{ url_for('accounts_receivable.update_loan_payment', loan_payment_id=payment.id) }}"
+                                    data-credit-card-payment-id="{{ payment.id }}"
+                                    data-amount="{{ payment.amount }}"
+                                    data-credit-card-id="{{ payment.credit_card_id }}"
+                                    data-bank-account-id="{{ payment.bank_account_id }}"
+                                >
+                                Edit
+                                </button>
+                                <a href="{{ url_for('credit_card_payment.delete', id=payment.id) }}" class="btn btn-danger">Delete</a>
+                            </div>
+                        </td>
                     </tr>
                     {% endfor %}
                     

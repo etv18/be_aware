@@ -233,31 +233,31 @@
             </div>
         </div>
 
-            <div id="payments-table-container" class="table-responsive overflow-y-auto" style="max-height: 322px;">
-                <table class="table table-borderless table-hover text-center" id="expenses-table">
-                    <thead class="sticky-top">
-                        <tr class="table-secondary">
-                            <th scope="col"># Id</th>
-                            <th scope="col" class="text-start">Amount</th>
-                            <th scope="col">Credit Card</th>
-                            <th scope="col">Bank Account</th>
-                            <th scope="col">Create at</th>
-                        </tr>
-                    </thead>
-                    <tbody id="credit-card-payment-table-body">
-                        {% for payment in bank_account.credit_card_payments %}                
-                        <tr>
-                            <th scope="row">{{ payment.id }}</th>
-                            <td class="text-start">{{ format_amount(payment.amount) }}</td>
-                            <td>{{ payment.credit_card.nick_name or '-' }}</td>
-                            <td>{{ payment.bank_account.nick_name or '-' }}</td>
-                            <td>{{ payment.created_at }}</td>
-                        </tr>
-                        {% endfor %}
-                        
-                    </tbody>
-                </table>
-            </div>
+        <div id="payments-table-container" class="table-responsive overflow-y-auto" style="max-height: 322px;">
+            <table class="table table-borderless table-hover text-center" id="expenses-table">
+                <thead class="sticky-top">
+                    <tr class="table-secondary">
+                        <th scope="col"># Id</th>
+                        <th scope="col" class="text-start">Amount</th>
+                        <th scope="col">Credit Card</th>
+                        <th scope="col">Bank Account</th>
+                        <th scope="col">Create at</th>
+                    </tr>
+                </thead>
+                <tbody id="credit-card-payment-table-body">
+                    {% for payment in bank_account.credit_card_payments %}                
+                    <tr>
+                        <th scope="row">{{ payment.id }}</th>
+                        <td class="text-start">{{ format_amount(payment.amount) }}</td>
+                        <td>{{ payment.credit_card.nick_name or '-' }}</td>
+                        <td>{{ payment.bank_account.nick_name or '-' }}</td>
+                        <td>{{ payment.created_at }}</td>
+                    </tr>
+                    {% endfor %}
+                    
+                </tbody>
+            </table>
+        </div>
 
         <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
             <p class="fs-6 fw-bold mx-2" id="total-amounts-credit-card-payments-id">TOTAL: {{ total_amount(bank_account.credit_card_payments) }}</p>

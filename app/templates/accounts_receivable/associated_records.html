@@ -56,27 +56,33 @@
         </form>
     </section>
     
-    <div class="mt-2 border rounded-3">
-        <div class="bg-success rounded-top d-flex align-items-center justify-content-center" style="height: 50px;">
-            <h4 class="d-flex justify-content-center">Loan Payments</h4>
+    <div class="my-5 border rounded-3">
+        <div class="bg-success rounded-top d-flex align-items-center justify-content-center p-2" style="height: 60px;">
+            <div class="me-auto">
+                <h4 class="d-flex justify-content-center">Loan Payments</h4>
+            </div>                
+            <div class="w-100" style="max-width: 217px;">
+                <input type="text" name="filter-input-loan-payment" id="filter-input-loan-payment-id" class="form-control"placeholder="Search...">
+            </div>
         </div>
+
         <div id="expenses-table-container" class="table-responsive overflow-y-auto" style="max-height: 322px;">
             <table class="table table-borderless table-hover text-center" id="expenses-table">
                 <thead class="sticky-top">
                     <tr class="table-success">
                         <th scope="col"># Id</th>
                         <th scope="col" class="text-start">Amount</th>
-                        <th scope="col">is_cash</th>
+                        <th scope="col">Is Cash</th>
                         <th scope="col">Bank Account</th>
-                        <th scope="col">Create at</th>
                         <th scope="col">Actions</th>
+                        <th scope="col">Create at</th>
                     </tr>
                 </thead>
-                <tbody id="expenses-table-body">
+                <tbody id="loan-payment-table-body">
                     {% for payment in loan.loan_payments %}                
                     <tr>
                         <th scope="row">{{ payment.id }}</th>
-                        <td class="text-start">{{ payment.amount }}</td>
+                        <td class="text-start">{{ format_amount(payment.amount) }}</td>
                         <td>{{ 'YES' if payment.is_cash else 'NO' }}</td>
                         <td>{{ payment.bank_account.nick_name }}</td>
                         <td>{{ payment.created_at }}</td>
@@ -106,14 +112,17 @@
         </div>
 
         <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
-            <p class="fs-6 fw-bold mx-2">TOTAL: {{ total_amount(loan.loan_payments) }}</p>
+            <p class="fs-6 fw-bold mx-2" id="total-amounts-loans-payments-id">TOTAL: {{ total_amount(loan.loan_payments) }}</p>
         </div>
     </div>
 
-    <p class="">Total: {{ total_expenses }}</p>
+    <p id="associated-records-endpoint-id">{{ url_for('accounts_receivable.associated_records_in_json', id=loan.id ) }}</p>
+
     <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/utils/dynamicTables.js' ) }}"></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/accounts_receivable/filterAssociatedRecords.js' ) }}"></script>
     <script>
         function toggleBankAccount(checkbox, select){
             if(checkbox.checked) {

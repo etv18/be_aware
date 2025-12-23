@@ -201,63 +201,78 @@ document.addEventListener('DOMContentLoaded', async e => {
 
 expenseFilterInput.addEventListener('input', debounce(async e => {
         const totatAmounts = document.getElementById('total-amounts-expenses-id');
+        const totalCount = document.getElementById('total-count-expenses-id');
         var query = expenseFilterInput.value;
 
         const filteredList = filterTableData(expenses, query);
+
         renderDataTable(filteredList, tBodyExpense, expensesTemplateFn, colSpan.expenses);
-        totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
+        totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`);
+        totalCount.textContent = `RECORDS: ${filteredList.length}`;
     })
 );
 
 incomeFilterInput.addEventListener('input', debounce(async e => {
         const totatAmounts = document.getElementById('total-amounts-incomes-id');
+        const totalCount = document.getElementById('total-count-incomes-id');
         var query = incomeFilterInput.value;
 
         const filteredList = filterTableData(incomes, query);
+
         renderDataTable(filteredList, tBodyIncome, incomesTemplateFn, colSpan.incomes);
-        totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
+        totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`);
+        totalCount.textContent = `RECORDS: ${filteredList.length}`;
     })
 );
 
 withdrawalFilterInput.addEventListener('input', debounce(async e => {
         const totatAmounts = document.getElementById('total-amounts-withdrawal-id');
+        const totalCount = document.getElementById('total-count-withdrawal-id');
         var query = withdrawalFilterInput.value;
 
         const filteredList = filterTableData(withdrawals, query);
+
         renderDataTable(filteredList, tBodyWithdrawal, withdrawalsTemplateFn, colSpan.withdrawals);
         totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
+        totalCount.textContent = `RECORDS: ${filteredList.length}`;
     })
 );
 
 loanFilterInput.addEventListener('input', debounce(async e => {
         const totatAmounts = document.getElementById('total-amounts-loans-id');
+        const totalCount = document.getElementById('total-count-loans-id');
         var query = loanFilterInput.value;
 
         const filteredList = filterTableData(loans, query);
+
         renderDataTable(filteredList, tBodyLoan, loansTemplateFn, colSpan.loans);
         totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
+        totalCount.textContent = `RECORDS: ${filteredList.length}`;
     })
 );
 
 loanPaymentFilterInput.addEventListener('input', debounce(async e => {
         const totatAmounts = document.getElementById('total-amounts-loans-payments-id');
+        const totalCount = document.getElementById('total-count-loans-payments-id');
         var query = loanPaymentFilterInput.value;
 
         const filteredList = filterTableData(loanPayments, query);
 
         renderDataTable(filteredList, tBodyLoanPayment, loanPaymentsTemplateFn, colSpan.loanPayments);
         totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
+        totalCount.textContent = `RECORDS: ${filteredList.length}`;
     })
 );
 
 creditCardPaymentFilterInput.addEventListener('input', debounce(async e => {
         const totatAmounts = document.getElementById('total-amounts-credit-card-payments-id');
+        const totalCount = document.getElementById('total-count-credit-card-payments-id');
         var query = creditCardPaymentFilterInput.value;
 
         const filteredList = filterTableData(creditCardPayments, query);
-        console.log('raw list: ', creditCardPayments);
-        console.log('filtered list: ', creditCardPayments);
+
         renderDataTable(filteredList, tBodyCreditCardPayment, creditCardPaymentsTemplateFn, colSpan.creditCardPayments);
         totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
+        totalCount.textContent = `RECORDS: ${filteredList.length}`;
     })
 );

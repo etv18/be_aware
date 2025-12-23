@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    <div class="container w-100">
+    <div class=" w-100">
 
         <h2>Accounts Receivable</h2>
         <section class="modal fade" tabindex="-1" id="create-account-receivable">
@@ -171,32 +171,33 @@
                 </div>
             </form>
         </section>
-
-        <div class="d-flex justify-content-start gap-1 flex-wrap flex-md-nowrap">
-            <button type="button" 
-                    class="btn btn-outline-primary me-auto me-md-auto w-100 w-md-auto" 
-                    style="max-width: 200px;"
-                    data-bs-toggle="modal" 
-                    data-bs-target="#create-account-receivable">
-                New Account Receivable
-            </button>
-            <div class="d-flex gap-1 w-100 align-items-center" style="max-width: 320px;">
-                <div class="w-md-auto mt-md-0">
-                    <label for="" class="fs-6 fw-bold">Filter by: </label>
+        <div class="w-100">
+            <div class="d-flex justify-content-start gap-1 flex-wrap flex-md-nowrap">
+                <button type="button" 
+                        class="btn btn-outline-primary me-auto me-md-auto w-100 w-md-auto" 
+                        style="max-width: 200px;"
+                        data-bs-toggle="modal" 
+                        data-bs-target="#create-account-receivable">
+                    New Account Receivable
+                </button>
+                <div class="d-flex gap-1 w-100 align-items-center" style="max-width: 320px;">
+                    <div class="w-md-auto mt-md-0">
+                        <label for="" class="fs-6 fw-bold">Filter by: </label>
+                    </div>
+                    <div class="w-100 w-md-auto mt-md-0" style="max-width: 250px;">
+                        <select class="form-select" id="select-filter-type-id">
+                            <option value="field">Field</option>
+                            <option value="time">Time</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="w-100 w-md-auto mt-md-0" style="max-width: 250px;">
-                    <select class="form-select" id="select-filter-type-id">
-                        <option value="field">Field</option>
-                        <option value="time">Time</option>
-                    </select>
+    
+                <div class="d-flex gap-1 w-100" style="max-width: 350px;">
+                    <div class="w-100 w-md-auto mt-md-0">
+                        <input type="text" class="form-control" id="filter-input-id">
+                    </div>
+                    <button type="button" class="btn btn-outline-success" id="btn-search-id"><i class="bi bi-search"></i></button>
                 </div>
-            </div>
-
-            <div class="d-flex gap-1 w-100" style="max-width: 350px;">
-                <div class="w-100 w-md-auto mt-md-0">
-                    <input type="text" class="form-control" id="filter-input-id">
-                </div>
-                <button type="button" class="btn btn-outline-success" id="btn-search-id"><i class="bi bi-search"></i></button>
             </div>
         </div>
 

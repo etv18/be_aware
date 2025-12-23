@@ -3,261 +3,263 @@
 {% block title %}Expenses{% endblock %}
 
 {% block content %}
-    <h2>Expenses</h2>
-    <section class="modal fade" tabindex="-1" id="create-expense">
-        <form id="create-expense-form">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">New Expense</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-sm">
-                                <div class="form-floating mt-2">
-                                    <input type="text" name="amount" id="amount-id" class="form-control"
-                                        placeholder="Amount" required>
-                                    <label for="amount-id">Amount</label>
+    <div class="container w-100">
+        <h2>Expenses</h2>
+        <section class="modal fade" tabindex="-1" id="create-expense">
+            <form id="create-expense-form">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">New Expense</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-sm">
+                                    <div class="form-floating mt-2">
+                                        <input type="text" name="amount" id="amount-id" class="form-control"
+                                            placeholder="Amount" required>
+                                        <label for="amount-id">Amount</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-check form-switch mt-2">
+                                        <input class="form-check-input" type="checkbox" name="is-cash" id="checkNativeSwitch" switch checked>
+                                        <label class="form-check-label" for="checkNativeSwitch">
+                                            Cash
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-sm">
-                                <div class="form-check form-switch mt-2">
-                                    <input class="form-check-input" type="checkbox" name="is-cash" id="checkNativeSwitch" switch checked>
-                                    <label class="form-check-label" for="checkNativeSwitch">
-                                        Cash
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-floating mt-2">
-                                <select name="select-expense-category" id="select-expense-category-id" class="form-select">
-                                    {% for category in expense_categories %}
-                                    <option value="{{ category.id }}">{{ category.name }}</option>
-                                    {% endfor %}
-                                </select>
-                                <label for="select-expense-category-id" class="p-3">Category</label>
-                            </div>
-
-                            <div class="form-floating mt-2">
-                                <input type="text" name="description" id="description-id" class="form-control"
-                                    placeholder="Description" required>
-                                <label for="description-id" class="p-3">Description</label>
-                            </div>
-                        </div>
-
-                        <div class="row" id="bank-products-id">
-                            <div class="col-sm">
+                            <div class="row">
                                 <div class="form-floating mt-2">
-                                    <select name="select-credit-card" id="select-credit-card-id" class="form-select">
-                                        <option value="none">...Select...</option>
-                                        {% for cc in credit_cards %}
-                                        <option value="{{ cc.id }}">{{ cc.nick_name }}</option>
+                                    <select name="select-expense-category" id="select-expense-category-id" class="form-select">
+                                        {% for category in expense_categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
                                         {% endfor %}
                                     </select>
-                                    <label for="select-credit-card-id" class="p-3">Credit Card</label>
+                                    <label for="select-expense-category-id" class="p-3">Category</label>
+                                </div>
+
+                                <div class="form-floating mt-2">
+                                    <input type="text" name="description" id="description-id" class="form-control"
+                                        placeholder="Description" required>
+                                    <label for="description-id" class="p-3">Description</label>
                                 </div>
                             </div>
-                            <div class="col-sm">
-                                <div class="form-floating mt-2">
-                                    <select name="select-bank-account" id="select-bank-account-id" class="form-select">
-                                        <option value="none">...Select...</option>
-                                        {% for ba in bank_accounts %}
-                                        <option value="{{ ba.id }}">{{ ba.nick_name }}</option>                                        
-                                        {% endfor %}
-                                    </select>
-                                    <label for="select-bank-account-id" class="p-3">Bank Account</label>
+
+                            <div class="row" id="bank-products-id">
+                                <div class="col-sm">
+                                    <div class="form-floating mt-2">
+                                        <select name="select-credit-card" id="select-credit-card-id" class="form-select">
+                                            <option value="none">...Select...</option>
+                                            {% for cc in credit_cards %}
+                                            <option value="{{ cc.id }}">{{ cc.nick_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <label for="select-credit-card-id" class="p-3">Credit Card</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-floating mt-2">
+                                        <select name="select-bank-account" id="select-bank-account-id" class="form-select">
+                                            <option value="none">...Select...</option>
+                                            {% for ba in bank_accounts %}
+                                            <option value="{{ ba.id }}">{{ ba.nick_name }}</option>                                        
+                                            {% endfor %}
+                                        </select>
+                                        <label for="select-bank-account-id" class="p-3">Bank Account</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" onclick="createExpense()">Save</button>
+                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="createExpense()">Save</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="modal fade" tabindex="-1" id="edit-expense">
+            <form id="edit-expense-form">
+                <input type="hidden" name="id" id="e-expense-id">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-sm">
+                                    <div class="form-floating mt-2">
+                                        <input type="text" name="amount" id="e-amount-id" class="form-control"
+                                            placeholder="Amount" required>
+                                        <label for="e-amount-id">Amount</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-check form-switch mt-2">
+                                        <input class="form-check-input" type="checkbox" name="is-cash" id="e-checkNativeSwitch" switch checked>
+                                        <label class="form-check-label" for="e-checkNativeSwitch">
+                                            Cash
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-floating mt-2">
+                                    <select name="select-expense-category" id="e-select-expense-category-id" class="form-select">
+                                        {% for category in expense_categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="e-select-expense-category-id" class="p-3">Category</label>
+                                </div>
+
+                                <div class="form-floating mt-2">
+                                    <input type="text" name="description" id="e-description-id" class="form-control"
+                                        placeholder="Description" required>
+                                    <label for="e-description-id" class="p-3">Description</label>
+                                </div>
+                            </div>
+
+                            <div class="row" id="e-bank-products-id">
+                                <div class="col-sm">
+                                    <div class="form-floating mt-2">
+                                        <select name="select-credit-card" id="e-select-credit-card-id" class="form-select">
+                                            <option value="none">...Select...</option>
+                                            {% for cc in credit_cards %}
+                                            <option value="{{ cc.id }}">{{ cc.nick_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <label for="e-select-credit-card-id" class="p-3">Credit Card</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-floating mt-2">
+                                        <select name="select-bank-account" id="e-select-bank-account-id" class="form-select">
+                                            <option value="none">...Select...</option>
+                                            {% for ba in bank_accounts %}
+                                            <option value="{{ ba.id }}">{{ ba.nick_name }}</option>                                        
+                                            {% endfor %}
+                                        </select>
+                                        <label for="e-select-bank-account-id" class="p-3">Bank Account</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" onclick="editExpense()">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <div class="d-flex justify-content-start gap-1 flex-wrap flex-md-nowrap mt-2">
+            <button 
+                type="button"
+                id="btn-create-expense-id"
+                class="btn btn-outline-primary me-auto me-md-auto w-100 w-md-auto" 
+                style="max-width: 200px;"
+                data-bs-toggle="modal"
+                data-bs-target="#create-expense"
+            >New expense
+            </button>
+            <div class="d-flex gap-1 w-100 align-items-center" style="max-width: 320px;">
+                <div class="w-md-auto mt-md-0">
+                    <label for="" class="fs-6 fw-bold">Filter by: </label>
+                </div>
+                <div class="w-100 w-md-auto mt-md-0" style="max-width: 250px;">
+                    <select class="form-select" id="select-filter-type-id">
+                        <option value="field">Field</option>
+                        <option value="time">Time</option>
+                    </select>
+                </div>
+            </div>
+            <div class="d-flex gap-1 w-100" style="max-width: 350px;">
+                <div class="w-100 w-md-auto mt-md-0">
+                    <input type="text" class="form-control" id="filter-input-id">
+                </div>
+                <button type="button" class="btn btn-outline-success" id="btn-search-id"><i class="bi bi-search"></i></button>
+            </div>
+        </div>
+
+        <div class="table-responsive overflow-y-auto border rounded-3 mt-1" style="max-height: 457px;">
+            <table class="table table-striped table-hover" id="expenses-table">
+                <thead class="sticky-top">
+                    <tr>
+                        <th scope="col"># Id</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Is Cash</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Credit Card</th>
+                        <th scope="col">Bank Account</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Create at</th>
+                        <th scope="col">Acctions</th>
+                    </tr>
+                </thead>
+                <tbody id="expenses-table-body">
+                    {% for expense in expenses %}                
+                    <tr>
+                        <th scope="row">{{ expense.id }}</th>
+                        <td>{{ format_amount(expense.amount) or '-' }}</td>
+                        <td><a id="filter-by-cash" class="filter_link" data-is-cash-value="{{ expense.is_cash }}">{{ 'YES' if expense.is_cash else 'NO' }}</a></td>
+                        <td> {{ expense.description or '-' }} </td>
+                        <td>{{ expense.credit_card.nick_name or '-' }}</td>
+                        <td>{{ expense.bank_account.nick_name or '-' }}</td>
+                        <td>{{ expense.expense_category.name or '-' }}</td>
+                        <td>{{ expense.created_at }}</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button 
+                                    type="button" 
+                                    class="btn btn-outline-success" 
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#edit-expense" 
+                                    data-expense-id="{{ expense.id }}"
+                                    data-amount-id="{{ expense.amount }}"
+                                    data-is-cash="{{ expense.is_cash }}"
+                                    data-select-expense-category-id="{{ expense.expense_category_id }}"
+                                    data-select-credit-card-id="{{ expense.credit_card_id }}"
+                                    data-select-bank-account-id="{{ expense.bank_account_id }}"
+                                    data-description="{{ expense.description }}"
+                                >
+                                    <i class="bi bi-pen"></i>
+                                </button>
+                                <a href="{{ url_for('expense.delete', id=expense.id) }}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    
+                </tbody>
+            </table>
+        </div>
+        <section>
+            <div class="d-flex flex-column">
+                <div>
+                    <label for="" id="weekly-title">WEELY BASIS </label>
+                </div>
+                <div class="d-flex gap-2">
+                    <div>
+                        <label for="" id="weekly-limit">Limit: {{ weekly.limit }}</label>
+                    </div>
+                    <div>
+                        <label for="" id="weekly-spent">Spent: {{ weekly.spent }}</label>
+                    </div>
+                    <div>
+                        <label for="" id="weekly-left">Left: {{ weekly.left }}</label>
                     </div>
                 </div>
             </div>
-        </form>
-    </section>
-
-    <section class="modal fade" tabindex="-1" id="edit-expense">
-        <form id="edit-expense-form">
-            <input type="hidden" name="id" id="e-expense-id">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-sm">
-                                <div class="form-floating mt-2">
-                                    <input type="text" name="amount" id="e-amount-id" class="form-control"
-                                        placeholder="Amount" required>
-                                    <label for="e-amount-id">Amount</label>
-                                </div>
-                            </div>
-                            <div class="col-sm">
-                                <div class="form-check form-switch mt-2">
-                                    <input class="form-check-input" type="checkbox" name="is-cash" id="e-checkNativeSwitch" switch checked>
-                                    <label class="form-check-label" for="e-checkNativeSwitch">
-                                        Cash
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-floating mt-2">
-                                <select name="select-expense-category" id="e-select-expense-category-id" class="form-select">
-                                    {% for category in expense_categories %}
-                                    <option value="{{ category.id }}">{{ category.name }}</option>
-                                    {% endfor %}
-                                </select>
-                                <label for="e-select-expense-category-id" class="p-3">Category</label>
-                            </div>
-
-                            <div class="form-floating mt-2">
-                                <input type="text" name="description" id="e-description-id" class="form-control"
-                                    placeholder="Description" required>
-                                <label for="e-description-id" class="p-3">Description</label>
-                            </div>
-                        </div>
-
-                        <div class="row" id="e-bank-products-id">
-                            <div class="col-sm">
-                                <div class="form-floating mt-2">
-                                    <select name="select-credit-card" id="e-select-credit-card-id" class="form-select">
-                                        <option value="none">...Select...</option>
-                                        {% for cc in credit_cards %}
-                                        <option value="{{ cc.id }}">{{ cc.nick_name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    <label for="e-select-credit-card-id" class="p-3">Credit Card</label>
-                                </div>
-                            </div>
-                            <div class="col-sm">
-                                <div class="form-floating mt-2">
-                                    <select name="select-bank-account" id="e-select-bank-account-id" class="form-select">
-                                        <option value="none">...Select...</option>
-                                        {% for ba in bank_accounts %}
-                                        <option value="{{ ba.id }}">{{ ba.nick_name }}</option>                                        
-                                        {% endfor %}
-                                    </select>
-                                    <label for="e-select-bank-account-id" class="p-3">Bank Account</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="editExpense()">Save</button>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </section>
-
-    <div class="d-flex justify-content-start gap-1 flex-wrap flex-md-nowrap mt-2">
-        <button 
-            type="button"
-            id="btn-create-expense-id"
-            class="btn btn-outline-primary me-auto me-md-auto w-100 w-md-auto" 
-            style="max-width: 200px;"
-            data-bs-toggle="modal"
-            data-bs-target="#create-expense"
-        >New expense
-        </button>
-        <div class="d-flex gap-1 w-100 align-items-center" style="max-width: 320px;">
-            <div class="w-md-auto mt-md-0">
-                <label for="" class="fs-6 fw-bold">Filter by: </label>
-            </div>
-            <div class="w-100 w-md-auto mt-md-0" style="max-width: 250px;">
-                <select class="form-select" id="select-filter-type-id">
-                    <option value="field">Field</option>
-                    <option value="time">Time</option>
-                </select>
-            </div>
-        </div>
-        <div class="d-flex gap-1 w-100" style="max-width: 350px;">
-            <div class="w-100 w-md-auto mt-md-0">
-                <input type="text" class="form-control" id="filter-input-id">
-            </div>
-            <button type="button" class="btn btn-outline-success" id="btn-search-id"><i class="bi bi-search"></i></button>
-        </div>
+        </section>
     </div>
-
-    <div class="table-responsive overflow-y-auto border rounded-3 mt-1" style="max-height: 457px;">
-        <table class="table table-striped table-hover" id="expenses-table">
-            <thead class="sticky-top">
-                <tr>
-                    <th scope="col"># Id</th>
-                    <th scope="col">Amount</th>
-                    <th scope="col">Is Cash</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Credit Card</th>
-                    <th scope="col">Bank Account</th>
-                    <th scope="col">Category</th>
-                    <th scope="col">Create at</th>
-                    <th scope="col">Acctions</th>
-                </tr>
-            </thead>
-            <tbody id="expenses-table-body">
-                {% for expense in expenses %}                
-                <tr>
-                    <th scope="row">{{ expense.id }}</th>
-                    <td>{{ format_amount(expense.amount) or '-' }}</td>
-                    <td><a id="filter-by-cash" class="filter_link" data-is-cash-value="{{ expense.is_cash }}">{{ 'YES' if expense.is_cash else 'NO' }}</a></td>
-                    <td> {{ expense.description or '-' }} </td>
-                    <td>{{ expense.credit_card.nick_name or '-' }}</td>
-                    <td>{{ expense.bank_account.nick_name or '-' }}</td>
-                    <td>{{ expense.expense_category.name or '-' }}</td>
-                    <td>{{ expense.created_at }}</td>
-                    <td>
-                        <div class="d-flex gap-2">
-                            <button 
-                                type="button" 
-                                class="btn btn-outline-success" 
-                                data-bs-toggle="modal"
-                                data-bs-target="#edit-expense" 
-                                data-expense-id="{{ expense.id }}"
-                                data-amount-id="{{ expense.amount }}"
-                                data-is-cash="{{ expense.is_cash }}"
-                                data-select-expense-category-id="{{ expense.expense_category_id }}"
-                                data-select-credit-card-id="{{ expense.credit_card_id }}"
-                                data-select-bank-account-id="{{ expense.bank_account_id }}"
-                                data-description="{{ expense.description }}"
-                            >
-                                <i class="bi bi-pen"></i>
-                            </button>
-                            <a href="{{ url_for('expense.delete', id=expense.id) }}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-                
-            </tbody>
-        </table>
-    </div>
-    <section>
-        <div class="d-flex flex-column">
-            <div>
-                <label for="" id="weekly-title">WEELY BASIS </label>
-            </div>
-            <div class="d-flex gap-2">
-                <div>
-                    <label for="" id="weekly-limit">Limit: {{ weekly.limit }}</label>
-                </div>
-                <div>
-                    <label for="" id="weekly-spent">Spent: {{ weekly.spent }}</label>
-                </div>
-                <div>
-                    <label for="" id="weekly-left">Left: {{ weekly.left }}</label>
-                </div>
-            </div>
-        </div>
-    </section>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>

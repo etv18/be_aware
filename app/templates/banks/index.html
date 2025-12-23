@@ -4,7 +4,7 @@
 
 {% block content %}
     
-    <div class="container w-75">
+    <div class="">
         <h2>Banks</h2>
         <section class="modal fade" tabindex="-1" id="create-bank">
             <form action="{{ url_for('bank.create' ) }}" method="post">
@@ -59,7 +59,7 @@
 
         <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-bank">New Bank</button>
         <div class="table-responsive overflow-y-auto border rounded-3 mt-1" style="max-height: 457px;">
-            <table class="table table-striped  table-hover text-center">
+            <table class="table table-striped  table-hover">
                 <thead class="sticky-top">
                     <tr>
                     <th scope="col"># Id</th>
@@ -75,19 +75,21 @@
                         <th scope="row">{{ bank.id }}</th>
                         <td class="text-start">{{ bank.name }}</td>
                         <td>{{ bank.created_at }}</td>
-                        <td class="d-flex justify-content-center">
-                            <div class="d-flex gap-2 justify-content-center">
-                                <button 
-                                    type="button" 
-                                    class="btn btn-outline-success" 
-                                    data-bs-toggle="modal" 
-                                    data-bs-target="#edit-bank"
-                                    data-id="{{ bank.id }}"
-                                    data-name="{{ bank.name }}"
-                                >
-                                    <i class="bi bi-pen"></i>
-                                </button>
-                                <a href="{{ url_for('bank.delete', id=bank.id ) }}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                        <td>
+                            <div  class="d-flex justify-content-center">
+                                <div class="d-flex gap-2 justify-content-center">
+                                    <button 
+                                        type="button" 
+                                        class="btn btn-outline-success" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#edit-bank"
+                                        data-id="{{ bank.id }}"
+                                        data-name="{{ bank.name }}"
+                                    >
+                                        <i class="bi bi-pen"></i>
+                                    </button>
+                                    <a href="{{ url_for('bank.delete', id=bank.id ) }}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                </div>
                             </div>
                         </td>
                     </tr>

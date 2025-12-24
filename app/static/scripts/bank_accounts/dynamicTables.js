@@ -65,10 +65,10 @@ const withdrawalsTemplateFn = (withdrawal) => `
 
 const loansTemplateFn = (loan) => `
     <th scope="row">${loan.id}</th>
-    <td class="text-start">${loan.amount}</td>
+    <td class="text-start">${formatNumber(loan.amount)}</td>
     <td>${loan.is_cash ? 'YES' : 'NO'}</td>
     <td>${loan.person_name ?? '-'}</td>
-    <td> ${loan.remaining_amount} </td>
+    <td> ${formatNumber(loan.remaining_amount)} </td>
     <td>${loan.is_active ? 'ACTIVE' : 'PAID'}</td>
     <td class="text-start">${loan.description ?? '-'}</td>
     <td>${loan.bank_account_nick_name ?? '-'}</td>
@@ -77,7 +77,7 @@ const loansTemplateFn = (loan) => `
 
 const loanPaymentsTemplateFn = (loanPayment) => `
     <th scope="row">${ loanPayment.id }</th>
-    <td class="text-start">${ loanPayment.amount }</td>
+    <td class="text-start">${ formatNumber(loanPayment.amount) }</td>
     <td>${ loanPayment.is_cash ? 'YES' : 'NO' }</td>
     <td>${ loanPayment.bank_account_nick_name ?? '-'}</td>
     <td>${ loanPayment.created_at }</td>
@@ -85,7 +85,7 @@ const loanPaymentsTemplateFn = (loanPayment) => `
 
 const creditCardPaymentsTemplateFn = (creditCardPayment) => `
     <th scope="row">${ creditCardPayment.id }</th>
-    <td class="text-start">${ creditCardPayment.amount }</td>
+    <td class="text-start">${ formatNumber(creditCardPayment.amount) }</td>
     <td>${ creditCardPayment.credit_card_nick_name ?? '-' }</td>
     <td>${ creditCardPayment.bank_account_nick_name ?? '-' }</td>
     <td>${ creditCardPayment.created_at }</td>

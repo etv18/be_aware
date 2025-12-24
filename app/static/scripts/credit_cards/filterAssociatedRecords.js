@@ -9,7 +9,7 @@ const tBodyExpense = document.getElementById('expenses-table-body');
 
 const creditCardPaymentsTemplateFn = (creditCardPayment) => `
     <th scope="row">${ creditCardPayment.id }</th>
-    <td class="text-start">${ creditCardPayment.amount }</td>
+    <td class="text-start">${ formatNumber(creditCardPayment.amount) }</td>
     <td>${ creditCardPayment.credit_card_nick_name ?? '-' }</td>
     <td>${ creditCardPayment.bank_account_nick_name ?? '-' }</td>
     <td>${ creditCardPayment.created_at }</td>

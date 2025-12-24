@@ -3,16 +3,19 @@ from flask import Blueprint, jsonify, request, render_template
 from app.controllers import withdrawal_controller
 from app.models.withdrawal import Withdrawal
 from app.models.bank_account import BankAccount
+from app.utils.numeric_casting import format_amount, total_amount
 
 withdrawal_bp = Blueprint('withdrawal', __name__, url_prefix='/withdrawals')
 
 @withdrawal_bp.route('index', methods=['GET'])
 def index():
-    withdrawals = Withdrawal.query.all()
+    withdrawals = Withdrawal.query.order_by(Withdrawal.created_at.desc()).all()
     bank_accounts = BankAccount.query.all()
     context = {
         'withdrawals': withdrawals,
         'bank_accounts': bank_accounts,
+        'total_amount': total_amount,
+        'format_amount': format_amount
     }
     return render_template('withdrawals/index.html', **context)
 

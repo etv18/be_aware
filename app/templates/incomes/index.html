@@ -161,8 +161,8 @@
                   {% for income in incomes %}
                     <tr>
                         <th scope="row">{{ income.id }}</th>
-                        <td>{{ income.amount }}</td>
-                        <td>{{ income.is_cash }}</td>
+                        <td>{{ format_amount(income.amount) }}</td>
+                        <td>{{ 'YES' if income.is_cash else 'NO'}}</td>
                         <td>{{ income.description if income.description else '-'}}</td>
                         <td>{{ income.bank_account.nick_name }}</td>
                         <td>{{ income.created_at }}</td>
@@ -198,7 +198,8 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
-<script src="{{ url_for('static', filename='scripts/incomes/filterData.js' ) }}"></script>
+<script type="module" src="{{ url_for('static', filename='scripts/utils/numericHandling.js' ) }}"></script>
+<script type="module" src="{{ url_for('static', filename='scripts/incomes/filterData.js' ) }}"></script>
 
 <script> 
     document.addEventListener('DOMContentLoaded', () => {

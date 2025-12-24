@@ -5,6 +5,7 @@ from app.models import income, bank_account
 from app.models.income import Income
 from app.models.bank_account import BankAccount
 from app.controllers import income_controller
+from app.utils.numeric_casting import total_amount, format_amount
 
 income_bp = Blueprint('income', __name__, url_prefix='/incomes')
 
@@ -15,7 +16,9 @@ def index():
 
     context = {
         'incomes': incomes,
-        'bank_accounts': bank_accounts
+        'bank_accounts': bank_accounts,
+        'format_amount': format_amount,
+        'total_amount': total_amount,
     }
 
     return render_template('incomes/index.html', **context)

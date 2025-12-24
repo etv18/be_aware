@@ -1,3 +1,6 @@
+import { getTotalSumOfAmounts, formatNumber } from "../utils/numericHandling.js";
+
+
 const selectFilterType = document.getElementById('select-filter-type-id');
 const filterInput = document.getElementById('filter-input-id');
 const btnSearch = document.getElementById('btn-search-id');
@@ -23,8 +26,8 @@ function renderDataTable(incomes){
 
         tableRow.innerHTML = `
             <th scope="row">${ income.id }</th>
-            <td>${ income.amount }</td>
-            <td>${ income.is_cash }</td>
+            <td>${ formatNumber(income.amount) }</td>
+            <td>${ income.is_cash ? 'YES' : 'NO' }</td>
             <td>${ income.description ? income.description : '-' }</td>
             <td>${ income.bank_nick_name }</td>
             <td>${ income.created_at }</td>

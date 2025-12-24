@@ -130,7 +130,7 @@
                             <div class="d-flex gap-2">
                                 <button 
                                     type="button" 
-                                    class="btn btn-success" 
+                                    class="btn btn-outline-success" 
                                     data-bs-toggle="modal" 
                                     data-bs-target="#edit-credit-card-payment"
                                     data-endpoint="{{ url_for('credit_card_payment.update', id=payment.id) }}"
@@ -139,9 +139,9 @@
                                     data-credit-card-id="{{ payment.credit_card_id }}"
                                     data-bank-account-id="{{ payment.bank_account_id }}"
                                 >
-                                Edit
+                                    <i class="bi bi-pen"></i>
                                 </button>
-                                <a href="{{ url_for('credit_card_payment.delete', id=payment.id) }}" class="btn btn-danger">Delete</a>
+                                <a href="{{ url_for('credit_card_payment.delete', id=payment.id) }}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
                             </div>
                         </td>
                     </tr>

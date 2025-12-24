@@ -1,3 +1,7 @@
+import { debounce } from "../utils/asyncHanlding.js";
+import { titleCase } from "../utils/stringHandling.js";
+import { formatNumber } from "../utils/numericHandling.js";
+
 const selectFilterType = document.getElementById('select-filter-type-id');
 const filterInput = document.getElementById('filter-input-id');
 const btnSearch = document.getElementById('btn-search-id');
@@ -24,8 +28,8 @@ function renderDataTable(ledgers){
         tableRow.innerHTML = `
             <th scope="row">${ ledger.id }</th>
             <td>${ ledger.reference_code }</td>
-            <td>${ ledger.type }</td>
-            <td>${ ledger.amount }</td>
+            <td class="text-start">${ titleCase(ledger.type) }</td>
+            <td class="text-start">${ formatNumber(ledger.amount) }</td>
             <td>${ ledger.created_at }</td>
         `;
 
@@ -113,5 +117,10 @@ selectFilterType.addEventListener('change', (e) => {
 });
 
 btnSearch.addEventListener('click', async e => {
-    filterData();
+    await filterData();
 });
+
+filterInput.addEventListener('keydown', debounce(async e => {
+    if(selectFilterType.value !== 'field' && e.key !== 'Enter') return;
+    await filterData();
+}));

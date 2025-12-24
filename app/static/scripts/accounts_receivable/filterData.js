@@ -1,4 +1,5 @@
 import { getTotalSumOfAmounts, formatNumber } from "../utils/numericHandling.js";
+import { debounce } from "../utils/asyncHanlding.js";
 
 
 const selectFilterType = document.getElementById('select-filter-type-id');
@@ -159,6 +160,11 @@ selectFilterType.addEventListener('change', (e) => {
 });
 
 btnSearch.addEventListener('click', async e => {
-    filterData();
+    await filterData();
 });
+
+filterInput.addEventListener('keydown', debounce(async e => {
+    if(selectFilterType.value !== 'field' && e.key !== 'Enter') return;
+    await filterData();
+}));
 

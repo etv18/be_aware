@@ -27,3 +27,16 @@ class BankTransfer(db.Model):
             if isinstance(obj, BankTransfer):
                 if not obj.code:
                     obj.code = generate_montly_sequence(prefixes.BANK_TRANSFER, BankTransfer)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'code': self.code,
+            'amount': self.amount,
+            'from_bank_account_id': self.from_bank_account_id,
+            'to_bank_account_id': self.to_bank_account_id,
+            'from_bank_account_nick_name': self.from_bank_account.nick_name if self.from_bank_account else None,
+            'code': self.code,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at,
+        }

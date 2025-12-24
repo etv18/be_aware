@@ -1,6 +1,10 @@
-from app.extensions import db
+from sqlalchemy import event
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+
+from app.extensions import db
+from app.utils import prefixes
+from app.utils.code_generator import generate_montly_sequence
 
 class BankTransfer(db.Model):
     __tablename__ = 'bank_transfers'
@@ -16,3 +20,10 @@ class BankTransfer(db.Model):
 
     from_bank_account = relationship('BankAccount', foreign_keys=[from_bank_account_id], back_populates='outgoing_transfers')
     to_bank_account = relationship('BankAccount', foreign_keys=[to_bank_account_id], back_populates='incoming_transfers')
+
+    @event.listens_for(db.session, 'before_flush')
+    def assign_code(session, flush_context, instances=None):
+        for obj in session.new:
+            if isinstance(obj, BankTransfer):
+                if not obj.code:
+                    obj.code = generate_montly_sequence(prefixes.BANK_TRANSFER, BankTransfer)

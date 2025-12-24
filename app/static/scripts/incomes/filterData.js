@@ -15,7 +15,7 @@ function renderDataTable(incomes){
     if(incomes.length === 0){
         tbody.innerHTML = `
             <tr>
-                <td colspan="6" class="text-center text-muted">No results found.</td>
+                <td colspan="7" class="text-center text-muted">No results found.</td>
             </tr>  
         `;
         return;

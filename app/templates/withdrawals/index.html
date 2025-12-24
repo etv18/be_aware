@@ -144,7 +144,7 @@
                   {% for withdrawal in withdrawals %}
                     <tr>
                         <th scope="row">{{ withdrawal.id }}</th>
-                        <td>{{ withdrawal.amount }}</td>
+                        <td>{{ format_amount(withdrawal.amount) }}</td>
                         <td>{{ withdrawal.description if withdrawal.description else '-'}}</td>
                         <td>{{ withdrawal.bank_account.nick_name }}</td>
                         <td>{{ withdrawal.created_at }}</td>
@@ -173,13 +173,16 @@
     </div>
 
 <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script type="module" src="{{ url_for('static', filename='scripts/utils/numericHandling.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='scripts/withdrawals/filterData.js') }}"></script>
 
-<script src="{{ url_for('static', filename='scripts/withdrawals/filterData.js') }}"></script>
 
 <script> 
     document.addEventListener('DOMContentLoaded', () => {

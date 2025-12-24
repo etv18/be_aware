@@ -27,13 +27,13 @@
             </div>
         </div>
         <div class="table-responsive overflow-y-auto border rounded-3 mt-1" style="max-height: 457px;">
-            <table class="table table-striped  table-hover">
+            <table class="table table-borderless table-hover text-center">
                 <thead class="sticky-top">
-                    <tr>
+                    <tr class="table-secondary">
                     <th scope="col"># Id</th>
                     <th scope="col">Ref. Code</th>
-                    <th scope="col">Type</th>
-                    <th scope="col">Amount</th>
+                    <th scope="col" class="text-start">Type</th>
+                    <th scope="col" class="text-start">Amount</th>
                     <th scope="col">Create at</th>
                     </tr>
                 </thead>
@@ -43,8 +43,8 @@
                     <tr>
                         <th scope="row">{{ ledger.id }}</th>
                         <td>{{ ledger.reference_code }}</td>
-                        <td>{{ ledger.type }}</td>
-                        <td>{{ ledger.amount }}</td>
+                        <td class="text-start">{{ ledger.type | lower | title }}</td>
+                        <td class="text-start">{{ ledger.amount }}</td>
                         <td>{{ ledger.created_at }}</td>
                     </tr>
                   {% endfor %}

@@ -223,8 +223,8 @@
                     <tr class="loan-row" data-loan-id="{{ loan.id }}" data-url-associated-records = "{{ url_for('accounts_receivable.associated_records', loan_id=loan.id) }}">
                         <th scope="row">{{ loan.id }}</th>
                         <td>{{ loan.person_name }}</td>
-                        <td>{{ loan.amount }}</td>
-                        <td> {{ loan.remaining_amount() }} </td>
+                        <td>{{ format_amount(loan.amount) }}</td>
+                        <td> {{ format_amount(loan.remaining_amount()) }} </td>
                         <td>{{ 'ACTIVE' if loan.is_active else 'PAID'  }}</td>
                         <td>{{ loan.description }}</td>
                         <td>{{ 'YES' if loan.is_cash else 'NO'  }}</td>
@@ -268,14 +268,17 @@
     </div>
     <input type="hidden" value="{{ url_for('accounts_receivable.create_loan') }}" id="createEndPoint">
     <input type="hidden" value="{{ url_for('accounts_receivable.create_loan_payment') }}" id="makePaymentEndPoint">
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
 <script src="{{ url_for('static', filename='scripts/accounts_receivable/script.js') }}"></script>
-<script src="{{ url_for('static', filename='scripts/accounts_receivable/filterData.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='scripts/accounts_receivable/filterData.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='scripts/utils/numericHandling.js' ) }}"></script>
 
 <script> 
     document.addEventListener('DOMContentLoaded', () => {

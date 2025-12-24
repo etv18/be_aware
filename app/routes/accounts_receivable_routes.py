@@ -16,6 +16,8 @@ def index():
     context = {
         'loans': loans,
         'bank_accounts': bank_accounts,
+        'format_amount': format_amount,
+        'total_amount': total_amount,
     }
     return render_template('accounts_receivable/index.html', **context)
 

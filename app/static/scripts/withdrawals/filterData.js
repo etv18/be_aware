@@ -1,3 +1,5 @@
+import { getTotalSumOfAmounts, formatNumber } from "../utils/numericHandling.js";
+
 const selectFilterType = document.getElementById('select-filter-type-id');
 const filterInput = document.getElementById('filter-input-id');
 const btnSearch = document.getElementById('btn-search-id');
@@ -23,7 +25,7 @@ function renderDataTable(withdrawals){
         
         tableRow.innerHTML = `
             <th scope="row">${ withdrawal.id }</th>
-            <td>${ withdrawal.amount }</td>
+            <td>${ formatNumber(withdrawal.amount) }</td>
             <td>${ withdrawal.description ? withdrawal.description : '-'}</td>
             <td>${ withdrawal.bank_account_nick_name }</td>
             <td>${ withdrawal.created_at }</td>

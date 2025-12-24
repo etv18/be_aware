@@ -17,7 +17,7 @@ const creditCardPaymentsTemplateFn = (creditCardPayment) => `
         <div class="d-flex gap-2">
             <button 
                 type="button" 
-                class="btn btn-success" 
+                class="btn btn-outline-success" 
                 data-bs-toggle="modal" 
                 data-bs-target="#edit-credit-card-payment"
                 data-endpoint="/credit_card_payments/update/${creditCardPayment.id}"
@@ -26,9 +26,9 @@ const creditCardPaymentsTemplateFn = (creditCardPayment) => `
                 data-credit-card-id="${ creditCardPayment.credit_card_id }"
                 data-bank-account-id="${ creditCardPayment.bank_account_id }"
             >
-            Edit
+                <i class="bi bi-pen"></i>
             </button>
-            <a href="/credit_card_payments/delete/${ creditCardPayment.id }" class="btn btn-danger">Delete</a>
+            <a href="/credit_card_payments/delete/${ creditCardPayment.id }" class="btn btn-danger"><i class="bi bi-trash"></i></a>
         </div>
     </td>
 `;

@@ -42,7 +42,7 @@ export function renderExpensesTable(expenses){
                 <div class="d-flex gap-2">
                     <button 
                         type="button"
-                        class="btn btn-success"
+                        class="btn btn-outline-success"
                         data-bs-toggle="modal"
                         data-bs-target="#edit-expense"
                         data-expense-id="${expense.id}"
@@ -52,8 +52,8 @@ export function renderExpensesTable(expenses){
                         data-select-credit-card-id="${expense.credit_card_id}"
                         data-select-bank-account-id="${expense.bank_account_id}"
                         data-description="${expense.description}"
-                    >Edit</button>
-                    <a href="/expenses/delete/${expense.id}" class="btn btn-danger">Delete</a>
+                    ><i class="bi bi-pen"></i></button>
+                    <a href="/expenses/delete/${expense.id}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
                 </div>
             </td>
         `;

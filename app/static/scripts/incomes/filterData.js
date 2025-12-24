@@ -32,7 +32,7 @@ function renderDataTable(incomes){
                 <div class="d-flex gap-2">
                     <button 
                         type="button" 
-                        class="btn btn-success" 
+                        class="btn btn-outline-success" 
                         data-bs-toggle="modal" 
                         data-bs-target="#edit-income"
                         data-income-id="${ income.id }"
@@ -40,9 +40,9 @@ function renderDataTable(incomes){
                         data-is-cash="${ income.is_cash }"
                         data-bank-account-id="${ income.bank_account_id }"
                     >
-                    Edit
+                    <i class="bi bi-pen"></i>
                     </button>
-                    <a href="/incomes/delete/${income.id}" class="btn btn-danger">Delete</a>
+                    <a href="/incomes/delete/${income.id}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
                 </div>
             </td>
         `;

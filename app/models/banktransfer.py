@@ -12,8 +12,8 @@ class BankTransfer(db.Model):
 
     code = db.Column(db.String(50), nullable=False)
     amount = db.Column(db.Numeric(10,2), nullable=False)
-    from_bank_account_id = db.Column(db.Integer, db.ForeignKey('bank_accounts.id'))
-    to_bank_account_id =db.Column(db.Integer, db.ForeignKey('bank_accounts.id'))
+    from_bank_account_id = db.Column(db.Integer, db.ForeignKey('bank_accounts.id'), nullable=False)
+    to_bank_account_id =db.Column(db.Integer, db.ForeignKey('bank_accounts.id'), nullable=False)
 
     created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
     updated_at = db.Column(db.DateTime(timezone=True), onupdate=func.now())   

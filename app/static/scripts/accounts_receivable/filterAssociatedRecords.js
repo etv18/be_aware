@@ -56,10 +56,12 @@ document.addEventListener('DOMContentLoaded', async e => {
 
 loanPaymentFilterInput.addEventListener('input', debounce(async e => {
         const totatAmounts = document.getElementById('total-amounts-loans-payments-id');
+        const totalCount = document.getElementById('total-count-loans-payments-id');
         var query = loanPaymentFilterInput.value;
         const filteredList = filterTableData(data.records.loan_payment, query);
 
         renderDataTable(filteredList, tBodyLoanPayment, loanPaymentsTemplateFn, colSpan.LOAN_PAYMENTS);
-        totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
+        totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`);
+        totalCount.textContent = `COUNT: ${filteredList.length}`;
     })
 );

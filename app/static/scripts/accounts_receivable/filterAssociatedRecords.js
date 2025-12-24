@@ -16,7 +16,7 @@ const loanPaymentsTemplateFn = (loanPayment) => `
         <div class="d-flex gap-2 justify-content-center">
             <button 
                 type="button" 
-                class="btn btn-success" 
+                class="btn btn-outline-success" 
                 data-bs-toggle="modal" 
                 data-bs-target="#edit-loan-payment"
                 data-endpoint="/accounts_receivable/update_loan_payment/${ loanPayment.id }"
@@ -26,9 +26,9 @@ const loanPaymentsTemplateFn = (loanPayment) => `
                 data-is-cash="${ loanPayment.is_cash }"
                 data-bank-account-id="${ loanPayment.bank_account_id }"
             >
-            Edit
+                <i class="bi bi-pen"></i>
             </button>
-            <a href="/accounts_receivable/delete_loan_payment/${loanPayment.id}" class="btn btn-danger">Delete</a>
+            <a href="/accounts_receivable/delete_loan_payment/${loanPayment.id}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
         </div>
     </td>
 `;

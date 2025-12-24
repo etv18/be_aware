@@ -46,11 +46,11 @@ function renderDataTable(loans){
                         class="btn btn-outline-light" 
                         data-loan-id="${loan.id}"
                     >
-                    Pay
+                        <i class="bi bi-cash-coin"></i>
                     </button>
                     <button 
                         type="button" 
-                        class="btn btn-success" 
+                        class="btn btn-outline-success" 
                         data-bs-toggle="modal" 
                         data-bs-target="#edit-account-receivable"
                         data-loan-id="${loan.id}"
@@ -61,9 +61,9 @@ function renderDataTable(loans){
                         data-person-name="${loan.person_name}"
                         data-bank-account-id="${loan.bank_account_id}"
                     >
-                    Edit
+                        <i class="bi bi-pen"></i>
                     </button>
-                    <a href="/accounts_receivable/delete/${loan.id}" class="btn btn-danger">Delete</a>
+                    <a href="/accounts_receivable/delete/${loan.id}" class="btn btn-danger"> <i class="bi bi-trash"></i></a>
                 </div>
             </td>
 

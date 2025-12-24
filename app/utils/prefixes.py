@@ -3,6 +3,7 @@ LOAN = 'LOAN'
 LOAN_PAYMENT = 'LPMT'
 INCOME = 'INC'
 EXPENSE = 'EXP'
+BANK_TRANSFER = 'BTRA'
 
 def get_prefixes():
     return (
@@ -10,5 +11,6 @@ def get_prefixes():
         LOAN,
         LOAN_PAYMENT,
         INCOME,
-        EXPENSE
+        EXPENSE,
+        BANK_TRANSFER
     )

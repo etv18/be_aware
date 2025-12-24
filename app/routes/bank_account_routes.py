@@ -5,6 +5,7 @@ from decimal import Decimal
 from app.controllers import bank_account_controller as ba_controller
 from app.models.bank_account import BankAccount
 from app.models.bank import Bank
+from app.utils.numeric_casting import format_amount, total_amount
 
 
 bank_account_bp = Blueprint('bank_account', __name__, url_prefix='/bank_accounts')
@@ -24,7 +25,9 @@ def index():
         'banks': banks,
         'bank_accounts': bank_accounts,
         'total_money': total_money_formatted,
-        'len': len
+        'len': len,
+        'total_amount': total_amount,
+        'format_amount': format_amount,
     }
 
     return render_template('bank_accounts/index.html', **context)

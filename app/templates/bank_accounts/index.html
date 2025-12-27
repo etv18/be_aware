@@ -113,6 +113,47 @@
         </form>
     </section>
 
+    <section class="modal fade" tabindex="-1" id="create-bank-transfer">
+        <form id="create-bank-transfer-form">
+            <input type="hidden" name="from-bank-account" id="from-bank-account-id">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title fw-bold" id="">Bank Transfer</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label for="" class="fs-5 fw-bold" id="t-title-id">From: BankAccount </label>
+                        <div class="row">
+                            <div class="form-floating mt-2">
+                                <input type="text" name="amount" id="t-amount-id" class="form-control"
+                                    placeholder="Amount" required>
+                                <label for="t-amount-id" class="mx-2">Amount</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm">
+                                <div class="form-floating mt-2">
+                                    <select name="to-bank-account-select" id="to-bank-account-select-id" class="form-select">
+                                        <option value="none">...select...</option>
+                                        {% for account in bank_accounts %}
+                                        <option value="{{ account.id }}">{{ account.nick_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="to-bank-account-select-id" class="ml-2">Destination</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="btn-create-bank-transfer">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </section>
+
     <div class="row">
         <div class="col-sm">        
             <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-bank-account"
@@ -147,6 +188,16 @@
                     <td>{{ bank_account.created_at }}</td>
                     <td>
                         <div class="d-flex gap-2">
+                            <button 
+                                type="button" 
+                                class="btn btn-outline-warning"
+                                data-bs-toggle="modal"
+                                data-bs-target="#create-bank-transfer"
+                                data-from-bank-account-id="{{ bank_account.id }}"
+                                data-nick-name="{{ bank_account.nick_name }}"
+                            >
+                                T
+                            </button>
                             <button 
                                 type="button" 
                                 class="btn btn-outline-success" 
@@ -197,5 +248,75 @@
                 document.getElementById('e-select-banks-id').value = bankId;
             });
         });
+    </script>
+
+    <script>
+        const toBankAccountSelect = document.getElementById('to-bank-account-select-id');
+        const originalOptionsHTML = toBankAccountSelect.innerHTML;
+        const btnCreateBankTransfer = document.getElementById('btn-create-bank-transfer');
+
+        function removeOriginBankAccount(select, opValue){
+            for(let i = 0; i < select.length; i++){
+                if(select.options[i].value === opValue){
+                    select.remove(i);
+                    break;
+                }
+            }
+        }
+
+        async function createBankTransfer(){
+            const form = document.getElementById('create-bank-transfer-form');
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('/banktransfer/create', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const data = await response.json();
+
+                if(!response.ok){
+                    console.log(response.json());
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.error || 'Something went wrong while creating the bank account.'
+                    });
+                    return;           
+                }
+
+                location.reload();
+                
+            } catch (error) {
+                console.error('Fetch error: ', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Network Error',
+                    text: error.message || 'Could not connect to server.'
+                });
+            }
+        }
+
+        const createBankTransferModal = document.getElementById('create-bank-transfer');
+        createBankTransferModal.addEventListener('show.bs.modal', e => {
+            const btn = e.relatedTarget;
+            const fromBankAccountId = btn.getAttribute('data-from-bank-account-id');
+            const nickName = btn.getAttribute('data-nick-name');
+
+            const fromBankAccountInput = document.getElementById('from-bank-account-id')
+            const modalTitle = document.getElementById('t-title-id');
+
+            fromBankAccountInput.value = fromBankAccountId;
+            modalTitle.textContent = 'Origin: ' + nickName;
+
+            toBankAccountSelect.innerHTML = originalOptionsHTML;
+
+            removeOriginBankAccount(toBankAccountSelect, fromBankAccountId);
+            
+        });
+        btnCreateBankTransfer.addEventListener('click',async e => {
+            await createBankTransfer();
+        })
     </script>
 {% endblock %}

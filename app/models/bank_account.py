@@ -20,10 +20,8 @@ class BankAccount(db.Model):
     incomes = relationship('Income', back_populates='bank_account', order_by='desc(Income.created_at)')
     credit_card_payments = relationship('CreditCardPayment', back_populates='bank_account', order_by='desc(CreditCardPayment.created_at)')
     withdrawals = relationship('Withdrawal', back_populates='bank_account', order_by='desc(Withdrawal.created_at)')
-
     loans = relationship('Loan', back_populates='bank_account', order_by='desc(Loan.created_at)')
     loan_payments = relationship('LoanPayment', back_populates='bank_account', order_by='desc(LoanPayment.created_at)')
-
     outgoing_transfers = relationship('BankTransfer', foreign_keys='BankTransfer.from_bank_account_id', back_populates='from_bank_account', order_by='desc(BankTransfer.created_at)')
     incoming_transfers = relationship('BankTransfer', foreign_keys='BankTransfer.to_bank_account_id', back_populates='to_bank_account', order_by='desc(BankTransfer.created_at)')
 

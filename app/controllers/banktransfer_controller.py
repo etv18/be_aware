@@ -7,21 +7,21 @@ from app.extensions import db
 from app.utils.numeric_casting import is_decimal_type
 from app.models.banktransfer import BankTransfer
 from app.models.bank_account import BankAccount
-from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero, BankAccountDoesNotExist, NoAvailableMoney
+from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero, BankAccountDoesNotExists, NoAvailableMoney
 
 def create_banktransfer():
     try:
         amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else Decimal('0')
-        if(amount <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
+        if(amount <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a valid number bigger than 0')
         
         from_bank_account_id = request.form.get('from-bank-account')
-        to_bank_account_id = request.form.get('to-bank-account')
+        to_bank_account_id = request.form.get('to-bank-account-select')
 
         from_bank_account = BankAccount.query.get(from_bank_account_id)
         to_bank_account = BankAccount.query.get(to_bank_account_id)
 
-        if not from_bank_account: raise BankAccountDoesNotExist('Origin bank account was not found.')
-        if not to_bank_account: raise BankAccountDoesNotExist('Destination bank account was not found.')
+        if not from_bank_account: raise BankAccountDoesNotExists('Origin bank account was not found.')
+        if not to_bank_account: raise BankAccountDoesNotExists('Destination bank account was not found.')
         if from_bank_account == to_bank_account: raise Exception('You can not select the same account.')
 
         h_update_bank_accounts_money_on_create(
@@ -43,7 +43,7 @@ def create_banktransfer():
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
-        return jsonify({'error', str(e)}), 400
+        return jsonify({'error': str(e)}), 400
 
 def update_banktransfer(transfer):
     try:
@@ -58,8 +58,8 @@ def update_banktransfer(transfer):
         from_bank_account = BankAccount.query.get(from_bank_account_id)
         to_bank_account = BankAccount.query.get(to_bank_account_id)
 
-        if not from_bank_account: raise BankAccountDoesNotExist('Origin bank account was not found.')
-        if not to_bank_account: raise BankAccountDoesNotExist('Destination bank account was not found.')
+        if not from_bank_account: raise BankAccountDoesNotExists('Origin bank account was not found.')
+        if not to_bank_account: raise BankAccountDoesNotExists('Destination bank account was not found.')
         if from_bank_account == to_bank_account: raise Exception('You can not select the same account.')
         
         transfer.amount = amount

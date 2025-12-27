@@ -36,6 +36,7 @@ class BankTransfer(db.Model):
             'from_bank_account_id': self.from_bank_account_id,
             'to_bank_account_id': self.to_bank_account_id,
             'from_bank_account_nick_name': self.from_bank_account.nick_name if self.from_bank_account else None,
+            'to_bank_account_nick_name': self.to_bank_account.nick_name if self.to_bank_account else None,
             'code': self.code,
             'created_at': self.created_at,
             'updated_at': self.updated_at,

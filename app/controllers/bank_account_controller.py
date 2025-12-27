@@ -9,6 +9,7 @@ from app.models.bank_account import BankAccount
 from app.models.expense import Expense
 from app.models.bank import Bank
 from app.models.loan_payment import LoanPayment
+from app.models.banktransfer import BankTransfer
 from app.utils.numeric_casting import is_decimal_type, total_amount, format_amount
 from app.exceptions.bankProductsException import BankAccountDoesNotExists, AmountIsLessThanOrEqualsToZero
 from app.extensions import db
@@ -73,9 +74,19 @@ def delete_bank_account(bank_account):
 def get_associated_records(bank_account_id):
     try:
         data = {}
-        bank_account = BankAccount.query.get(bank_account_id) 
+        bank_account = BankAccount.query.get(bank_account_id)
+
+        banktransfers = (
+            BankTransfer.query.filter(
+                (BankTransfer.from_bank_account_id == bank_account.id) |
+                (BankTransfer.to_bank_account_id == bank_account.id)
+            )
+            .order_by(BankTransfer.created_at.desc())
+            .all()
+        )
         data = {
             'bank_account': bank_account,
+            'banktransfers': banktransfers,
             'total_amount': total_amount, #this the utility function to transfor decimal objects into a readable currency string
             'format_amount': format_amount,
         }
@@ -91,6 +102,15 @@ def get_associated_records_in_json(bank_account_id):
         if not bank_account: 
             return jsonify({'error': 'Bank account not found'}), 404
 
+        '''
+        This will query transfer where the bank account id is either
+        on from_bank_account_id or to_bank_account_id column on the DB
+        '''
+        banktransfers = BankTransfer.query.filter(
+            (BankTransfer.from_bank_account_id == bank_account.id) |
+            (BankTransfer.to_bank_account_id == bank_account.id)
+        ).all()
+
         associations = [
             bank_account.expenses,
             bank_account.incomes,
@@ -98,6 +118,7 @@ def get_associated_records_in_json(bank_account_id):
             bank_account.loan_payments,
             bank_account.credit_card_payments,
             bank_account.withdrawals,
+            banktransfers
         ]
         data = {}
         for a in associations:

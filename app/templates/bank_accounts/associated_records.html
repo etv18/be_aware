@@ -9,6 +9,78 @@
     <a href="{{ url_for('bank_account.index') }}" class="btn btn-light fs-5"><i class="bi bi-arrow-return-left"></i> Go back</a>
 
     <div class="my-3 border rounded-3">
+        <div class="rounded-top d-flex align-items-center justify-content-center p-2" style="height: 60px; background-color: #992784;">
+            <div class="me-auto">
+                <h4 class="d-flex justify-content-center">Transfers</h4>
+            </div>
+            <div class="w-100" style="max-width: 217px;">
+                <input type="text" name="filter-input-expense" id="filter-input-expense-id" class="form-control"
+                    placeholder="Search...">
+            </div>
+        </div>
+        <div id="expenses-table-container" class="table-responsive overflow-y-auto" style="max-height: 322px;">
+            <table class="table table-borderless table-hover text-start" id="expenses-table">
+                <thead class="sticky-top" >
+                    <tr class="table-danger">
+                        <th scope="col"># Id</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Origin</th>
+                        <th scope="col">Destination</th>
+                        <th scope="col">Create at</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="expenses-table-body">
+                    {% for transfer in banktransfers %}                
+                    <tr>
+                        <th scope="row">{{ transfer.id }}</th>
+                        <td>
+                            {% if transfer.to_bank_account.id == bank_account.id %}
+                                {{ format_amount(transfer.amount) }}
+                            {% else %}
+                                -{{ format_amount(transfer.amount) }}
+                            {% endif %}
+                        </td>                        
+                        <td>{{ 'OUT' if transfer.from_bank_account.id == bank_account.id else 'IN'  }}</td>
+                        <td>{{ '.' if transfer.from_bank_account.id == bank_account.id else transfer.from_bank_account.nick_name }}</td>
+                        <td>{{ '.' if transfer.to_bank_account.id == bank_account.id else transfer.to_bank_account.nick_name }}</td>
+                        <td>{{ transfer.created_at }}</td>
+                        <td>
+                            {% if transfer.from_bank_account_id == bank_account.id %}
+                                <div class="d-flex gap-2">
+                                    <button 
+                                        type="button" 
+                                        class="btn btn-outline-success"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#create-bank-transfer"
+                                        data-to-transfer-id="{{ transfer.id }}"
+                                        data-to-bank-account-id="{{ bank_account.id }}"
+                                        data-nick-name="{{ bank_account.nick_name }}"
+                                    >
+                                        <i class="bi bi-pen"></i>
+                                    </button>
+                                    <a href="{{ url_for('bank_account.delete', id=bank_account.id) }}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                </div> 
+                            {% else %}
+                                <p class="fs-6">Not Allowed</p>                               
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    
+                </tbody>
+            </table>
+        </div>
+        <div class="p-2 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
+            <div class="row text-center">
+                <p class="fs-6 fw-bold" id="total-amounts-expenses-id">TOTAL: {{ total_amount(banktransfers) }}</p>
+                <p class="fs-6 fw-bold" id="total-count-expenses-id">RECORDS: {{ banktransfers | length }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="my-5 border rounded-3">
         <div class="rounded-top d-flex align-items-center justify-content-center p-2" style="height: 60px; background-color: #ff0000;">
             <div class="me-auto">
                 <h4 class="d-flex justify-content-center">Expenses</h4>

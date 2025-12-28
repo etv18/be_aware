@@ -38,6 +38,6 @@ class BankTransfer(db.Model):
             'from_bank_account_nick_name': self.from_bank_account.nick_name if self.from_bank_account else None,
             'to_bank_account_nick_name': self.to_bank_account.nick_name if self.to_bank_account else None,
             'code': self.code,
-            'created_at': self.created_at,
-            'updated_at': self.updated_at,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
         }

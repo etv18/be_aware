@@ -32,7 +32,7 @@ export function renderExpensesTable(expenses){
         tableRow.innerHTML = `
             <th scope="row">${expense.id}</th>
             <td>${formatNumber(expense.amount)}</td>
-            <td>${expense.is_cash ? 'Yes' : 'No'}</td>
+            <td>${expense.is_cash ? 'YES' : 'NO'}</td>
             <td>${expense.description || '-'}</td>
             <td>${expense.credit_card_name || '-'}</td>
             <td>${expense.bank_account_name || '-'}</td>

@@ -5,6 +5,50 @@
 {% endblock %}
 
 {% block content %}
+
+    <section class="modal fade" tabindex="-1" id="edit-bank-transfer">
+        <form id="edit-bank-transfer-form">
+            <input type="hidden" name="transfer-id" id="transfer-id">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title fw-bold" id="">Bank Transfer (EDIT)</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label for="" class="fs-5 fw-bold" id="t-title-id">From: {{ bank_account.nick_name }} </label>
+                        <div class="row">
+                            <div class="form-floating mt-2">
+                                <input type="text" name="amount" id="t-amount-id" class="form-control"
+                                    placeholder="Amount" required>
+                                <label for="t-amount-id" class="mx-2">Amount</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm">
+                                <div class="form-floating mt-2">
+                                    <select name="to-bank-account-select" id="to-bank-account-select-id" class="form-select">
+                                        <option value="none">...select...</option>
+                                        {% for account in all_bank_accounts %}
+                                            {% if account.id != bank_account.id %}    
+                                                <option value="{{ account.id }}">{{ account.nick_name }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                    <label for="to-bank-account-select-id" class="ml-2">Destination</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="btn-edit-bank-transfer">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </section>
+
     <h3>{{ bank_account.nick_name }}</h3>
     <a href="{{ url_for('bank_account.index') }}" class="btn btn-light fs-5"><i class="bi bi-arrow-return-left"></i> Go back</a>
 
@@ -53,10 +97,12 @@
                                         type="button" 
                                         class="btn btn-outline-success"
                                         data-bs-toggle="modal"
-                                        data-bs-target="#create-bank-transfer"
-                                        data-to-transfer-id="{{ transfer.id }}"
-                                        data-to-bank-account-id="{{ bank_account.id }}"
+                                        data-bs-target="#edit-bank-transfer"
+                                        data-transfer-id="{{ transfer.id }}"
+                                        data-amount="{{ transfer.amount }}"
+                                        data-to-bank-account-id="{{ transfer.to_bank_account_id }}"
                                         data-nick-name="{{ bank_account.nick_name }}"
+                                        data-update-endpoint = "{{ url_for('banktransfer.update', id=transfer.id ) }}"
                                     >
                                         <i class="bi bi-pen"></i>
                                     </button>
@@ -355,7 +401,10 @@
     </div>
 
     <p id="associated-records-url-id" class="d-none">{{ url_for('bank_account.get_associated_records_in_json', bank_account_id=bank_account.id) }}</p>
+    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="module" src="{{ url_for('static', filename='scripts/bank_accounts/dynamicTables.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/bank_accounts/scriptsForAssociatedRecords.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='scripts/utils/numericHandling.js' ) }}"></script>
     <script type="module" src="{{ url_for('static', filename='scripts/utils/asyncHanlding.js' ) }}"></script>
 {% endblock %}

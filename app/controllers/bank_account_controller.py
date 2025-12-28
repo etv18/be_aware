@@ -75,7 +75,7 @@ def get_associated_records(bank_account_id):
     try:
         data = {}
         bank_account = BankAccount.query.get(bank_account_id)
-
+        bank_accounts = BankAccount.query.all()
         banktransfers = (
             BankTransfer.query.filter(
                 (BankTransfer.from_bank_account_id == bank_account.id) |
@@ -86,6 +86,7 @@ def get_associated_records(bank_account_id):
         )
         data = {
             'bank_account': bank_account,
+            'all_bank_accounts': bank_accounts,
             'banktransfers': banktransfers,
             'total_amount': total_amount, #this the utility function to transfor decimal objects into a readable currency string
             'format_amount': format_amount,

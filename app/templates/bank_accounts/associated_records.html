@@ -106,7 +106,7 @@
                                     >
                                         <i class="bi bi-pen"></i>
                                     </button>
-                                    <a href="{{ url_for('bank_account.delete', id=bank_account.id) }}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                    <a href="{{ url_for('banktransfer.delete', id=transfer.id) }}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
                                 </div> 
                             {% else %}
                                 <p class="fs-6">Not Allowed</p>                               
@@ -403,6 +403,7 @@
     <p id="associated-records-url-id" class="d-none">{{ url_for('bank_account.get_associated_records_in_json', bank_account_id=bank_account.id) }}</p>
     <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
     <script type="module" src="{{ url_for('static', filename='scripts/bank_accounts/dynamicTables.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='scripts/bank_accounts/scriptsForAssociatedRecords.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='scripts/utils/numericHandling.js' ) }}"></script>

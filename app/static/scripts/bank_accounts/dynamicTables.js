@@ -8,6 +8,7 @@ const tBodyWithdrawal = document.getElementById('withdrawals-table-body');
 const tBodyLoan = document.getElementById('loans-table-body');
 const tBodyLoanPayment = document.getElementById('loan-payment-table-body');
 const tBodyCreditCardPayment = document.getElementById('credit-card-payment-table-body');
+const tBodyBankTransfer = document.getElementById('transfer-table-body');
 
 //FILTER INPUTS
 const expenseFilterInput = document.getElementById('filter-input-expense-id');
@@ -16,6 +17,7 @@ const withdrawalFilterInput = document.getElementById('filter-input-withdrawal-i
 const loanFilterInput = document.getElementById('filter-input-loan-id');
 const loanPaymentFilterInput = document.getElementById('filter-input-loan-payment-id');
 const creditCardPaymentFilterInput = document.getElementById('filter-input-credit-card-payment-id');
+const bankTransferFilterInput = document.getElementById('filter-input-transfer-id');
 
 const associatedRecordsInJsonEndpoint = document.getElementById('associated-records-url-id').textContent;
 
@@ -25,6 +27,8 @@ let withdrawals;
 let loans;
 let loanPayments;
 let creditCardPayments;
+let bankTransfers;
+let ownerBankAccountId;
 
 const colSpan = {
     expenses: 7,
@@ -32,7 +36,8 @@ const colSpan = {
     withdrawals: 5,
     loans: 9,
     loanPayments: 5,
-    creditCardPayments: 5
+    creditCardPayments: 5,
+    bankTransfers: 7
 }
 
 const expensesTemplateFn = (expense) => `
@@ -91,6 +96,44 @@ const creditCardPaymentsTemplateFn = (creditCardPayment) => `
     <td>${ creditCardPayment.created_at }</td>
 `;
 
+const bankTransfersTemplateFn = (transfer) => `
+    <tr>
+        <th scope="row">${ transfer.id }</th>
+        <td>${ 
+            transfer.to_bank_account_id === ownerBankAccountId 
+            ?  `<p class="fs-6 text-primary">${formatNumber(transfer.amount)}</p>`
+            : `<p class="fs-6 text-danger">${formatNumber(transfer.amount)}</p>`
+        }</td>                        
+        <td>${ transfer.from_bank_account_id === ownerBankAccountId ? '.' : transfer.from_bank_account_nick_name }</td>
+        <td>${ transfer.to_bank_account_id === ownerBankAccountId ? '.' : transfer.to_bank_account_nick_name }</td>
+        <td>${ transfer.created_at }</td>
+        <td>
+            ${
+                transfer.from_bank_account_id === ownerBankAccountId
+                ? 
+                    `<div class="d-flex gap-2">
+                        <button 
+                            type="button" 
+                            class="btn btn-outline-success"
+                            data-bs-toggle="modal"
+                            data-bs-target="#edit-bank-transfer"
+                            data-transfer-id="${ transfer.id }"
+                            data-amount="${ transfer.amount }"
+                            data-to-bank-account-id="${ transfer.to_bank_account_id }"
+                            data-nick-name="${ transfer.from_bank_account_nick_name }"
+                            data-update-endpoint = "/banktransfer/update/${transfer.id}"
+                        >
+                            <i class="bi bi-pen"></i>
+                        </button>
+                        <a href="/banktransfer/delete/${transfer.id}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                    </div>`
+                :
+                `<p class="fs-6">Not Allowed</p>`                             
+            }
+        </td>
+    </tr>
+`;
+
 async function getData(url){
     let data;
 
@@ -120,7 +163,10 @@ async function getData(url){
         loans = data.records?.loans ?? [];
         loanPayments = data.records?.loan_payment ?? [];
         creditCardPayments = data.records?.credit_card_payments ?? [];
-        
+        bankTransfers = data.records?.bank_transfers ?? [];
+        ownerBankAccountId = data.owner_bank_account_id;
+        console.log('value *****> ', ownerBankAccountId)
+
         return data
         
     } catch (error) {
@@ -272,6 +318,21 @@ creditCardPaymentFilterInput.addEventListener('input', debounce(async e => {
         const filteredList = filterTableData(creditCardPayments, query);
 
         renderDataTable(filteredList, tBodyCreditCardPayment, creditCardPaymentsTemplateFn, colSpan.creditCardPayments);
+        totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
+        totalCount.textContent = `RECORDS: ${filteredList.length}`;
+    })
+);
+
+bankTransferFilterInput.addEventListener('input', debounce(async e => {
+        const totatAmounts = document.getElementById('total-amounts-transfers-id');
+        const totalCount = document.getElementById('total-count-transfers-id');
+
+        var query = bankTransferFilterInput.value;
+
+        const filteredList = filterTableData(bankTransfers, query);
+        console.log('value ##> ', ownerBankAccountId)
+
+        renderDataTable(filteredList, tBodyBankTransfer, bankTransfersTemplateFn, colSpan.bankTransfers);
         totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
         totalCount.textContent = `RECORDS: ${filteredList.length}`;
     })

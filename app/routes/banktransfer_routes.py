@@ -11,3 +11,17 @@ def create():
        return controller.create_banktransfer()
     except Exception as e:
         raise e
+    
+@banktransfer_bp.route('/update/<int:id>', methods=['PUT'])
+def update(id):
+    try:
+       return controller.update_banktransfer(id)
+    except Exception as e:
+        raise e
+    
+@banktransfer_bp.route('/get/record/<int:id>', methods=['GET'])
+def get_record(id):
+    try:
+        return controller.get_record(id)
+    except Exception as e:
+        raise e

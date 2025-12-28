@@ -48,7 +48,7 @@ def create_banktransfer():
 def update_banktransfer(id):
     try:
         transfer = BankTransfer.query.get(id)
-        if not transfer: return jsonify({'error', 'Bank transfer record was not found.'})
+        if not transfer: return jsonify({'error', 'Bank transfer record was not found.'}), 400
 
         amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else Decimal('0')
         if(amount <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
@@ -72,19 +72,22 @@ def update_banktransfer(id):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
-        return jsonify({'error', str(e)}), 400
+        return jsonify({'error': str(e)}), 400
 
-def delete_banktransfer(transfer):
+def delete_banktransfer(id):
     try:
-        if not transfer: return jsonify({'error', 'Bank transfer record was not found.'})
+        transfer = BankTransfer.query.get(id)
+        if not transfer: return jsonify({'error', 'Bank transfer record was not found.'}), 400
+        h_update_bank_accounts_money_on_delete(transfer)
+
         db.session.delete(transfer)
         db.session.commit()
 
-        return redirect(url_for('bank_account.associated_records'))
+        return jsonify({'message': 'Bank transfer deleted successfully'}), 200
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
-        return jsonify({'error', str(e)}), 400
+        return jsonify({'error': str(e)}), 400
     
 def get_record(id):
     try:
@@ -93,7 +96,7 @@ def get_record(id):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
-        return jsonify({'error', str(e)}), 400
+        return jsonify({'error': str(e)}), 400
     
 def h_update_bank_accounts_money_on_create(origin, destination, amount):
     if origin.amount_available <= 0 or origin.amount_available < amount:
@@ -116,3 +119,10 @@ def h_update_bank_accounts_money_on_update(origin, old_destination, new_destinat
     
     origin.amount_available -= new_amount
     new_destination.amount_available += new_amount
+
+def h_update_bank_accounts_money_on_delete(transfer):
+    if transfer.to_bank_account.amount_available <= 0 or transfer.to_bank_account.amount_available < transfer.amount:
+        raise NoAvailableMoney(f'{transfer.to_bank_account.nick_name.capitalize()} does not have enough founds.')
+    
+    transfer.to_bank_account.amount_available -= transfer.amount #takes the transfered money from the destination
+    transfer.from_bank_account.amount_available += transfer.amount #return the money to its origin

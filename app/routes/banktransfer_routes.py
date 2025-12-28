@@ -19,6 +19,13 @@ def update(id):
     except Exception as e:
         raise e
     
+@banktransfer_bp.route('/delete/<int:id>', methods=['DELETE'])
+def delete(id):
+    try:
+       return controller.delete_banktransfer(id)
+    except Exception as e:
+        raise e
+    
 @banktransfer_bp.route('/get/record/<int:id>', methods=['GET'])
 def get_record(id):
     try:

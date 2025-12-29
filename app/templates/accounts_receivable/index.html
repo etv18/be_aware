@@ -228,7 +228,7 @@
                         <td>{{ 'ACTIVE' if loan.is_active else 'PAID'  }}</td>
                         <td>{{ loan.description }}</td>
                         <td>{{ 'YES' if loan.is_cash else 'NO'  }}</td>
-                        <td>{{ loan.bank_account.nick_name }}</td>
+                        <td>{{ loan.bank_account.nick_name if loan.bank_account else '-' }}</td>
                         <td>{{ loan.created_at }}</td>
                         <td>
                             <div class="d-flex gap-2">

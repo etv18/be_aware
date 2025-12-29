@@ -26,8 +26,10 @@ def create_loan():
         if(amount <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
 
         selected_bank_account_id = request.form.get('select-bank-account')
-
-        if not is_cash:
+    
+        if not is_cash and selected_bank_account_id.lower() == 'none':
+            pass
+        elif not is_cash:
             if selected_bank_account_id == 'none' or not selected_bank_account_id:
                 raise NoBankProductSelected('No bank account was selected for this loan')
             
@@ -67,8 +69,11 @@ def update_loan(loan):
         if amount <= 0: raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
         
         selected_bank_account_id = request.form.get('select-bank-account')
-        
-        if not is_cash:
+
+        if not is_cash and selected_bank_account_id.lower() == 'none':
+            if loan.bank_account:
+                return_money_to_bank_account(loan)
+        elif not is_cash:
             if selected_bank_account_id == 'none' or not selected_bank_account_id:
                 raise NoBankProductSelected('No bank product was selected for this loan')
             

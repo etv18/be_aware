@@ -14,6 +14,7 @@ from app.models.credit_card import CreditCard
 from app.models.cash_ledger import CashLedger
 from app.exceptions.bankProductsException import *
 from app.utils.numeric_casting import is_decimal_type
+from app.utils.filter_data import get_monthly_records
 
 #HANDLERS
 def create_expense():
@@ -229,6 +230,15 @@ def filter_weekly_basis_expenses_info():
         data.append(e)
     
     return data
+
+def get_monthly_expenses_records():
+    now = datetime.now()
+    year = now.year
+    month = now.month
+
+    records = get_monthly_records(Expense, year, month)
+
+    return records
 
 def filter_expenses_by_is_cash(is_cash):
     data = {}

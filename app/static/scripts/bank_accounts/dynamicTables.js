@@ -43,9 +43,7 @@ const colSpan = {
 const expensesTemplateFn = (expense) => `
     <th scope="row">${expense.id}</th>
     <td class="text-start">${formatNumber(expense.amount)}</td>
-    <td>${expense.is_cash ? 'YES' : 'NO'}</td>
     <td class="text-start">${expense.description ?? '-'}</td>
-    <td>${expense.credit_card_name ?? '-'}</td>
     <td>${expense.bank_account_name ?? '-'}</td>
     <td class="text-start">${expense.expense_category_name ?? '-'}</td>
     <td>${expense.created_at}</td>
@@ -54,7 +52,6 @@ const expensesTemplateFn = (expense) => `
 const incomesTemplateFn = (income) => `
     <th scope="row">${ income.id }</th>
     <td class="text-start">${ formatNumber(income.amount) }</td>
-    <td>${ income.is_cash ? 'YES' : 'NO'}</td>
     <td class="text-start">${ income.description ?? '-' }</td>
     <td>${ income.bank_nick_name ?? '-'}</td>
     <td>${ income.created_at }</td>
@@ -71,7 +68,6 @@ const withdrawalsTemplateFn = (withdrawal) => `
 const loansTemplateFn = (loan) => `
     <th scope="row">${loan.id}</th>
     <td class="text-start">${formatNumber(loan.amount)}</td>
-    <td>${loan.is_cash ? 'YES' : 'NO'}</td>
     <td>${loan.person_name ?? '-'}</td>
     <td> ${formatNumber(loan.remaining_amount)} </td>
     <td>${loan.is_active ? 'ACTIVE' : 'PAID'}</td>
@@ -83,7 +79,6 @@ const loansTemplateFn = (loan) => `
 const loanPaymentsTemplateFn = (loanPayment) => `
     <th scope="row">${ loanPayment.id }</th>
     <td class="text-start">${ formatNumber(loanPayment.amount) }</td>
-    <td>${ loanPayment.is_cash ? 'YES' : 'NO' }</td>
     <td>${ loanPayment.bank_account_nick_name ?? '-'}</td>
     <td>${ loanPayment.created_at }</td>
 `;
@@ -102,7 +97,7 @@ const bankTransfersTemplateFn = (transfer) => `
         <td>${ 
             transfer.to_bank_account_id === ownerBankAccountId 
             ?  `<p class="fs-6 text-primary">${formatNumber(transfer.amount)}</p>`
-            : `<p class="fs-6 text-danger">${formatNumber(transfer.amount)}</p>`
+            : `<p class="fs-6 text-danger">-${formatNumber(transfer.amount)}</p>`
         }</td>                        
         <td>${ transfer.from_bank_account_id === ownerBankAccountId ? '.' : transfer.from_bank_account_nick_name }</td>
         <td>${ transfer.to_bank_account_id === ownerBankAccountId ? '.' : transfer.to_bank_account_nick_name }</td>
@@ -165,7 +160,6 @@ async function getData(url){
         creditCardPayments = data.records?.credit_card_payments ?? [];
         bankTransfers = data.records?.bank_transfers ?? [];
         ownerBankAccountId = data.owner_bank_account_id;
-        console.log('value *****> ', ownerBankAccountId)
 
         return data
         
@@ -229,6 +223,37 @@ function filterTableData(dataSet, query){
             }
         }
         if(itemMatches) filteredList.push(item);
+    });
+
+    return filteredList;
+}
+
+function filterTransfersByInAndOut(dataSet, query){
+    if(query === null || query === undefined || query === '') {
+        return dataSet;
+    }
+
+    var fields = getKeysFromDataSet(dataSet);
+
+    if(fields.length === 0) return dataSet;
+
+    var term = query.toLowerCase(); //User input
+
+    var filteredList = [];
+
+    dataSet.forEach(item => {
+        if(term === 'in'){
+
+            if(item.to_bank_account_id === ownerBankAccountId){ 
+                filteredList.push(item);
+            }
+
+        } else {
+
+            if(item.to_bank_account_id !== ownerBankAccountId){ 
+                filteredList.push(item);
+            }
+        }
     });
 
     return filteredList;
@@ -328,8 +353,13 @@ bankTransferFilterInput.addEventListener('input', debounce(async e => {
         const totalCount = document.getElementById('total-count-transfers-id');
 
         var query = bankTransferFilterInput.value;
+        var filteredList;
+        if(query.toLowerCase() === 'in' || query.toLowerCase() === 'out'){
+            filteredList = filterTransfersByInAndOut(bankTransfers, query);
+        } else {
+            filteredList = filterTableData(bankTransfers, query);
+        }
 
-        const filteredList = filterTableData(bankTransfers, query);
         console.log('value ##> ', ownerBankAccountId)
 
         renderDataTable(filteredList, tBodyBankTransfer, bankTransfersTemplateFn, colSpan.bankTransfers);

@@ -37,7 +37,7 @@ class Income(db.Model):
             'code': self.code,
             'description': self.description,
             'bank_account_id': self.bank_account_id,
-            'bank_nick_name': self.bank_account.nick_name if self.bank_account.nick_name else '-',
+            'bank_nick_name': self.bank_account.nick_name if self.bank_account else '-',
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
         }

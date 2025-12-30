@@ -15,7 +15,7 @@ def index():
     credit_cards = credit_card.CreditCard.query.all()
     expense_categories = expense_category.ExpenseCategory.query.all()
     bank_accounts = bank_account.BankAccount.query.all()
-    expenses = expense_controller.filter_weekly_basis_expenses_info()
+    expenses = expense_controller.get_monthly_expenses_records()
     weekly = expense_controller.money_limit_spent_left_for_expenses(expenses)
 
     context = {

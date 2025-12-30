@@ -16,10 +16,10 @@ from app.utils.parse_structures import get_data_as_dictionary
 def create_expense_category():
     try:
         name = request.form.get('name')
-        limit = Decimal(request.form.get('limit')) if is_decimal_type(request.form.get('limit')) else Decimal('0')
+        limit = Decimal(request.form.get('limit')) if is_decimal_type(request.form.get('limit')) else -1
         
         validName(name)
-        if(limit <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a valid number bigger than 0')
+        if(limit < 0): raise AmountIsLessThanOrEqualsToZero('Introduce a valid number bigger than 0')
 
         expense_category = ExpenseCategory(
             name=name.upper(),
@@ -38,10 +38,10 @@ def create_expense_category():
 def update_expense_category(expense_category):
     try:
         name = request.form.get('name')
-        limit = Decimal(request.form.get('limit')) if is_decimal_type(request.form.get('limit')) else Decimal('0')
+        limit = Decimal(request.form.get('limit')) if is_decimal_type(request.form.get('limit')) else -1
         
         validName(name)
-        if(limit <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a valid number bigger than 0')
+        if(limit < 0): raise AmountIsLessThanOrEqualsToZero('Introduce a valid number bigger than 0')
 
         expense_category.name = name
         expense_category.limit = limit

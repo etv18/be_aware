@@ -35,7 +35,7 @@
                                 <div class="form-floating mt-2">
                                     <select name="select-expense-category" id="select-expense-category-id" class="form-select">
                                         {% for category in expense_categories %}
-                                        <option value="{{ category.id }}">{{ category.name.lower().capitalize() }}</option>
+                                        <option value="{{ category.id }}">{{ category.name.lower().title() }}</option>
                                         {% endfor %}
                                     </select>
                                     <label for="select-expense-category-id" class="p-3">Category</label>
@@ -113,7 +113,7 @@
                                 <div class="form-floating mt-2">
                                     <select name="select-expense-category" id="e-select-expense-category-id" class="form-select">
                                         {% for category in expense_categories %}
-                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                        <option value="{{ category.id }}">{{ category.name.lower().title() }}</option>
                                         {% endfor %}
                                     </select>
                                     <label for="e-select-expense-category-id" class="p-3">Category</label>
@@ -213,7 +213,7 @@
                         <td> {{ expense.description or '-' }} </td>
                         <td>{{ expense.credit_card.nick_name or '-' }}</td>
                         <td>{{ expense.bank_account.nick_name or '-' }}</td>
-                        <td>{{ expense.expense_category.name or '-' }}</td>
+                        <td>{{ expense.expense_category.name.lower().title() or '-' }}</td>
                         <td>{{ expense.created_at }}</td>
                         <td>
                             <div class="d-flex gap-2">

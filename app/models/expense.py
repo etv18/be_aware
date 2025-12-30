@@ -50,5 +50,5 @@ class Expense(db.Model):
             # with js.
             'credit_card_name': getattr(self.credit_card, 'nick_name', None),
             'bank_account_name': getattr(self.bank_account, 'nick_name', None),
-            'expense_category_name': getattr(self.expense_category, 'name', None)
+            'expense_category_name': self.expense_category.name.lower().title() if self.expense_category else None
         }

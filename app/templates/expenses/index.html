@@ -35,7 +35,7 @@
                                 <div class="form-floating mt-2">
                                     <select name="select-expense-category" id="select-expense-category-id" class="form-select">
                                         {% for category in expense_categories %}
-                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                        <option value="{{ category.id }}">{{ category.name.lower().capitalize() }}</option>
                                         {% endfor %}
                                     </select>
                                     <label for="select-expense-category-id" class="p-3">Category</label>
@@ -324,7 +324,7 @@
                 
                 const expenseId = button.getAttribute("data-expense-id");
                 const amount = button.getAttribute("data-amount-id");
-                const isCash = button.getAttribute("data-is-cash") === "True";
+                const isCash = button.getAttribute("data-is-cash").toLowerCase() === "true";
                 const expenseCategoryId = button.getAttribute("data-select-expense-category-id");
                 const creditCardId = button.getAttribute("data-select-credit-card-id");
                 const bankAccountId = button.getAttribute("data-select-bank-account-id");

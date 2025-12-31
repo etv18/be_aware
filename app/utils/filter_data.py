@@ -1,18 +1,25 @@
+import traceback
 from datetime import datetime
-from sqlalchemy import extract, func
+from sqlalchemy import func
 
-def get_monthly_records(CustomModel, year, month):
-    
-    records = ( 
-        CustomModel.query
-        .filter(
-            extract('year', CustomModel.created_at) == year,
-            extract('month', CustomModel.created_at) == month
+from app.extensions import db
+
+def get_monthly_records(CustomModel, year, month) -> list:
+    try:
+        records = ( 
+            CustomModel.query
+            .filter(
+                func.extract('year', CustomModel.created_at) == year,
+                func.extract('month', CustomModel.created_at) == month
+            )
+            .order_by(CustomModel.created_at.desc())
+            .all()
         )
-        .order_by(CustomModel.created_at.desc())
-        .all()
-    )
-    return records
+        return records
+    except Exception as e:
+        db.session.rollback()
+        traceback.print_exc()
+        raise e
 
 def get_yearly_records(CustomModel, year=None) -> list:
     if year is None:

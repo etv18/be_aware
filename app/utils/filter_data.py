@@ -14,7 +14,7 @@ def get_monthly_records(CustomModel, year, month):
     )
     return records
 
-def get_yearly_records(CustomModel, year=None):
+def get_yearly_records(CustomModel, year=None) -> list:
     if year is None:
         year = datetime.now().year
 

@@ -80,3 +80,10 @@ def get_associated_records_in_json(bank_account_id):
     except Exception as e:
         raise e
     
+@bank_account_bp.route('/cash/flow/info/<int:bank_account_id>')
+def get_cash_flow_info(bank_account_id):
+    try:
+        return ba_controller.get_cash_flow_info(bank_account_id)
+    except Exception as e:
+        raise e
+    

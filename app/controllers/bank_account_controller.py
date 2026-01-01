@@ -5,14 +5,19 @@ from sqlalchemy.exc import SQLAlchemyError
 from decimal import Decimal
 import traceback
 
+from app.exceptions.bankProductsException import BankAccountDoesNotExists, AmountIsLessThanOrEqualsToZero
+from app.extensions import db
+from app.utils.filter_data import get_yearly_total_amount_info
+from app.utils.numeric_casting import is_decimal_type, total_amount, format_amount
 from app.models.bank_account import BankAccount
 from app.models.expense import Expense
 from app.models.bank import Bank
 from app.models.loan_payment import LoanPayment
+from app.models.loan import Loan
+from app.models.withdrawal import Withdrawal
+from app.models.credit_card_payment import CreditCardPayment
+from app.models.income import Income
 from app.models.banktransfer import BankTransfer
-from app.utils.numeric_casting import is_decimal_type, total_amount, format_amount
-from app.exceptions.bankProductsException import BankAccountDoesNotExists, AmountIsLessThanOrEqualsToZero
-from app.extensions import db
 
 def create_bank_account():
     try:
@@ -134,7 +139,46 @@ def get_associated_records_in_json(bank_account_id):
     except Exception as e:
         traceback.print_exc()
         return jsonify({'error': str(e)}), 400
-        
+    
+def get_cash_flow_info(bank_account_id):
+    '''
+    OUTGOINGS
+        Outgoing Transfers
+
+    INCOMINGS
+        Incoming Transfers  
+    '''
+    outgoing_classes = [Expense, Withdrawal, Loan, CreditCardPayment]
+    incoming_classes = [LoanPayment, Income]
+
+    outgoings = h_get_total_amount_info_using_models(models=outgoing_classes)
+    incomings = h_get_total_amount_info_using_models(models=incoming_classes)
+
+    data = {
+        'months': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        'outgoings': outgoings,
+        'incomings': incomings
+    }
+    return jsonify(data), 200
+
+def h_get_total_amount_info_using_models(models: list, year=None) -> list:
+    year_results = []
+    for model in models:
+        totals = get_yearly_total_amount_info(
+            CustomModel=model,
+            year=year
+        )
+        year_results.append(totals)
+
+    total_amounts_per_month = [Decimal('0.00') for _ in range(12)]
+
+    for model_info in year_results:
+        for i in range(0, len(model_info)):
+            total_amounts_per_month[i] += model_info[i]
+
+    return total_amounts_per_month
+
+
 
 def h_get_data_as_dictionary(elems: list) -> list:
     if not elems: return

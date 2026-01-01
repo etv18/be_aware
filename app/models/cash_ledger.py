@@ -26,7 +26,7 @@ class CashLedger(db.Model):
             "amount": float(self.amount) if isinstance(self.amount, Decimal) else self.amount,
             "type": self.type,
             "reference_code": self.reference_code,
-            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "created_at": self.created_at.strftime("%a, %d %b %Y %I:%M %p") if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }
 

@@ -87,3 +87,18 @@ def get_cash_flow_info(bank_account_id):
     except Exception as e:
         raise e
     
+@bank_account_bp.route('/stats/<int:bank_account_id>')
+def stats(bank_account_id):
+    try:
+        data = ba_controller.get_associated_records(bank_account_id)
+        bank_account = BankAccount.query.get(bank_account_id)
+        context = {
+            'data': data,
+            'bank_account': bank_account,
+        }
+        return render_template('bank_accounts/stats.html', **context)
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400
+
+    

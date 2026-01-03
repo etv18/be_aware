@@ -14,7 +14,6 @@ from app.models.credit_card import CreditCard
 from app.models.cash_ledger import CashLedger
 from app.exceptions.bankProductsException import *
 from app.utils.numeric_casting import is_decimal_type
-from app.utils.filter_data import get_monthly_records
 
 #HANDLERS
 def create_expense():
@@ -236,7 +235,15 @@ def get_monthly_expenses_records():
     year = now.year
     month = now.month
 
-    records = get_monthly_records(Expense, year, month)
+    records = (
+        Expense.query
+        .filter(
+            func.extract('year', Expense.created_at) == year,
+            func.extract('month', Expense.created_at) == month
+        )
+        .order_by(Expense.created_at.desc())
+        .all()
+    )
 
     return records
 

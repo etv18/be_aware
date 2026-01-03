@@ -151,8 +151,15 @@ def get_cash_flow_info(bank_account_id):
     outgoing_classes = [Expense, Withdrawal, Loan, CreditCardPayment]
     incoming_classes = [LoanPayment, Income]
 
-    outgoings = h_get_total_amount_info_using_models(models=outgoing_classes)
-    incomings = h_get_total_amount_info_using_models(models=incoming_classes)
+    outgoings = h_get_total_amount_info_using_models(
+        id=bank_account_id, 
+        models=outgoing_classes
+    )
+
+    incomings = h_get_total_amount_info_using_models(
+        id=bank_account_id, 
+        models=incoming_classes
+    )
 
     data = {
         'months': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -161,10 +168,11 @@ def get_cash_flow_info(bank_account_id):
     }
     return jsonify(data), 200
 
-def h_get_total_amount_info_using_models(models: list, year=None) -> list:
+def h_get_total_amount_info_using_models(id, models: list, year=None) -> list:
     year_results = []
     for model in models:
         totals = get_yearly_total_amount_info(
+            id=id,
             CustomModel=model,
             year=year
         )

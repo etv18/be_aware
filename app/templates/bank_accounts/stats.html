@@ -1,0 +1,50 @@
+{% extends 'layout.html' %}
+
+{% block title %}home{% endblock %}
+
+{% block content %}
+<style>
+    .chart-box {
+        width: 100%;
+        max-width: 800px;      /* optional: keeps charts from getting huge */
+        height: 350px;         /* SAME HEIGHT for both charts */
+    }
+
+    .chart-box canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    /* Mobile */
+    @media (max-width: 576px) {
+        .chart-box {
+            height: 280px;
+        }
+    }
+</style>
+
+<h5>{{ bank_account.nick_name }}</h5>
+<div class="d-flex gap-1 justify-items-center">
+    <a href="{{ url_for('bank_account.index') }}" class="btn btn-outline-light fs-5"><i class="bi bi-arrow-return-left"></i></a>
+    <a href="{{ url_for('bank_account.associated_records', bank_account_id=bank_account.id ) }}" class="btn btn-outline-primary"><i class="bi bi-diagram-3-fill"></i></a>
+</div>
+<div class="row align-items-stretch">
+    <!-- MONTHLY 
+    <div class="col-sm d-flex justify-content-center">
+        <div class="chart-box">
+            <canvas id="incomings"></canvas>
+        </div>
+    </div> 
+    -->
+    <!-- YEARLY -->
+    <div class="col-sm d-flex justify-content-center">
+        <div class="chart-box">
+            <canvas id="yearly-stats"></canvas>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" name="" id="yearly-cash-flow-endpoint-id" value="{{ url_for('bank_account.get_cash_flow_info', bank_account_id=bank_account.id ) }}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='scripts/bank_accounts/stats.js' ) }}"></script>
+{% endblock %}

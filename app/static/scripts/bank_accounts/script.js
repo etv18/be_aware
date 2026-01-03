@@ -146,14 +146,12 @@ async function editBankAccount(){
 
 document.addEventListener('DOMContentLoaded', (event) => {
     const rows = document.querySelectorAll('.bank-row');
-    const expensesTableContainer = document.getElementById('expenses-table-container');
-
 
     rows.forEach(row => {
         row.addEventListener('dblclick', async event => {
             if(preventBtnClickWhenClickOnRow(event)) return;
             let bankAccountId = row.getAttribute('data-bank-account-id');
-            window.location.assign(`/bank_accounts/associated_records/${bankAccountId}`);
+            window.location.assign(`/bank_accounts/stats/${bankAccountId}`);
         });
     });
 });

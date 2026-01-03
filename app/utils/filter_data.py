@@ -5,11 +5,12 @@ from decimal import Decimal
 
 from app.extensions import db
 
-def get_monthly_records(CustomModel, year, month) -> list:
+def get_monthly_records(id, CustomModel, year, month) -> list:
     try:
         records = ( 
             CustomModel.query
             .filter(
+                CustomModel.bank_account_id == id,
                 func.extract('year', CustomModel.created_at) == year,
                 func.extract('month', CustomModel.created_at) == month
             )
@@ -22,11 +23,12 @@ def get_monthly_records(CustomModel, year, month) -> list:
         traceback.print_exc()
         raise e
 
-def get_monthly_total_amount_info(CustomModel, year, month) -> list:
+def get_monthly_total_amount_info(id, CustomModel, year, month) -> list:
     try:
         total_amount = ( 
             CustomModel.query
             .filter(
+                CustomModel.bank_account_id == id,
                 func.extract('year', CustomModel.created_at) == year,
                 func.extract('month', CustomModel.created_at) == month
             )
@@ -39,7 +41,7 @@ def get_monthly_total_amount_info(CustomModel, year, month) -> list:
         traceback.print_exc()
         raise e
 
-def get_yearly_records(CustomModel, year=None) -> list:
+def get_yearly_records(id, CustomModel, year=None) -> list:
     if year is None:
         year = datetime.now().year
 
@@ -47,6 +49,7 @@ def get_yearly_records(CustomModel, year=None) -> list:
 
     for month in range(1, 13):
         record = get_monthly_records(
+            id=id,
             CustomModel=CustomModel, 
             year=year,
             month=month
@@ -55,7 +58,7 @@ def get_yearly_records(CustomModel, year=None) -> list:
     
     return monthly_records
 
-def get_yearly_total_amount_info(CustomModel, year=None) -> list:
+def get_yearly_total_amount_info(id, CustomModel, year=None) -> list:
     if year is None:
         year = datetime.now().year
 
@@ -63,6 +66,7 @@ def get_yearly_total_amount_info(CustomModel, year=None) -> list:
 
     for month in range(1, 13):
         record = get_monthly_total_amount_info(
+            id=id,
             CustomModel=CustomModel, 
             year=year,
             month=month

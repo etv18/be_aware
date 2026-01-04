@@ -7,7 +7,7 @@ import traceback
 
 from app.exceptions.bankProductsException import BankAccountDoesNotExists, AmountIsLessThanOrEqualsToZero
 from app.extensions import db
-from app.utils.filter_data import get_yearly_total_amount_info
+from app.utils.bank_accounts.filter_data import get_yearly_total_amount_info
 from app.utils.numeric_casting import is_decimal_type, total_amount, format_amount
 from app.models.bank_account import BankAccount
 from app.models.expense import Expense

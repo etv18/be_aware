@@ -7,7 +7,7 @@ import traceback
 
 from app.exceptions.bankProductsException import BankAccountDoesNotExists, AmountIsLessThanOrEqualsToZero
 from app.extensions import db
-from app.utils.bank_accounts.filter_data import get_yearly_total_amount_info
+from app.utils.bank_accounts.filter_data import get_yearly_total_amount_info, get_yearly_total_amount_info_of_transfers
 from app.utils.numeric_casting import is_decimal_type, total_amount, format_amount
 from app.models.bank_account import BankAccount
 from app.models.expense import Expense
@@ -140,7 +140,7 @@ def get_associated_records_in_json(bank_account_id):
         traceback.print_exc()
         return jsonify({'error': str(e)}), 400
     
-def get_cash_flow_info(bank_account_id):
+def get_cash_flow_info(bank_account_id, year=None):
     '''
     OUTGOINGS
         Outgoing Transfers
@@ -151,14 +151,20 @@ def get_cash_flow_info(bank_account_id):
     outgoing_classes = [Expense, Withdrawal, Loan, CreditCardPayment]
     incoming_classes = [LoanPayment, Income]
 
+    transfers = get_yearly_total_amount_info_of_transfers(id=bank_account_id, year=year)
+
     outgoings = h_get_total_amount_info_using_models(
         id=bank_account_id, 
-        models=outgoing_classes
+        models=outgoing_classes,
+        transfers=transfers.get('outgoings'),
+        year=year
     )
 
     incomings = h_get_total_amount_info_using_models(
         id=bank_account_id, 
-        models=incoming_classes
+        models=incoming_classes,
+        transfers=transfers.get('incomings'),
+        year=year
     )
 
     data = {
@@ -168,7 +174,7 @@ def get_cash_flow_info(bank_account_id):
     }
     return jsonify(data), 200
 
-def h_get_total_amount_info_using_models(id, models: list, year=None) -> list:
+def h_get_total_amount_info_using_models(id, models: list, transfers: list, year=None) -> list:
     year_results = []
     for model in models:
         totals = get_yearly_total_amount_info(
@@ -177,7 +183,11 @@ def h_get_total_amount_info_using_models(id, models: list, year=None) -> list:
             year=year
         )
         year_results.append(totals)
-
+    '''
+    Since transfer's stores outgoings and incomings transfers they have to be
+    managed individually to get each group separetly
+    '''
+    year_results.append(transfers)
     total_amounts_per_month = [Decimal('0.00') for _ in range(12)]
 
     for model_info in year_results:

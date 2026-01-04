@@ -6,7 +6,7 @@
 <style>
     .chart-box {
         width: 100%;
-        max-width: 800px;      /* optional: keeps charts from getting huge */
+        max-width: 900px;      /* optional: keeps charts from getting huge */
         height: 350px;         /* SAME HEIGHT for both charts */
     }
 
@@ -29,20 +29,25 @@
     <a href="{{ url_for('bank_account.associated_records', bank_account_id=bank_account.id ) }}" class="btn btn-outline-primary"><i class="bi bi-diagram-3-fill"></i></a>
 </div>
 <div class="row align-items-stretch text-center">
-    <!-- MONTHLY 
-    <div class="col-sm d-flex justify-content-center">
-        <div class="chart-box">
-            <canvas id="incomings"></canvas>
-        </div>
-    </div> 
-    -->
-    <!-- YEARLY -->
      <h3>Yearly Cash Flow Chart</h3>
     <div class=" d-flex justify-content-center">
         <div class="chart-box">
             <canvas id="yearly-stats"></canvas>
         </div>
     </div>
+</div>
+
+<div class="row align-items-stretch text-center my-2">
+    <div class="col-sm d-flex justify-content-center">
+        <div class="chart-box">
+            <canvas id="outgoings"></canvas>
+        </div>
+    </div>
+    <div class="col-sm d-flex justify-content-center">
+        <div class="chart-box">
+            <canvas id="incomings"></canvas>
+        </div>
+    </div> 
 </div>
 
 <input type="hidden" name="" id="yearly-cash-flow-endpoint-id" value="{{ url_for('bank_account.get_cash_flow_info', bank_account_id=bank_account.id ) }}">

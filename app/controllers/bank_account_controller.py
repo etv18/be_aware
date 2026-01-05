@@ -141,16 +141,12 @@ def get_associated_records_in_json(bank_account_id):
         return jsonify({'error': str(e)}), 400
     
 def get_cash_flow_info(bank_account_id, year=None):
-    '''
-    OUTGOINGS
-        Outgoing Transfers
 
-    INCOMINGS
-        Incoming Transfers  
-    '''
     outgoing_classes = [Expense, Withdrawal, Loan, CreditCardPayment]
     incoming_classes = [LoanPayment, Income]
 
+    #Since transfer's stores outgoings and incomings cash flow they have to be
+    #managed individually to get each group separetly
     transfers = get_yearly_total_amount_info_of_transfers(id=bank_account_id, year=year)
 
     outgoings = h_get_total_amount_info_using_models(
@@ -167,12 +163,26 @@ def get_cash_flow_info(bank_account_id, year=None):
         year=year
     )
 
+    balances = h_get_balances(outgoings=outgoings, incomings=incomings)
+
     data = {
         'months': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         'outgoings': outgoings,
-        'incomings': incomings
+        'incomings': incomings,
+        'balances': balances
     }
     return jsonify(data), 200
+
+
+def h_get_balances(outgoings: list, incomings: list):
+    balances = []
+    for month in range(0, 12):
+        balances.append(
+            incomings[month] - outgoings[month] 
+        )
+    return balances
+        
+
 
 def h_get_total_amount_info_using_models(id, models: list, transfers: list, year=None) -> list:
     year_results = []
@@ -184,7 +194,7 @@ def h_get_total_amount_info_using_models(id, models: list, transfers: list, year
         )
         year_results.append(totals)
     '''
-    Since transfer's stores outgoings and incomings transfers they have to be
+    Since transfer's stores outgoings and incomings cash flow they have to be
     managed individually to get each group separetly
     '''
     year_results.append(transfers)

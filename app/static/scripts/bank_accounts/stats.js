@@ -1,5 +1,8 @@
 const yearlyEndpoint = document.getElementById('yearly-cash-flow-endpoint-id').value;
 const yearlyCanvas = document.getElementById('yearly-stats');
+const tableCashFlow = document.getElementById('cash-flow-table-id');
+const theadCashFlow = tableCashFlow.querySelector('thead');
+const tbodyCashFlow = tableCashFlow.querySelector('tbody');
 
 async function getYearlyCashFlowData(){
     try {
@@ -58,7 +61,51 @@ function generateYearlyChart(canvas, type, data){
     }
 }
 
+
+function canBeNumberStrict(value) {
+    return value !== '' && value !== null && !Number.isNaN(Number(value));
+}
+
+function buildRow(label, values, tag){
+    let row = '<tr>'; //open row
+
+    row += `<${tag} class="fs-6 fw-bold">${label}</${tag}>`; //this will display the name of the row
+    values.forEach(val => {
+        const isNumber = canBeNumberStrict(val);
+        const numericValue = isNumber ? Number(val) : null;
+
+        let textClass = '';
+
+        if(label.toLowerCase() === 'balances'){
+            if(isNumber && numericValue < 0){
+                textClass = 'text-danger';
+            } else if (isNumber && numericValue > 0){
+                textClass = 'text-primary';
+            }
+        }
+
+        row += `
+            <${tag} class="${textClass}">
+                ${val}
+            </${tag}>
+        `;
+    });
+
+    row += '</tr>'; //close row
+    return row;
+}
+
+function buildCashFlowTable(data){
+    theadCashFlow.innerHTML = buildRow('Months:', data.months, 'th');
+    tbodyCashFlow.innerHTML = `
+        ${buildRow('Incomings', data.incomings, 'td', false)}
+        ${buildRow('Outgoings', data.outgoings, 'td', false)}
+        ${buildRow('Balances', data.balances, 'td', true)}
+    `;
+}
+
 document.addEventListener('DOMContentLoaded', async e => {
     var data = await getYearlyCashFlowData();
-    await generateYearlyChart(yearlyCanvas, 'bar', data)
+    await generateYearlyChart(yearlyCanvas, 'bar', data);
+    buildCashFlowTable(data);
 });

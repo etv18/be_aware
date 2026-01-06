@@ -69,7 +69,8 @@ function canBeNumberStrict(value) {
 function buildRow(label, values, tag){
     let row = '<tr>'; //open row
 
-    row += `<${tag} class="fs-6 fw-bold">${label}</${tag}>`; //this will display the name of the row
+    row += `<${tag} class="fs-6 fw-bold table-active">${label}</${tag}>`; //this will display the name of the row
+
     values.forEach(val => {
         const isNumber = canBeNumberStrict(val);
         const numericValue = isNumber ? Number(val) : null;
@@ -84,9 +85,16 @@ function buildRow(label, values, tag){
             }
         }
 
+        if(!isNumber) textClass += ' table-active';
+
         row += `
             <${tag} class="${textClass}">
-                ${val}
+                ${canBeNumberStrict(val) 
+                    ? Number(val).toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }) 
+                    : val}
             </${tag}>
         `;
     });
@@ -96,11 +104,11 @@ function buildRow(label, values, tag){
 }
 
 function buildCashFlowTable(data){
-    theadCashFlow.innerHTML = buildRow('Months:', data.months, 'th');
+    theadCashFlow.innerHTML = buildRow('Months', data.months, 'th');
     tbodyCashFlow.innerHTML = `
-        ${buildRow('Incomings', data.incomings, 'td', false)}
-        ${buildRow('Outgoings', data.outgoings, 'td', false)}
-        ${buildRow('Balances', data.balances, 'td', true)}
+        ${buildRow('Incomings', data.incomings, 'td')}
+        ${buildRow('Outgoings', data.outgoings, 'td')}
+        ${buildRow('Balances', data.balances, 'td')}
     `;
 }
 

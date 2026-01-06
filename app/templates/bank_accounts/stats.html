@@ -6,7 +6,7 @@
 <style>
     .chart-box {
         width: 100%;
-        max-width: 900px;      /* optional: keeps charts from getting huge */
+        max-width: 100%;      /* optional: keeps charts from getting huge */
         height: 350px;         /* SAME HEIGHT for both charts */
     }
 
@@ -23,21 +23,23 @@
     }
 </style>
 
-<h5>{{ bank_account.nick_name }}</h5>
+<label class="fs-2 fw-bold">{{ bank_account.nick_name }}</label>
 <div class="d-flex gap-1 justify-items-center">
     <a href="{{ url_for('bank_account.index') }}" class="btn btn-outline-light fs-5"><i class="bi bi-arrow-return-left"></i></a>
     <a href="{{ url_for('bank_account.associated_records', bank_account_id=bank_account.id ) }}" class="btn btn-outline-primary"><i class="bi bi-diagram-3-fill"></i></a>
 </div>
-<div class="row align-items-stretch text-center">
-     <h3>Yearly Cash Flow Chart</h3>
-    <div class=" d-flex justify-content-center">
-        <div class="chart-box">
-            <canvas id="yearly-stats"></canvas>
+<div class="container border rounded-3 mt-2">
+    <div class="row align-items-stretch text-center my-2">
+         <h3>Yearly Cash Flow Chart</h3>
+        <div class=" d-flex justify-content-center">
+            <div class="chart-box">
+                <canvas id="yearly-stats"></canvas>
+            </div>
         </div>
     </div>
 </div>
 
-<div id="cash-flow-table-container-id" class="table-responsive border rounded-3 mt-2" style="height: 185px;">
+<div id="cash-flow-table-container-id" class="table-responsive border rounded-3 mt-2" style="height: 180x;">
     <table id="cash-flow-table-id" class="table table-hover">
         <thead class="fs-6">
         </thead>

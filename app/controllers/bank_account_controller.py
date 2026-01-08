@@ -3,11 +3,12 @@ from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError
 
 from decimal import Decimal
+from datetime import datetime
 import traceback
 
 from app.exceptions.bankProductsException import BankAccountDoesNotExists, AmountIsLessThanOrEqualsToZero
 from app.extensions import db
-from app.utils.bank_accounts.filter_data import get_yearly_total_amount_info, get_yearly_total_amount_info_of_transfers
+from app.utils.bank_accounts.filter_data import get_yearly_total_amount_info, get_yearly_total_amount_info_of_transfers, get_monthly_total_amount_info, get_monthly_total_amount_info_of_transfers
 from app.utils.numeric_casting import is_decimal_type, total_amount, format_amount
 from app.models.bank_account import BankAccount
 from app.models.expense import Expense
@@ -172,6 +173,32 @@ def get_cash_flow_info(bank_account_id, year=None):
         'balances': balances
     }
     return jsonify(data), 200
+
+
+def total_monthly_per_associated_record(bank_account_id, year=None):
+    models = [Expense, Withdrawal, Loan, CreditCardPayment, LoanPayment, Income]
+    monthly_totals = {}
+    now = datetime.now()
+    for model in models:
+        total = get_monthly_total_amount_info(
+            id=bank_account_id,
+            CustomModel=model,
+            year=now.year,
+            month=now.month
+        )
+        
+        monthly_totals[model.__tablename__] = total
+
+    transfers = get_monthly_total_amount_info_of_transfers(
+        id=bank_account_id,
+        year=now.year,
+        month=now.month
+    )
+
+    monthly_totals['transfers_incomings'] = transfers.get('incomings')
+    monthly_totals['transfers_outgoings'] = transfers.get('outgoings')
+
+    return jsonify({'monthly_totals': monthly_totals}), 200
 
 
 def h_get_balances(outgoings: list, incomings: list):

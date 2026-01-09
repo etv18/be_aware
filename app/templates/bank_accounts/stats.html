@@ -3,6 +3,8 @@
 {% block title %}home{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='statCard.css' ) }}">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
 <style>
     .chart-box {
         width: 100%;
@@ -48,20 +50,193 @@
     </table>
 </div>
 
-<div class="row align-items-stretch text-center my-2">
-    <div class="col-sm d-flex justify-content-center">
-        <div class="chart-box">
-            <canvas id="outgoings"></canvas>
+<div class="my-3">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 my-2">
+            <div class="row g-4">
+
+                <!-- Revenue -->
+                <div class="col-md-4">
+                    <div class="stat-card p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="stat-icon bg-danger bg-opacity-25 text-danger">
+                                <i class="fas fa-chart-line fs-4"></i>
+                            </div>
+                            <span class="badge bg-success bg-opacity-25 text-success">
+                                +12.5%
+                            </span>
+                        </div>
+                        <h5 class="mb-1">Expenses</h5>
+                        <h3 class="mb-3" id="monthly-expenses-total-id">$0</h3>
+                        <div class="progress mb-2">
+                            <div class="progress-bar bg-danger" style="width: 100%"></div>
+                        </div>
+                        <small>Monthly expenses total</small>
+                    </div>
+                </div>
+
+                <!-- Users -->
+                <div class="col-md-4">
+                    <div class="stat-card p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="stat-icon bg-primary bg-opacity-25 text-primary">
+                                <i class="fas fa-users fs-4"></i>
+                            </div>
+                            <span class="badge bg-success bg-opacity-25 text-success">
+                                +8.2%
+                            </span>
+                        </div>
+                        <h5 class="mb-1">Incomes</h5>
+                        <h3 class="mb-3" id="monthly-incomes-total-id">$0</h3>
+                        <div class="progress mb-2">
+                            <div class="progress-bar bg-primary" style="width: 100%"></div>
+                        </div>
+                        <small>Monthly active users growth</small>
+                    </div>
+                </div>
+
+
+                <!-- Orders -->
+                <div class="col-md-4">
+                    <div class="stat-card p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="stat-icon bg-secondary-emphasis bg-opacity-25 text-secondary-emphasis">
+                                <i class="fas fa-shopping-cart fs-4"></i>
+                            </div>
+                            <span class="badge bg-success bg-opacity-25 text-success">
+                                +15.7%
+                            </span>
+                        </div>
+                        <h5 class="mb-1">Withdrawals</h5>
+                        <h3 class="mb-3" id="monthly-withdrawals-total-id">$0</h3>
+                        <div class="progress mb-2">
+                            <div class="progress-bar" style="width: 100%; background-color: rgb(203, 218, 218);"></div>
+                        </div>
+                        <small>Monthly order completion rate</small>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        <div class="col-lg-10 my-2">
+            <div class="row g-4">
+
+                <!-- Revenue -->
+                <div class="col-md-4">
+                    <div class="stat-card p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="stat-icon bg-warning bg-opacity-25 text-warning">
+                                <i class="fas fa-chart-line fs-4"></i>
+                            </div>
+                            <span class="badge bg-success bg-opacity-25 text-success">
+                                +12.5%
+                            </span>
+                        </div>
+                        <h5 class="mb-1">Loans</h5>
+                        <h3 class="mb-3" id="monthly-loans-total-id">$0</h3>
+                        <div class="progress mb-2">
+                            <div class="progress-bar bg-warning" style="width: 100%"></div>
+                        </div>
+                        <small>Monthly loans total</small>
+                    </div>
+                </div>
+
+
+                <!-- Orders -->
+                <div class="col-md-4">
+                    <div class="stat-card p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="stat-icon bg-success bg-opacity-25 text-success">
+                                <i class="fas fa-shopping-cart fs-4"></i>
+                            </div>
+                            <span class="badge bg-success bg-opacity-25 text-success">
+                                +15.7%
+                            </span>
+                        </div>
+                        <h5 class="mb-1">Loan Payments</h5>
+                        <h3 class="mb-3" id="monthly-loan-payment-total-id">$0</h3>
+                        <div class="progress mb-2">
+                            <div class="progress-bar bg-success" style="width: 100%"></div>
+                        </div>
+                        <small>Monthly loan payments total</small>
+                    </div>
+                </div>
+
+                <!-- Users -->
+                <div class="col-md-4">
+                    <div class="stat-card p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="stat-icon bg-secondary bg-opacity-25 text-secondary">
+                                <i class="fas fa-users fs-4"></i>
+                            </div>
+                            <span class="badge bg-success bg-opacity-25 text-success">
+                                +8.2%
+                            </span>
+                        </div>
+                        <h5 class="mb-1">Credit Card Payments</h5>
+                        <h3 class="mb-3" id="monthly-credit-card-payments-total-id">$0</h3>
+                        <div class="progress mb-2">
+                            <div class="progress-bar bg-secondary" style="width: 100%"></div>
+                        </div>
+                        <small>Monthly active users growth</small>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-lg-10 my-2">
+            <div class="row g-4">
+
+                <!-- Orders -->
+                <div class="col-md-4">
+                    <div class="stat-card p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="stat-icon bg-secondary bg-opacity-25 text-primary-emphasis">
+                                <i class="fas fa-shopping-cart fs-4"></i>
+                            </div>
+                            <span class="badge bg-success bg-opacity-25 text-success">
+                                +15.7%
+                            </span>
+                        </div>
+                        <h5 class="mb-1">Incoming Transfers</h5>
+                        <h3 class="mb-3" id="monthly-transfers-incomings-total-id">$0</h3>
+                        <div class="progress mb-2">
+                            <div class="progress-bar" style="width: 100%; background-color: rgb(93, 144, 255);"></div>
+                        </div>
+                        <small>Monthly loan payments total</small>
+                    </div>
+                </div>
+
+                <!-- Revenue -->
+                <div class="col-md-4">
+                    <div class="stat-card p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="stat-icon bg-secondary bg-opacity-25 text-danger-emphasis">
+                                <i class="fas fa-chart-line fs-4"></i>
+                            </div>
+                            <span class="badge bg-success bg-opacity-25 text-success">
+                                +12.5%
+                            </span>
+                        </div>
+                        <h5 class="mb-1">Outgoing Transfers</h5>
+                        <h3 class="mb-3" id="monthly-transfers-outgoings-total-id">$0</h3>
+                        <div class="progress mb-2">
+                            <div class="progress-bar" style="width: 100%; background-color: rgb(255, 93, 141);"></div>
+                        </div>
+                        <small>Monthly loans total</small>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
-    <div class="col-sm d-flex justify-content-center">
-        <div class="chart-box">
-            <canvas id="incomings"></canvas>
-        </div>
-    </div> 
 </div>
 
 <input type="hidden" name="" id="yearly-cash-flow-endpoint-id" value="{{ url_for('bank_account.get_cash_flow_info', bank_account_id=bank_account.id ) }}">
+<input type="hidden" name="" id="total-monthly-per-associated-record-info-endpoint-id" value="{{ url_for('bank_account.get_total_monthly_per_associated_record_info', bank_account_id=bank_account.id ) }}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{{ url_for('static', filename='scripts/bank_accounts/stats.js' ) }}"></script>
+<script src="{{ url_for('static', filename='scripts/bank_accounts/cardStats.js' ) }}"></script>
 {% endblock %}

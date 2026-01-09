@@ -88,7 +88,7 @@ def get_cash_flow_info(bank_account_id):
         raise e
     
 @bank_account_bp.route('/total/monthly/per/associated/record/info/<int:bank_account_id>')
-def get_cash_flow_info2(bank_account_id):
+def get_total_monthly_per_associated_record_info(bank_account_id):
     try:
         return ba_controller.total_monthly_per_associated_record(bank_account_id)
     except Exception as e:

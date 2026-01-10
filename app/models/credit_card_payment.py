@@ -33,6 +33,7 @@ class CreditCardPayment(db.Model):
         return {
             'id': self.id,
             'amount': self.amount,
+            'code': self.code,
             'credit_card_id': self.credit_card_id,
             'bank_account_id': self.bank_account_id,
             'credit_card_nick_name': self.credit_card.nick_name if self.credit_card.nick_name else '-',

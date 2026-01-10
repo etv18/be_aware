@@ -1,12 +1,17 @@
 from app.extensions import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+from sqlalchemy import event
+
+from app.utils import prefixes
+from app.utils.code_generator import generate_montly_sequence
 
 class CreditCardPayment(db.Model):
     __tablename__ = 'credit_card_payments'
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Numeric(10,2), nullable=False)
     
+    code = db.Column(db.String(50), nullable=False, server_default='TEMP')
     credit_card_id = db.Column(db.Integer, db.ForeignKey('credit_cards.id'), nullable=False)
     bank_account_id = db.Column(db.Integer, db.ForeignKey('bank_accounts.id', name='bank_account_id'), nullable=False)
 
@@ -15,6 +20,14 @@ class CreditCardPayment(db.Model):
 
     credit_card = relationship('CreditCard', back_populates='payments')
     bank_account = relationship('BankAccount', back_populates='credit_card_payments')
+
+    @event.listens_for(db.session, 'before_flush')
+    def assign_code(session, flush_context, instances=None):
+        for obj in session.new:
+            if isinstance(obj, CreditCardPayment):
+                if not obj.code:
+                    obj.code = generate_montly_sequence(prefixes.CREDIT_CARD_PAYMENT, CreditCardPayment)
+
 
     def to_dict(self):
         return {

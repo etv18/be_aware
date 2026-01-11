@@ -8,6 +8,7 @@ import traceback
 from app.models.income import Income
 from app.models.bank_account import BankAccount
 from app.models.cash_ledger import CashLedger
+from app.models.bank_account_transactions_ledger import BankAccountTransactionsLedger
 from app.exceptions.bankProductsException import BankAccountDoesNotExists, AmountIsLessThanOrEqualsToZero, NoBankProductSelected
 from app.extensions import db
 from app.utils.numeric_casting import is_decimal_type
@@ -38,6 +39,7 @@ def create_income():
             db.session.commit()
 
             CashLedger.create(income)
+            if income.bank_account_id: BankAccountTransactionsLedger.create(income)
 
         except (AmountIsLessThanOrEqualsToZero, BankAccountDoesNotExists) as e:
             db.session.rollback()

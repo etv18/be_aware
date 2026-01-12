@@ -10,6 +10,7 @@ from app.extensions import db
 from app.models.loan import Loan
 from app.models.bank_account import BankAccount
 from app.models.cash_ledger import CashLedger
+from app.models.bank_account_transactions_ledger import BankAccountTransactionsLedger
 from app.controllers.expense_controller import update_bank_account_money_on_create, update_bank_account_money_on_update
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero, NoBankProductSelected
 from app.utils.numeric_casting import is_decimal_type
@@ -48,6 +49,7 @@ def create_loan():
         db.session.commit()
 
         CashLedger.create(loan)
+        if loan.bank_account_id: BankAccountTransactionsLedger.create(loan)
 
     except SQLAlchemyError as e:
         db.session.rollback()

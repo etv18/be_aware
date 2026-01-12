@@ -9,6 +9,7 @@ import traceback
 from app.extensions import db
 from app.models.withdrawal import Withdrawal
 from app.models.cash_ledger import CashLedger
+from app.models.bank_account_transactions_ledger import BankAccountTransactionsLedger
 from app.models.bank_account import BankAccount
 from app.exceptions.bankProductsException import *
 from app.exceptions.generic import *
@@ -39,6 +40,7 @@ def create_withdrawal():
         db.session.commit()
 
         CashLedger.create(withdrawal)
+        if withdrawal.bank_account_id: BankAccountTransactionsLedger.create(withdrawal)
 
     except Exception as e:
         db.session.rollback()

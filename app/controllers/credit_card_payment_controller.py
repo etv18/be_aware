@@ -8,6 +8,7 @@ from app.extensions import db
 from app.models.credit_card_payment import CreditCardPayment
 from app.models.credit_card import CreditCard
 from app.models.bank_account import BankAccount
+from app.models.bank_account_transactions_ledger import BankAccountTransactionsLedger
 from app.exceptions.bankProductsException import *
 from app.utils.numeric_casting import is_decimal_type
 
@@ -39,6 +40,8 @@ def create_credit_card_payment():
 
         db.session.add(credit_card_payment)
         db.session.commit()
+
+        if credit_card_payment.bank_account_id: BankAccountTransactionsLedger.create(credit_card_payment)
 
     except Exception as e:
         db.session.rollback()

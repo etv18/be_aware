@@ -38,6 +38,10 @@ class BankAccountTransactionsLedger(db.Model):
     @staticmethod
     def create(transaction):
         try:
+            if isinstance(transaction, btc.BankTransfer):
+                BankAccountTransactionsLedger._create_ledger_for_bank_transfer(transaction)
+                return
+            
             if not isinstance(transaction, btc.get_all()) or not transaction.bank_account: return
 
             amount = Decimal('0')
@@ -55,9 +59,6 @@ class BankAccountTransactionsLedger(db.Model):
                 amount = -transaction.amount
                 before_update_balance = transaction.bank_account.amount_available + transaction.amount
 
-            elif isinstance(transaction, btc.BankTransfer):
-                pass
-
             ledger = BankAccountTransactionsLedger(
                 amount=amount,
                 transaction_type=normalize_string(transaction.__class__.__tablename__),
@@ -70,23 +71,34 @@ class BankAccountTransactionsLedger(db.Model):
             db.session.add(ledger)
             db.session.commit()
         except Exception as e:
-            print('Error on cash ledger file: ', e)
             traceback.print_exc()
             db.session.rollback()
             raise e
-        
-'''
-        *** ADD ***
-            LoanPayment,
-            Income,
-        
-        *** MINUS ***
-            Withdrawal,
-            Loan,
-            Expense,
-            CreditCardPayment,
+      
+    def _create_ledger_for_bank_transfer(transaction):
+        try:
+            origin_ledger = BankAccountTransactionsLedger(
+                amount= -transaction.amount,
+                transaction_type=normalize_string(transaction.__class__.__tablename__),
+                reference_code=transaction.code,
+                before_update_balance= transaction.from_bank_account.amount_available + transaction.amount,
+                after_update_balance=transaction.from_bank_account.amount_available,
+                bank_account_id=transaction.from_bank_account_id
+            )
 
-        *** BOTH ***
-            BankTransfer,
+            destination_ledger = BankAccountTransactionsLedger(
+                amount= transaction.amount,
+                transaction_type=normalize_string(transaction.__class__.__tablename__),
+                reference_code=transaction.code,
+                before_update_balance= transaction.to_bank_account.amount_available - transaction.amount,
+                after_update_balance=transaction.to_bank_account.amount_available,
+                bank_account_id=transaction.to_bank_account_id
+            )
+            db.session.add(origin_ledger)
+            db.session.add(destination_ledger)
+            db.session.commit()
 
-'''
+        except Exception as e:
+            traceback.print_exc()
+            db.session.rollback()
+            raise e     

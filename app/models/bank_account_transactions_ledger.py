@@ -7,6 +7,8 @@ from decimal import Decimal
 from app.utils import bank_transactional_classes as btc
 from app.utils.normalize_string import normalize_string
 from app.utils.date_handling import utcnow
+from app.utils.cash_transactional_classes import is_a_cash_transaction
+
 
 class BankAccountTransactionsLedger(db.Model):
     __tablename__ = 'bank_account_transactions_ledger'
@@ -106,8 +108,7 @@ class BankAccountTransactionsLedger(db.Model):
     @staticmethod
     def update(transaction):
         try:
-            is_cash = getattr(transaction, 'is_cash', False)
-            if is_cash: return BankAccountTransactionsLedger.delete(transaction)
+            if is_a_cash_transaction(transaction): return BankAccountTransactionsLedger.delete(transaction)
 
             if isinstance(transaction, btc.BankTransfer):
                 return
@@ -137,6 +138,7 @@ class BankAccountTransactionsLedger(db.Model):
             ledger.amount = amount
             ledger.before_update_balance = before_update_balance
             ledger.after_update_balance = after_update_balance
+            ledger.bank_account_id = transaction.bank_account_id
             
             db.session.commit()
         except Exception as e:
@@ -150,7 +152,7 @@ class BankAccountTransactionsLedger(db.Model):
             if not isinstance(transaction, btc.get_all()):
                 return
             
-            ledger = BankAccountTransactionsLedger.query.filter_by(reference_code=transaction.code).all()
+            ledger = BankAccountTransactionsLedger.query.filter_by(reference_code=transaction.code).one_or_none()
 
             if ledger:
                 db.session.delete(ledger)

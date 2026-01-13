@@ -71,6 +71,8 @@ def update_banktransfer(id):
         transfer.to_bank_account_id = to_bank_account_id
         
         db.session.commit()
+
+        BankAccountTransactionsLedger.update(transfer)
         return jsonify({'message': 'Bank transfer updated successfully'}), 200
     except Exception as e:
         db.session.rollback()

@@ -90,6 +90,8 @@ def update_loan_payment(loan_payment):
             new_bank_account_id = int(request.form.get('select-bank-account'))
             new_bank_account = BankAccount.query.get(new_bank_account_id)
             update_bank_account_money_on_update(loan_payment.bank_account, new_bank_account, loan_payment.amount, new_amount)
+        elif loan_payment.bank_account:
+            loan_payment.bank_account.amount_available -= loan_payment.amount
 
         loan_payment.amount = new_amount
         loan_payment.is_cash = is_cash
@@ -99,7 +101,7 @@ def update_loan_payment(loan_payment):
 
         CashLedger.update_or_delete(loan_payment)
         BankAccountTransactionsLedger.update(loan_payment)
-        
+
         update_loan_is_active(loan)
         return jsonify({'message': 'Loan payment created successfully'}), 201
 

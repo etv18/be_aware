@@ -133,7 +133,7 @@ class BankAccountTransactionsLedger(db.Model):
                 amount = -transaction.amount
                 before_update_balance = transaction.bank_account.amount_available + transaction.amount
 
-            ledger = BankAccountTransactionsLedger.query.filter_by(reference_code = transaction.code).one_or_none()
+            ledger = BankAccountTransactionsLedger.query.filter_by(reference_code = transaction.code).first()
 
             ledger.amount = amount
             ledger.before_update_balance = before_update_balance
@@ -152,7 +152,7 @@ class BankAccountTransactionsLedger(db.Model):
             if not isinstance(transaction, btc.get_all()):
                 return
             
-            ledger = BankAccountTransactionsLedger.query.filter_by(reference_code=transaction.code).one_or_none()
+            ledger = BankAccountTransactionsLedger.query.filter_by(reference_code=transaction.code).first()
 
             if ledger:
                 db.session.delete(ledger)

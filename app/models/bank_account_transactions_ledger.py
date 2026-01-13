@@ -79,7 +79,7 @@ class BankAccountTransactionsLedger(db.Model):
         try:
             origin_ledger = BankAccountTransactionsLedger(
                 amount= -transaction.amount,
-                transaction_type=normalize_string(transaction.__class__.__tablename__),
+                transaction_type=f'OUTGOING {normalize_string(transaction.__class__.__tablename__)}',
                 reference_code=transaction.code,
                 before_update_balance= transaction.from_bank_account.amount_available + transaction.amount,
                 after_update_balance=transaction.from_bank_account.amount_available,
@@ -88,7 +88,7 @@ class BankAccountTransactionsLedger(db.Model):
 
             destination_ledger = BankAccountTransactionsLedger(
                 amount= transaction.amount,
-                transaction_type=normalize_string(transaction.__class__.__tablename__),
+                transaction_type=f'INCOMING {normalize_string(transaction.__class__.__tablename__)}',
                 reference_code=transaction.code,
                 before_update_balance= transaction.to_bank_account.amount_available - transaction.amount,
                 after_update_balance=transaction.to_bank_account.amount_available,
@@ -102,3 +102,60 @@ class BankAccountTransactionsLedger(db.Model):
             traceback.print_exc()
             db.session.rollback()
             raise e     
+
+    @staticmethod
+    def update(transaction):
+        try:
+            is_cash = getattr(transaction, 'is_cash', False)
+            if is_cash: return BankAccountTransactionsLedger.delete(transaction)
+
+            if isinstance(transaction, btc.BankTransfer):
+                return
+            
+            if not isinstance(transaction, btc.get_all()) or not transaction.bank_account: return
+
+            ledger = BankAccountTransactionsLedger.query.filter_by(reference_code = transaction.code).one_or_none()
+            if not ledger: return BankAccountTransactionsLedger.create(transaction)
+
+            amount = Decimal('0')
+            before_update_balance = Decimal('0')
+            after_update_balance = transaction.bank_account.amount_available
+            
+            increase_amount_available = (btc.LoanPayment, btc.Income)
+            reduce_amount_available = (btc.Withdrawal, btc.Loan, btc.Expense, btc.CreditCardPayment)
+            
+            if isinstance(transaction, increase_amount_available):
+                amount = transaction.amount
+                before_update_balance = transaction.bank_account.amount_available - transaction.amount #if the available amount increased to get the before update balance, it must be taken off the amount of the transaction. Eg: amount_available = 1, transaction.amount = 2, 1 + 2 = 3 -> 3 - 2 = 1 = before_update_amount 
+            
+            elif isinstance(transaction, reduce_amount_available):
+                amount = -transaction.amount
+                before_update_balance = transaction.bank_account.amount_available + transaction.amount
+
+            ledger = BankAccountTransactionsLedger.query.filter_by(reference_code = transaction.code).one_or_none()
+
+            ledger.amount = amount
+            ledger.before_update_balance = before_update_balance
+            ledger.after_update_balance = after_update_balance
+            
+            db.session.commit()
+        except Exception as e:
+            traceback.print_exc()
+            db.session.rollback()
+            raise e
+
+    @staticmethod
+    def delete(transaction):
+        try:
+            if not isinstance(transaction, btc.get_all()):
+                return
+            
+            ledger = BankAccountTransactionsLedger.query.filter_by(reference_code=transaction.code).all()
+
+            if ledger:
+                db.session.delete(ledger)
+                db.session.commit()
+        except Exception as e:
+            traceback.print_exc()
+            db.session.rollback()
+            raise e  

@@ -7,6 +7,7 @@ from app.extensions import db
 from app.utils.numeric_casting import is_decimal_type
 from app.models.banktransfer import BankTransfer
 from app.models.bank_account import BankAccount
+from app.models.bank_account_transactions_ledger import BankAccountTransactionsLedger
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero, BankAccountDoesNotExists, NoAvailableMoney
 
 def create_banktransfer():
@@ -38,6 +39,8 @@ def create_banktransfer():
 
         db.session.add(transfer)
         db.session.commit()
+
+        BankAccountTransactionsLedger.create(transfer)
 
         return jsonify({'message': 'Bank transfer crated successfully'}), 200
     except Exception as e:

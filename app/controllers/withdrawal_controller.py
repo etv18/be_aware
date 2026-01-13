@@ -40,7 +40,7 @@ def create_withdrawal():
         db.session.commit()
 
         CashLedger.create(withdrawal)
-        if withdrawal.bank_account_id: BankAccountTransactionsLedger.create(withdrawal)
+        BankAccountTransactionsLedger.create(withdrawal)
 
     except Exception as e:
         db.session.rollback()
@@ -75,6 +75,7 @@ def update_withdrawal(id):
         db.session.commit()
 
         CashLedger.update_or_delete(withdrawal)
+        BankAccountTransactionsLedger.update(withdrawal)
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()

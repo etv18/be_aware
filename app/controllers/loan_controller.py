@@ -93,6 +93,8 @@ def update_loan(loan):
         db.session.commit()
 
         CashLedger.update_or_delete(loan)
+        BankAccountTransactionsLedger.update(loan)
+        
         return jsonify({'data': 'Loan updated successfully'}), 200
     
     except SQLAlchemyError as e:

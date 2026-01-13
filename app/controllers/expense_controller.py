@@ -161,6 +161,8 @@ def update_expense(expense):
 
         CashLedger.update_or_delete(expense, delete_ledger=False)
         
+        BankAccountTransactionsLedger.update(expense)
+        
     except (
         AmountGreaterThanAvailableMoney,
         BankAccountDoesNotExists,

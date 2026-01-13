@@ -77,6 +77,8 @@ def update_credit_card_payment(id):
         payment.bank_account_id=bank_account_id
 
         db.session.commit()
+
+        BankAccountTransactionsLedger.update(payment)
     except Exception as e:
         db.session.rollback()
         raise e

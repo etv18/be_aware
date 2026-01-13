@@ -78,6 +78,7 @@ def update_income(income):
         db.session.commit()
 
         CashLedger.update_or_delete(income)
+        BankAccountTransactionsLedger.update(income)
 
     except (AmountIsLessThanOrEqualsToZero, BankAccountDoesNotExists) as e:
         db.session.rollback()

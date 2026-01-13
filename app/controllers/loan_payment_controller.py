@@ -98,7 +98,8 @@ def update_loan_payment(loan_payment):
         db.session.commit()
 
         CashLedger.update_or_delete(loan_payment)
-
+        BankAccountTransactionsLedger.update(loan_payment)
+        
         update_loan_is_active(loan)
         return jsonify({'message': 'Loan payment created successfully'}), 201
 

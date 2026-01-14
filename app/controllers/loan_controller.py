@@ -117,6 +117,8 @@ def delete_loan(loan):
             return_money_to_bank_account(loan)
             BankAccountTransactionsLedger.delete(loan)
         
+        delete_loan_payments_ledgers(loan.loan_payments)
+
         db.session.delete(loan)
         db.session.commit()
         
@@ -225,3 +227,14 @@ def evaluate_boolean_columns(query, reference_for_true, reference_for_false):
     if q == reference_for_false.lower():
         return False
     return None
+
+def delete_loan_payments_ledgers(payments):
+    
+    for payment in payments:
+        if payment.is_cash:
+            CashLedger.delete(payment)
+        else: 
+            BankAccountTransactionsLedger.delete(payment)
+
+
+

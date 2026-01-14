@@ -79,12 +79,12 @@ def update_loan_payment(loan_payment):
         if not loan:
             return jsonify({'error': 'Loan record was not found'}), 400
 
-        expected_total_payments = (loan.total_payments() - loan_payment.amount) + new_amount
-        if expected_total_payments > loan.amount:
-            return jsonify({
-                'message': 'The updated amount exceeds the remaining loan balance',
-                'is_paid': True
-            }), 200
+        #expected_total_payments = (loan.total_payments() - loan_payment.amount) + new_amount
+        #if expected_total_payments > loan.amount:
+        #    return jsonify({
+        #        'message': 'The updated amount exceeds the remaining loan balance',
+        #        'is_paid': True
+        #    }), 200
         
         if not is_cash and (selected_bank_account != None or selected_bank_account != '' or selected_bank_account != 'none'):
             new_bank_account_id = int(request.form.get('select-bank-account'))

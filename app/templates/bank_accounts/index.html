@@ -154,12 +154,23 @@
         </form>
     </section>
 
-    <div class="row">
-        <div class="col-sm">        
-            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-bank-account"
-            >New Account</button>
+    <div class="d-flex gap-2">
+        <div class="">        
+            <button 
+                type="button" 
+                class="btn btn-outline-primary" 
+                data-bs-toggle="modal" 
+                data-bs-target="#create-bank-account"
+            > New Account
+            </button>
         </div>
-        <div class="col-sm"></div>
+        <div class="">
+            <a 
+                href="{{ url_for('bank_transaction_ledger.index' ) }}" 
+                class="btn btn-light" 
+            > Transactions
+            </a>
+        </div>
 
     </div>
     <div class="table-responsive overflow-y-auto border rounded-3 mt-1" style="max-height: 388px;">

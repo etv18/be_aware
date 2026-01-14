@@ -31,7 +31,7 @@
                 <thead class="sticky-top">
                     <tr class="table-secondary">
                     <th scope="col"># Id</th>
-                    <th scope="col">Ref. Code</th>
+                    <th scope="col" class="text-start">Ref. Code</th>
                     <th scope="col" class="text-start">Type</th>
                     <th scope="col" class="text-start">Amount</th>
                     <th scope="col">Create at</th>
@@ -42,7 +42,7 @@
                   {% for ledger in ledgers %}
                     <tr>
                         <th scope="row">{{ ledger.id }}</th>
-                        <td>{{ ledger.reference_code }}</td>
+                        <td class="text-start">{{ ledger.reference_code }}</td>
                         <td class="text-start">{{ ledger.type | replace('_', ' ') | lower | title }}</td>
                         <td class="text-start">{{ ledger.amount }}</td>
                         <td>{{ ledger.created_at }}</td>

@@ -115,6 +115,7 @@ def delete_loan(loan):
         #this code will return the money which was used before.
         if loan.bank_account:
             return_money_to_bank_account(loan)
+            BankAccountTransactionsLedger.delete(loan)
         
         db.session.delete(loan)
         db.session.commit()

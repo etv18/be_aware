@@ -92,6 +92,7 @@ def delete_credit_card_payment(id):
         payment.bank_account.amount_available += payment.amount #return the money used to the bank account
         payment.credit_card.amount_available -= payment.amount #reduce the amount available of the credit card 'cause you are deleting the payment
 
+        BankAccountTransactionsLedger.delete(payment)
         db.session.delete(payment)
         db.session.commit()
     except Exception as e:

@@ -181,6 +181,7 @@ def delete_expense(expense):
     try:
         if expense.credit_card or expense.bank_account:
             return_money(expense)
+            BankAccountTransactionsLedger.delete(expense)
 
         CashLedger.update_or_delete(expense, delete_ledger=True)
         

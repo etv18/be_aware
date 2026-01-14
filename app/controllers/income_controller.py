@@ -94,7 +94,7 @@ def delete_income(income):
     try:
         if income.bank_account:
             update_bank_account_money_on_delete(income.bank_account, income.amount)
-
+            BankAccountTransactionsLedger.delete(income)
         CashLedger.update_or_delete(income, delete_ledger=True)
 
         db.session.delete(income)

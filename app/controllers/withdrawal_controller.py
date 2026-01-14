@@ -92,7 +92,7 @@ def delete_withdrawal(id):
         db.session.commit()
 
         CashLedger.update_or_delete(withdrawal, delete_ledger=True)
-
+        BankAccountTransactionsLedger.delete(withdrawal)
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()

@@ -120,6 +120,7 @@ def delete_loan_payment(loan_payment):
         loan = loan_payment.loan
         if loan_payment.bank_account:
             update_bank_account_money_on_delete(loan_payment.bank_account, loan_payment.amount)
+            BankAccountTransactionsLedger.delete(loan_payment)
 
         CashLedger.update_or_delete(loan_payment, delete_ledger=True)
 

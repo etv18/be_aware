@@ -120,8 +120,10 @@ class BankAccountTransactionsLedger(db.Model):
     @staticmethod
     def delete(transaction):
         try:
-            if not isinstance(transaction, btc.get_all()):
-                return
+
+            if isinstance(transaction, btc.BankTransfer): return BankAccountTransactionsLedger._delete_ledger_for_bank_transfer(transaction)
+
+            if not isinstance(transaction, btc.get_all()): return
             
             ledger = BankAccountTransactionsLedger.query.filter_by(reference_code=transaction.code).first()
 
@@ -188,4 +190,26 @@ class BankAccountTransactionsLedger(db.Model):
         except Exception as e:
             traceback.print_exc()
             db.session.rollback()
-            raise e    
+            raise e
+
+    def _delete_ledger_for_bank_transfer(transaction):
+        try:
+            transfer_ledgers = BankAccountTransactionsLedger.query.filter_by(reference_code = transaction.code).all()
+            origin_ledger = None
+            destination_ledger = None
+
+            for ledger in transfer_ledgers:
+                if ledger.amount >= 0:
+                    destination_ledger = ledger
+                else:
+                    origin_ledger = ledger
+
+            db.session.delete(origin_ledger)
+            db.session.delete(destination_ledger)
+
+            db.session.commit()
+
+        except Exception as e:
+            traceback.print_exc()
+            db.session.rollback()
+            raise e 

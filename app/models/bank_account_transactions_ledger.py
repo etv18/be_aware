@@ -80,11 +80,11 @@ class BankAccountTransactionsLedger(db.Model):
     @staticmethod
     def update(transaction):
         try:
-            if is_a_cash_transaction(transaction): return BankAccountTransactionsLedger.delete(transaction)
+            if is_a_cash_transaction(transaction) or not transaction.bank_account_id: return BankAccountTransactionsLedger.delete(transaction)
 
             if isinstance(transaction, btc.BankTransfer): return BankAccountTransactionsLedger._update_ledger_for_bank_transfer(transaction)
             
-            if not isinstance(transaction, btc.get_all()) or not transaction.bank_account: return
+            if not isinstance(transaction, btc.get_all()): return
 
             ledger = BankAccountTransactionsLedger.query.filter_by(reference_code = transaction.code).one_or_none()
             if not ledger: return BankAccountTransactionsLedger.create(transaction)
@@ -120,7 +120,6 @@ class BankAccountTransactionsLedger(db.Model):
     @staticmethod
     def delete(transaction):
         try:
-
             if isinstance(transaction, btc.BankTransfer): return BankAccountTransactionsLedger._delete_ledger_for_bank_transfer(transaction)
 
             if not isinstance(transaction, btc.get_all()): return

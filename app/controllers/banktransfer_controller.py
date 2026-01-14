@@ -85,6 +85,8 @@ def delete_banktransfer(id):
         if not transfer: return jsonify({'error', 'Bank transfer record was not found.'}), 400
         h_update_bank_accounts_money_on_delete(transfer)
 
+        BankAccountTransactionsLedger.delete(transfer)
+        
         db.session.delete(transfer)
         db.session.commit()
 

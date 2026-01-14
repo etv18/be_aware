@@ -6,7 +6,7 @@
 
     <div class="container w-100">
 
-        <h2>Cash Ledger</h2>
+        <h2>Bank Accounts Transactions</h2>
         <div class="d-flex justify-content-end gap-1 flex-wrap flex-md-nowrap mt-2">
             <div class="d-flex gap-1 w-100 align-items-center" style="max-width: 320px;">
                 <div class="w-md-auto mt-md-0">
@@ -27,13 +27,16 @@
             </div>
         </div>
         <div class="table-responsive overflow-y-auto border rounded-3 mt-1" style="max-height: 457px;">
-            <table class="table table-borderless table-hover text-center">
+            <table class="table table-borderless table-hover">
                 <thead class="sticky-top">
                     <tr class="table-secondary">
                     <th scope="col"># Id</th>
                     <th scope="col">Ref. Code</th>
-                    <th scope="col" class="text-start">Type</th>
-                    <th scope="col" class="text-start">Amount</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Bank Account</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Before Update</th>
+                    <th scope="col">After Update</th>
                     <th scope="col">Create at</th>
                     </tr>
                 </thead>
@@ -43,8 +46,11 @@
                     <tr>
                         <th scope="row">{{ ledger.id }}</th>
                         <td>{{ ledger.reference_code }}</td>
-                        <td class="text-start">{{ ledger.type | replace('_', ' ') | lower | title }}</td>
-                        <td class="text-start">{{ ledger.amount }}</td>
+                        <td>{{ ledger.transaction_type | title }}</td>
+                        <td>{{ ledger.bank_account.nick_name | title }}</td>
+                        <td>{{ format_amount(ledger.amount) }}</td>
+                        <td>{{ format_amount(ledger.before_update_balance) }}</td>
+                        <td>{{ format_amount(ledger.after_update_balance) }}</td>
                         <td>{{ ledger.created_at }}</td>
                     </tr>
                   {% endfor %}
@@ -62,7 +68,7 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
-<script type="module" src="{{ url_for('static', filename='scripts/cashledger/filterData.js' ) }}"></script>
+<script type="module" src="{{ url_for('static', filename='scripts/bank_transactions_ledger/filterData.js' ) }}"></script>
 <script type="module" src="{{ url_for('static', filename='scripts/utils/asyncHanlding.js' ) }}"></script>
 
 

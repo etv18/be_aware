@@ -3,7 +3,7 @@ function preventBtnClickWhenClickOnRow(event){
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
-    const tbody = document.getElementById('loans-table-body-id');
+    const tbody = document.getElementById('debt-table-body-id');
    
     //This block of code allows me to make the dblclick event even though
     //when the content of the table is re-render dynamically with js in the
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     tbody.addEventListener('dblclick', e => {
         if(preventBtnClickWhenClickOnRow(e)) return;
         
-        const row = e.target.closest('.loan-row');
+        const row = e.target.closest('.debt-row');
         if (!row) return; 
         
         const url = row.getAttribute('data-url-associated-records');

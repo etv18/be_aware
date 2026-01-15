@@ -23,7 +23,7 @@ class Debt(db.Model):
     updated_at = db.Column(db.DateTime(timezone=True), onupdate=func.now())
     description = db.Column(db.String(200))
 
-    #debt_payments = relationship('DebtPayment', back_populates='debt', order_by='desc(DebtPayment.created_at)', cascade='all, delete-orphan')
+    debt_payments = relationship('DebtPayment', back_populates='debt', order_by='desc(DebtPayment.created_at)', cascade='all, delete-orphan')
     bank_account = relationship('BankAccount', back_populates='debts')
 
     @event.listens_for(db.session, 'before_flush')

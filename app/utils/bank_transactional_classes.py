@@ -5,6 +5,7 @@ from app.models.loan import Loan
 from app.models.withdrawal import Withdrawal
 from app.models.credit_card_payment import CreditCardPayment
 from app.models.banktransfer import BankTransfer
+from app.models.debt import Debt
 
 def get_all():
     return (
@@ -15,4 +16,5 @@ def get_all():
         Expense,
         CreditCardPayment,
         BankTransfer,
+        Debt,
     )

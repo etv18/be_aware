@@ -29,7 +29,7 @@ function renderDataTable(ledgers){
             <th scope="row">${ ledger.id }</th>
             <td>${ ledger.reference_code }</td>
             <td>${ titleCase(ledger.transaction_type) }</td>
-            <td>${ titleCase(ledger.bank_account.nick_name) }</td>
+            <td>${ titleCase(ledger.bank_account_nick_name) }</td>
             <td>${ formatNumber(ledger.amount) }</td>
             <td>${ formatNumber(ledger.before_update_balance) }</td>
             <td>${ formatNumber(ledger.after_update_balance) }</td>
@@ -71,7 +71,7 @@ async function filterData(){
     let url = '';
 
     if(selectFilterType.value === 'field'){
-        url = `/cashledger/filter/cashledger/by/field?query=${filterInput.value}`;
+        url = `/bank_transaction_ledger/filter/by/field?query=${filterInput.value}`;
     } else {
         if(startDate === null || endDate === null){ 
             Swal.fire({

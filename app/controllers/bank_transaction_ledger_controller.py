@@ -6,6 +6,8 @@ from datetime import datetime, timedelta
 from app.extensions import db
 from app.models.bank_account_transactions_ledger import BankAccountTransactionsLedger
 from app.models.bank_account import BankAccount
+from app.utils.numeric_casting import total_amount
+
 def filter_by_field(query):
     try:
         q = f'%{query}%'
@@ -30,7 +32,10 @@ def filter_by_field(query):
         for l in ledgers:
             ledgers_list.append(l.to_dict())
         
-        return jsonify({'ledgers': ledgers_list}), 200
+        return jsonify({
+            'ledgers': ledgers_list,
+            'total_amount': total_amount(ledgers),
+        }), 200
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()

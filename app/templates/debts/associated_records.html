@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <h3>Code: {{ loan.code }}</h3>
+    <h3>Code: </h3>
     <a href="{{ url_for('debt.index') }}" class="btn btn-light fs-6"><i class="bi bi-arrow-return-left"></i> Go back</a>
     <section class="modal fade" tabindex="-1" id="edit-debt-payment">
         <form id="edit-debt-payment-form">
@@ -79,7 +79,7 @@
                     </tr>
                 </thead>
                 <tbody id="loan-payment-table-body">
-                    {% for payment in loan.loan_payments %}                
+                    {% for payment in debt.debt_payments %}                
                     <tr>
                         <th scope="row">{{ payment.id }}</th>
                         <td class="text-start">{{ format_amount(payment.amount) }}</td>
@@ -92,9 +92,9 @@
                                     type="button" 
                                     class="btn btn-outline-success" 
                                     data-bs-toggle="modal" 
-                                    data-bs-target="#edit-loan-payment"
-                                    data-endpoint="{{ url_for('accounts_receivable.update_loan_payment', loan_payment_id=payment.id) }}"
-                                    data-loan-id="{{ loan.id }}"
+                                    data-bs-target="#edit-debt-payment"
+                                    data-endpoint="#"
+                                    data-loan-id="{{ payment.id }}"
                                     data-loan-payment-id="{{ payment.id }}"
                                     data-amount="{{ payment.amount }}"
                                     data-is-cash="{{ payment.is_cash }}"
@@ -102,7 +102,7 @@
                                 >
                                     <i class="bi bi-pen"></i>
                                 </button>
-                                <a href="{{ url_for('accounts_receivable.delete_loan_payment', loan_payment_id=payment.id) }}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                <a href="#" class="btn btn-danger"><i class="bi bi-trash"></i></a>
                             </div>
                         </td>
                     </tr>
@@ -113,19 +113,19 @@
 
         <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
             <div class="row text-center">
-                <p class="fs-6 fw-bold" id="total-amounts-loans-payments-id">TOTAL: {{ total_amount(loan.loan_payments) }}</p>
-                <p class="fs-6 fw-bold" id="total-count-loans-payments-id">RECORDS: {{ loan.loan_payments | length }}</p>
+                <p class="fs-6 fw-bold" id="total-amounts-loans-payments-id">TOTAL: </p>
+                <p class="fs-6 fw-bold" id="total-count-loans-payments-id">RECORDS: </p>
             </div>
         </div>
     </div>
 
-    <p class="d-none" id="associated-records-endpoint-id">{{ url_for('accounts_receivable.associated_records_in_json', id=loan.id ) }}</p>
+    <p class="d-none" id="associated-records-endpoint-id">#</p>
 
     <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
     <script type="module" src="{{ url_for('static', filename='scripts/utils/dynamicTables.js' ) }}"></script>
-    <script type="module" src="{{ url_for('static', filename='scripts/debts/filterAssociatedRecords.js' ) }}"></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/accounts_payable/filterAssociatedRecords.js' ) }}"></script>
     <script>
         function toggleBankAccount(checkbox, select){
             if(checkbox.checked) {

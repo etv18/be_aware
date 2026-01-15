@@ -37,6 +37,18 @@ class BankAccountTransactionsLedger(db.Model):
 
     bank_account = db.relationship('BankAccount', back_populates='transaction_ledger')
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'amount': self.amount,
+            'transaction_type': self.transaction_type,
+            'reference_code': self.reference_code,
+            'bank_account_id': self.bank_account_id,
+            'before_update_balance': self.before_update_balance,
+            'after_update_balance': self.after_update_balance,
+            'bank_account_nick_name': self.bank_account.nick_name
+        }
+
     @staticmethod
     def create(transaction):
         try:

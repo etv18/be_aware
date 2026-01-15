@@ -173,7 +173,7 @@
                 </div>
             </form>
         </section>
-        
+
         <div class="w-100">
             <div class="d-flex justify-content-start gap-1 flex-wrap flex-md-nowrap">
                 <button type="button" 
@@ -222,17 +222,17 @@
                 </thead>
                 
                 <tbody id="loans-table-body-id">
-                  {% for loan in loans %}
+                  {% for debt in debts %}
                     <tr class="loan-row" data-loan-id="{{ loan.id }}" data-url-associated-records = "{{ url_for('accounts_receivable.associated_records', loan_id=loan.id) }}">
-                        <th scope="row">{{ loan.id }}</th>
-                        <td>{{ loan.person_name }}</td>
-                        <td>{{ format_amount(loan.amount) }}</td>
-                        <td> {{ format_amount(loan.remaining_amount()) }} </td>
-                        <td>{{ 'ACTIVE' if loan.is_active else 'PAID'  }}</td>
-                        <td>{{ loan.description }}</td>
-                        <td>{{ 'YES' if loan.is_cash else 'NO'  }}</td>
-                        <td>{{ loan.bank_account.nick_name if loan.bank_account else '-' }}</td>
-                        <td>{{ loan.created_at }}</td>
+                        <th scope="row">{{ debt.id }}</th>
+                        <td>{{ debt.person_name }}</td>
+                        <td>{{ format_amount(debt.amount) }}</td>
+                        <td> {{ format_amount(debt.remaining_amount()) }} </td>
+                        <td>{{ 'ACTIVE' if debt.is_active else 'PAID'  }}</td>
+                        <td>{{ debt.description }}</td>
+                        <td>{{ 'YES' if debt.is_cash else 'NO'  }}</td>
+                        <td>{{ debt.bank_account.nick_name if debt.bank_account else '-' }}</td>
+                        <td>{{ debt.created_at }}</td>
                         <td>
                             <div class="d-flex gap-2">
                                 <button 

@@ -1,18 +1,18 @@
 {% extends 'layout.html' %}
 
-{% block title %}Accounts Receivable{% endblock %}
+{% block title %}Accounts Payable{% endblock %}
 
 {% block content %}
 
     <div class=" w-100">
 
-        <h2>Accounts Receivable</h2>
-        <section class="modal fade" tabindex="-1" id="create-account-receivable">
-            <form id="create-account-receivable-form">
+        <h2>Accounts Payable</h2>
+        <section class="modal fade" tabindex="-1" id="create-account-payable">
+            <form id="create-account-payable-form">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">New Accounts Receivable</h5>
+                            <h5 class="modal-title">New Accounts Payable</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
@@ -59,7 +59,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" onclick="createIncome()">Save</button>
+                            <button type="button" class="btn btn-primary" onclick="createDebt()">Save</button>
                         </div>
                     </div>
                 </div>
@@ -180,8 +180,8 @@
                         class="btn btn-outline-primary me-auto me-md-auto w-100 w-md-auto" 
                         style="max-width: 200px;"
                         data-bs-toggle="modal" 
-                        data-bs-target="#create-account-receivable">
-                    New Account Receivable
+                        data-bs-target="#create-account-payable">
+                    New Account Payable
                 </button>
                 <div class="d-flex gap-1 w-100 align-items-center" style="max-width: 320px;">
                     <div class="w-md-auto mt-md-0">
@@ -223,11 +223,11 @@
                 
                 <tbody id="loans-table-body-id">
                   {% for debt in debts %}
-                    <tr class="loan-row" data-loan-id="{{ loan.id }}" data-url-associated-records = "{{ url_for('accounts_receivable.associated_records', loan_id=loan.id) }}">
+                    <tr class="debt-row" data-loan-id="{{ debt.id }}" data-url-associated-records = "#">
                         <th scope="row">{{ debt.id }}</th>
                         <td>{{ debt.person_name }}</td>
                         <td>{{ format_amount(debt.amount) }}</td>
-                        <td> {{ format_amount(debt.remaining_amount()) }} </td>
+                        <td> ## </td>
                         <td>{{ 'ACTIVE' if debt.is_active else 'PAID'  }}</td>
                         <td>{{ debt.description }}</td>
                         <td>{{ 'YES' if debt.is_cash else 'NO'  }}</td>
@@ -241,7 +241,7 @@
                                     data-bs-toggle="modal" 
                                     data-bs-target="#pay-account-receivable"
                                     class="btn btn-outline-light" 
-                                    data-loan-id="{{ loan.id }}"
+                                    data-debt-id="{{ debt.id }}"
                                 >
                                     <i class="bi bi-cash-coin"></i>
                                 </button>
@@ -250,17 +250,17 @@
                                     class="btn btn-outline-success" 
                                     data-bs-toggle="modal" 
                                     data-bs-target="#edit-account-receivable"
-                                    data-loan-id="{{ loan.id }}"
-                                    data-amount="{{ loan.amount }}"
-                                    data-is-cash="{{ loan.is_cash }}"
-                                    data-is-active="{{ loan.is_active }}"
-                                    data-description="{{ loan.description }}"
-                                    data-person-name="{{ loan.person_name }}"
-                                    data-bank-account-id="{{ loan.bank_account_id }}"
+                                    data-debt-id="{{ debt.id }}"
+                                    data-amount="{{ debt.amount }}"
+                                    data-is-cash="{{ debt.is_cash }}"
+                                    data-is-active="{{ debt.is_active }}"
+                                    data-description="{{ debt.description }}"
+                                    data-person-name="{{ debt.person_name }}"
+                                    data-bank-account-id="{{ debt.bank_account_id }}"
                                 >
                                     <i class="bi bi-pen"></i>
                                 </button>
-                                <a href="{{ url_for('accounts_receivable.delete_loan', loan_id=loan.id) }}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                <a href="#" class="btn btn-danger"><i class="bi bi-trash"></i></a>
                             </div>
                         </td>
                     </tr>
@@ -269,7 +269,7 @@
             </table>
         </div>
     </div>
-    <input type="hidden" value="{{ url_for('accounts_receivable.create_loan') }}" id="createEndPoint">
+    <input type="hidden" value="{{ url_for('debt.create') }}" id="createEndPoint">
     <input type="hidden" value="{{ url_for('accounts_receivable.create_loan_payment') }}" id="makePaymentEndPoint">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -286,7 +286,7 @@
 
 <script> 
     document.addEventListener('DOMContentLoaded', () => {
-        const createAccountReceivableModal = document.getElementById('create-account-receivable');
+        const createAccountReceivableModal = document.getElementById('create-account-payable');
         const editAccountReceivableModal = document.getElementById('edit-account-receivable');
         const payAccountReceivableModal = document.getElementById('pay-account-receivable');
 
@@ -366,9 +366,9 @@
     })
 </script>
 <script>
-    async function createIncome(){
+    async function createDebt(){
         const createEndPoint = document.getElementById('createEndPoint').value;
-        const form = document.getElementById('create-account-receivable-form');
+        const form = document.getElementById('create-account-payable-form');
         const formData = new FormData(form);
 
         try {

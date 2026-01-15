@@ -30,9 +30,7 @@ class BankAccountTransactionsLedger(db.Model):
     )
     updated_at = db.Column(
         db.DateTime(timezone=True), 
-        default=utcnow, #internally sqlalchemy will exectute the function so dont add the parentheses otherwise it'll break down when creating the record in the db
         onupdate=utcnow, #internally sqlalchemy will exectute the function so dont add the parentheses otherwise it'll break down when creating the record in the db
-        nullable=False
     )
 
     bank_account = db.relationship('BankAccount', back_populates='transaction_ledger')
@@ -46,7 +44,9 @@ class BankAccountTransactionsLedger(db.Model):
             'bank_account_id': self.bank_account_id,
             'before_update_balance': self.before_update_balance,
             'after_update_balance': self.after_update_balance,
-            'bank_account_nick_name': self.bank_account.nick_name
+            'bank_account_nick_name': self.bank_account.nick_name,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
         }
 
     @staticmethod

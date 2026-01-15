@@ -233,7 +233,8 @@ def delete_loan_payments_ledgers(payments):
     for payment in payments:
         if payment.is_cash:
             CashLedger.delete(payment)
-        else: 
+        else:
+            payment.bank_account.amount_available -= payment.amount
             BankAccountTransactionsLedger.delete(payment)
 
 

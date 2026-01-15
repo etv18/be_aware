@@ -1,11 +1,12 @@
 WITHDRAWAL = 'WDR'
 LOAN = 'LOAN'
-LOAN_PAYMENT = 'LPMT'
 INCOME = 'INC'
 EXPENSE = 'EXP'
 BANK_TRANSFER = 'BTRA'
-CREDIT_CARD_PAYMENT = 'CDP'
 DEBT = 'DEBT'
+LOAN_PAYMENT = 'LPMT'
+DEBT_PAYMENT = 'DPMT'
+CREDIT_CARD_PAYMENT = 'CCP'
 
 def get_prefixes():
     return (
@@ -17,4 +18,5 @@ def get_prefixes():
         BANK_TRANSFER,
         CREDIT_CARD_PAYMENT,
         DEBT,
+        DEBT_PAYMENT
     )

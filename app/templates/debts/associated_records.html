@@ -6,11 +6,11 @@
 
 {% block content %}
     <h3>Code: {{ loan.code }}</h3>
-    <a href="{{ url_for('accounts_receivable.index') }}" class="btn btn-light fs-6"><i class="bi bi-arrow-return-left"></i> Go back</a>
-    <section class="modal fade" tabindex="-1" id="edit-loan-payment">
-        <form id="edit-loan-payment-form">
-            <input type="hidden" name="loan-id" id="p-loan-id">
-            <input type="hidden" name="loan-payment-id" id="p-loan-payment-id">
+    <a href="{{ url_for('debt.index') }}" class="btn btn-light fs-6"><i class="bi bi-arrow-return-left"></i> Go back</a>
+    <section class="modal fade" tabindex="-1" id="edit-debt-payment">
+        <form id="edit-debt-payment-form">
+            <input type="hidden" name="debt-id" id="p-debt-id">
+            <input type="hidden" name="debt-payment-id" id="p-debt-payment-id">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -125,7 +125,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
     <script type="module" src="{{ url_for('static', filename='scripts/utils/dynamicTables.js' ) }}"></script>
-    <script type="module" src="{{ url_for('static', filename='scripts/accounts_receivable/filterAssociatedRecords.js' ) }}"></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/debts/filterAssociatedRecords.js' ) }}"></script>
     <script>
         function toggleBankAccount(checkbox, select){
             if(checkbox.checked) {

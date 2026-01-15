@@ -1,0 +1,215 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Loan Associated Records
+{% endblock %}
+
+{% block content %}
+    <h3>Code: {{ loan.code }}</h3>
+    <a href="{{ url_for('accounts_receivable.index') }}" class="btn btn-light fs-6"><i class="bi bi-arrow-return-left"></i> Go back</a>
+    <section class="modal fade" tabindex="-1" id="edit-loan-payment">
+        <form id="edit-loan-payment-form">
+            <input type="hidden" name="loan-id" id="p-loan-id">
+            <input type="hidden" name="loan-payment-id" id="p-loan-payment-id">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Make a payment</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm">
+                                <div class="form-floating mt-2">
+                                    <input type="text" name="amount" id="p-amount-id" class="form-control"
+                                        placeholder="Amount" required>
+                                    <label for="amount-id">Amount</label>
+                                </div>
+                            </div>
+                            <div class="col-sm">
+                                <div class="form-check form-switch mt-2">
+                                    <input class="form-check-input" type="checkbox" name="is-cash" id="p-is-cash-id" switch checked>
+                                    <label class="form-check-label" for="checkNativeSwitch">
+                                        Cash
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-floating mt-2">
+                                <select name="select-bank-account" id="p-select-bank-account-id" class="form-select">
+                                    <option value="none">...Select...</option>
+                                    {% for ba in bank_accounts %}
+                                    <option value="{{ ba.id }}">{{ ba.nick_name }}</option>                                        
+                                    {% endfor %}
+                                </select>
+                                <label for="e-select-bank-account-id" class="p-3">Bank Account</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="editLoanPayment()">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </section>
+    
+    <div class="my-2 border rounded-3">
+        <div class="bg-success rounded-top d-flex align-items-center justify-content-center p-2" style="height: 60px;">
+            <div class="me-auto">
+                <h4 class="d-flex justify-content-center">Loan Payments</h4>
+            </div>                
+            <div class="w-100" style="max-width: 217px;">
+                <input type="text" name="filter-input-loan-payment" id="filter-input-loan-payment-id" class="form-control"placeholder="Search...">
+            </div>
+        </div>
+
+        <div id="loan-payments-table-container" class="table-responsive overflow-y-auto" style="max-height: 322px;">
+            <table class="table table-borderless table-hover text-center" id="expenses-table">
+                <thead class="sticky-top">
+                    <tr class="table-success">
+                        <th scope="col"># Id</th>
+                        <th scope="col" class="text-start">Amount</th>
+                        <th scope="col">Is Cash</th>
+                        <th scope="col" class="text-start">Bank Account</th>
+                        <th scope="col">Actions</th>
+                        <th scope="col">Create at</th>
+                    </tr>
+                </thead>
+                <tbody id="loan-payment-table-body">
+                    {% for payment in loan.loan_payments %}                
+                    <tr>
+                        <th scope="row">{{ payment.id }}</th>
+                        <td class="text-start">{{ format_amount(payment.amount) }}</td>
+                        <td>{{ 'YES' if payment.is_cash else 'NO' }}</td>
+                        <td class="text-start">{{ payment.bank_account.nick_name if payment.bank_account else '-' }}</td>
+                        <td>{{ payment.created_at }}</td>
+                        <td>
+                            <div class="d-flex gap-2 justify-content-center">
+                                <button 
+                                    type="button" 
+                                    class="btn btn-outline-success" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#edit-loan-payment"
+                                    data-endpoint="{{ url_for('accounts_receivable.update_loan_payment', loan_payment_id=payment.id) }}"
+                                    data-loan-id="{{ loan.id }}"
+                                    data-loan-payment-id="{{ payment.id }}"
+                                    data-amount="{{ payment.amount }}"
+                                    data-is-cash="{{ payment.is_cash }}"
+                                    data-bank-account-id="{{ payment.bank_account_id }}"
+                                >
+                                    <i class="bi bi-pen"></i>
+                                </button>
+                                <a href="{{ url_for('accounts_receivable.delete_loan_payment', loan_payment_id=payment.id) }}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
+            <div class="row text-center">
+                <p class="fs-6 fw-bold" id="total-amounts-loans-payments-id">TOTAL: {{ total_amount(loan.loan_payments) }}</p>
+                <p class="fs-6 fw-bold" id="total-count-loans-payments-id">RECORDS: {{ loan.loan_payments | length }}</p>
+            </div>
+        </div>
+    </div>
+
+    <p class="d-none" id="associated-records-endpoint-id">{{ url_for('accounts_receivable.associated_records_in_json', id=loan.id ) }}</p>
+
+    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/utils/dynamicTables.js' ) }}"></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/accounts_receivable/filterAssociatedRecords.js' ) }}"></script>
+    <script>
+        function toggleBankAccount(checkbox, select){
+            if(checkbox.checked) {
+                select.disabled = checkbox.checked;
+                select.value = "none";
+            } else {
+                select.disabled = checkbox.checked;
+            }
+            console.log('its running')
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const editLoanPaymentModal = document.getElementById('edit-loan-payment');
+            editLoanPaymentModal.addEventListener('show.bs.modal', (event) => {
+                const button = event.relatedTarget;
+                const loanId = button.getAttribute('data-loan-id');
+                const loanPaymentId = button.getAttribute('data-loan-payment-id');
+
+                const oldAmount = button.getAttribute('data-amount');
+                const oldIsCash = button.getAttribute('data-is-cash').toLowerCase() === 'true';
+                const oldBankAccountId = button.getAttribute('data-bank-account-id');
+
+                document.getElementById('p-loan-id').value = loanId;
+                document.getElementById('p-loan-payment-id').value = loanPaymentId;
+                document.getElementById('p-amount-id').value = oldAmount;
+
+                const isCashCheckbox = document.getElementById('p-is-cash-id');
+                isCashCheckbox.checked = oldIsCash;
+                const bankAccountSelect = document.getElementById('p-select-bank-account-id');
+                bankAccountSelect.value = bankAccountSelect === 'None' ? 'none' : oldBankAccountId;
+                console.log('Old Bank Account ID:', oldBankAccountId);
+
+                toggleBankAccount(isCashCheckbox, bankAccountSelect);
+                isCashCheckbox.addEventListener('change', () => {
+                    toggleBankAccount(isCashCheckbox, bankAccountSelect);
+                });
+            });
+        });
+    </script>
+    <script>
+        async function editLoanPayment(){
+            const loanPaymentId = document.getElementById('p-loan-payment-id').value;
+            const form = document.getElementById('edit-loan-payment-form');
+            const formData = new FormData(form);
+            
+            try {
+            const response = await fetch(`/accounts_receivable/update_loan_payment/${loanPaymentId}`, {
+                method: 'PUT',
+                body: formData
+            });
+
+            const data = await response.json();
+            console.log(data);
+
+            if(!response.ok){
+                console.log(response.json());
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error || 'Something went wrong while creating the loan.'
+                });
+                return;
+            }
+
+            if(data.is_paid === true){
+                console.log(data);
+                Swal.fire({
+                    icon: 'success',
+                    title: data.message || 'The loan has been fully paid.'
+                });
+                return;
+            }
+
+            location.reload();//Reload the current page to see the new added income
+        
+        } catch (error) {
+            console.error('Fetch error:', error);
+
+            Swal.fire({
+            icon: 'error',
+            title: 'Network Error',
+            text: error.message || 'Could not connect to server.'
+            });
+        }
+        }
+    </script>
+{% endblock %}

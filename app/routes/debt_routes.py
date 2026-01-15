@@ -20,9 +20,36 @@ def index():
     }
     return render_template('debts/index.html', **context)
 
+@debt_bp.route('/associated/records/<int:id>')
+def associated_records(id):
+    debt = Debt.query.get(id)
+    bank_accounts = BankAccount.query.all()
+    context = {
+        'debt': debt,
+        'bank_accounts': bank_accounts,
+        'format_amount': format_amount,
+        'total_amount': total_amount,
+    }
+    return render_template('debts/associated_records.html', **context)
+
 @debt_bp.route('/create', methods=['POST'])
 def create():
     try:
         return controller.create()
     except Exception as e:
         raise e
+
+@debt_bp.route('/update/<int:id>', methods=['PUT'])
+def update(id):
+    try:
+        return controller.update(id)
+    except Exception as e:
+        raise e
+
+@debt_bp.route('/delete/<int:id>', methods=['DELETE'])
+def delete(id):
+    try:
+        return controller.delete(id)
+    except Exception as e:
+        raise e
+    

@@ -66,9 +66,9 @@
             </form>
         </section>
 
-        <section class="modal fade" tabindex="-1" id="edit-account-receivable">
-            <form id="edit-account-receivable-form">
-                <input type="hidden" name="loan_id" id="e-loan-id">
+        <section class="modal fade" tabindex="-1" id="edit-account-payable">
+            <form id="edit-account-payable-form">
+                <input type="hidden" name="debt_id" id="e-debt-id">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -249,7 +249,7 @@
                                     type="button" 
                                     class="btn btn-outline-success" 
                                     data-bs-toggle="modal" 
-                                    data-bs-target="#edit-account-receivable"
+                                    data-bs-target="#edit-account-payable"
                                     data-debt-id="{{ debt.id }}"
                                     data-amount="{{ debt.amount }}"
                                     data-is-cash="{{ debt.is_cash }}"
@@ -260,7 +260,7 @@
                                 >
                                     <i class="bi bi-pen"></i>
                                 </button>
-                                <a href="#" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                <a href="{{ url_for('debt.delete', id=debt.id ) }}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
                             </div>
                         </td>
                     </tr>
@@ -286,8 +286,8 @@
 
 <script> 
     document.addEventListener('DOMContentLoaded', () => {
-        const createAccountReceivableModal = document.getElementById('create-account-payable');
-        const editAccountReceivableModal = document.getElementById('edit-account-receivable');
+        const createAccountPayableModal = document.getElementById('create-account-payable');
+        const editAccountPayableModal = document.getElementById('edit-account-payable');
         const payAccountReceivableModal = document.getElementById('pay-account-receivable');
 
         function toggleBankAccount(checkbox, select){
@@ -310,7 +310,7 @@
             }
         }
         
-        createAccountReceivableModal.addEventListener('show.bs.modal', () => {
+        createAccountPayableModal.addEventListener('show.bs.modal', () => {
             const isCash = document.getElementById('is-cash-id');
             const bankAccountsSelect = document.getElementById('select-bank-account-id');
 
@@ -318,10 +318,10 @@
             isCash.addEventListener('change', () => toggleBankAccount(isCash, bankAccountsSelect));
         });
         
-        editAccountReceivableModal.addEventListener('show.bs.modal', (event) => {
-            const button = event.relatedTarget;
+        editAccountPayableModal.addEventListener('show.bs.modal', (event) => {
+            const button = event.relatedTarget; //debt
             const btnSubmitEdition = document.getElementById('btn-submit-edition');
-            const editAccountReceivableForm = document.getElementById('edit-account-receivable-form');
+            const editAccountPayableForm = document.getElementById('edit-account-payable-form');
             const editIsCash = document.getElementById('e-is-cash-id');
             const editBankAccountsSelect = document.getElementById('e-select-bank-account-id');
             const editAmount = document.getElementById('e-amount');
@@ -329,14 +329,14 @@
             const oldIsCash = button.getAttribute('data-is-cash').toLowerCase() === 'true';
             const oldBankAccountId = button.getAttribute('data-bank-account-id');
             const oldAmount = button.getAttribute('data-amount');
-            const loanId = button.getAttribute('data-loan-id');
+            const debtId = button.getAttribute('data-debt-id');
             const isActive = button.getAttribute('data-is-active');
             const description = button.getAttribute('data-description');
             const personName = button.getAttribute('data-person-name');
 
             document.getElementById('e-amount-id').value = oldAmount;
             document.getElementById('e-is-cash-id').checked = oldIsCash;
-            document.getElementById('e-loan-id').value = loanId;
+            document.getElementById('e-debt-id').value = debtId; //loan
             document.getElementById('e-select-bank-account-id').value = oldBankAccountId; //If on the db its value it's Null flask will convert it into 'None' which the browser interprets it as String value in js
             if(oldBankAccountId === 'None') {
                 document.getElementById('e-select-bank-account-id').value = 'none';
@@ -347,7 +347,7 @@
             toggleBankAccount(editIsCash, editBankAccountsSelect);
             editIsCash.addEventListener('change', () => toggleBankAccount(editIsCash, editBankAccountsSelect));
 
-            editAccountReceivableForm.addEventListener('submit', (event) => {
+            editAccountPayableForm.addEventListener('submit', (event) => {
                 selectBankAccountOption(editIsCash, editBankAccountsSelect, event);
             });
 
@@ -402,12 +402,12 @@
     }
 
     async function editIncome(){
-        const loanId = document.getElementById('e-loan-id').value;
-        const form = document.getElementById('edit-account-receivable-form');
+        const loanId = document.getElementById('e-debt-id').value;
+        const form = document.getElementById('edit-account-payable-form');
         const formData = new FormData(form);
 
         try {
-            const response = await fetch(`/accounts_receivable/update_loan/${loanId}`, {
+            const response = await fetch(`/debts/update/${loanId}`, {
                 method: 'PUT',
                 body: formData,
             });

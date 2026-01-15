@@ -22,6 +22,7 @@ from app.routes import (
     banktransfer_routes,
     bank_transaction_ledger_routes,
     debt_routes,
+    debt_payment_routes
 )
 
 def create_app():
@@ -56,6 +57,7 @@ def register_resources(app):
     app.register_blueprint(banktransfer_routes.banktransfer_bp)
     app.register_blueprint(bank_transaction_ledger_routes.bank_transaction_ledger_bp)
     app.register_blueprint(debt_routes.debt_bp)
+    app.register_blueprint(debt_payment_routes.debt_payment_bp)
     
 def create_error_logger(app):
     if not os.path.exists('logs'):

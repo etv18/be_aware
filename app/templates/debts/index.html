@@ -227,7 +227,7 @@
                         <th scope="row">{{ debt.id }}</th>
                         <td>{{ debt.person_name }}</td>
                         <td>{{ format_amount(debt.amount) }}</td>
-                        <td> ## </td>
+                        <td> {{ format_amount(debt.remaining_amount()) }} </td>
                         <td>{{ 'ACTIVE' if debt.is_active else 'PAID'  }}</td>
                         <td>{{ debt.description }}</td>
                         <td>{{ 'YES' if debt.is_cash else 'NO'  }}</td>
@@ -270,7 +270,7 @@
         </div>
     </div>
     <input type="hidden" value="{{ url_for('debt.create') }}" id="createEndPoint">
-    <input type="hidden" value="{{ url_for('accounts_receivable.create_loan_payment') }}" id="makePaymentEndPoint">
+    <input type="hidden" value="{{ url_for('debt_payment.create') }}" id="makePaymentEndPoint">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">

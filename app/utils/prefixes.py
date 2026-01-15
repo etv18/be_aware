@@ -5,6 +5,7 @@ INCOME = 'INC'
 EXPENSE = 'EXP'
 BANK_TRANSFER = 'BTRA'
 CREDIT_CARD_PAYMENT = 'CDP'
+DEBT = 'DEBT'
 
 def get_prefixes():
     return (
@@ -14,5 +15,6 @@ def get_prefixes():
         INCOME,
         EXPENSE,
         BANK_TRANSFER,
-        CREDIT_CARD_PAYMENT
+        CREDIT_CARD_PAYMENT,
+        DEBT,
     )

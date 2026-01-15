@@ -26,3 +26,13 @@ def filter_by_field():
         return controller.filter_by_field(query) 
     except Exception as e:
         raise e
+
+@bank_transaction_ledger_bp.route('/filter/by/time')
+def filter_by_time():
+    try:
+        start = request.args.get('start')
+        end = request.args.get('end')
+        return controller.filter_by_time(start, end) 
+    except Exception as e:
+        raise e
+    

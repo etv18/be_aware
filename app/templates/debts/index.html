@@ -126,9 +126,9 @@
             </form>
         </section>
 
-        <section class="modal fade" tabindex="-1" id="pay-account-receivable">
-            <form id="pay-account-receivable-form">
-                <input type="hidden" name="loan-id" id="p-loan-id">
+        <section class="modal fade" tabindex="-1" id="pay-account-payable">
+            <form id="pay-account-payable-form">
+                <input type="hidden" name="debt-id" id="p-debt-id">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -221,9 +221,9 @@
                     </tr>
                 </thead>
                 
-                <tbody id="loans-table-body-id">
+                <tbody id="debt-table-body-id">
                   {% for debt in debts %}
-                    <tr class="debt-row" data-loan-id="{{ debt.id }}" data-url-associated-records = "#">
+                    <tr class="debt-row" data-debt-id="{{ debt.id }}" data-url-associated-records = "{{ url_for('debt.associated_records', id=debt.id ) }}">
                         <th scope="row">{{ debt.id }}</th>
                         <td>{{ debt.person_name }}</td>
                         <td>{{ format_amount(debt.amount) }}</td>
@@ -239,7 +239,7 @@
                                     id=""
                                     type="button"
                                     data-bs-toggle="modal" 
-                                    data-bs-target="#pay-account-receivable"
+                                    data-bs-target="#pay-account-payable"
                                     class="btn btn-outline-light" 
                                     data-debt-id="{{ debt.id }}"
                                 >
@@ -279,8 +279,8 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
-<script src="{{ url_for('static', filename='scripts/accounts_receivable/script.js') }}"></script>
-<script type="module" src="{{ url_for('static', filename='scripts/accounts_receivable/filterData.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/accounts_payable/script.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='scripts/accounts_payable/filterData.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='scripts/utils/numericHandling.js' ) }}"></script>
 <script type="module" src="{{ url_for('static', filename='scripts/utils/asyncHanlding.js' ) }}"></script>
 
@@ -288,7 +288,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         const createAccountPayableModal = document.getElementById('create-account-payable');
         const editAccountPayableModal = document.getElementById('edit-account-payable');
-        const payAccountReceivableModal = document.getElementById('pay-account-receivable');
+        const payAccountPayableModal = document.getElementById('pay-account-payable');
 
         function toggleBankAccount(checkbox, select){
             if(checkbox.checked) {
@@ -353,10 +353,10 @@
 
         });
         
-        payAccountReceivableModal.addEventListener('show.bs.modal', (event) => {
+        payAccountPayableModal.addEventListener('show.bs.modal', (event) => {
             const button = event.relatedTarget;
-            const loanId = button.getAttribute('data-loan-id');
-            document.getElementById('p-loan-id').value = loanId; //Set the loan id to the hidden input so backend can process it as part of the form
+            const loanId = button.getAttribute('data-debt-id');
+            document.getElementById('p-debt-id').value = loanId; //Set the loan id to the hidden input so backend can process it as part of the form
             const isCash = document.getElementById('p-is-cash-id');
             const bankAccountsSelect = document.getElementById('p-select-bank-account-id');
 
@@ -440,7 +440,7 @@
     async function makePayment(){
         const createEndPoint = document.getElementById('makePaymentEndPoint').value;
 
-        const form = document.getElementById('pay-account-receivable-form');
+        const form = document.getElementById('pay-account-payable-form');
         const formData = new FormData(form);
 
         try {

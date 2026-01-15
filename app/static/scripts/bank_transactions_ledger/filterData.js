@@ -84,7 +84,7 @@ async function filterData(){
         const start = timePicker.formatDate(startDate, 'Y-m-d');      
         const end = timePicker.formatDate(endDate, 'Y-m-d'); 
 
-        url = `/cashledger/filter/cashledger/by/time?start=${start}&end=${end}`;
+        url = `/bank_transaction_ledger/filter/by/time?start=${start}&end=${end}`;
     }
 
     const data = await getData(url);

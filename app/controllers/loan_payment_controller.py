@@ -34,7 +34,7 @@ def create_loan_payment():
         if(amount <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
 
         if not is_cash:
-            bank_account_id = int(request.form.get('select-bank-account'))
+            bank_account_id = request.form.get('select-bank-account')
             update_bank_account_money_on_create(bank_account_id, amount)
 
         loan_payment = LoanPayment(

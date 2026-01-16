@@ -42,14 +42,17 @@ def create():
         CashLedger.create(deposit)
         BankAccountTransactionsLedger.create(deposit)
 
+        return jsonify({'message': 'deposit created successfully'}), 200
+
     except Exception as e:
         db.session.rollback()
-        raise e
-'''    
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 400
+ 
 def update(id):
     try: 
-        withdrawal = Withdrawal.query.get(id)
-        if not withdrawal: raise NotRecordFound('No withdrawal record was found')
+        deposit = Deposit.query.get(id)
+        if not deposit: raise NotRecordFound('No deposit record was found')
 
         amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else Decimal('0')
         description = request.form.get('description')
@@ -59,28 +62,30 @@ def update(id):
         if(amount <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
 
         bank_account = BankAccount.query.get(bank_account_id) 
-        if not bank_account: raise NoBankProductSelected('No bank account was selected for this withdrawal')
+        if not bank_account: raise NoBankProductSelected('No bank account was selected for this deposit')
 
         h_update_bank_account_money_on_update(
-            old_bank_account=withdrawal.bank_account,
+            old_bank_account=deposit.bank_account,
             new_bank_account=bank_account,
-            old_amount=withdrawal.amount,
+            old_amount=deposit.amount,
             new_amount=amount
         )
 
-        withdrawal.amount = amount
-        withdrawal.description = description
-        withdrawal.bank_account_id = bank_account_id
+        deposit.amount = amount
+        deposit.description = description
+        deposit.bank_account_id = bank_account_id
         
         db.session.commit()
 
-        CashLedger.update_or_delete(withdrawal)
-        BankAccountTransactionsLedger.update(withdrawal)
+        CashLedger.update_or_delete(deposit)
+        BankAccountTransactionsLedger.update(deposit)
+
+        return jsonify({'message': 'deposit updated successfully'}), 200
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
-        raise e
-    
+        return jsonify({'error': str(e)}), 400
+'''
 def delete(id):
     try:
         withdrawal = Withdrawal.query.get(id)

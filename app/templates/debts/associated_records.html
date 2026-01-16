@@ -14,7 +14,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Make a payment</h5>
+                        <h5 class="modal-title">Edit</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -49,7 +49,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="editLoanPayment()">Save</button>
+                        <button type="button" class="btn btn-primary" onclick="editDebtPayment()">Save</button>
                     </div>
                 </div>
             </div>
@@ -94,8 +94,8 @@
                                     data-bs-toggle="modal" 
                                     data-bs-target="#edit-debt-payment"
                                     data-endpoint="#"
-                                    data-loan-id="{{ payment.id }}"
-                                    data-loan-payment-id="{{ payment.id }}"
+                                    data-debt-id="{{ debt.id }}"
+                                    data-debt-payment-id="{{ payment.id }}"
                                     data-amount="{{ payment.amount }}"
                                     data-is-cash="{{ payment.is_cash }}"
                                     data-bank-account-id="{{ payment.bank_account_id }}"
@@ -138,18 +138,18 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const editLoanPaymentModal = document.getElementById('edit-loan-payment');
+            const editLoanPaymentModal = document.getElementById('edit-debt-payment');
             editLoanPaymentModal.addEventListener('show.bs.modal', (event) => {
                 const button = event.relatedTarget;
-                const loanId = button.getAttribute('data-loan-id');
-                const loanPaymentId = button.getAttribute('data-loan-payment-id');
+                const debt = button.getAttribute('data-debt-id');
+                const debtPaymentId = button.getAttribute('data-debt-payment-id');
 
                 const oldAmount = button.getAttribute('data-amount');
                 const oldIsCash = button.getAttribute('data-is-cash').toLowerCase() === 'true';
                 const oldBankAccountId = button.getAttribute('data-bank-account-id');
 
-                document.getElementById('p-loan-id').value = loanId;
-                document.getElementById('p-loan-payment-id').value = loanPaymentId;
+                document.getElementById('p-debt-id').value = debt;
+                document.getElementById('p-debt-payment-id').value = debtPaymentId;
                 document.getElementById('p-amount-id').value = oldAmount;
 
                 const isCashCheckbox = document.getElementById('p-is-cash-id');
@@ -166,13 +166,13 @@
         });
     </script>
     <script>
-        async function editLoanPayment(){
-            const loanPaymentId = document.getElementById('p-loan-payment-id').value;
-            const form = document.getElementById('edit-loan-payment-form');
+        async function editDebtPayment(){
+            const debtPaymentId = document.getElementById('p-debt-payment-id').value;
+            const form = document.getElementById('edit-debt-payment-form');
             const formData = new FormData(form);
             
             try {
-            const response = await fetch(`/accounts_receivable/update_loan_payment/${loanPaymentId}`, {
+            const response = await fetch(`/debt_payments/update/${debtPaymentId}`, {
                 method: 'PUT',
                 body: formData
             });

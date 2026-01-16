@@ -1,0 +1,43 @@
+from flask import Blueprint, redirect, render_template, request, url_for, jsonify
+from sqlalchemy import func
+
+from app.controllers import deposit_controller as controller
+from app.models.deposit import Deposit
+from app.models.bank_account import BankAccount
+from app.utils.numeric_casting import format_amount, total_amount
+
+deposit_bp = Blueprint('deposit', __name__, url_prefix='/deposits')
+
+@deposit_bp.route('/index')
+def index():
+    deposits = Deposit.query.order_by(Deposit.created_at.desc()).all()
+    bank_accounts = BankAccount.query.all()
+    context = {
+        'deposits': deposits,
+        'bank_accounts': bank_accounts,
+        'format_amount': format_amount,
+        'total_amount': total_amount,
+    }
+    return render_template('deposits/index.html', **context)
+
+@deposit_bp.route('/create', methods=['POST'])
+def create():
+    try:
+        return controller.create()
+    except Exception as e:
+        raise e
+
+@deposit_bp.route('/update/<int:id>', methods=['PUT'])
+def update(id):
+    try:
+        return controller.update(id)
+    except Exception as e:
+        raise e
+
+@deposit_bp.route('/delete/<int:id>', methods=['DELETE'])
+def delete(id):
+    try:
+        return controller.delete(id)
+    except Exception as e:
+        raise e
+    

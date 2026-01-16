@@ -120,7 +120,7 @@ def delete(id):
         traceback.print_exc()
         return jsonify({'error': str(e)}), 400
     
-def fiter_by_field():
+def filter_by_field():
     try:
         query = request.args.get('query')
         q = f'%{query}%'

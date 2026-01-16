@@ -56,14 +56,14 @@ def delete(id):
 @debt_bp.route('/filter/by/field')
 def filter_by_field():
     try:
-        return controller.fiter_by_field()
+        return controller.filter_by_field()
     except Exception as e:
         raise e
 
 @debt_bp.route('/filter/by/time')
 def filter_by_time():
     try:
-        return controller.fiter_by_time()
+        return controller.filter_by_time()
     except Exception as e:
         raise e
     

@@ -72,7 +72,7 @@ def update(id):
         bank_account = BankAccount.query.get(selected_bank_account)
         if not is_cash and not bank_account: raise BankAccountDoesNotExists('Please select a bank account')
         new_bank_account_id = selected_bank_account
-        
+
         if not is_cash:
             _update_bank_account_money_on_update(
                 old_ba_id=debt_payment.bank_account_id, 
@@ -80,8 +80,8 @@ def update(id):
                 old_amount=debt_payment.amount, 
                 new_amount=new_amount
             )
-        else:
-            _add_money_to_back_account(id=debt_payment.bank_account_id, amount=debt_payment.amount)
+        elif debt_payment.bank_account:
+            debt_payment.bank_account.amount_available += debt_payment.amount
 
         debt = Debt.query.get(debt_id)
         if not debt:

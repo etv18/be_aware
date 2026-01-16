@@ -177,7 +177,7 @@ def filter_by_time():
             Debt.query
             .filter(
                 Debt.created_at >= start_date,
-                Debt.created_at <= end_date
+                Debt.created_at <= (end_date + timedelta(days=1))
             )
             .order_by(Debt.created_at.desc())
             .all()

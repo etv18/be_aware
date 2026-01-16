@@ -1,4 +1,5 @@
 from flask import request, jsonify, redirect, url_for
+from sqlalchemy import func, or_
 
 import traceback
 from datetime import datetime, timedelta
@@ -117,8 +118,80 @@ def delete(id):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
-        return jsonify({'error': str(e)}), 400 
+        return jsonify({'error': str(e)}), 400
     
+def fiter_by_field():
+    try:
+        query = request.args.get('query')
+        q = f'%{query}%'
+
+        is_active = _evaluate_boolean_columns(query, 'active', 'paid')
+        is_cash = _evaluate_boolean_columns(query, 'yes', 'no')
+
+        debts_list = []
+
+        filters = [
+            (Debt.person_name.ilike(q)),
+            (Debt.amount.ilike(q)),
+            (Debt.description.ilike(q)),
+            (Debt.created_at.ilike(q)),
+            (BankAccount.nick_name.ilike(q))
+        ]
+
+        if is_active is not None:
+            filters.append(Debt.is_active == is_active)
+
+        if is_cash is not None:
+            filters.append(Debt.is_cash == is_cash)
+
+        debts = (
+            Debt.query
+            .join(Debt.bank_account, isouter=True) # allow Debts without bank accounts
+            .filter(or_(*filters))
+            .order_by(Debt.created_at.desc())
+            .all()
+        )
+
+        for debt in debts:
+            debts_list.append(debt.to_dict())
+
+        return jsonify({'debts': debts_list}), 200
+    except Exception as e:
+        db.session.rollback()
+        raise e 
+    
+def filter_by_time():
+    try:
+        start = request.args.get('start')
+        end = request.args.get('end')
+
+        if not start or not end:
+            return jsonify({'error': 'Missing data range.'}), 400
+        
+        start_date = datetime.strptime(start, '%Y-%m-%d')
+        end_date = datetime.strptime(end, '%Y-%m-%d')
+
+        debts_list = []
+
+        debts = (
+            Debt.query
+            .filter(
+                Debt.created_at >= start_date,
+                Debt.created_at <= end_date
+            )
+            .order_by(Debt.created_at.desc())
+            .all()
+        )
+
+        for debt in debts:
+            debts_list.append(debt.to_dict())
+
+        return jsonify({'debts': debts_list}), 200
+    except Exception as e:
+        db.session.rollback()
+        raise e
+
+
 def _add_money_to_back_account(id, amount):
     bank_account = BankAccount.query.get(id)
 
@@ -146,10 +219,17 @@ def _update_bank_account_money_on_delete(bank_account, amount):
     bank_account.amount_available -= amount
 
 def _delete_debt_payments_ledgers(payments):
-    
     for payment in payments:
         if payment.is_cash:
             CashLedger.delete(payment)
         else:
             payment.bank_account.amount_available += payment.amount
             BankAccountTransactionsLedger.delete(payment)
+
+def _evaluate_boolean_columns(query, reference_for_true, reference_for_false):
+    q = query.lower()
+    if q == reference_for_true.lower():
+        return True
+    if q == reference_for_false.lower():
+        return False
+    return None

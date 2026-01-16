@@ -5,6 +5,7 @@ from app.models.loan import Loan
 from app.models.withdrawal import Withdrawal
 from app.models.debt import Debt
 from app.models.debt_payment import DebtPayment
+from app.models.deposit import Deposit
 
 def get_all():
     return (
@@ -15,6 +16,7 @@ def get_all():
         Expense,
         Debt,
         DebtPayment,
+        Deposit,
     )
 
 def is_a_cash_transaction(transaction):

@@ -14,6 +14,7 @@ from app.models.bank_account import BankAccount
 from app.exceptions.bankProductsException import *
 from app.exceptions.generic import *
 from app.utils.numeric_casting import is_decimal_type
+from app.utils.filter_data import get_total_amount
 
 def create():
     try: 
@@ -24,6 +25,8 @@ def create():
         
         if(amount <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
 
+        if(amount > get_total_amount(CashLedger)): raise AmountGreaterThanAvailableMoney('You do not have enough cash available for this deposit')
+        
         bank_account_id = request.form.get('select-bank-account')
         bank_account = BankAccount.query.get(bank_account_id) 
         if not bank_account: raise NoBankProductSelected('No bank account was selected for this deposit')
@@ -34,7 +37,7 @@ def create():
             bank_account_id=bank_account_id,
         )
 
-        h_update_bank_account_money_on_create(bank_account, amount)
+        _update_bank_account_money_on_create(bank_account, amount)
 
         db.session.add(deposit)
         db.session.commit()
@@ -61,10 +64,12 @@ def update(id):
         
         if(amount <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
 
+        if(amount > get_total_amount(CashLedger)): raise AmountGreaterThanAvailableMoney('You do not have enough cash available for this deposit')
+
         bank_account = BankAccount.query.get(bank_account_id) 
         if not bank_account: raise NoBankProductSelected('No bank account was selected for this deposit')
 
-        h_update_bank_account_money_on_update(
+        _update_bank_account_money_on_update(
             old_bank_account=deposit.bank_account,
             new_bank_account=bank_account,
             old_amount=deposit.amount,
@@ -160,19 +165,15 @@ def filter_withdrawals_by_timeframe(start, end):
     
 
 '''HELPERS'''
-def h_update_bank_account_money_on_create(bank_account, amount):
+def _update_bank_account_money_on_create(bank_account, amount):
 
     if not bank_account:
         raise BankAccountDoesNotExists('This bank account does not exists.')
-    if bank_account.amount_available <= 0:
-        raise NoAvailableMoney('Bank Account does not have any money left.')
-    if bank_account.amount_available < amount:
-        raise AmountGreaterThanAvailableMoney('Insufficient founds.')
     
     bank_account.amount_available += amount
 
 
-def h_update_bank_account_money_on_update(old_bank_account, new_bank_account, old_amount, new_amount):
+def _update_bank_account_money_on_update(old_bank_account, new_bank_account, old_amount, new_amount):
     if (old_bank_account.id == new_bank_account.id) and (old_amount == new_amount): return
 
     try:

@@ -19,12 +19,15 @@ document.addEventListener('click', async e => {
             const res = await fetch(deleteUrl, {
                 method: 'DELETE'
             });
-            console.log(res.json());
+
+            let data = await res.json();
+            console.log(data);
+
             
             if (res.ok) {
                 location.reload();
             } else {
-                Swal.fire("Error", "Could not delete record", "error");
+                Swal.fire("Error", data.error, "error");
             }
         }
     });

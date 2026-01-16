@@ -41,3 +41,17 @@ def delete(id):
     except Exception as e:
         raise e
     
+@deposit_bp.route('/filter/by/field')
+def filter_by_field():
+    try:
+        return controller.filter_by_field()
+    except Exception as e:
+        raise e
+
+@deposit_bp.route('/filter/by/time')
+def filter_by_time():
+    try:
+        return controller.filter_by_time()
+    except Exception as e:
+        raise e
+    

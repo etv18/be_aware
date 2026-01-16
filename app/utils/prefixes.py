@@ -7,6 +7,7 @@ DEBT = 'DEBT'
 LOAN_PAYMENT = 'LPMT'
 DEBT_PAYMENT = 'DPMT'
 CREDIT_CARD_PAYMENT = 'CCP'
+DEPOSIT = 'DPT'
 
 def get_prefixes():
     return (
@@ -18,5 +19,6 @@ def get_prefixes():
         BANK_TRANSFER,
         CREDIT_CARD_PAYMENT,
         DEBT,
-        DEBT_PAYMENT
+        DEBT_PAYMENT,
+        DEPOSIT,
     )

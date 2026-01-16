@@ -103,6 +103,28 @@ def update(id):
         db.session.rollback()
         traceback.print_exc()
         return jsonify({'error': str(e)}), 400
+    
+def delete(id):
+    try:
+        debt_payment = DebtPayment.query.get(id)
+        if not debt_payment:
+            return jsonify({'error': 'Debt payment record was not found'}), 400
+        
+        debt = Debt.query.get(debt_payment.debt_id)
+
+        if debt_payment.bank_account:
+            debt_payment.bank_account.amount_available += debt_payment.amount
+
+        db.session.delete(debt_payment)
+        db.session.commit()
+
+        _update_debt_is_active(debt)
+
+        return jsonify({'message': 'Debt payment deleted successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 400
 
 def _update_debt_is_active(debt):
     db.session.refresh(debt)  # <-- refresh from DB

@@ -1,0 +1,303 @@
+{% extends 'layout.html' %}
+
+{% block title %}Deposits{% endblock %}
+
+{% block content %}
+
+    <div class=" w-100">
+
+        <h2>Deposits</h2>
+        <section class="modal fade" tabindex="-1" id="create-deposit-model">
+            <form id="create-deposit-form">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">New Deposit</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="">
+                                    <div class="form-floating mt-2">
+                                        <input type="text" name="amount" id="amount-id" class="form-control"
+                                            placeholder="Amount" required>
+                                        <label for="amount-id">Amount</label>
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <div class="form-floating mt-2">
+                                        <input type="text" name="description" id="description-id" class="form-control"
+                                            placeholder="Description" required>
+                                        <label for="description-id">Description</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-floating mt-2">
+                                    <select name="select-bank-account" id="select-bank-account-id" class="form-select">
+                                        <option value="none">...Select...</option>
+                                        {% for ba in bank_accounts %}
+                                        <option value="{{ ba.id }}">{{ ba.nick_name }}</option>                                        
+                                        {% endfor %}
+                                    </select>
+                                    <label for="e-select-bank-account-id" class="p-3">Bank Account</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" onclick="createDeposit()">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <section class="modal fade" tabindex="-1" id="edit-deposit-modal">
+            <form id="edit-deposit-form">
+                <input type="hidden" name="deposit_id" id="deposit-id">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="">
+                                    <div class="form-floating mt-2">
+                                        <input type="text" name="amount" id="e-amount-id" class="form-control"
+                                            placeholder="Amount" required>
+                                        <label for="amount-id">Amount</label>
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <div class="form-floating mt-2">
+                                        <input type="text" name="description" id="e-description-id" class="form-control"
+                                            placeholder="Description" required>
+                                        <label for="e-description-id">Description</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-floating mt-2">
+                                    <select name="select-bank-account" id="e-select-bank-account-id" class="form-select">
+                                        <option value="none">...Select...</option>
+                                        {% for ba in bank_accounts %}
+                                        <option value="{{ ba.id }}">{{ ba.nick_name }}</option>                                        
+                                        {% endfor %}
+                                    </select>
+                                    <label for="e-select-bank-account-id" class="p-3">Bank Account</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="btn-submit-edition" onclick="editIncome()">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>        
+        <div class="d-flex justify-content-start gap-1 flex-wrap flex-md-nowrap mt-2">
+            <button 
+                type="button"
+                id="btn-create-expense-id"
+                class="btn btn-outline-primary me-auto me-md-auto w-100 w-md-auto" 
+                style="max-width: 200px;"
+                data-bs-toggle="modal"
+                data-bs-target="#create-deposit-model"
+            >New Deposit <i class="bi bi-coin"></i>
+            </button>
+            <div class="d-flex gap-1 w-100 align-items-center" style="max-width: 320px;">
+                <div class="w-md-auto mt-md-0">
+                    <label for="" class="fs-6 fw-bold">Filter by: </label>
+                </div>
+                <div class="w-100 w-md-auto mt-md-0" style="max-width: 250px;">
+                    <select class="form-select" id="select-filter-type-id">
+                        <option value="field">Field</option>
+                        <option value="time">Time</option>
+                    </select>
+                </div>
+            </div>
+            <div class="d-flex gap-1 w-100" style="max-width: 350px;">
+                <div class="w-100 w-md-auto mt-md-0">
+                    <input type="text" class="form-control" id="filter-input-id">
+                </div>
+                <button type="button" class="btn btn-outline-success" id="btn-search-id"><i class="bi bi-search"></i></button>
+            </div>
+        </div>
+
+        <div class="table-responsive overflow-y-auto border rounded-3 mt-1" style="max-height: 457px;">
+            <table class="table table-striped  table-hover">
+                <thead class="sticky-top">
+                    <tr>
+                    <th scope="col"># Id</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Bank Account</th>
+                    <th scope="col">Create at</th>
+                    <th scope="col">Acctions</th>
+                    </tr>
+                </thead>
+                
+                <tbody  id="withdrawals-table-body-id">
+                  {% for deposit in deposits %} 
+                    <tr>
+                        <th scope="row">{{ deposit.id }}</th>
+                        <td>{{ format_amount(deposit.amount) }}</td>
+                        <td>{{ deposit.description if deposit.description else '-'}}</td>
+                        <td>{{ deposit.bank_account.nick_name }}</td>
+                        <td>{{ deposit.created_at }}</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button 
+                                    type="button" 
+                                    class="btn btn-outline-success" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#edit-deposit-modal"
+                                    data-deposit-id="{{ deposit.id }}"
+                                    data-description="{{ deposit.description }}"
+                                    data-amount="{{ deposit.amount }}"
+                                    data-bank-account-id="{{ deposit.bank_account_id }}"
+                                >
+                                <i class="bi bi-pen"></i>
+                                </button>
+                                <a href="{{ url_for('deposit.delete', id=deposit.id) }}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+<link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
+
+<script type="module" src="{{ url_for('static', filename='scripts/utils/numericHandling.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='scripts/withdrawals/filterData.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='scripts/utils/asyncHanlding.js' ) }}"></script>
+<script type="module" src="{{ url_for('static', filename='scripts/utils/stringHandling.js' ) }}"></script>
+
+<script> 
+    document.addEventListener('DOMContentLoaded', () => {
+        const createWithdrawalModal = document.getElementById('create-deposit-model');
+        const editDepositModal = document.getElementById('edit-deposit-modal');
+//withdrawal
+        function selectBankAccountOption(checkbox, select, event){
+            if(!checkbox.checked && select.value == 'none') {
+                event.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'No selected bank account',
+                    text: 'If you transaction was not made in cash you must select a bank account.'
+                });
+                return;
+            }
+        }
+        
+        editDepositModal.addEventListener('show.bs.modal', (event) => {
+            const button = event.relatedTarget;
+
+            const btnSubmitEdition = document.getElementById('btn-submit-edition');
+            const editIncomeForm = document.getElementById('edit-income-form');
+            const editBankAccountsSelect = document.getElementById('e-select-bank-account-id');
+
+            const oldBankAccountId = button.getAttribute('data-bank-account-id');
+            const oldAmount = button.getAttribute('data-amount');
+            const oldDescription = button.getAttribute('data-description');
+            const depositId = button.getAttribute('data-deposit-id');
+
+            document.getElementById('deposit-id').value = depositId;
+            document.getElementById('e-amount-id').value = oldAmount;
+            document.getElementById('e-description-id').value = oldDescription;
+            document.getElementById('e-select-bank-account-id').value = oldBankAccountId; //If on the db its value it's Null flask will convert it into 'None' which the browser interprets it as String value in js
+            if(oldBankAccountId === 'None') {
+                document.getElementById('e-select-bank-account-id').value = 'none';
+            }
+
+        });
+    })
+</script>
+<script>
+    async function createDeposit(){
+        const form = document.getElementById('create-deposit-form');
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch('/deposits/create', {
+                method: 'POST',
+                body: formData,
+                headers: {'X-Requested-With': 'XMLHttpRequest'}
+            });
+
+            const data = await response.json();
+
+            if(!response.ok){
+                console.log(response.json());
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error || 'Something went wrong while creating the deposit.'
+                });
+                return;
+            }
+            location.reload();//Reload the current page to see the new added income
+        
+        } catch (error) {
+            console.error('Fetch error:', error);
+
+            Swal.fire({
+            icon: 'error',
+            title: 'Network Error',
+            text: error.message || 'Could not connect to server.'
+            });
+        }        
+    }
+
+    async function editIncome(){
+        const withdrawalId = document.getElementById('deposit-id').value;
+        const form = document.getElementById('edit-deposit-form');
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch(`/deposits/update/${withdrawalId}`, {
+                method: 'PUT',
+                body: formData,
+                headers: {'X-Requested-With': 'XMLHttpRequest'}
+            });
+
+            const data = await response.json();
+
+            if(!response.ok){
+                console.log(response.json())
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error || 'Something went wrong while creating the expense.'
+                });
+                return;
+            }
+
+            location.reload();
+
+        } catch (error) {
+            console.error('Fetch error:', error);
+
+            Swal.fire({
+            icon: 'error',
+            title: 'Network Error',
+            text: error.message || 'Could not connect to server.'
+            });
+        }
+    }
+</script>
+
+{% endblock %}

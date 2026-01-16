@@ -62,7 +62,7 @@ class BankAccountTransactionsLedger(db.Model):
             before_update_balance = Decimal('0')
             after_update_balance = transaction.bank_account.amount_available
             
-            increase_amount_available = (btc.LoanPayment, btc.Income, btc.Debt)
+            increase_amount_available = (btc.LoanPayment, btc.Income, btc.Debt, btc.Deposit)
             reduce_amount_available = (btc.Withdrawal, btc.Loan, btc.Expense, btc.CreditCardPayment, btc.DebtPayment)
             
             if isinstance(transaction, increase_amount_available):
@@ -106,7 +106,7 @@ class BankAccountTransactionsLedger(db.Model):
             before_update_balance = Decimal('0')
             after_update_balance = transaction.bank_account.amount_available
             
-            increase_amount_available = (btc.LoanPayment, btc.Income, btc.Debt)
+            increase_amount_available = (btc.LoanPayment, btc.Income, btc.Debt, btc.Deposit)
             reduce_amount_available = (btc.Withdrawal, btc.Loan, btc.Expense, btc.CreditCardPayment, btc.DebtPayment)
             
             if isinstance(transaction, increase_amount_available):

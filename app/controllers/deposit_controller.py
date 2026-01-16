@@ -168,7 +168,72 @@ def filter_withdrawals_by_timeframe(start, end):
         db.session.rollback()
         traceback.print_exc()
         raise e
+
     
+def filter_by_field():
+    try:
+        query = request.args.get('query')
+        q = f'%{query}%'
+
+        is_active = _evaluate_boolean_columns(query, 'active', 'paid')
+        is_cash = _evaluate_boolean_columns(query, 'yes', 'no')
+
+        deposits_list = []
+
+        filters = [
+            (Deposit.amount.ilike(q)),
+            (Deposit.description.ilike(q)),
+            (Deposit.created_at.ilike(q)),
+            (BankAccount.nick_name.ilike(q))
+        ]
+
+        deposits = (
+            Deposit.query
+            .outerjoin(Deposit.bank_account)
+            .filter(or_(*filters))
+            .order_by(Deposit.created_at.desc())
+            .all()
+        )
+
+        for deposit in deposits:
+            deposits_list.append(deposit.to_dict())
+
+        return jsonify({'deposits': deposits_list}), 200
+    except Exception as e:
+        db.session.rollback()
+        raise e 
+
+def filter_by_time():
+    try:
+        start = request.args.get('start')
+        end = request.args.get('end')
+
+        if not start or not end:
+            return jsonify({'error': 'Missing data range.'}), 400
+        
+        start_date = datetime.strptime(start, '%Y-%m-%d')
+        end_date = datetime.strptime(end, '%Y-%m-%d')
+
+        deposits_list = []
+
+        deposits = (
+            Deposit.query
+            .filter(
+                Deposit.created_at >= start_date,
+                Deposit.created_at <= (end_date + timedelta(days=1))
+            )
+            .order_by(Deposit.created_at.desc())
+            .all()
+        )
+
+        for deposit in deposits:
+            deposits_list.append(deposit.to_dict())
+
+        return jsonify({'deposits': deposits_list}), 200
+    except Exception as e:
+        db.session.rollback()
+        raise e
+
 
 '''HELPERS'''
 def _update_bank_account_money_on_create(bank_account, amount):
@@ -208,3 +273,11 @@ def _update_bank_account_money_on_update(old_bank_account, new_bank_account, old
     except Exception as e:
         traceback.print_exc()
         raise e
+    
+def _evaluate_boolean_columns(query, reference_for_true, reference_for_false):
+    q = query.lower()
+    if q == reference_for_true.lower():
+        return True
+    if q == reference_for_false.lower():
+        return False
+    return None

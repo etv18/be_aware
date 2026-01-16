@@ -62,8 +62,8 @@ class BankAccountTransactionsLedger(db.Model):
             before_update_balance = Decimal('0')
             after_update_balance = transaction.bank_account.amount_available
             
-            increase_amount_available = (btc.LoanPayment, btc.Income)
-            reduce_amount_available = (btc.Withdrawal, btc.Loan, btc.Expense, btc.CreditCardPayment)
+            increase_amount_available = (btc.LoanPayment, btc.Income, btc.Debt)
+            reduce_amount_available = (btc.Withdrawal, btc.Loan, btc.Expense, btc.CreditCardPayment, btc.DebtPayment)
             
             if isinstance(transaction, increase_amount_available):
                 amount = transaction.amount
@@ -92,9 +92,10 @@ class BankAccountTransactionsLedger(db.Model):
     @staticmethod
     def update(transaction):
         try:
+            if isinstance(transaction, btc.BankTransfer): return BankAccountTransactionsLedger._update_ledger_for_bank_transfer(transaction)
+            
             if is_a_cash_transaction(transaction) or not transaction.bank_account_id: return BankAccountTransactionsLedger.delete(transaction)
 
-            if isinstance(transaction, btc.BankTransfer): return BankAccountTransactionsLedger._update_ledger_for_bank_transfer(transaction)
             
             if not isinstance(transaction, btc.get_all()): return
 
@@ -105,8 +106,8 @@ class BankAccountTransactionsLedger(db.Model):
             before_update_balance = Decimal('0')
             after_update_balance = transaction.bank_account.amount_available
             
-            increase_amount_available = (btc.LoanPayment, btc.Income)
-            reduce_amount_available = (btc.Withdrawal, btc.Loan, btc.Expense, btc.CreditCardPayment)
+            increase_amount_available = (btc.LoanPayment, btc.Income, btc.Debt)
+            reduce_amount_available = (btc.Withdrawal, btc.Loan, btc.Expense, btc.CreditCardPayment, btc.DebtPayment)
             
             if isinstance(transaction, increase_amount_available):
                 amount = transaction.amount

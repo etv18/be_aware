@@ -43,7 +43,7 @@ class CashLedger(db.Model):
             '''
             if isinstance(transaction, cash_transactional_classes.Withdrawal) or transaction.is_cash:
                 amount = transaction.amount
-                if isinstance(transaction, (cash_transactional_classes.Expense, cash_transactional_classes.Loan)):
+                if isinstance(transaction, (cash_transactional_classes.Expense, cash_transactional_classes.Loan, cash_transactional_classes.DebtPayment)):
                     amount = -amount
                 
                 ledger = CashLedger(
@@ -67,7 +67,7 @@ class CashLedger(db.Model):
                 return
             
             amount = transaction.amount
-            if isinstance(transaction, (cash_transactional_classes.Expense, cash_transactional_classes.Loan)):
+            if isinstance(transaction, (cash_transactional_classes.Expense, cash_transactional_classes.Loan, cash_transactional_classes.DebtPayment)):
                 amount = -amount #If a transaction is instance of Expense or Loan the amount must be negative
 
             ledger = CashLedger.query.filter_by(reference_code=transaction.code).first()

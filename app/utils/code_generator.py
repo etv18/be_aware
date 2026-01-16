@@ -1,20 +1,23 @@
+import random
 from datetime import datetime
-from sqlalchemy import func
+
 from app.extensions import db
 
-def generate_montly_sequence(prefix, model):
+def generate_montly_sequence(prefix, model, field_name="code"):
     now = datetime.now()
     year = now.year
     month = now.month
 
-    #Count how many records of this models were create this moth
-    last_number = (
-        db.session.query(func.count(model.id))
-        .filter(func.extract('year', model.created_at) == year)
-        .filter(func.extract('month', model.created_at) == month)
-        .scalar()
-    )
+    while True:
+        random_part = random.randint(0, 99999)
+        code = f"{prefix}_{year}_{month:02d}_{random_part:05d}"
 
-    next_number = last_number + 1
+        exists = (
+            db.session.query(model.id)
+            .filter(getattr(model, field_name) == code)
+            .first()
+        )
 
-    return f'{prefix}_{year}_{month:02d}_{next_number:05d}'
+        if not exists:
+            return code
+

@@ -45,8 +45,8 @@ def create():
 
         _update_debt_is_active(debt)
         
-        #CashLedger.create(debt_payment)
-        #if debt_payment.bank_account_id: BankAccountTransactionsLedger.create(debt_payment)
+        CashLedger.create(debt_payment)
+        if debt_payment.bank_account_id: BankAccountTransactionsLedger.create(debt_payment)
 
         return jsonify({'message': 'Debt payment created successfully'}), 201
     except Exception as e:
@@ -93,8 +93,8 @@ def update(id):
 
         db.session.commit()
 
-        #CashLedger.update_or_delete(debt_payment)
-        #BankAccountTransactionsLedger.update(debt_payment)
+        CashLedger.update_or_delete(debt_payment)
+        BankAccountTransactionsLedger.update(debt_payment)
 
         _update_debt_is_active(debt)
 
@@ -114,6 +114,9 @@ def delete(id):
 
         if debt_payment.bank_account:
             debt_payment.bank_account.amount_available += debt_payment.amount
+            BankAccountTransactionsLedger.delete(debt_payment)
+
+        CashLedger.update_or_delete(debt_payment, delete_ledger=True)
 
         db.session.delete(debt_payment)
         db.session.commit()

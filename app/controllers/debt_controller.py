@@ -43,8 +43,8 @@ def create():
         db.session.add(debt)
         db.session.commit()
 
-        #CashLedger.create(debt)
-        #if debt.bank_account_id: BankAccountTransactionsLedger.create(debt)
+        CashLedger.create(debt)
+        if debt.bank_account_id: BankAccountTransactionsLedger.create(debt)
 
         return jsonify({'message': 'debt created successfully'}), 200
     except Exception as e:
@@ -89,8 +89,8 @@ def update(id):
     
         db.session.commit()
 
-        #CashLedger.update_or_delete(debt)
-        #BankAccountTransactionsLedger.update(debt)
+        CashLedger.update_or_delete(debt)
+        BankAccountTransactionsLedger.update(debt)
         
         return jsonify({'data': 'Debt updated successfully'}), 200
     
@@ -104,8 +104,11 @@ def delete(id):
         debt = Debt.query.get(id)
         if debt.bank_account:
             _update_bank_account_money_on_delete(debt.bank_account, debt.amount)
-            #BankAccountTransactionsLedger.delete(debt)
-        #CashLedger.update_or_delete(debt, delete_ledger=True)
+            BankAccountTransactionsLedger.delete(debt)
+            
+        CashLedger.update_or_delete(debt, delete_ledger=True)
+        
+        _delete_debt_payments_ledgers(debt.debt_payments)
 
         db.session.delete(debt)
         db.session.commit()
@@ -141,3 +144,12 @@ def _update_bank_account_money_on_delete(bank_account, amount):
         raise BankAccountDoesNotExists('The bank account does not exists.')
     
     bank_account.amount_available -= amount
+
+def _delete_debt_payments_ledgers(payments):
+    
+    for payment in payments:
+        if payment.is_cash:
+            CashLedger.delete(payment)
+        else:
+            payment.bank_account.amount_available += payment.amount
+            BankAccountTransactionsLedger.delete(payment)

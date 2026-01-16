@@ -57,7 +57,7 @@
     </section>
     
     <div class="my-2 border rounded-3">
-        <div class="bg-success rounded-top d-flex align-items-center justify-content-center p-2" style="height: 60px;">
+        <div class="rounded-top d-flex align-items-center justify-content-center p-2" style="height: 60px; background-color: rgba(219, 208, 53, 0.678);">
             <div class="me-auto">
                 <h4 class="d-flex justify-content-center">Loan Payments</h4>
             </div>                
@@ -78,7 +78,7 @@
                         <th scope="col">Create at</th>
                     </tr>
                 </thead>
-                <tbody id="loan-payment-table-body">
+                <tbody id="debt-payment-table-body">
                     {% for payment in debt.debt_payments %}                
                     <tr>
                         <th scope="row">{{ payment.id }}</th>
@@ -102,7 +102,7 @@
                                 >
                                     <i class="bi bi-pen"></i>
                                 </button>
-                                <a href="#" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                                <a href="{{ url_for('debt_payment.delete', id=payment.id ) }}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
                             </div>
                         </td>
                     </tr>
@@ -113,8 +113,8 @@
 
         <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
             <div class="row text-center">
-                <p class="fs-6 fw-bold" id="total-amounts-loans-payments-id">TOTAL: </p>
-                <p class="fs-6 fw-bold" id="total-count-loans-payments-id">RECORDS: </p>
+                <p class="fs-6 fw-bold" id="total-amounts-debts-payments-id">TOTAL: {{ total_amount(debt.debt_payments) }}</p>
+                <p class="fs-6 fw-bold" id="total-count-debts-payments-id">RECORDS: {{ debt.debt_payments | length }} </p>
             </div>
         </div>
     </div>

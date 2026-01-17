@@ -12,6 +12,7 @@ from app.models.bank_account_transactions_ledger import BankAccountTransactionsL
 from app.models.bank_account import BankAccount
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero, NoBankProductSelected, AmountGreaterThanAvailableMoney, NoAvailableMoney, BankAccountDoesNotExists
 from app.utils.numeric_casting import is_decimal_type
+from app.utils.parse_structures import get_data_as_dictionary
 
 def create():
     try:
@@ -191,6 +192,25 @@ def filter_by_time():
         db.session.rollback()
         raise e
 
+def associated_records_in_json(id):
+    try:
+        debt = Debt.query.get(id)
+        if not debt: 
+            return jsonify({'error': 'Debt not found'}), 404
+
+        associations = [
+            debt.debt_payments,
+        ]
+        data = {}
+        for a in associations:
+            if a:
+                table_name = a[0].__class__.__tablename__; '''access the first element to get its table name'''
+                data[table_name] = get_data_as_dictionary(a); '''set the table name as the key and use the function to  get all elements of the list in dictionary format'''
+        
+        return jsonify({'records': data}), 200
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 400
 
 def _add_money_to_back_account(id, amount):
     bank_account = BankAccount.query.get(id)

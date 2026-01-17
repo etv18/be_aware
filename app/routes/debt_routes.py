@@ -30,7 +30,7 @@ def associated_records(id):
         'format_amount': format_amount,
         'total_amount': total_amount,
     }
-    return render_template('debts/associated_records.html', **context)
+    return render_template('accounts_payable/associated_records.html', **context)
 
 @debt_bp.route('/create', methods=['POST'])
 def create():

@@ -257,7 +257,12 @@ def _update_bank_account_money_on_update(old_bank_account, new_bank_account, old
 
     try:
         if not old_bank_account:  
-            raise BankAccountDoesNotExists('Bank account does not exists.')   
+            raise BankAccountDoesNotExists('Bank account does not exists.')
+        
+        if old_bank_account == new_bank_account:
+            old_bank_account.amount_available += (new_amount - old_amount)
+            return
+        
         if old_bank_account.amount_available <= 0:
             raise NoAvailableMoney(f"'{old_bank_account.nick_name}' bank account does not have any money left.")
         if old_bank_account.amount_available < new_amount:

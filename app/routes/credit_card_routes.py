@@ -13,7 +13,7 @@ credit_card_bp = Blueprint('credit_card', __name__, url_prefix='/credit_cards')
 @credit_card_bp.route('/index', methods=['GET'])
 def index():
     banks = Bank.query.all()
-    credit_cards = CreditCard.query.all()
+    credit_cards = CreditCard.query.filter(CreditCard.is_deleted == None).all()
     bank_accounts = BankAccount.query.all()
 
     context = {

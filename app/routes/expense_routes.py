@@ -12,7 +12,7 @@ expense_bp = Blueprint('expense', __name__, url_prefix='/expenses')
 
 @expense_bp.route('/index', methods=['GET'])
 def index():
-    credit_cards = credit_card.CreditCard.query.all()
+    credit_cards = credit_card.CreditCard.query.filter(credit_card.CreditCard.is_deleted == None).all()
     expense_categories = expense_category.ExpenseCategory.query.all()
     bank_accounts = bank_account.BankAccount.query.all()
     expenses = expense_controller.get_monthly_expenses_records()

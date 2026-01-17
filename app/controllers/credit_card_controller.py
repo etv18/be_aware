@@ -59,7 +59,8 @@ def update_credit_card(credit_card):
 
 def delete_credit_card(credit_card):
     try:
-        db.session.delete(credit_card)
+        if credit_card:
+            credit_card.is_deleted = True
         db.session.commit()
     except SQLAlchemyError as e:
         db.session.rollback()

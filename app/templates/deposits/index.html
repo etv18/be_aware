@@ -141,7 +141,7 @@
                     </tr>
                 </thead>
                 
-                <tbody  id="withdrawals-table-body-id">
+                <tbody  id="deposit-table-body-id">
                   {% for deposit in deposits %} 
                     <tr>
                         <th scope="row">{{ deposit.id }}</th>
@@ -182,7 +182,7 @@
 <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
 
 <script type="module" src="{{ url_for('static', filename='scripts/utils/numericHandling.js') }}"></script>
-<script type="module" src="{{ url_for('static', filename='scripts/withdrawals/filterData.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='scripts/deposits/filterData.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='scripts/utils/asyncHanlding.js' ) }}"></script>
 <script type="module" src="{{ url_for('static', filename='scripts/utils/stringHandling.js' ) }}"></script>
 

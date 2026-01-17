@@ -60,6 +60,13 @@ def filter_by_field():
     except Exception as e:
         raise e
 
+@debt_bp.route('/associated/records/in/json/<int:id>')
+def associated_records_in_json(id):
+    try:
+        return controller.associated_records_in_json(id)
+    except Exception as e:
+        raise e
+
 @debt_bp.route('/filter/by/time')
 def filter_by_time():
     try:

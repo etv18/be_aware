@@ -9,11 +9,11 @@ let timePicker = null;
 let startDate = null;
 let endDate = null;
 
-function renderDataTable(loans){
-    const tbody = document.getElementById('loans-table-body-id');
+function renderDataTable(debts){
+    const tbody = document.getElementById('debt-table-body-id');
     tbody.innerHTML = '';
 
-    if(loans.length === 0) {
+    if(debts.length === 0) {
         tbody.innerHTML = `
             <tr>
                 <td colspan="10" class="text-center text-muted">No results found.</td>
@@ -22,33 +22,33 @@ function renderDataTable(loans){
         return;
     }
 
-    loans.forEach(loan => {
+    debts.forEach(debt => {
         const tableRow = document.createElement('tr');
 
-        tableRow.classList.add('loan-row');
+        tableRow.classList.add('debt-row');
 
-        tableRow.setAttribute('data-loan-id', loan.id)
-        tableRow.setAttribute('data-url-associated-records', `/accounts_receivable/associated_records/${loan.id}`);
+        tableRow.setAttribute('data-debt-id', debt.id);
+        tableRow.setAttribute('data-url-associated-records', `/debts/associated/records/${debt.id}`);
 
         tableRow.innerHTML = `
-            <th scope="row">${loan.id}</th>
-            <td>${loan.person_name}</td>
-            <td>${formatNumber(loan.amount)}</td>
-            <td> ${formatNumber(loan.remaining_amount)} </td>
-            <td>${loan.is_active ? 'ACTIVE' : 'PAID'}</td>
-            <td>${loan.description}</td>
-            <td>${loan.is_cash ? 'YES' : 'NO'}</td>
-            <td>${loan.bank_account_nick_name}</td>
-            <td>${loan.created_at}</td>
+            <th scope="row">${debt.id}</th>
+            <td>${debt.person_name}</td>
+            <td>${formatNumber(debt.amount)}</td>
+            <td> ${formatNumber(debt.remaining_amount)} </td>
+            <td>${debt.is_active ? 'ACTIVE' : 'PAID'}</td>
+            <td>${debt.description}</td>
+            <td>${debt.is_cash ? 'YES' : 'NO'}</td>
+            <td>${debt.bank_account_nick_name}</td>
+            <td>${debt.created_at}</td>
             <td>
                 <div class="d-flex gap-2">
                     <button 
                         id=""
                         type="button"
                         data-bs-toggle="modal" 
-                        data-bs-target="#pay-account-receivable"
+                        data-bs-target="#pay-account-payable"
                         class="btn btn-outline-light" 
-                        data-loan-id="${loan.id}"
+                        data-debt-id="${debt.id}"
                     >
                         <i class="bi bi-cash-coin"></i>
                     </button>
@@ -56,18 +56,18 @@ function renderDataTable(loans){
                         type="button" 
                         class="btn btn-outline-success" 
                         data-bs-toggle="modal" 
-                        data-bs-target="#edit-account-receivable"
-                        data-loan-id="${loan.id}"
-                        data-amount="${loan.amount}"
-                        data-is-cash="${loan.is_cash}"
-                        data-is-active="${loan.is_active}"
-                        data-description="${loan.description}"
-                        data-person-name="${loan.person_name}"
-                        data-bank-account-id="${loan.bank_account_id}"
+                        data-bs-target="#edit-account-payable"
+                        data-debt-id="${debt.id}"
+                        data-amount="${debt.amount}"
+                        data-is-cash="${debt.is_cash}"
+                        data-is-active="${debt.is_active}"
+                        data-description="${debt.description}"
+                        data-person-name="${debt.person_name}"
+                        data-bank-account-id="${debt.bank_account_id}"
                     >
                         <i class="bi bi-pen"></i>
                     </button>
-                    <a href="/accounts_receivable/delete/${loan.id}" class="btn btn-danger"> <i class="bi bi-trash"></i></a>
+                    <a href="/debts/delete/${debt.id}" class="btn btn-danger"> <i class="bi bi-trash"></i></a>
                 </div>
             </td>
 
@@ -107,7 +107,7 @@ async function filterData(){
     let url = '';
 
     if(selectFilterType.value === 'field'){
-        url = `/accounts_receivable/filter_loans_by_field?query=${filterInput.value}`;
+        url = `/debts/filter/by/field?query=${filterInput.value}`;
     } else {
         if(startDate === null || endDate === null){ 
             Swal.fire({
@@ -121,12 +121,12 @@ async function filterData(){
         const end = timePicker.formatDate(endDate, 'Y-m-d'); 
 
 
-        url = `/accounts_receivable/filter_loans_by_timeframe?start=${start}&end=${end}`;
+        url = `/debts/filter/by/time?start=${start}&end=${end}`;
     }
 
     const data = await getData(url);
 
-    renderDataTable(data.loans);
+    renderDataTable(data.debts);
 
     startDate = null;
     endDate = null;

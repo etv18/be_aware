@@ -18,7 +18,7 @@ def index():
         'format_amount': format_amount,
         'total_amount': total_amount,
     }
-    return render_template('debts/index.html', **context)
+    return render_template('accounts_payable/index.html', **context)
 
 @debt_bp.route('/associated/records/<int:id>')
 def associated_records(id):

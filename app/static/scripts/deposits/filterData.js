@@ -44,7 +44,7 @@ function renderDataTable(deposits){
                     >
                     <i class="bi bi-pen"></i>
                     </button>
-                    <a href="/debts/delete/${deposit.id}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                    <a href="/deposits/delete/${deposit.id}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
                 </div>
             </td>
         `;

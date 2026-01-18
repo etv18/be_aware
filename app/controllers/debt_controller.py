@@ -81,7 +81,7 @@ def update(id):
                 old_amount=debt.amount, 
                 new_amount=amount)
         elif debt.bank_account:
-            debt.bank_account.amount_available -= debt.amount
+            debt.bank_account.amount_available -= debt.amount #subtract the money from the previous bank account if the bank account is changed to other one
 
         debt.amount = amount
         debt.is_cash = is_cash

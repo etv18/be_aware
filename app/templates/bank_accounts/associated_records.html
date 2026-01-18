@@ -170,6 +170,54 @@
     </div>
 
     <div class="my-5 border rounded-3">
+        <div class="rounded-top d-flex align-items-center justify-content-center p-2" style="height: 60px; background-color: #006909;">
+            <div class="me-auto">
+                <h4 class="d-flex justify-content-center">Debts</h4>
+            </div>                
+            <div class="w-100" style="max-width: 217px;">
+                <input type="text" name="filter-input-debt" id="filter-input-debt-id" class="form-control"placeholder="Search...">
+            </div>
+        </div>
+        <div id="debts-table-container" class="table-responsive overflow-y-auto" style="max-height: 322px;">
+            <table class="table table-borderless table-hover text-center">
+                <thead class="sticky-top">
+                    <tr class="table-info">
+                        <th scope="col"># Id</th>
+                        <th scope="col" class="text-start">Amount</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Remaining</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-start">Description</th>
+                        <th scope="col">Bank Account</th>
+                        <th scope="col">Create at</th>
+                    </tr>
+                </thead>
+                
+                <tbody id="debts-table-body">
+                  {% for debt in bank_account.debts %}
+                    <tr>
+                        <th scope="row">{{ debt.id }}</th>
+                        <td class="text-start">{{ format_amount(debt.amount) }}</td>
+                        <td>{{ debt.person_name }}</td>
+                        <td> {{ debt.remaining_amount() }} </td>
+                        <td>{{ 'ACTIVE' if debt.is_active else 'PAID'  }}</td>
+                        <td class="text-start">{{ debt.description }}</td>
+                        <td>{{ debt.bank_account.nick_name }}</td>
+                        <td>{{ debt.created_at }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
+            <div class="row text-center">
+                <p class="fs-6 fw-bold" id="total-amounts-debts-id">TOTAL: {{ total_amount(bank_account.debts) }}</p>
+                <p class="fs-6 fw-bold" id="total-count-debts-id">RECORDS: {{ bank_account.debts | length }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="my-5 border rounded-3">
         <div class="bg-primary rounded-top d-flex align-items-center justify-content-center p-2" style="height: 60px;">
             <div class="me-auto">
                 <h4 class="d-flex justify-content-center">Incomes</h4>

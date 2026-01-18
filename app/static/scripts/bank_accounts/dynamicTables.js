@@ -9,6 +9,7 @@ const tBodyLoan = document.getElementById('loans-table-body');
 const tBodyLoanPayment = document.getElementById('loan-payment-table-body');
 const tBodyCreditCardPayment = document.getElementById('credit-card-payment-table-body');
 const tBodyBankTransfer = document.getElementById('transfer-table-body');
+const tBodyDebt = document.getElementById('debts-table-body');
 
 //FILTER INPUTS
 const expenseFilterInput = document.getElementById('filter-input-expense-id');
@@ -18,6 +19,7 @@ const loanFilterInput = document.getElementById('filter-input-loan-id');
 const loanPaymentFilterInput = document.getElementById('filter-input-loan-payment-id');
 const creditCardPaymentFilterInput = document.getElementById('filter-input-credit-card-payment-id');
 const bankTransferFilterInput = document.getElementById('filter-input-transfer-id');
+const debtFilterInput = document.getElementById('filter-input-debt-id');
 
 const associatedRecordsInJsonEndpoint = document.getElementById('associated-records-url-id').textContent;
 
@@ -28,6 +30,7 @@ let loans;
 let loanPayments;
 let creditCardPayments;
 let bankTransfers;
+let debts;
 let ownerBankAccountId;
 
 const colSpan = {
@@ -129,6 +132,17 @@ const bankTransfersTemplateFn = (transfer) => `
     </tr>
 `;
 
+const debtsTemplateFn = (debt) => `
+    <th scope="row">${debt.id}</th>
+    <td class="text-start">${formatNumber(debt.amount)}</td>
+    <td>${debt.person_name ?? '-'}</td>
+    <td> ${formatNumber(debt.remaining_amount)} </td>
+    <td>${debt.is_active ? 'ACTIVE' : 'PAID'}</td>
+    <td class="text-start">${debt.description ?? '-'}</td>
+    <td>${debt.bank_account_nick_name ?? '-'}</td>
+    <td>${debt.created_at}</td>
+`;
+
 async function getData(url){
     let data;
 
@@ -159,6 +173,8 @@ async function getData(url){
         loanPayments = data.records?.loan_payment ?? [];
         creditCardPayments = data.records?.credit_card_payments ?? [];
         bankTransfers = data.records?.bank_transfers ?? [];
+        debts = data.records?.debts ?? [];
+
         ownerBankAccountId = data.owner_bank_account_id;
 
         return data
@@ -360,9 +376,20 @@ bankTransferFilterInput.addEventListener('input', debounce(async e => {
             filteredList = filterTableData(bankTransfers, query);
         }
 
-        console.log('value ##> ', ownerBankAccountId)
-
         renderDataTable(filteredList, tBodyBankTransfer, bankTransfersTemplateFn, colSpan.bankTransfers);
+        totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
+        totalCount.textContent = `RECORDS: ${filteredList.length}`;
+    })
+);
+
+debtFilterInput.addEventListener('input', debounce(async e => {
+        const totatAmounts = document.getElementById('total-amounts-debts-id');
+        const totalCount = document.getElementById('total-count-debts-id');
+        var query = debtFilterInput.value;
+
+        const filteredList = filterTableData(debts, query);
+
+        renderDataTable(filteredList, tBodyDebt, debtsTemplateFn, colSpan.loans);
         totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
         totalCount.textContent = `RECORDS: ${filteredList.length}`;
     })

@@ -10,6 +10,8 @@ const tBodyLoanPayment = document.getElementById('loan-payment-table-body');
 const tBodyCreditCardPayment = document.getElementById('credit-card-payment-table-body');
 const tBodyBankTransfer = document.getElementById('transfer-table-body');
 const tBodyDebt = document.getElementById('debts-table-body');
+const tBodyDebtPayment = document.getElementById('debt-payment-table-body');
+const tBodyDeposit = document.getElementById('deposits-table-body');
 
 //FILTER INPUTS
 const expenseFilterInput = document.getElementById('filter-input-expense-id');
@@ -20,6 +22,8 @@ const loanPaymentFilterInput = document.getElementById('filter-input-loan-paymen
 const creditCardPaymentFilterInput = document.getElementById('filter-input-credit-card-payment-id');
 const bankTransferFilterInput = document.getElementById('filter-input-transfer-id');
 const debtFilterInput = document.getElementById('filter-input-debt-id');
+const debtPaymentFilterInput = document.getElementById('filter-input-debt-payment-id');
+const depositFilterInput = document.getElementById('filter-input-withdrawal-id');
 
 const associatedRecordsInJsonEndpoint = document.getElementById('associated-records-url-id').textContent;
 
@@ -32,6 +36,8 @@ let creditCardPayments;
 let bankTransfers;
 let debts;
 let ownerBankAccountId;
+let debtPayments;
+let deposits;
 
 const colSpan = {
     expenses: 7,
@@ -143,6 +149,21 @@ const debtsTemplateFn = (debt) => `
     <td>${debt.created_at}</td>
 `;
 
+const debtPaymentsTemplateFn = (debtPayment) => `
+    <th scope="row">${ debtPayment.id }</th>
+    <td class="text-start">${ formatNumber(debtPayment.amount) }</td>
+    <td>${ debtPayment.bank_account_nick_name ?? '-'}</td>
+    <td>${ debtPayment.created_at }</td>
+`;
+
+const depositsTemplateFn = (deposit) => `
+    <th scope="row">${ deposit.id }</th>
+    <td>${ formatNumber(deposit.amount) }</td>
+    <td>${ deposit.description ?? '-'}</td>
+    <td>${ deposit.bank_account_nick_name ?? '-' }</td>
+    <td>${ deposit.created_at }</td>
+`;
+
 async function getData(url){
     let data;
 
@@ -174,6 +195,8 @@ async function getData(url){
         creditCardPayments = data.records?.credit_card_payments ?? [];
         bankTransfers = data.records?.bank_transfers ?? [];
         debts = data.records?.debts ?? [];
+        debtPayments = data.records?.debt_payments ?? [];
+        deposits = data.records?.deposits ?? [];
 
         ownerBankAccountId = data.owner_bank_account_id;
 
@@ -390,6 +413,32 @@ debtFilterInput.addEventListener('input', debounce(async e => {
         const filteredList = filterTableData(debts, query);
 
         renderDataTable(filteredList, tBodyDebt, debtsTemplateFn, colSpan.loans);
+        totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
+        totalCount.textContent = `RECORDS: ${filteredList.length}`;
+    })
+);
+
+debtPaymentFilterInput.addEventListener('input', debounce(async e => {
+        const totatAmounts = document.getElementById('total-amounts-debt-payments-id');
+        const totalCount = document.getElementById('total-count-debt-payments-id');
+        var query = debtPaymentFilterInput.value;
+
+        const filteredList = filterTableData(debtPayments, query);
+
+        renderDataTable(filteredList, tBodyDebtPayment, debtPaymentsTemplateFn, colSpan.loanPayments);
+        totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
+        totalCount.textContent = `RECORDS: ${filteredList.length}`;
+    })
+);
+
+depositFilterInput.addEventListener('input', debounce(async e => {
+        const totatAmounts = document.getElementById('total-amounts-deposit-id');
+        const totalCount = document.getElementById('total-count-deposit-id');
+        var query = depositFilterInput.value;
+
+        const filteredList = filterTableData(deposits, query);
+
+        renderDataTable(filteredList, tBodyDeposit, depositsTemplateFn, colSpan.withdrawals);
         totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
         totalCount.textContent = `RECORDS: ${filteredList.length}`;
     })

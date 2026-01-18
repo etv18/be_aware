@@ -218,6 +218,47 @@
     </div>
 
     <div class="my-5 border rounded-3">
+        <div class="rounded-top d-flex align-items-center justify-content-center p-2" style="height: 60px; background-color: #449177;">
+            <div class="me-auto">
+                <h4 class="d-flex justify-content-center">Debt Payments</h4>
+            </div>                
+            <div class="w-100" style="max-width: 217px;">
+                <input type="text" name="filter-input-debt-payment" id="filter-input-debt-payment-id" class="form-control"placeholder="Search...">
+            </div>
+        </div>
+
+        <div id="expenses-table-container" class="table-responsive overflow-y-auto" style="max-height: 322px;">
+            <table class="table table-borderless table-hover text-center" id="expenses-table">
+                <thead class="sticky-top">
+                    <tr class="table-success">
+                        <th scope="col"># Id</th>
+                        <th scope="col" class="text-start">Amount</th>
+                        <th scope="col">Bank Account</th>
+                        <th scope="col">Create at</th>
+                    </tr>
+                </thead>
+                <tbody id="debt-payment-table-body">
+                    {% for payment in bank_account.debt_payments %}                
+                    <tr>
+                        <th scope="row">{{ payment.id }}</th>
+                        <td class="text-start">{{ format_amount(payment.amount) }}</td>
+                        <td>{{ payment.bank_account.nick_name }}</td>
+                        <td>{{ payment.created_at }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
+            <div class="row text-center">
+                <p class="fs-6 fw-bold" id="total-amounts-debt-payments-id">TOTAL: {{ total_amount(bank_account.debt_payments) }}</p>
+                <p class="fs-6 fw-bold" id="total-count-debt-payments-id">RECORDS: {{ bank_account.debt_payments | length }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="my-5 border rounded-3">
         <div class="bg-primary rounded-top d-flex align-items-center justify-content-center p-2" style="height: 60px;">
             <div class="me-auto">
                 <h4 class="d-flex justify-content-center">Incomes</h4>
@@ -255,6 +296,50 @@
             <div class="row text-center">
                 <p class="fs-6 fw-bold" id="total-amounts-incomes-id">TOTAL: {{ total_amount(bank_account.incomes) }}</p>
                 <p class="fs-6 fw-bold" id="total-count-incomes-id">RECORDS: {{ bank_account.incomes | length }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="my-5 border rounded-3">
+        <div class="rounded-top d-flex align-items-center justify-content-center p-2" style="height: 60px; background-color: #3f2991bb;">
+            <div class="me-auto">
+                <h4 class="d-flex justify-content-center">Deposits</h4>
+            </div>                
+            <div class="w-100" style="max-width: 217px;">
+                <input type="text" name="filter-input-withdrawal" id="filter-input-withdrawal-id" class="form-control"placeholder="Search...">
+            </div>
+        </div>
+
+        <div class="table-responsive overflow-y-auto" style="max-height: 322px;">
+            <table class="table table-borderless table-hover text-center">
+                <thead class="sticky-top">
+                    <tr class="table-light" >
+                        <th scope="col"># Id</th>
+                        <th scope="col" class="text-start">Amount</th>
+                        <th scope="col" class="text-start">Description</th>
+                        <th scope="col">Bank Account</th>
+                        <th scope="col">Create at</th>
+                    </tr>
+                </thead>
+                
+                <tbody  id="deposits-table-body">
+                  {% for deposit in bank_account.deposits %}
+                    <tr>
+                        <th scope="row">{{ deposit.id }}</th>
+                        <td class="text-start">{{ format_amount(deposit.amount) }}</td>
+                        <td class="text-start">{{ deposit.description if deposit.description else '-'}}</td>
+                        <td>{{ deposit.bank_account.nick_name }}</td>
+                        <td>{{ deposit.created_at }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
+            <div class="row text-center">
+                <p class="fs-6 fw-bold" id="total-amounts-deposit-id">TOTAL: {{ total_amount(bank_account.deposits) }}</p>
+                <p class="fs-6 fw-bold" id="total-count-deposit-id">RECORDS: {{ bank_account.deposits | length }}</p>
             </div>
         </div>
     </div>

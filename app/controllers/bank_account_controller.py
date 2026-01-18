@@ -125,6 +125,9 @@ def get_associated_records_in_json(bank_account_id):
             bank_account.loan_payments,
             bank_account.credit_card_payments,
             bank_account.withdrawals,
+            bank_account.debts,
+            bank_account.debt_payments,
+            bank_account.deposits,
             banktransfers
         ]
         data = {}

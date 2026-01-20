@@ -1,6 +1,6 @@
 import traceback
 from datetime import datetime
-from sqlalchemy import func
+from sqlalchemy import func, case
 from decimal import Decimal
 
 from app.extensions import db
@@ -100,42 +100,87 @@ def get_yearly_records(id, CustomModel, year=None) -> list:
     return monthly_records
 
 def get_yearly_total_amount_info(id, CustomModel, year=None) -> list:
-    if year is None:
-        year = datetime.now().year
+    try:
+        if year is None:
+            year = datetime.now().year
 
-    monthly_totals = []
-
-    for month in range(1, 13):
-        record = get_monthly_total_amount_info(
-            id=id,
-            CustomModel=CustomModel, 
-            year=year,
-            month=month
+        results = (
+            CustomModel.query
+            .filter(
+                CustomModel.bank_account_id == id,
+                func.extract('year', CustomModel.created_at) == year
+            )
+            .with_entities(
+                func.extract('month', CustomModel.created_at).label('month'),
+                func.sum(CustomModel.amount).label('total')
+            )
+            .group_by('month')
+            .all()
         )
-        monthly_totals.append(record)
-    
-    return monthly_totals
+
+        # Initialize all 12 months with 0
+        monthly_totals = {month: Decimal('0.00') for month in range(1, 13)}
+
+        # Fill months that have data
+        for month, total in results:
+            monthly_totals[int(month)] = total or Decimal('0.00')
+
+        # Return ordered list (Jan → Dec)
+        return [monthly_totals[m] for m in range(1, 13)]
+
+    except Exception as e:
+        db.session.rollback()
+        traceback.print_exc()
+        raise e
 
 def get_yearly_total_amount_info_of_transfers(id, year=None) -> list:
-    if year is None:
-        year = datetime.now().year
+    try:
+        if year is None:
+            year = datetime.now().year
 
-    outgoings = []
-    incomings = []
+        results = (
+            BankTransfer.query
+            .filter(
+                func.extract('year', BankTransfer.created_at) == year,
+                (BankTransfer.from_bank_account_id == id) |
+                (BankTransfer.to_bank_account_id == id)
+            )
+            .with_entities(
+                func.extract('month', BankTransfer.created_at).label('month'),
 
-    for month in range(1, 13):
-        results = {} #Dictionary
-        results = get_monthly_total_amount_info_of_transfers(
-            id=id,
-            year=year,
-            month=month
+                func.sum(
+                    case(
+                        (BankTransfer.from_bank_account_id == id, BankTransfer.amount),
+                        else_=0
+                    )
+                ).label('outgoings'),
+
+                func.sum(
+                    case(
+                        (BankTransfer.to_bank_account_id == id, BankTransfer.amount),
+                        else_=0
+                    )
+                ).label('incomings'),
+            )
+            .group_by('month')
+            .all()
         )
-        outgoings.append(results['outgoings'])
-        incomings.append(results['incomings'])
 
-    transfers = {
-        'outgoings': outgoings,
-        'incomings': incomings,
-    }
+        # Initialize all 12 months with 0
+        outgoings = {m: Decimal('0.00') for m in range(1, 13)}
+        incomings = {m: Decimal('0.00') for m in range(1, 13)}
 
-    return transfers
+        for month, outgoing, incoming in results:
+            month = int(month)
+            outgoings[month] = outgoing or Decimal('0.00')
+            incomings[month] = incoming or Decimal('0.00')
+
+        return {
+            'outgoings': [outgoings[m] for m in range(1, 13)],
+            'incomings': [incomings[m] for m in range(1, 13)],
+        }
+
+    except Exception as e:
+        db.session.rollback()
+        traceback.print_exc()
+        raise e

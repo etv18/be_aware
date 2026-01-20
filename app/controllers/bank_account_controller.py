@@ -180,6 +180,40 @@ def get_cash_flow_info(bank_account_id, year=None):
     }
     return jsonify(data), 200
 
+    
+def get_yearly_total_per_association_info(bank_account_id, year=None):
+
+    outgoing_classes = [Expense, Withdrawal, Loan, CreditCardPayment, DebtPayment]
+    incoming_classes = [LoanPayment, Income, Deposit, Debt]
+
+    #Since transfer's stores outgoings and incomings cash flow they have to be
+    #managed individually to get each group separetly
+    transfers = get_yearly_total_amount_info_of_transfers(id=bank_account_id, year=year)
+
+    outgoings = h_get_total_amount_info_using_models(
+        id=bank_account_id, 
+        models=outgoing_classes,
+        transfers=transfers.get('outgoings'),
+        year=year
+    )
+
+    incomings = h_get_total_amount_info_using_models(
+        id=bank_account_id, 
+        models=incoming_classes,
+        transfers=transfers.get('incomings'),
+        year=year
+    )
+
+    balances = h_get_balances(outgoings=outgoings, incomings=incomings)
+
+    data = {
+        'months': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        'outgoings': outgoings,
+        'incomings': incomings,
+        'balances': balances
+    }
+    return jsonify(data), 200
+
 
 def total_monthly_per_associated_record(bank_account_id, year=None):
     models = [Expense, Withdrawal, Loan, CreditCardPayment, LoanPayment, Income, Debt, DebtPayment, Deposit]

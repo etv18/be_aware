@@ -8,6 +8,9 @@ const creditCardPaymentsTotal = document.getElementById('monthly-credit-card-pay
 const transfersOutgoingsTotal = document.getElementById('monthly-transfers-outgoings-total-id');
 const transfersIncomingsTotal = document.getElementById('monthly-transfers-incomings-total-id');
 const withdrawalsTotal = document.getElementById('monthly-withdrawals-total-id');
+const depositsTotal = document.getElementById('monthly-deposits-total-id');
+const debtsTotal = document.getElementById('monthly-debts-total-id');
+const debtsPaymentsTotal = document.getElementById('monthly-debt-payments-total-id');
 
 async function getMonthlyTotalPerAssociatedRecord(){
     try {
@@ -46,4 +49,7 @@ document.addEventListener('DOMContentLoaded', async e => {
     transfersOutgoingsTotal.textContent = formatNumber(data.monthly_totals.transfers_outgoings);
     transfersIncomingsTotal.textContent = formatNumber(data.monthly_totals.transfers_incomings);
     withdrawalsTotal.textContent = formatNumber(data.monthly_totals.withdrawals);
+    depositsTotal.textContent = formatNumber(data.monthly_totals.deposits);
+    debtsTotal.textContent = formatNumber(data.monthly_totals.debts);
+    debtsPaymentsTotal.textContent = formatNumber(data.monthly_totals.debt_payments);
 });

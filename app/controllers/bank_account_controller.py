@@ -19,6 +19,9 @@ from app.models.withdrawal import Withdrawal
 from app.models.credit_card_payment import CreditCardPayment
 from app.models.income import Income
 from app.models.banktransfer import BankTransfer
+from app.models.debt import Debt
+from app.models.debt_payment import DebtPayment
+from app.models.deposit import Deposit
 
 def create_bank_account():
     try:
@@ -146,8 +149,8 @@ def get_associated_records_in_json(bank_account_id):
     
 def get_cash_flow_info(bank_account_id, year=None):
 
-    outgoing_classes = [Expense, Withdrawal, Loan, CreditCardPayment]
-    incoming_classes = [LoanPayment, Income]
+    outgoing_classes = [Expense, Withdrawal, Loan, CreditCardPayment, DebtPayment]
+    incoming_classes = [LoanPayment, Income, Deposit, Debt]
 
     #Since transfer's stores outgoings and incomings cash flow they have to be
     #managed individually to get each group separetly
@@ -179,7 +182,7 @@ def get_cash_flow_info(bank_account_id, year=None):
 
 
 def total_monthly_per_associated_record(bank_account_id, year=None):
-    models = [Expense, Withdrawal, Loan, CreditCardPayment, LoanPayment, Income]
+    models = [Expense, Withdrawal, Loan, CreditCardPayment, LoanPayment, Income, Debt, DebtPayment, Deposit]
     monthly_totals = {}
     now = datetime.now()
     for model in models:

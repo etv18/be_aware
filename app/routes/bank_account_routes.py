@@ -94,6 +94,13 @@ def get_total_monthly_per_associated_record_info(bank_account_id):
     except Exception as e:
         raise e
     
+@bank_account_bp.route('/yearly/total/per/association/info/<int:bank_account_id>')
+def get_yearly_total_per_association_info(bank_account_id):
+    try:
+        return ba_controller.get_yearly_total_per_association_info(bank_account_id)
+    except Exception as e:
+        raise e
+    
 @bank_account_bp.route('/stats/<int:bank_account_id>')
 def stats(bank_account_id):
     try:

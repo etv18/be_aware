@@ -192,7 +192,7 @@ def get_yearly_total_per_association_info(bank_account_id, year=None):
     outgoing_transfers = transfers.get('outgoings')
     incoming_transfers = transfers.get('incomings')
 
-    associations_info = []
+    associations_info = {}
 
     for association in associations:
         table_name = association.__tablename__
@@ -201,10 +201,10 @@ def get_yearly_total_per_association_info(bank_account_id, year=None):
             CustomModel=association,
             year=year
         )
-        associations_info.append( { table_name: yearly_info } )
+        associations_info[table_name] = yearly_info
     
-    associations_info.append( { 'outgoing_transfers': outgoing_transfers } )
-    associations_info.append( { 'incoming_transfers': incoming_transfers } )
+    associations_info['outgoing_transfers'] = outgoing_transfers
+    associations_info['incoming_transfers'] = incoming_transfers
 
     data = {
         'months': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],

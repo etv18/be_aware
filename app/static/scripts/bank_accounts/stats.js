@@ -73,78 +73,78 @@ function generateYearlyTotalPerAssociationChart(canvas, type, data){
                     {
                         label: 'Expenses',
                         data: data.associations_info.expenses,
-                        backgroundColor: "rgba(255, 99, 132, 0.6)",
-                        borderColor: "rgba(255, 99, 132, 1)",
+                        backgroundColor: "#dd3445",
+                        borderColor: "#dd3445",
                         borderWidth: 1                       
                     },
                     {
                         label: 'Withdrawals',
                         data: data.associations_info.withdrawals,
-                        backgroundColor: "rgba(75, 192, 192, 0.6)",
-                        borderColor: "rgba(75, 192, 192, 1)",
+                        backgroundColor: "#b9dc88",
+                        borderColor: "#b9dc88",
                         borderWidth: 1 
                     },
                     {
                         label: 'Loans',
                         data: data.associations_info.loans,
-                        backgroundColor: "rgba(75, 192, 192, 0.6)",
-                        borderColor: "rgba(75, 192, 192, 1)",
+                        backgroundColor: "#ffc106",
+                        borderColor: "#ffc106",
                         borderWidth: 1 
                     },
                     {
                         label: 'Credit Card Payments',
                         data: data.associations_info.credit_card_payments,
-                        backgroundColor: "rgba(75, 192, 192, 0.6)",
-                        borderColor: "rgba(75, 192, 192, 1)",
+                        backgroundColor: "#6d747c",
+                        borderColor: "#6d747c",
                         borderWidth: 1 
                     },
                     {
                         label: 'Debt Payments',
                         data: data.associations_info.debt_payments,
-                        backgroundColor: "rgba(75, 192, 192, 0.6)",
-                        borderColor: "rgba(75, 192, 192, 1)",
+                        backgroundColor: "#3a768b",
+                        borderColor: "#3a768b",
                         borderWidth: 1 
                     },
                     {
                         label: 'Loan Payment',
                         data: data.associations_info.loan_payment,
-                        backgroundColor: "rgba(75, 192, 192, 0.6)",
-                        borderColor: "rgba(75, 192, 192, 1)",
+                        backgroundColor: "#198754",
+                        borderColor: "#198754",
                         borderWidth: 1 
                     },
                     {
                         label: 'Incomes',
                         data: data.associations_info.incomes,
-                        backgroundColor: "rgba(75, 192, 192, 0.6)",
-                        borderColor: "rgba(75, 192, 192, 1)",
+                        backgroundColor: "#0d6efd",
+                        borderColor: "#0d6efd",
                         borderWidth: 1 
                     },
                     {
                         label: 'Deposits',
                         data: data.associations_info.deposits,
-                        backgroundColor: "rgba(75, 192, 192, 0.6)",
-                        borderColor: "rgba(75, 192, 192, 1)",
+                        backgroundColor: "#624ea2",
+                        borderColor: "#624ea2",
                         borderWidth: 1 
                     },
                     {
                         label: 'Debts',
                         data: data.associations_info.debts,
-                        backgroundColor: "rgba(75, 192, 192, 0.6)",
-                        borderColor: "rgba(75, 192, 192, 1)",
+                        backgroundColor: "#dfbab1",
+                        borderColor: "#dfbab1",
                         borderWidth: 1 
                     },
                     {
                         label: 'Outgoing Transfers',
                         data: data.associations_info.outgoing_transfers,
-                        backgroundColor: "rgba(75, 192, 192, 0.6)",
-                        borderColor: "rgba(75, 192, 192, 1)",
+                        backgroundColor: "#ff8daf",
+                        borderColor: "#ff8daf",
                         borderWidth: 1 
                     },
                     {
                         label: 'Incoming Transfers',
                         data: data.associations_info.incoming_transfers,
-                        backgroundColor: "rgba(75, 192, 192, 0.6)",
-                        borderColor: "rgba(75, 192, 192, 1)",
+                        backgroundColor: "#86acff",
+                        borderColor: "#86acff",
                         borderWidth: 1 
                     },
                 ]

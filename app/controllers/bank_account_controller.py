@@ -183,34 +183,32 @@ def get_cash_flow_info(bank_account_id, year=None):
     
 def get_yearly_total_per_association_info(bank_account_id, year=None):
 
-    outgoing_classes = [Expense, Withdrawal, Loan, CreditCardPayment, DebtPayment]
-    incoming_classes = [LoanPayment, Income, Deposit, Debt]
+    associations = [Expense, Withdrawal, Loan, CreditCardPayment, DebtPayment, LoanPayment, Income, Deposit, Debt]
 
     #Since transfer's stores outgoings and incomings cash flow they have to be
     #managed individually to get each group separetly
     transfers = get_yearly_total_amount_info_of_transfers(id=bank_account_id, year=year)
 
-    outgoings = h_get_total_amount_info_using_models(
-        id=bank_account_id, 
-        models=outgoing_classes,
-        transfers=transfers.get('outgoings'),
-        year=year
-    )
+    outgoing_transfers = transfers.get('outgoings')
+    incoming_transfers = transfers.get('incomings')
 
-    incomings = h_get_total_amount_info_using_models(
-        id=bank_account_id, 
-        models=incoming_classes,
-        transfers=transfers.get('incomings'),
-        year=year
-    )
+    associations_info = []
 
-    balances = h_get_balances(outgoings=outgoings, incomings=incomings)
+    for association in associations:
+        table_name = association.__tablename__
+        yearly_info = get_yearly_total_amount_info(
+            id=bank_account_id,
+            CustomModel=association,
+            year=year
+        )
+        associations_info.append( { table_name: yearly_info } )
+    
+    associations_info.append( { 'outgoing_transfers': outgoing_transfers } )
+    associations_info.append( { 'incoming_transfers': incoming_transfers } )
 
     data = {
         'months': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        'outgoings': outgoings,
-        'incomings': incomings,
-        'balances': balances
+        'associations_info': associations_info,
     }
     return jsonify(data), 200
 

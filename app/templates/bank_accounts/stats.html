@@ -55,7 +55,7 @@
          <h3>Yearly Cash Flow Chart</h3>
         <div class=" d-flex justify-content-center">
             <div class="chart-box">
-                <canvas id="yearly-association-stats"></canvas>
+                <canvas id="yearly-total-per-association-chart"></canvas>
             </div>
         </div>
     </div>
@@ -316,6 +316,8 @@
 
 <input type="hidden" name="" id="yearly-cash-flow-endpoint-id" value="{{ url_for('bank_account.get_cash_flow_info', bank_account_id=bank_account.id ) }}">
 <input type="hidden" name="" id="total-monthly-per-associated-record-info-endpoint-id" value="{{ url_for('bank_account.get_total_monthly_per_associated_record_info', bank_account_id=bank_account.id ) }}">
+<input type="hidden" name="" id="yearly-total-per-association-endpoint-id" value="{{ url_for('bank_account.get_yearly_total_per_association_info', bank_account_id=bank_account.id ) }}">
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{{ url_for('static', filename='scripts/bank_accounts/stats.js' ) }}"></script>
 <script src="{{ url_for('static', filename='scripts/bank_accounts/cardStats.js' ) }}"></script>

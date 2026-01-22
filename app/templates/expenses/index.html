@@ -244,17 +244,19 @@
         <section>
             <div class="d-flex flex-column">
                 <div>
-                    <label for="" id="weekly-title">WEELY BASIS </label>
+                    <label for="" id="monthly-total-id">Total: $ {{ total_amount(expenses) }}</label>
+                    <br>
+                    <label for="" id="weekly-title">MONTHLY BASIS </label>
                 </div>
                 <div class="d-flex gap-2">
                     <div>
-                        <label for="" id="weekly-limit">Limit: {{ weekly.limit }}</label>
+                        <label for="" id="monthly-limit">Limit: {{ format_amount(monthly.limit) }}</label>
                     </div>
                     <div>
-                        <label for="" id="weekly-spent">Spent: {{ weekly.spent }}</label>
+                        <label for="" id="monthly-spent">Spent: {{ format_amount(monthly.spent) }}</label>
                     </div>
                     <div>
-                        <label for="" id="weekly-left">Left: {{ weekly.left }}</label>
+                        <label for="" id="monthly-left">Left: {{ format_amount(monthly.left) }}</label>
                     </div>
                 </div>
             </div>

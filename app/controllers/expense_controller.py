@@ -14,7 +14,7 @@ from app.models.credit_card import CreditCard
 from app.models.cash_ledger import CashLedger
 from app.models.bank_account_transactions_ledger import BankAccountTransactionsLedger
 from app.exceptions.bankProductsException import *
-from app.utils.numeric_casting import is_decimal_type
+from app.utils.numeric_casting import is_decimal_type, total_amount
 
 #HANDLERS
 def create_expense():
@@ -306,7 +306,8 @@ def filter_by_field(query):
 
         return jsonify({
             'expenses': expenses_list,
-            'count': len(expenses_list)
+            'count': len(expenses_list),
+            'total': total_amount(expenses)
         }), 200
     
     except Exception as e:

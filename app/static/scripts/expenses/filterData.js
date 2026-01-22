@@ -9,16 +9,17 @@ if (typeof yourVariable === 'undefined') {...}
 const selectFilterType = document.getElementById('select-filter-type-id');
 const filterInput = document.getElementById('filter-input-id');
 const btnSearch = document.getElementById('btn-search-id');
+const lblMonthlyTotal = document.getElementById('monthly-total-id')
 
 let timePicker = null;
 let startDate = null;
 let endDate = null;
 
-export function renderExpensesTable(expenses){
+export function renderExpensesTable(data){
     const tbody = document.getElementById('expenses-table-body');
     tbody.innerHTML = ''; //first you must clear previous rows
 
-    if(expenses.length === 0) {
+    if(data.expenses.length === 0) {
         tbody.innerHTML = `
             <tr>
                 <td colspan="9" class="text-center text-muted">No expenses found for this date range.</td>
@@ -27,7 +28,7 @@ export function renderExpensesTable(expenses){
         return;
     }
 
-    expenses.forEach(expense => {
+    data.expenses.forEach(expense => {
         const tableRow = document.createElement('tr');
         tableRow.innerHTML = `
             <th scope="row">${expense.id}</th>
@@ -59,6 +60,7 @@ export function renderExpensesTable(expenses){
         `;
         tbody.appendChild(tableRow);
     });
+
 }
 
 async function getData(url){
@@ -66,17 +68,18 @@ async function getData(url){
 
     try {
         const response = await fetch(url);
-        if(!response.ok) {
-            console.log(response.json());
+
+        if (!response.ok) {
+            const errorData = await response.json();
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: data.error || 'Something went wrong while creating the expense.'
+                text: errorData.error || 'Something went wrong'
             });
-            return;
+            return null;
         }
+
         data = await response.json();
-        console.log(data);
     } catch (error) {
         Swal.fire({
             icon: 'error',
@@ -109,7 +112,9 @@ async function filterData(){
 
     const data = await getData(url);
 
-    renderExpensesTable(data.expenses);
+    renderExpensesTable(data);
+
+    lblMonthlyTotal.textContent = 'Total: $'+data.total;
 
     //startDate = null;
     //endDate = null;

@@ -16,14 +16,14 @@ def index():
     expense_categories = expense_category.ExpenseCategory.query.all()
     bank_accounts = bank_account.BankAccount.query.all()
     expenses = expense_controller.get_monthly_expenses_records()
-    weekly = expense_controller.money_limit_spent_left_for_expenses(expenses)
+    monthly = expense_controller.money_limit_spent_left_for_expenses(expenses)
 
     context = {
         'credit_cards': credit_cards,
         'expense_categories': expense_categories,
         'bank_accounts': bank_accounts,
         'expenses':expenses,
-        'weekly': weekly,
+        'monthly': monthly,
         'format_amount': format_amount, #function
         'total_amount': total_amount, #function
     }
@@ -86,7 +86,10 @@ def filter_by_time():
     end = request.args.get('end')
 
     data = expense_controller.filter_by_time(start, end)
-    return jsonify({'expenses': data}), 200
+    return jsonify({
+        'expenses': data,
+        'total': total_amount(obj_list=data)
+    }), 200
 
 @expense_bp.route('/filter_expenses_by_cash/<int:is_cash>', methods=['GET'])
 def filter_expenses_by_cash(is_cash):

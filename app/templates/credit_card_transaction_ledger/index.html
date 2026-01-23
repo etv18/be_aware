@@ -1,0 +1,73 @@
+{% extends 'layout.html' %}
+
+{% block title %}Transactions Ledger{% endblock %}
+
+{% block content %}
+
+    <div class="container w-100">
+
+        <h2>Bank Accounts Transactions</h2>
+        <div class="d-flex justify-content-end gap-1 flex-wrap flex-md-nowrap mt-2">
+            <div class="d-flex gap-1 w-100 align-items-center" style="max-width: 320px;">
+                <div class="w-md-auto mt-md-0">
+                    <label for="" class="fs-6 fw-bold">Filter by: </label>
+                </div>
+                <div class="w-100 w-md-auto mt-md-0" style="max-width: 250px;">
+                    <select class="form-select" id="select-filter-type-id">
+                        <option value="field">Field</option>
+                        <option value="time">Time</option>
+                    </select>
+                </div>
+            </div>
+            <div class="d-flex gap-1 w-100" style="max-width: 350px;">
+                <div class="w-100 w-md-auto mt-md-0">
+                    <input type="text" class="form-control" id="filter-input-id">
+                </div>
+                <button type="button" class="btn btn-outline-success" id="btn-search-id"><i class="bi bi-search"></i></button>
+            </div>
+        </div>
+        <div class="table-responsive overflow-y-auto border rounded-3 mt-1" style="max-height: 457px;">
+            <table class="table table-hover">
+                <thead class="sticky-top">
+                    <tr class="table-secondary">
+                    <th scope="col"># Id</th>
+                    <th scope="col">Ref. Code</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Bank Account</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Before Update</th>
+                    <th scope="col">After Update</th>
+                    <th scope="col">Create at</th>
+                    </tr>
+                </thead>
+                
+                <tbody id="cashledger-table-body-id">
+                  {% for ledger in ledgers %}
+                    <tr>
+                        <th scope="row">{{ ledger.id }}</th>
+                        <td>{{ ledger.reference_code }}</td>
+                        <td>{{ ledger.transaction_type | title }}</td>
+                        <td>{{ ledger.bank_account.nick_name | title }}</td>
+                        <td>{{ format_amount(ledger.amount) }}</td>
+                        <td>{{ format_amount(ledger.before_update_balance) }}</td>
+                        <td>{{ format_amount(ledger.after_update_balance) }}</td>
+                        <td>{{ ledger.created_at }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+<link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
+<script type="module" src="{{ url_for('static', filename='scripts/bank_transactions_ledger/filterData.js' ) }}"></script>
+<script type="module" src="{{ url_for('static', filename='scripts/utils/asyncHanlding.js' ) }}"></script>
+
+
+{% endblock %}

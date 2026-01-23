@@ -4,6 +4,7 @@ import { debounce } from "../utils/asyncHanlding.js";
 const selectFilterType = document.getElementById('select-filter-type-id');
 const filterInput = document.getElementById('filter-input-id');
 const btnSearch = document.getElementById('btn-search-id');
+const lblTotal = document.getElementById('lbl-total-withdrawals');
 let timePicker = null;
 let startDate = null;
 let endDate = null;
@@ -102,6 +103,8 @@ async function filterData(){
     const data = await getData(url);
 
     renderDataTable(data.withdrawals);
+    console.log(data.total);
+    lblTotal.textContent = 'Total: $'+ data.total;
 
     //startDate = null;
     //endDate = null;

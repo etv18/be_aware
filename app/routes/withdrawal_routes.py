@@ -50,9 +50,7 @@ def delete(id):
 def filter_withdrawals_by_field():
     try:
         query = request.args.get('query')
-        print(query)
-        withdrawals = withdrawal_controller.filter_withdrawals_by_field(query)
-        return jsonify({'withdrawals': withdrawals}), 200
+        return withdrawal_controller.filter_withdrawals_by_field(query)
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400
@@ -62,8 +60,7 @@ def filter_withdrawals_by_timeframe():
     try:
         start = request.args.get('start')
         end =request.args.get('end')
-        withdrawals = withdrawal_controller.filter_withdrawals_by_timeframe(start, end)
-        return jsonify({'withdrawals': withdrawals}), 200
+        return withdrawal_controller.filter_withdrawals_by_timeframe(start, end)
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400

@@ -12,7 +12,6 @@ debt_bp = Blueprint('debt', __name__, url_prefix='/debts')
 def index():
     debts = Debt.query.order_by(Debt.created_at.desc()).all()
     bank_accounts = BankAccount.query.all()
-    ramaining_to_pay = Debt.query.filter(Debt.is_active == True).with_entities(func.sum(Debt.amount)).scalar()
     actives_debts = Debt.query.filter(Debt.is_active == True).count()
     paids_debts = Debt.query.filter(Debt.is_active == False).count()
 

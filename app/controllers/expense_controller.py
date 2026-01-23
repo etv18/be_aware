@@ -213,11 +213,14 @@ def filter_by_time(start, end):
         for e in expenses:
             data_from_database.append(e.to_dict())
 
-    except Exception as e:
-        print(e)
-    
-    return data_from_database
+        return jsonify({
+            'expenses': data_from_database,
+            'total': total_amount(obj_list=expenses)
+        }), 200
 
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+    
 def filter_weekly_basis_expenses_info():
     start_date, end_date = get_current_week_range()
     end_date += timedelta(days=1)

@@ -265,6 +265,25 @@
                 </tbody>
             </table>
         </div>
+
+        <section>
+            <div class="d-flex flex-column">
+                <div>
+                    <label for="" id="total-loans-id">Total: ${{ total_amount(loans) }}</label>
+                </div>
+                <div class="row">
+                    <div>
+                        <label for="" id="paid-debts">Paid Debts: {{ paids }}</label>
+                    </div>
+                    <div>
+                        <label for="" id="active-debts">Actives Debts: {{ actives }}</label>
+                    </div>
+                    <div>
+                        <label for="" id="remaining">Remaining to Collect: ${{ format_amount(remaining_to_collect) }}</label>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
     <input type="hidden" value="{{ url_for('accounts_receivable.create_loan') }}" id="createEndPoint">
     <input type="hidden" value="{{ url_for('accounts_receivable.create_loan_payment') }}" id="makePaymentEndPoint">

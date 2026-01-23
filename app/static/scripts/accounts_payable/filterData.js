@@ -5,6 +5,8 @@ import { debounce } from "../utils/asyncHanlding.js";
 const selectFilterType = document.getElementById('select-filter-type-id');
 const filterInput = document.getElementById('filter-input-id');
 const btnSearch = document.getElementById('btn-search-id');
+const lblTotal = document.getElementById('lbl-total');
+
 let timePicker = null;
 let startDate = null;
 let endDate = null;
@@ -128,8 +130,10 @@ async function filterData(){
 
     renderDataTable(data.debts);
 
-    startDate = null;
-    endDate = null;
+    lblTotal.textContent = 'Total: $'+ data.total;
+
+   // startDate = null;
+    // endDate = null;
 }
 
 selectFilterType.addEventListener('change', (e) => {

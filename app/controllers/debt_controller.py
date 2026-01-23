@@ -7,11 +7,12 @@ from decimal import Decimal
 
 from app.extensions import db
 from app.models.debt import Debt
+from app.models.debt_payment import DebtPayment
 from app.models.cash_ledger import CashLedger
 from app.models.bank_account_transactions_ledger import BankAccountTransactionsLedger
 from app.models.bank_account import BankAccount
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero, NoBankProductSelected, AmountGreaterThanAvailableMoney, NoAvailableMoney, BankAccountDoesNotExists
-from app.utils.numeric_casting import is_decimal_type
+from app.utils.numeric_casting import is_decimal_type, total_amount
 from app.utils.parse_structures import get_data_as_dictionary
 
 def create():
@@ -156,7 +157,10 @@ def filter_by_field():
         for debt in debts:
             debts_list.append(debt.to_dict())
 
-        return jsonify({'debts': debts_list}), 200
+        return jsonify({
+            'debts': debts_list,
+            'total': total_amount(debts)
+        }), 200
     except Exception as e:
         db.session.rollback()
         raise e 
@@ -187,7 +191,10 @@ def filter_by_time():
         for debt in debts:
             debts_list.append(debt.to_dict())
 
-        return jsonify({'debts': debts_list}), 200
+        return jsonify({
+            'debts': debts_list,
+            'total': total_amount(debts)
+        }), 200
     except Exception as e:
         db.session.rollback()
         raise e
@@ -211,6 +218,27 @@ def associated_records_in_json(id):
     except Exception as e:
         traceback.print_exc()
         return jsonify({'error': str(e)}), 400
+    
+def calculate_all_remainings():
+    try:
+        total_remaining = Decimal('0.0')
+        active_debt_data = Debt.query.filter(Debt.is_active == True).with_entities(Debt.id, Debt.amount).all()
+        print(active_debt_data[0])
+        for debt_data in active_debt_data:
+            debt_id = debt_data[0]
+            debt_amount = debt_data[1]
+            total_payments = (
+                DebtPayment.query
+                .filter(DebtPayment.debt_id == debt_id)
+                .with_entities(func.sum(DebtPayment.amount))
+                .scalar() or Decimal('0.0')
+            )
+            total_remaining += (debt_amount - total_payments)
+        
+        return total_remaining
+    except Exception as e:
+        traceback.print_exc()
+        raise e
 
 def _add_money_to_back_account(id, amount):
     bank_account = BankAccount.query.get(id)
@@ -253,3 +281,4 @@ def _evaluate_boolean_columns(query, reference_for_true, reference_for_false):
     if q == reference_for_false.lower():
         return False
     return None
+

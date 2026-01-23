@@ -24,7 +24,7 @@ def index():
         'bank_accounts': bank_accounts,
         'actives': active_loans,
         'paids': paid_loans,
-        'remaining_to_collect': remaining_to_collect,
+        'remaining_to_collect': loan_controller.calculate_all_remainings(),
         'format_amount': format_amount,
         'total_amount': total_amount,
     }

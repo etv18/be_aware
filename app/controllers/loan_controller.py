@@ -8,6 +8,7 @@ import traceback
 
 from app.extensions import db
 from app.models.loan import Loan
+from app.models.loan_payment import LoanPayment
 from app.models.bank_account import BankAccount
 from app.models.cash_ledger import CashLedger
 from app.models.bank_account_transactions_ledger import BankAccountTransactionsLedger
@@ -221,6 +222,28 @@ def associated_records_in_json(id):
     except Exception as e:
         traceback.print_exc()
         return jsonify({'error': str(e)}), 400
+    
+def calculate_all_remainings():
+    try:
+        total_remaining = Decimal('0.0')
+        active_loan_data = Loan.query.filter(Loan.is_active == True).with_entities(Loan.id, Loan.amount).all()
+        print(active_loan_data[0])
+        for loan_data in active_loan_data:
+            loan_id = loan_data[0]
+            loan_amount = loan_data[1]
+
+            total_payments = (
+                LoanPayment.query
+                .filter(LoanPayment.loan_id == loan_id)
+                .with_entities(func.sum(LoanPayment.amount))
+                .scalar() or Decimal('0.0')
+            )
+            total_remaining += (loan_amount - total_payments)
+        
+        return total_remaining
+    except Exception as e:
+        traceback.print_exc()
+        raise e
 
 #HELPERS
 def return_money_to_bank_account(loan):

@@ -13,7 +13,7 @@ from app.models.bank_account_transactions_ledger import BankAccountTransactionsL
 from app.models.bank_account import BankAccount
 from app.exceptions.bankProductsException import *
 from app.exceptions.generic import *
-from app.utils.numeric_casting import is_decimal_type
+from app.utils.numeric_casting import is_decimal_type, total_amount
 from app.utils.filter_data import get_total_amount
 
 def create():
@@ -114,69 +114,10 @@ def delete(id):
         traceback.print_exc()
         return jsonify({'error': str(e)}), 400
 
-    
-def filter_withdrawals_by_field(query):
-    try:
-        q = f'%{query}%'
-        filters = [
-            (Deposit.amount.ilike(q)),
-            (Deposit.description.ilike(q)),
-            (BankAccount.nick_name.ilike(q))
-        ]
-
-        deposits = (
-            Deposit.query
-            .outerjoin(Deposit.bank_account)
-            .filter(or_(*filters))
-            .order_by(Deposit.created_at.desc())
-            .all()
-        )
-
-        deposits_list = []
-        for deposit in deposits:
-            deposits_list.append(deposit.to_dict())
-
-        return deposits_list
-    except Exception as e:
-        db.session.rollback()
-        traceback.print_exc()
-        raise e
-    
-def filter_withdrawals_by_timeframe(start, end):
-    try:
-        if not start or not end:
-            return jsonify({'error': 'Missing data range.'})
-        
-        start_date = datetime.strptime(start, '%Y-%m-%d')
-        end_date = datetime.strptime(end, '%Y-%m-%d')
-        end_date += timedelta(days=1)
-
-        deposits_list = []
-
-        deposits = (
-            Deposit.query
-            .filter(Deposit.created_at.between(start_date, end_date))
-            .order_by(Deposit.created_at.desc())
-            .all()
-        )
-
-        for deposit in deposits:
-            deposits_list.append(deposit.to_dict())
-
-        return deposits_list
-    except Exception as e:
-        db.session.rollback()
-        traceback.print_exc()
-        raise e
-
-    
 def filter_by_field():
     try:
         query = request.args.get('query')
         q = f'%{query}%'
-
-        is_active = _evaluate_boolean_columns(query, 'active', 'paid')
-        is_cash = _evaluate_boolean_columns(query, 'yes', 'no')
 
         deposits_list = []
 
@@ -198,7 +139,10 @@ def filter_by_field():
         for deposit in deposits:
             deposits_list.append(deposit.to_dict())
 
-        return jsonify({'deposits': deposits_list}), 200
+        return jsonify({
+            'deposits': deposits_list,
+            'total': total_amount(deposits)
+        }), 200
     except Exception as e:
         db.session.rollback()
         raise e 
@@ -229,7 +173,10 @@ def filter_by_time():
         for deposit in deposits:
             deposits_list.append(deposit.to_dict())
 
-        return jsonify({'deposits': deposits_list}), 200
+        return jsonify({
+            'deposits': deposits_list,
+            'total': total_amount(deposits)
+        }), 200
     except Exception as e:
         db.session.rollback()
         raise e

@@ -13,6 +13,7 @@ from app.models.bank_account import BankAccount
 from app.models.credit_card import CreditCard
 from app.models.cash_ledger import CashLedger
 from app.models.bank_account_transactions_ledger import BankAccountTransactionsLedger
+from app.models.credit_card_transactions_ledger import CreditCardTransactionsLedger
 from app.exceptions.bankProductsException import *
 from app.utils.numeric_casting import is_decimal_type, total_amount
 
@@ -68,6 +69,7 @@ def create_expense():
 
         CashLedger.create(expense)
         if expense.bank_account_id: BankAccountTransactionsLedger.create(expense)
+        if expense.credit_card_id: CreditCardTransactionsLedger.create(expense)
 
 
     except (
@@ -162,6 +164,8 @@ def update_expense(expense):
         CashLedger.update_or_delete(expense, delete_ledger=False)
         
         BankAccountTransactionsLedger.update(expense)
+
+        CreditCardTransactionsLedger.update(expense)
         
     except (
         AmountGreaterThanAvailableMoney,
@@ -182,6 +186,7 @@ def delete_expense(expense):
         if expense.credit_card or expense.bank_account:
             return_money(expense)
             BankAccountTransactionsLedger.delete(expense)
+            CreditCardTransactionsLedger.delete(expense)
 
         CashLedger.update_or_delete(expense, delete_ledger=True)
         

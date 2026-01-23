@@ -6,6 +6,7 @@ import traceback
 
 from app.extensions import db
 from app.models.credit_card_payment import CreditCardPayment
+from app.models.credit_card_transactions_ledger import CreditCardTransactionsLedger
 from app.models.credit_card import CreditCard
 from app.models.bank_account import BankAccount
 from app.models.bank_account_transactions_ledger import BankAccountTransactionsLedger
@@ -42,6 +43,7 @@ def create_credit_card_payment():
         db.session.commit()
 
         if credit_card_payment.bank_account_id: BankAccountTransactionsLedger.create(credit_card_payment)
+        CreditCardTransactionsLedger.create(credit_card_payment)
 
     except Exception as e:
         db.session.rollback()
@@ -79,6 +81,8 @@ def update_credit_card_payment(id):
         db.session.commit()
 
         BankAccountTransactionsLedger.update(payment)
+
+        CreditCardTransactionsLedger.update(payment)
     except Exception as e:
         db.session.rollback()
         raise e
@@ -93,6 +97,7 @@ def delete_credit_card_payment(id):
         payment.credit_card.amount_available -= payment.amount #reduce the amount available of the credit card 'cause you are deleting the payment
 
         BankAccountTransactionsLedger.delete(payment)
+        CreditCardTransactionsLedger.delete(payment)
         db.session.delete(payment)
         db.session.commit()
     except Exception as e:

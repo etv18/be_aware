@@ -11,7 +11,7 @@ from app.models.cash_ledger import CashLedger
 from app.models.bank_account_transactions_ledger import BankAccountTransactionsLedger
 from app.exceptions.bankProductsException import BankAccountDoesNotExists, AmountIsLessThanOrEqualsToZero, NoBankProductSelected
 from app.extensions import db
-from app.utils.numeric_casting import is_decimal_type
+from app.utils.numeric_casting import is_decimal_type, total_amount, format_amount
 
 def create_income():
         try:
@@ -128,7 +128,11 @@ def filter_incomes_by_field(query):
         for i in incomes:
             incomes_list.append(i.to_dict())
 
-        return jsonify({'incomes': incomes_list}), 200
+        return jsonify({
+            'incomes': incomes_list,
+            'total': total_amount(incomes)
+        }), 200
+
 
     except Exception as e:
         db.session.rollback()
@@ -155,7 +159,10 @@ def filter_incomes_by_time(start, end):
         for i in incomes:
             incomes_list.append(i.to_dict())
 
-        return jsonify({'incomes': incomes_list}), 200
+        return jsonify({
+            'incomes': incomes_list,
+            'total': total_amount(incomes)
+        }), 200
 
     except Exception as e:
         db.session.rollback()

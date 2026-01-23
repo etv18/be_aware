@@ -13,7 +13,7 @@ from app.models.cash_ledger import CashLedger
 from app.models.bank_account_transactions_ledger import BankAccountTransactionsLedger
 from app.controllers.expense_controller import update_bank_account_money_on_create, update_bank_account_money_on_update
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero, NoBankProductSelected
-from app.utils.numeric_casting import is_decimal_type
+from app.utils.numeric_casting import is_decimal_type, total_amount
 from app.utils.parse_structures import get_data_as_dictionary
 
 def create_loan():
@@ -164,7 +164,10 @@ def filter_loans_by_field(query):
         for loan in loans:
             loans_list.append(loan.to_dict())
 
-        return jsonify({'loans': loans_list}), 200
+        return jsonify({
+            'loans': loans_list,
+            'total': total_amount(loans)
+        }), 200
     except Exception as e:
         db.session.rollback()
         raise e
@@ -191,7 +194,10 @@ def filter_loans_by_timeframe(start, end):
         for loan in loans:
             loans_list.append(loan.to_dict())
 
-        return jsonify({'loans': loans_list}), 200
+        return jsonify({
+            'loans': loans_list,
+            'total': total_amount(loans)
+        }), 200
     except Exception as e:
         db.session.rollback()
         raise e

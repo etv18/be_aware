@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, jsonify
 
+from sqlalchemy import func
+
 from app.controllers import loan_controller
 from app.controllers import loan_payment_controller
 from app.models.loan import Loan
@@ -12,10 +14,17 @@ accounts_receivable_bp = Blueprint('accounts_receivable', __name__, url_prefix='
 @accounts_receivable_bp.route('/index', methods=['GET'])
 def index():
     loans = Loan.query.order_by(Loan.created_at.desc()).all()
+    active_loans = Loan.query.filter(Loan.is_active == True).count()
+    paid_loans = Loan.query.filter(Loan.is_active == False).count()
+    remaining_to_collect = Loan.query.filter(Loan.is_active == True).with_entities(func.sum(Loan.amount)).scalar()
     bank_accounts = BankAccount.query.all()
+
     context = {
         'loans': loans,
         'bank_accounts': bank_accounts,
+        'actives': active_loans,
+        'paids': paid_loans,
+        'remaining_to_collect': remaining_to_collect,
         'format_amount': format_amount,
         'total_amount': total_amount,
     }

@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 
 from app.extensions import db
 from app.models.cash_ledger import CashLedger
+from app.utils.numeric_casting import total_amount
 
 def filter_by_field(query):
     try:
@@ -26,7 +27,10 @@ def filter_by_field(query):
         for l in ledgers:
             ledgers_list.append(l.to_dict())
         
-        return jsonify({'ledgers': ledgers_list}), 200
+        return jsonify({
+            'ledgers': ledgers_list,
+            'total': total_amount(ledgers)
+        }), 200
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
@@ -52,7 +56,10 @@ def filter_by_time(start, end):
         for l in ledgers:
             ledgers_list.append(l.to_dict())
         
-        return jsonify({'ledgers': ledgers_list}), 200
+        return jsonify({
+            'ledgers': ledgers_list,
+            'total': total_amount(ledgers)
+        }), 200
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()

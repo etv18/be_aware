@@ -195,3 +195,20 @@ def update_bank_account_money_on_delete(bank_account, amount):
         raise BankAccountDoesNotExists('The bank account does not exists.')
     
     bank_account.amount_available -= amount
+
+def get_monthly_incomes_records():
+    now = datetime.now()
+    year = now.year
+    month = now.month
+
+    records = (
+        Income.query
+        .filter(
+            db.func.extract('year', Income.created_at) == year,
+            db.func.extract('month', Income.created_at) == month
+        )
+        .order_by(Income.created_at.desc())
+        .all()
+    )
+
+    return records

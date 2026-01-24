@@ -11,7 +11,7 @@ income_bp = Blueprint('income', __name__, url_prefix='/incomes')
 
 @income_bp.route('/index', methods=['GET', 'POST'])
 def index():
-    incomes = Income.query.order_by(Income.created_at.desc()).all()
+    incomes = income_controller.get_monthly_incomes_records()
     bank_accounts = BankAccount.query.all()
 
     context = {

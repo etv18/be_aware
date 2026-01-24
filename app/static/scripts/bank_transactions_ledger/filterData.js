@@ -5,6 +5,8 @@ import { formatNumber } from "../utils/numericHandling.js";
 const selectFilterType = document.getElementById('select-filter-type-id');
 const filterInput = document.getElementById('filter-input-id');
 const btnSearch = document.getElementById('btn-search-id');
+const lblTotalLedgers = document.getElementById('lbl-total-ledgers');
+
 let timePicker = null;
 let startDate = null;
 let endDate = null;
@@ -90,6 +92,8 @@ async function filterData(){
     const data = await getData(url);
 
     renderDataTable(data.ledgers);
+
+    lblTotalLedgers.textContent = 'Total: $' + data.total;
 }
 
 selectFilterType.addEventListener('change', (e) => {

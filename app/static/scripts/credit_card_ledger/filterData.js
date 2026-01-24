@@ -93,7 +93,7 @@ async function filterData(){
 
     renderDataTable(data.ledgers);
 
-    lblTotalLedgers.textContent = 'Total: $'+ formatNumber(data.total);
+    lblTotalLedgers.textContent = 'Total: $'+ data.total;
 }
 
 selectFilterType.addEventListener('change', (e) => {

@@ -70,3 +70,32 @@ def filter_by_time(start, end):
         db.session.rollback()
         traceback.print_exc()
         raise e
+    
+def filter_all(query, start, end):
+    try:
+        if not query and (not start or not end):
+            return
+
+        start_date = datetime.strptime(start, '%Y-%m-%d')
+        end_date = datetime.strptime(end, '%Y-%m-%d')
+        end_date += timedelta(days=1)
+
+        ledgers = (
+            BankAccountTransactionsLedger.query
+            .filter(BankAccountTransactionsLedger.created_at.between(start_date, end_date))
+            .order_by(BankAccountTransactionsLedger.created_at.desc())
+            .all()
+        )
+
+        ledgers_list = []
+        for l in ledgers:
+            ledgers_list.append(l.to_dict())
+        
+        return jsonify({
+            'ledgers': ledgers_list,
+            'total': total_amount(ledgers)
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        traceback.print_exc()
+        raise e

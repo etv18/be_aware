@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request, render_template
 
 from app.models.bank_account_transactions_ledger import BankAccountTransactionsLedger
 from app.controllers import bank_transaction_ledger_controller as controller
-from app.utils.numeric_casting import format_amount
+from app.utils.numeric_casting import format_amount, total_amount
 
 bank_transaction_ledger_bp = Blueprint('bank_transaction_ledger', __name__, url_prefix='/bank_transaction_ledger')
 
@@ -16,6 +16,7 @@ def index():
     context = {
         'ledgers': ledgers,
         'format_amount': format_amount,
+        'total_amount': total_amount,
     }
     return render_template('bank_accounts/ledger.html', **context)
 

@@ -37,3 +37,12 @@ def filter_by_time():
     except Exception as e:
         raise e
     
+@bank_transaction_ledger_bp.route('/filter/all')
+def filter_all():
+    try:
+        query = request.args.get('query')
+        start = request.args.get('start')
+        end = request.args.get('end')
+        return controller.filter_all(query, start, end) 
+    except Exception as e:
+        raise e

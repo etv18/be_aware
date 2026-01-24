@@ -35,6 +35,7 @@ def filter_by_field(query):
         
         return jsonify({
             'ledgers': ledgers_list,
+            'total': total_amount(ledgers)
         }), 200
     except Exception as e:
         db.session.rollback()
@@ -61,7 +62,10 @@ def filter_by_time(start, end):
         for l in ledgers:
             ledgers_list.append(l.to_dict())
         
-        return jsonify({'ledgers': ledgers_list}), 200
+        return jsonify({
+            'ledgers': ledgers_list,
+            'total': total_amount(ledgers)
+        }), 200
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()

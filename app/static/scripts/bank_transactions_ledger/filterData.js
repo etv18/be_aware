@@ -6,6 +6,7 @@ const selectFilterType = document.getElementById('select-filter-type-id');
 const filterInput = document.getElementById('filter-input-id');
 const btnSearch = document.getElementById('btn-search-id');
 const lblTotalLedgers = document.getElementById('lbl-total-ledgers');
+const filterByFieldInput = document.getElementById('filter-byfiled-input-id');
 
 let timePicker = null;
 let startDate = null;

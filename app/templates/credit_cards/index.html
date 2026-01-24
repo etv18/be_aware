@@ -150,8 +150,28 @@
             </div>
         </form>
     </section>
-    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#create-credit-card">New
-    Credit Card</button>
+    
+    <div class="d-flex gap-2">
+        <div class="">        
+            <button 
+                type="button" 
+                class="btn btn-outline-primary" 
+                data-bs-toggle="modal" 
+                data-bs-target="#create-credit-card"
+            >
+                NewCredit Card
+            </button>
+        </div>
+        <div class="">
+            <a 
+                href="{{ url_for('credit_card_ledger.index' ) }}" 
+                class="btn btn-light" 
+            > Transactions
+            </a>
+        </div>
+
+    </div>
+
         <div class="table-responsive overflow-y-auto border rounded-3 mt-1" style="max-height: 457px;">
             <table class="table table-striped  table-hover">
                 <thead class="sticky-top">

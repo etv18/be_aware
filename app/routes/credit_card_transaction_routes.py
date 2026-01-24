@@ -6,7 +6,7 @@ from app.utils.numeric_casting import format_amount
 
 credit_card_ledger_bp = Blueprint('credit_card_ledger', __name__, url_prefix='/credit_card_ledger')
 
-@credit_card_ledger_bp.route('/index')
+@credit_card_ledger_bp.route('/ledger')
 def index():
     ledgers = (
         CreditCardTransactionsLedger.query
@@ -17,7 +17,7 @@ def index():
         'ledgers': ledgers,
         'format_amount': format_amount,
     }
-    return render_template('credit_card_transaction_ledger/index.html', **context)
+    return render_template('credit_cards/ledger.html', **context)
 
 @credit_card_ledger_bp.route('/filter/by/field')
 def filter_by_field():

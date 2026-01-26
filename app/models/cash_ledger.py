@@ -41,9 +41,9 @@ class CashLedger(db.Model):
             other words make sure only objects from Withdrawal or Models which have an is_cash=True property can
             be saved into cash_ledger table in the database
             '''
-            if isinstance(transaction, (ctc.Withdrawal, ctc.Deposit)) or transaction.is_cash:
+            if isinstance(transaction, (ctc.Withdrawal, ctc.LoanPayment)) or transaction.is_cash:
                 amount = transaction.amount
-                if isinstance(transaction, (ctc.Expense, ctc.Loan, ctc.DebtPayment, ctc.LoanPayment, ctc.Deposit)):
+                if isinstance(transaction, (ctc.Expense, ctc.Loan, ctc.DebtPayment, ctc.Deposit)):
                     amount = -amount
                 
                 ledger = CashLedger(

@@ -32,3 +32,10 @@ def filter_by_time():
        return cashledger_controller.filter_by_time(start, end)
     except Exception as e:
         raise e
+    
+@cashlegder_bp.route('/filter/all', methods=['POST'])
+def filter_all():
+    try:
+       return cashledger_controller.filter_all()
+    except Exception as e:
+        raise e

@@ -36,4 +36,11 @@ def filter_by_time():
         return controller.filter_by_time(start, end) 
     except Exception as e:
         raise e
+
+@credit_card_ledger_bp.route('/filter/all', methods=['POST'])
+def filter_all():
+    try:
+        return controller.filter_all() 
+    except Exception as e:
+        raise e
     

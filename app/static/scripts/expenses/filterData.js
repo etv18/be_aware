@@ -6,14 +6,27 @@ best way to compare to undifined values, it only matches expecifically undefined
 if (typeof yourVariable === 'undefined') {...}
 */
 
-const selectFilterType = document.getElementById('select-filter-type-id');
-const filterInput = document.getElementById('filter-input-id');
+const filterByFieldInput = document.getElementById('filter-byfiled-input-id');
+const filterByTimeInput = document.getElementById('filter-bytime-input-id');
 const btnSearch = document.getElementById('btn-search-id');
-const lblMonthlyTotal = document.getElementById('monthly-total-id')
+const lblMonthlyTotal = document.getElementById('monthly-total-id');
+const filterDataEndpoint = document.getElementById('filter-data-endpoint').value;
 
-let timePicker = null;
 let startDate = null;
 let endDate = null;
+
+const timePicker = flatpickr(filterByTimeInput, {
+    mode: 'range',
+    altInput: true,
+    altFormat: 'M j, Y',
+    dateFormat: 'Y-m-d',
+    onChange: (selectedDates, dateStr, instance) => {
+        if(selectedDates.length === 2){
+            startDate = selectedDates[0];
+            endDate = selectedDates[1];
+        }
+    }
+});
 
 export function renderExpensesTable(data){
     const tbody = document.getElementById('expenses-table-body');
@@ -63,23 +76,31 @@ export function renderExpensesTable(data){
 
 }
 
-async function getData(url){
+async function getData(url, payload) {
     let data;
 
     try {
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
 
         if (!response.ok) {
             const errorData = await response.json();
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: errorData.error || 'Something went wrong'
+                text: errorData.error || 'Something went wrong.'
             });
-            return null;
+            return;
         }
 
         data = await response.json();
+        console.log(data);
+
     } catch (error) {
         Swal.fire({
             icon: 'error',
@@ -92,25 +113,22 @@ async function getData(url){
 }
 
 async function filterData(){
-    let url = '';
-    if(selectFilterType.value === 'field'){
-        url = `/expenses/filter_by_field?query=${filterInput.value}`;
-    } else {
-        if(startDate === null || endDate === null){ 
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'You need to select two dates.'
-            });
-            return;
-        }  
-        const start = timePicker.formatDate(startDate, 'Y-m-d');      
-        const end = timePicker.formatDate(endDate, 'Y-m-d'); 
+    let payload = {
+        query: null,
+        start: null,
+        end: null
+    };
 
-        url = `/expenses/filter_by_time?start=${start}&end=${end}`;
+    if(filterByFieldInput.value.length > 0){
+        payload.query = filterByFieldInput.value?.trim() || null;
     }
 
-    const data = await getData(url);
+    payload.start = startDate ? timePicker.formatDate(startDate, 'Y-m-d') : null;
+    payload.end = endDate ? timePicker.formatDate(endDate, 'Y-m-d') : null;
+
+    const data = await getData(filterDataEndpoint, payload);
+
+    if (!data) return;
 
     renderExpensesTable(data);
 
@@ -120,38 +138,20 @@ async function filterData(){
     //endDate = null;
 }
 
-//LISTENERS
-selectFilterType.addEventListener('change', e => {
-    if(e.target.value == 'time'){
-        timePicker = flatpickr(filterInput, {
-            mode: 'range',
-            altInput: true,
-            altFormat: 'M j, Y',
-            dateFormat: 'Y-m-d',
-            onChange: (selectedDates, dateStr, instance) => {
-                if(selectedDates.length === 2){
-                    startDate = selectedDates[0];
-                    endDate = selectedDates[1];
-                }
-            }
-        });
-        return;  
-    }
-
-    if(timePicker){
-        timePicker.destroy();
-        timePicker = null;
-    }
-
-    filterInput.type = "text";
-    filterInput.value = "";
-});
-
 btnSearch.addEventListener('click', async e => {
+    if(!startDate || !endDate) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'You need to select two dates.'
+        });
+        return;    
+    }
     await filterData();
 });
 
-filterInput.addEventListener('keydown', debounce(async e => {
-    if(selectFilterType.value !== 'field' && e.key !== 'Enter') return;
+filterByFieldInput.addEventListener('keydown', debounce(async e => {
+    if(!filterByFieldInput.value.trim()) return;
+    console.log('filterByFieldInput => '+filterByFieldInput.value)
     await filterData();
 }));

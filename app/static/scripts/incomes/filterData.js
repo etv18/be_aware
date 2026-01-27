@@ -1,14 +1,28 @@
 import { getTotalSumOfAmounts, formatNumber } from "../utils/numericHandling.js";
 import { debounce } from "../utils/asyncHanlding.js";
 
-const selectFilterType = document.getElementById('select-filter-type-id');
+const filterByFieldInput = document.getElementById('filter-byfiled-input-id');
+const filterByTimeInput = document.getElementById('filter-bytime-input-id');
 const filterInput = document.getElementById('filter-input-id');
 const btnSearch = document.getElementById('btn-search-id');
-const lblMonthlyTotal = document.getElementById('monthly-total-id')
+const lblMonthlyTotal = document.getElementById('monthly-total-id');
+const filterDataEndpoint = document.getElementById('filter-data-endpoint').value;
 
-let timePicker = null;
 let startDate = null;
 let endDate = null;
+
+const timePicker = flatpickr(filterByTimeInput, {
+    mode: 'range',
+    altInput: true,
+    altFormat: 'M j, Y',
+    dateFormat: 'Y-m-d',
+    onChange: (selectedDates, dateStr, instance) => {
+        if(selectedDates.length === 2){
+            startDate = selectedDates[0];
+            endDate = selectedDates[1];
+        }
+    }
+});
 
 function renderDataTable(incomes){
     const tbody = document.getElementById('incomes-table-body-id');
@@ -56,22 +70,31 @@ function renderDataTable(incomes){
     });
 }
 
-async function getData(url){
+async function getData(url, payload) {
     let data;
 
     try {
-        const response = await fetch(url);
-        if(!response.ok) {
-            console.log(response.json());
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: data.error || 'Something went wrong while creating the expense.'
+                text: errorData.error || 'Something went wrong.'
             });
             return;
         }
+
         data = await response.json();
         console.log(data);
+
     } catch (error) {
         Swal.fire({
             icon: 'error',
@@ -84,64 +107,42 @@ async function getData(url){
 }
 
 async function filterData(){
-    let url = '';
+    let payload = {
+        query: null,
+        start: null,
+        end: null
+    };
 
-    if(selectFilterType.value === 'field'){
-        url = `/incomes/filter/incomes/by/field?query=${filterInput.value}`;
-    } else {
-        if(startDate === null || endDate === null){ 
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'You need to select two dates.'
-            });
-            return;
-        }  
-        const start = timePicker.formatDate(startDate, 'Y-m-d');      
-        const end = timePicker.formatDate(endDate, 'Y-m-d'); 
-
-        url = `/incomes/filter/incomes/by/time?start=${start}&end=${end}`;
+    if(filterByFieldInput.value.length > 0){
+        payload.query = filterByFieldInput.value?.trim() || null;
     }
 
-    const data = await getData(url);
+    payload.start = startDate ? timePicker.formatDate(startDate, 'Y-m-d') : null;
+    payload.end = endDate ? timePicker.formatDate(endDate, 'Y-m-d') : null;
+
+    const data = await getData(filterDataEndpoint, payload);
+
+    if (!data) return;
 
     renderDataTable(data.incomes);
 
     lblMonthlyTotal.textContent = 'Total: $'+data.total;
 }
 
-selectFilterType.addEventListener('change', (e) => {
-    if(e.target.value === 'time'){
-        timePicker = flatpickr(filterInput, {
-            mode: 'range',
-            altInput: true,
-            altFormat: 'M j, Y',
-            dateFormat: 'Y-m-d',
-            onChange: (selectedDates, dateStr, instance) => {
-                if(selectedDates.length === 2){
-                    startDate = selectedDates[0];
-                    endDate = selectedDates[1];
-                }
-            }
-        });
-        return;
-    }
-
-    if(timePicker){
-        timePicker.destroy();
-        timePicker = null;
-    }
-
-    filterInput.type = "text";
-    filterInput.value = "";
-    
-});
-
 btnSearch.addEventListener('click', async e => {
+    if(!startDate || !endDate) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'You need to select two dates.'
+        });
+        return;    
+    }
     await filterData();
 });
 
-filterInput.addEventListener('keydown', debounce(async e => {
-    if(selectFilterType.value !== 'field' && e.key !== 'Enter') return;
+filterByFieldInput.addEventListener('keydown', debounce(async e => {
+    if(!filterByFieldInput.value.trim()) return;
+    console.log('filterByFieldInput => '+filterByFieldInput.value)
     await filterData();
 }));

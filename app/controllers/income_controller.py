@@ -202,7 +202,7 @@ def filter_all():
 
             and_filters.append(text_filters)
 
-        ledgers = (
+        incomes = (
             Income.query
             .outerjoin(Income.bank_account)
             .filter(db.and_(*and_filters))
@@ -210,13 +210,13 @@ def filter_all():
             .all()
         )
 
-        ledgers_list = []
-        for l in ledgers:
-            ledgers_list.append(l.to_dict())
+        income_list = []
+        for l in incomes:
+            income_list.append(l.to_dict())
         
         return jsonify({
-            'incomes': ledgers_list,
-            'total': total_amount(ledgers)
+            'incomes': income_list,
+            'total': total_amount(incomes)
         }), 200
     except Exception as e:
         db.session.rollback()

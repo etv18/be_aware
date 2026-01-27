@@ -90,3 +90,11 @@ def filter_incomes_by_time():
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400
+    
+@income_bp.route('/filter/all', methods=['POST'])
+def filter_all():
+    try:
+        return income_controller.filter_all()
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400

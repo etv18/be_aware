@@ -208,6 +208,7 @@ def filter_all():
                 text_filters = db.or_(
                     (Loan.person_name.ilike(q)),
                     (Loan.amount.ilike(q)),
+                    (Loan.code.ilike(q)),
                     (Loan.description.ilike(q)),
                     (BankAccount.nick_name.ilike(q))
                 )

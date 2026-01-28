@@ -202,6 +202,7 @@ def filter_all():
                     (Debt.person_name.ilike(q)),
                     (Debt.amount.ilike(q)),
                     (Debt.description.ilike(q)),
+                    (Debt.code.ilike(q)),
                     (BankAccount.nick_name.ilike(q))
                 )
 

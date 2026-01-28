@@ -356,6 +356,7 @@ def filter_all():
                     CreditCard.nick_name.ilike(q),
                     BankAccount.nick_name.ilike(q),
                     ExpenseCategory.name.ilike(q),
+                    Expense.code.ilike(q),
                     Expense.description.ilike(q),
                     Expense.amount.ilike(q)
                 )

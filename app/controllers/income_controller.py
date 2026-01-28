@@ -201,6 +201,7 @@ def filter_all():
             else:
                 text_filters = db.or_(
                     (Income.amount.ilike(q)),
+                    (Income.code.ilike(q)),
                     (BankAccount.nick_name.ilike(q)),
                     (Income.description.ilike(q))
                 )

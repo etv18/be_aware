@@ -155,6 +155,7 @@ def filter_all():
             text_filters = db.or_(
                 (Withdrawal.amount.ilike(q)),
                 (Withdrawal.description.ilike(q)),
+                (Withdrawal.code.ilike(q)),
                 (BankAccount.nick_name.ilike(q))
             )
             and_filters.append(text_filters)

@@ -227,7 +227,7 @@ def calculate_all_remainings():
     try:
         total_remaining = Decimal('0.0')
         active_loan_data = Loan.query.filter(Loan.is_active == True).with_entities(Loan.id, Loan.amount).all()
-        print(active_loan_data[0])
+        if not active_loan_data: return Decimal('0.0')
         for loan_data in active_loan_data:
             loan_id = loan_data[0]
             loan_amount = loan_data[1]

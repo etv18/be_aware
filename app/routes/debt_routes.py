@@ -80,3 +80,9 @@ def filter_by_time():
     except Exception as e:
         raise e
     
+@debt_bp.route('/filter/all', methods=['POST'])
+def filter_all():
+    try:
+        return controller.filter_all()
+    except Exception as e:
+        raise e

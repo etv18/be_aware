@@ -223,7 +223,9 @@ def calculate_all_remainings():
     try:
         total_remaining = Decimal('0.0')
         active_debt_data = Debt.query.filter(Debt.is_active == True).with_entities(Debt.id, Debt.amount).all()
-        print(active_debt_data[0])
+        
+        if not active_debt_data: return Decimal('0.0')
+
         for debt_data in active_debt_data:
             debt_id = debt_data[0]
             debt_amount = debt_data[1]

@@ -3,7 +3,6 @@ import { debounce } from "../utils/asyncHanlding.js";
 
 const filterByFieldInput = document.getElementById('filter-byfiled-input-id');
 const filterByTimeInput = document.getElementById('filter-bytime-input-id');
-const filterInput = document.getElementById('filter-input-id');
 const btnSearch = document.getElementById('btn-search-id');
 const lblMonthlyTotal = document.getElementById('monthly-total-id');
 const filterDataEndpoint = document.getElementById('filter-data-endpoint').value;

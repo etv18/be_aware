@@ -64,3 +64,11 @@ def filter_withdrawals_by_timeframe():
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400
+    
+@withdrawal_bp.route('/filter/all', methods=['POST'])
+def filter_all():
+    try:
+        return withdrawal_controller.filter_all()
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400

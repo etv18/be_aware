@@ -163,7 +163,70 @@ def filter_by_field():
         }), 200
     except Exception as e:
         db.session.rollback()
-        raise e 
+        raise e
+    
+
+def filter_all():
+    try:
+        data = request.get_json(silent=True) or {}
+
+        query = data.get('query')
+        start = data.get('start')
+        end = data.get('end')
+
+        if not query and (not start or not end):
+            return jsonify({
+                'error': 'Try to type some query or select a time frame.'
+            }), 400
+
+        and_filters = []
+
+        if start and end:
+            start_date = datetime.strptime(start, '%Y-%m-%d')
+            end_date = datetime.strptime(end, '%Y-%m-%d')
+            end_date += timedelta(days=1)
+            and_filters.append(Debt.created_at.between(start_date, end_date))
+
+        if query: 
+            q = f'%{query}%'
+
+            is_cash = evaluate_boolean_columns(query, 'yes', 'no')    
+            is_active = evaluate_boolean_columns(query, 'active', 'paid')
+
+            if is_cash is not None:
+                and_filters.append(Debt.is_cash == is_cash)
+            elif is_active is not None:
+                and_filters.append(Debt.is_active == is_active)
+            else:
+                text_filters = db.or_(
+                    (Debt.person_name.ilike(q)),
+                    (Debt.amount.ilike(q)),
+                    (Debt.description.ilike(q)),
+                    (BankAccount.nick_name.ilike(q))
+                )
+
+                and_filters.append(text_filters)
+
+        debts = (
+            Debt.query
+            .outerjoin(Debt.bank_account) #allows to show expense without a bank account        
+            .filter(db.and_(*and_filters))
+            .order_by(Debt.created_at.desc())
+            .all()
+        )
+
+        debts_list = []
+        for l in debts:
+            debts_list.append(l.to_dict())
+        
+        return jsonify({
+            'debts': debts_list,
+            'total': total_amount(debts)
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        traceback.print_exc()
+        return jsonify({'error': 'Internal server error'}), 500   
     
 def filter_by_time():
     try:
@@ -277,6 +340,14 @@ def _delete_debt_payments_ledgers(payments):
             BankAccountTransactionsLedger.delete(payment)
 
 def _evaluate_boolean_columns(query, reference_for_true, reference_for_false):
+    q = query.lower()
+    if q == reference_for_true.lower():
+        return True
+    if q == reference_for_false.lower():
+        return False
+    return None
+
+def evaluate_boolean_columns(query, reference_for_true, reference_for_false):
     q = query.lower()
     if q == reference_for_true.lower():
         return True

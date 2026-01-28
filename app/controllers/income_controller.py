@@ -193,14 +193,19 @@ def filter_all():
 
         if query: 
             q = f'%{query}%'
+            
+            is_cash = evaluate_boolean_columns(query, 'yes', 'no')    
 
-            text_filters = db.or_(
-                (Income.amount.ilike(q)),
-                (BankAccount.nick_name.ilike(q)),
-                (Income.description.ilike(q))
-            )
+            if is_cash is not None:
+                and_filters.append(Income.is_cash == is_cash)
+            else:
+                text_filters = db.or_(
+                    (Income.amount.ilike(q)),
+                    (BankAccount.nick_name.ilike(q)),
+                    (Income.description.ilike(q))
+                )
 
-            and_filters.append(text_filters)
+                and_filters.append(text_filters)
 
         incomes = (
             Income.query
@@ -266,3 +271,11 @@ def get_monthly_incomes_records():
     )
 
     return records
+
+def evaluate_boolean_columns(query, reference_for_true, reference_for_false):
+    q = query.lower()
+    if q == reference_for_true.lower():
+        return True
+    if q == reference_for_false.lower():
+        return False
+    return None

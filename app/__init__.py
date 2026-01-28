@@ -75,11 +75,7 @@ def create_error_logger(app):
         backupCount=10 #There will be a maximum of 10 backup files of errors
     )
 
-    formatter = logging.Formatter(
-        "\n\n"
-        "=======================================================================================\n"
-        "%(asctime)s [%(levelname)s] %(message)s in %(pathname)s:%(lineno)d\n"
-    )
+    formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s in %(pathname)s:%(lineno)d")
 
     handler.setFormatter(formatter)
     handler.setLevel(logging.ERROR)

@@ -364,7 +364,9 @@ def filter_all():
 
         expenses = (
             Expense.query
-            .outerjoin(Expense.bank_account)
+            .outerjoin(Expense.bank_account) #allows to show expense without a bank account
+            .outerjoin(Expense.credit_card) #allows to show expense without a credit card
+            .outerjoin(Expense.expense_category) #allows to show expense without an expense category            
             .filter(db.and_(*and_filters))
             .order_by(Expense.created_at.desc())
             .all()

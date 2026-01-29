@@ -108,8 +108,6 @@ def monthly_incomings_and_outgoings():
         'outgoings': outgoings_monthly_total,
     }), 200
 
-
-    
 def _get_model(model_str: str):
     if   model_str == 'expenses'             : return btc.Expense
     elif model_str == 'deposits'             : return btc.Deposit 

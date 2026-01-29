@@ -41,3 +41,15 @@ def get_yearly_total_amount_info(CustomModel, year=None) -> list:
         db.session.rollback()
         traceback.print_exc()
         raise e
+
+def get_monthly_total_amount_info(CustomModel, year, month) -> Decimal:
+    try:
+        return CustomModel.query.filter(
+            db.extract('year', CustomModel.created_at) == year,
+            db.extract('month', CustomModel.created_at) == month
+        ).with_entities(db.func.sum(CustomModel.amount)).scalar() or Decimal(0.00)
+    
+    except Exception as e:
+        db.session.rollback()
+        traceback.print_exc()
+        raise e

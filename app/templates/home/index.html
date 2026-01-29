@@ -46,12 +46,12 @@
 </div>
 
 <!-- Fancy Dark Mode Card -->
-<div class="d-flex justify-content-center mt-2">
+<div class="d-flex justify-content-center my-2">
     <div class="d-flex justify-content-cente w-100" style="max-width: 320px;">
-      <div class="border-top border-start border-end rounded-top-3 p-3 w-100">
+      <div class="border-top border-start border-end border-bottom rounded-3 p-3 w-100">
         <h5 class="mb-3 text-light">Select a year for the report</h5>
     
-        <select class="form-select dark-select">
+        <select class="form-select dark-select" id="year-select">
           <option value="2026" selected>2026</option>
           <option value="2025">2025</option>
         </select>
@@ -69,7 +69,8 @@
 
 </div>
 
-<input type="hidden" name="" id="yearly-stats-all-models-endpoint" value="{{ url_for('stats.all_model_reports' ) }}">
+<input type="hidden" name="" id="yearly-stats-all-models-endpoint" value="{{ url_for('stats.yearly_all_model_reports' ) }}">
+<input type="hidden" name="" id="yearly-incomes-and-outgoings-endpoint" value="{{ url_for('stats.yearly_incomes_and_outgoings' ) }}">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="../../static/scripts/home/stats.js"></script>

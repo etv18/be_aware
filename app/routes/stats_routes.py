@@ -4,16 +4,23 @@ from app.controllers import stats_controller as controller
 
 stats_bp = Blueprint('stats', __name__, url_prefix='/stats')
 
-@stats_bp.route('/single/model/report', methods=['POST'])
-def single_model_report():
+@stats_bp.route('/yearly/single/model/report', methods=['POST'])
+def yearly_single_model_report():
     try: 
-        return controller.single_model_report()
+        return controller.yearly_single_model_report()
     except Exception as e:
         raise e
 
-@stats_bp.route('/all/model/reports', methods=['POST'])
-def all_model_reports():
+@stats_bp.route('/yearly/all/model/reports', methods=['POST'])
+def yearly_all_model_reports():
     try: 
-        return controller.all_model_reports()
+        return controller.yearly_all_model_reports()
+    except Exception as e:
+        raise e
+
+@stats_bp.route('/yearly/incomes/and/outgoings', methods=['POST'])
+def yearly_incomes_and_outgoings():
+    try: 
+        return controller.yearly_incomes_and_outgoings()
     except Exception as e:
         raise e

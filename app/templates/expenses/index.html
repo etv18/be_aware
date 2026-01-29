@@ -257,13 +257,24 @@
         </section>
     </div>
 
+    <div class="border rounded-3 w-100 p-2">
+        <h3 class="text-center">Expense Stats</h3>
+
+        <div class="chart-container">
+            <canvas id="yearly-stats-expense"></canvas>
+        </div>
+    </div>
+
     <input type="hidden" name="" id="filter-data-endpoint" value="{{ url_for('expense.filter_all' ) }}">
+    <input type="hidden" name="" id="yearly-single-model-report-endpoint" value="{{ url_for('stats.yearly_single_model_report' ) }}">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="{{ url_for('static', filename='scripts/expenses/filterData.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/expenses/stats.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='scripts/utils/numericHandling.js' ) }}"></script>
     <script type="module" src="{{ url_for('static', filename='scripts/utils/asyncHanlding.js' ) }}"></script>
     <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>

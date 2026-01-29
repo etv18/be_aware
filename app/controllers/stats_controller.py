@@ -8,7 +8,7 @@ import traceback
 
 from app.extensions import db
 import app.utils.bank_transactional_classes as btc
-from app.utils.filter_data import get_yearly_total_amount_info
+from app.utils.filter_data import get_yearly_total_amount_info, get_monthly_total_amount_info
 from app.utils.date_handling import MONTHS
 
 def yearly_single_model_report():
@@ -75,14 +75,40 @@ def yearly_incomes_and_outgoings():
         year=year
     )
 
-    incoming_list = _total_amount_per_month(incomings_dict)
-    outgoing_list = _total_amount_per_month(outgoings_dict)
+    incoming_list = _total_amount_per_month_through_the_year(incomings_dict)
+    outgoing_list = _total_amount_per_month_through_the_year(outgoings_dict)
     
     return jsonify({
         'months': MONTHS,
         'incomings': incoming_list,
         'outgoings': outgoing_list,
     }), 200
+
+def monthly_incomings_and_outgoings():
+    incomings = (btc.LoanPayment, btc.Income, btc.Debt)
+    outgoings = (btc.Withdrawal, btc.Loan, btc.Expense, btc.CreditCardPayment, btc.DebtPayment)
+
+    now = datetime.now()
+    current_year = now.year
+    current_month = now.month
+
+    incomings_monthly_total = _total_monthly(
+        models=incomings,
+        year=current_year,
+        month=current_month
+    )
+    outgoings_monthly_total = _total_monthly(
+        models=outgoings,
+        year=current_year,
+        month=current_month 
+    )
+
+    return jsonify({
+        'incomings': incomings_monthly_total,
+        'outgoings': outgoings_monthly_total,
+    }), 200
+
+
     
 def _get_model(model_str: str):
     if   model_str == 'expenses'             : return btc.Expense
@@ -106,12 +132,22 @@ def _dict_info(models: list, container: dict, year):
         key_name = model.__tablename__
         container[key_name] = report
 
-def _total_amount_per_month(yearly_models_total: dict):
+def _total_amount_per_month_through_the_year(yearly_models_total: dict) -> list:
     total_amount_per_month = [Decimal('0.00') for _ in range(12)]
 
     for yearly in yearly_models_total.values():
         for i in range(0, len(yearly)):
             total_amount_per_month[i] += yearly[i]
     return total_amount_per_month
+
+def _total_monthly(models, year, month) -> Decimal:
+    total = Decimal('0')
+    for model in models:
+        total += get_monthly_total_amount_info(
+            CustomModel=model,
+            year=year,
+            month=month
+        )
+    return total
         
 

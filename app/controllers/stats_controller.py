@@ -9,6 +9,7 @@ import traceback
 from app.extensions import db
 import app.utils.bank_transactional_classes as btc
 from app.utils.filter_data import get_yearly_total_amount_info
+from app.utils.date_handling import MONTHS
 
 def single_model_report():
     try: 
@@ -49,7 +50,10 @@ def all_model_reports():
         key_name = model.__tablename__
         reports[key_name] = report
     
-    return jsonify(reports), 200
+    return jsonify({
+        'months': MONTHS,
+        'report': reports,
+    }), 200
     
 def _get_model(model_str: str):
     if   model_str == 'expenses'             : return btc.Expense

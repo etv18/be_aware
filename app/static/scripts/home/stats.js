@@ -2,7 +2,13 @@ const monthlyIncomesAndExpensesChart = document.getElementById('incomes-and-expe
 const yearlyIncomesAndExpensesChart = document.getElementById('incomes-and-expenses-yearly');
 const yearlyStatsAllModelsChart = document.getElementById('yearly-stats-all-models');
 
+const selectYearElement = document.getElementById('year-select');
+
 const yearlyStatsAllModelsEndpoint = document.getElementById('yearly-stats-all-models-endpoint').value;
+const yearlyIncomesAndOutgoingsEndpoint = document.getElementById('yearly-incomes-and-outgoings-endpoint').value;
+
+let yearlyStatsAllModelsChartInstance = null;
+let yearlyIncomesAndOutgoingsChartInstance = null;
 
 async function getMonthlyIncomeAndExpenseData(){
     try {
@@ -90,48 +96,51 @@ async function generateMontlyChart(canvas, type, data) {
     }
 }
 
-function generateYearlyChart(canvas, type, data){
-    try {
-        new Chart(canvas, {
-            type: type,
-            data: {
-                labels: data.months,
-                datasets: [
-                    {
-                        label: 'Expenses',
-                        data: data.expenses,
-                        backgroundColor: "rgba(255, 99, 132, 0.6)",
-                        borderColor: "rgba(255, 99, 132, 1)",
-                        borderWidth: 1
-                    },
-                    {
-                        label: 'incomes',
-                        data: data.incomes,
-                        backgroundColor: "rgba(75, 192, 192, 0.6)",
-                        borderColor: "rgba(75, 192, 192, 1)",
-                        borderWidth: 1
-                    }                                          
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {stepSize: 500}
-                    }
+function generateYearlyIncomesAndExpensesChart(canvas, type, data){
+if (yearlyIncomesAndOutgoingsChartInstance) {
+        yearlyIncomesAndOutgoingsChartInstance.destroy();
+    }
+
+    yearlyIncomesAndOutgoingsChartInstance = new Chart(canvas, {
+        type: type,
+        data: {
+            labels: data.months,
+            datasets: [
+                {
+                    label: 'Outgoings',
+                    data: data.outgoings,
+                    backgroundColor: "rgb(243, 0, 53)",
+                    borderColor: "rgba(255, 99, 132, 1)",
+                    borderWidth: 1
+                },
+                {
+                    label: 'Incomings',
+                    data: data.incomings,
+                    backgroundColor: "rgb(21, 75, 255)",
+                    borderColor: "rgba(75, 192, 192, 1)",
+                    borderWidth: 1
+                }                                          
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {stepSize: 500}
                 }
             }
-        });
-    } catch (error) {
-        console.error(error);
-        throw new Error();
-    }
+        }
+    });
 }
 
 function generateYearlyAllModelsChart(canvas, type, data){
-    return new Chart(canvas, {
+if (yearlyStatsAllModelsChartInstance) {
+        yearlyStatsAllModelsChartInstance.destroy();
+    }
+
+    yearlyStatsAllModelsChartInstance = new Chart(canvas, {
         type: type,
         data: {
             labels: data.months,
@@ -216,14 +225,26 @@ function generateYearlyAllModelsChart(canvas, type, data){
 
 document.addEventListener('DOMContentLoaded',async (event) => {
     monthlyData = await getMonthlyIncomeAndExpenseData();
-    yearlyData = await getYearlyIncomeAndExpenseData();
     generateMontlyChart(monthlyIncomesAndExpensesChart, 'doughnut', monthlyData);
-    generateYearlyChart(yearlyIncomesAndExpensesChart, 'bar', yearlyData);
+    //yearlyData = await getYearlyIncomeAndExpenseData();
+    //generateYearlyChart(yearlyIncomesAndExpensesChart, 'bar', yearlyData);
 
-    payload = {
-        
-    }
-    let data = await getData(yearlyStatsAllModelsEndpoint, {year: 2026});
-    console.log(data.months);
-    generateYearlyAllModelsChart(yearlyStatsAllModelsChart, 'line', data);
+    const yearlyData = await getData(yearlyIncomesAndOutgoingsEndpoint, {year: 2026})
+    generateYearlyIncomesAndExpensesChart(yearlyIncomesAndExpensesChart, 'bar', yearlyData)
+
+    const allModelsData = await getData(yearlyStatsAllModelsEndpoint, {year: 2026});
+    generateYearlyAllModelsChart(yearlyStatsAllModelsChart, 'line', allModelsData);
+});
+
+selectYearElement.addEventListener('change', async (event) => {
+    const selectedYear = event.target.value;
+    const payload = {
+        year: selectedYear
+    };
+
+    const yearlyData = await getData(yearlyIncomesAndOutgoingsEndpoint, payload);
+    generateYearlyIncomesAndExpensesChart(yearlyIncomesAndExpensesChart, 'bar', yearlyData);
+
+    let allModelsData = await getData(yearlyStatsAllModelsEndpoint, payload);
+    generateYearlyAllModelsChart(yearlyStatsAllModelsChart, 'line', allModelsData);
 });

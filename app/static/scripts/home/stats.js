@@ -1,5 +1,8 @@
 const monthlyIncomesAndExpensesChart = document.getElementById('incomes-and-expenses-monthly');
 const yearlyIncomesAndExpensesChart = document.getElementById('incomes-and-expenses-yearly');
+const yearlyStatsAllModelsChart = document.getElementById('yearly-stats-all-models');
+
+const yearlyStatsAllModelsEndpoint = document.getElementById('yearly-stats-all-models-endpoint');
 
 async function getMonthlyIncomeAndExpenseData(){
     try {

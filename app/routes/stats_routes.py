@@ -24,3 +24,10 @@ def yearly_incomes_and_outgoings():
         return controller.yearly_incomes_and_outgoings()
     except Exception as e:
         raise e
+
+@stats_bp.route('/monthly/incomes/and/outgoings', methods=['POST'])
+def monthly_incomings_and_outgoings():
+    try: 
+        return controller.monthly_incomings_and_outgoings()
+    except Exception as e:
+        raise e

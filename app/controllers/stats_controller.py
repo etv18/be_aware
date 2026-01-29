@@ -26,7 +26,8 @@ def yearly_single_model_report():
             )
             key_name = model.__tablename__
             return jsonify({
-               key_name : report,
+                'months': MONTHS,
+                key_name : report,
             })
         
         return jsonify({}), 200

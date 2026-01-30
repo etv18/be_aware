@@ -28,6 +28,7 @@ def yearly_single_model_report():
             return jsonify({
                 'months': MONTHS,
                 key_name : report,
+                'label': key_name.replace('_', ' ').title()
             })
         
         return jsonify({}), 200
@@ -115,7 +116,7 @@ def _get_model(model_str: str):
     elif model_str == 'withdrawals'          : return btc.Withdrawal
     elif model_str == 'incomes'              : return btc.Income
     elif model_str == 'loans'                : return btc.Loan
-    elif model_str == 'loans_payments'       : return btc.LoanPayment
+    elif model_str == 'loan_payment'         : return btc.LoanPayment
     elif model_str == 'credit_card_payments' : return btc.CreditCardPayment
     elif model_str == 'debts'                : return btc.Debt
     elif model_str == 'debts_payments'       : return btc.DebtPayment

@@ -119,7 +119,7 @@ def _get_model(model_str: str):
     elif model_str == 'loan_payment'         : return btc.LoanPayment
     elif model_str == 'credit_card_payments' : return btc.CreditCardPayment
     elif model_str == 'debts'                : return btc.Debt
-    elif model_str == 'debts_payments'       : return btc.DebtPayment
+    elif model_str == 'debt_payments'        : return btc.DebtPayment
     elif model_str == 'bank_transfers'       : return btc.BankTransfer
     else : return None
 

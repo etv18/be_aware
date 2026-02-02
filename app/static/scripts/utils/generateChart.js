@@ -1,13 +1,28 @@
+let yearlyStatsExpenseChartInstance = null; //This it'll be needed to be able to update the chart's data when a user selects a different year
 
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+export const CURRENT_YEAR = new Date().getFullYear();
+
+export const chartConfig = {
+    yearlySingleModelReportEndpoint: '',
+    backgroundColor: '',
+    borderColor: '',
+    chartType: '',
+    model: ''
+} 
+
+const yearlyExpenseCanvas = document.getElementById('yearly-stats');
 const yearlySingleModelReportEndpoint = document.getElementById('yearly-single-model-report-endpoint').value;
-const yearlyModelChart = document.getElementById('yearly-stats-line-chart');
-const modelStr = document.getElementById('model-str').value;
+const chartTitle = document.getElementById('chart-title');
 const yearSelect = document.getElementById('year-select');
-const chartType = document.getElementById('char-type');
+const chartTitleTextContent = document.getElementById('chart-title').textContent;
 
-let yearlyStatsExpenseChartInstance = null;
+const BACKGROUND_COLOR = '#dd3445';
+const BORDER_COLOR = '#dd3445';
+const CHART_TYPE = 'line';
+const MODEL = 'expenses';
 
-async function getData(url, payload) {
+export async function getData(url, payload) {
     let data;
 
     try {
@@ -35,7 +50,7 @@ async function getData(url, payload) {
 
 }
 
-function generateYearlyAllModelsChart(canvas, type, data){
+export function generateYearlyAllModelsChart(canvas, type, label, dataArray, backgroundColor, borderColor){
 if (yearlyStatsExpenseChartInstance) {
         yearlyStatsExpenseChartInstance.destroy();
     }
@@ -43,13 +58,13 @@ if (yearlyStatsExpenseChartInstance) {
     yearlyStatsExpenseChartInstance = new Chart(canvas, {
         type: type,
         data: {
-            labels: data.months,
+            labels: MONTHS,
             datasets: [
                 {
-                    label: 'Expenses',
-                    data: data.expenses,
-                    backgroundColor: "#dd3445",
-                    borderColor: "#dd3445",
+                    label: label,
+                    data: dataArray,
+                    backgroundColor: backgroundColor,
+                    borderColor: borderColor,
                     borderWidth: 1                       
                 },
             ]
@@ -71,10 +86,24 @@ document.addEventListener('DOMContentLoaded',async (event) => {
     const yearlyStatsData = await getData(
         yearlySingleModelReportEndpoint, 
         {
-            model: 'modelStr',
-            year: yearSelect.value
+            model: MODEL,
+            year: CURRENT_YEAR
         }
     );
-    generateYearlyAllModelsChart(yearlyModelChart, chartType, yearlyStatsData[modelStr]);
+    generateYearlyAllModelsChart(yearlyExpenseCanvas, CHART_TYPE, yearlyStatsData.label, yearlyStatsData[MODEL], BACKGROUND_COLOR, BORDER_COLOR);
+    chartTitle.textContent = chartTitleTextContent + ' - ' + CURRENT_YEAR;
+});
+
+yearSelect.addEventListener('change', async (event) => {
+    const selectedYear = event.target.value;
+    const yearlyStatsData = await getData(
+        yearlySingleModelReportEndpoint,
+        {
+            model: MODEL,
+            year: selectedYear
+        }
+    );
+    generateYearlyAllModelsChart(yearlyExpenseCanvas, CHART_TYPE, yearlyStatsData.label, yearlyStatsData[MODEL], BACKGROUND_COLOR, BORDER_COLOR);
+    chartTitle.textContent = chartTitleTextContent + ' - ' + selectedYear;
 });
 

@@ -1,19 +1,23 @@
-.filter_link {
-    text-decoration: none;
-    color: inherit;
+.chart-box {
+    width: 100%;
+    max-width: 600px;      /* optional: keeps charts from getting huge */
+    height: 350px;         /* SAME HEIGHT for both charts */
 }
-
-.filter_link:hover{
-    text-decoration: underline;
-    color: rgb(39, 125, 255);
-    cursor: pointer;
-}
-
-.chart-container {
-    height: 457px; /* same as table max-height */
-}
-
-.chart-container canvas {
+.chart-box canvas {
     width: 100% !important;
     height: 100% !important;
 }
+
+.chart-container {
+    height: 350px;   /* change this to whatever you want */
+    width: 100%;
+    position: relative;
+}
+/* Mobile */
+@media (max-width: 576px) {
+    .chart-box {
+        height: 280px;
+    }
+}
+
+/*  */

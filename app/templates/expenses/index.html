@@ -257,11 +257,26 @@
         </section>
     </div>
 
-    <div class="border rounded-3 w-100 p-2">
-        <h3 class="text-center">Expense Stats</h3>
+    <div id="stats-container">
+        <div class="d-flex justify-content-center my-2">
+            <div class="d-flex justify-content-cente w-100" style="max-width: 320px;">
+            <div class="border-top border-start border-end border-bottom rounded-3 p-3 w-100">
+                <h5 class="mb-3 text-light">Select a year for the report</h5>
+            
+                <select class="form-select dark-select" id="year-select">
+                    <option value="2026" selected>2026</option>
+                    <option value="2025">2025</option>
+                </select>
+            </div>
+            </div>
+        </div>
 
-        <div class="chart-container">
-            <canvas id="yearly-stats-expense"></canvas>
+        <div class="border rounded-3 w-100 p-2">
+            <h3 class="text-center" id="chart-title">Expense Stats</h3>
+
+            <div class="chart-container">
+                <canvas id="yearly-stats"></canvas>
+            </div>
         </div>
     </div>
 
@@ -277,6 +292,7 @@
     <script type="module" src="{{ url_for('static', filename='scripts/expenses/stats.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='scripts/utils/numericHandling.js' ) }}"></script>
     <script type="module" src="{{ url_for('static', filename='scripts/utils/asyncHanlding.js' ) }}"></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/utils/generateChart.js' ) }}"></script>
     <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {

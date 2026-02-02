@@ -3,31 +3,7 @@
 {% block title %}home{% endblock %}
 
 {% block content %}
-<style>
-    .chart-box {
-        width: 100%;
-        max-width: 600px;      /* optional: keeps charts from getting huge */
-        height: 350px;         /* SAME HEIGHT for both charts */
-    }
-
-    .chart-box canvas {
-        width: 100% !important;
-        height: 100% !important;
-    }
-    
-    .chart-container {
-        height: 350px;   /* change this to whatever you want */
-        width: 100%;
-        position: relative;
-    }
-
-    /* Mobile */
-    @media (max-width: 576px) {
-        .chart-box {
-            height: 280px;
-        }
-    }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css' ) }}">
 
 <h5>Home</h5>
 <div class="row align-items-stretch">

@@ -140,3 +140,16 @@ def delete_loan_payment(loan_payment_id):
         print(e)
         return jsonify({'error': str(e)}), 400
     
+@accounts_receivable_bp.route('/see/all/loan/payments', methods=['GET'])
+def see_all_loan_payments():
+    try:
+        context = {
+            'loan_payments': LoanPayment.query.all(),
+            'format_amount': format_amount,
+            'total_amount': total_amount,
+        }
+        return render_template('accounts_receivable/loan_payments.html', **context)
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400
+    

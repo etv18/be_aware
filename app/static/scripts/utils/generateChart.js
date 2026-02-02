@@ -3,25 +3,6 @@ let yearlyStatsExpenseChartInstance = null; //This it'll be needed to be able to
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 export const CURRENT_YEAR = new Date().getFullYear();
 
-export const chartConfig = {
-    yearlySingleModelReportEndpoint: '',
-    backgroundColor: '',
-    borderColor: '',
-    chartType: '',
-    model: ''
-} 
-
-const yearlyExpenseCanvas = document.getElementById('yearly-stats');
-const yearlySingleModelReportEndpoint = document.getElementById('yearly-single-model-report-endpoint').value;
-const chartTitle = document.getElementById('chart-title');
-const yearSelect = document.getElementById('year-select');
-const chartTitleTextContent = document.getElementById('chart-title').textContent;
-
-const BACKGROUND_COLOR = '#dd3445';
-const BORDER_COLOR = '#dd3445';
-const CHART_TYPE = 'line';
-const MODEL = 'expenses';
-
 export async function getData(url, payload) {
     let data;
 
@@ -81,29 +62,4 @@ if (yearlyStatsExpenseChartInstance) {
         }
     });
 }
-
-document.addEventListener('DOMContentLoaded',async (event) => {
-    const yearlyStatsData = await getData(
-        yearlySingleModelReportEndpoint, 
-        {
-            model: MODEL,
-            year: CURRENT_YEAR
-        }
-    );
-    generateYearlyAllModelsChart(yearlyExpenseCanvas, CHART_TYPE, yearlyStatsData.label, yearlyStatsData[MODEL], BACKGROUND_COLOR, BORDER_COLOR);
-    chartTitle.textContent = chartTitleTextContent + ' - ' + CURRENT_YEAR;
-});
-
-yearSelect.addEventListener('change', async (event) => {
-    const selectedYear = event.target.value;
-    const yearlyStatsData = await getData(
-        yearlySingleModelReportEndpoint,
-        {
-            model: MODEL,
-            year: selectedYear
-        }
-    );
-    generateYearlyAllModelsChart(yearlyExpenseCanvas, CHART_TYPE, yearlyStatsData.label, yearlyStatsData[MODEL], BACKGROUND_COLOR, BORDER_COLOR);
-    chartTitle.textContent = chartTitleTextContent + ' - ' + selectedYear;
-});
 

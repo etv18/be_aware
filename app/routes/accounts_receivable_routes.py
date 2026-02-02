@@ -153,3 +153,11 @@ def see_all_loan_payments():
         print(e)
         return jsonify({'error': str(e)}), 400
     
+    
+@accounts_receivable_bp.route('/filter/loan/payments/all', methods=['POST'])
+def filter_loans_payments_all():
+    try:
+        return loan_controller.filter_all()
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 400

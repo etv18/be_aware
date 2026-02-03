@@ -2,6 +2,7 @@ from flask import request, jsonify
 
 from decimal import Decimal
 import traceback
+from datetime import datetime, timedelta
 
 from app.extensions import db
 from app.models.cash_ledger import CashLedger
@@ -9,7 +10,7 @@ from app.models.bank_account_transactions_ledger import BankAccountTransactionsL
 from app.models.debt_payment import DebtPayment
 from app.models.debt import Debt
 from app.models.bank_account import BankAccount
-from app.utils.numeric_casting import is_decimal_type
+from app.utils.numeric_casting import is_decimal_type, total_amount
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero, BankAccountDoesNotExists, NoAvailableMoney, AmountGreaterThanAvailableMoney
 
 def create():
@@ -128,6 +129,67 @@ def delete(id):
         db.session.rollback()
         traceback.print_exc()
         return jsonify({'error': str(e)}), 400
+    
+def filter_all():
+    try:
+        data = request.get_json(silent=True) or {}
+
+        query = data.get('query')
+        start = data.get('start')
+        end = data.get('end')
+
+        if not query and (not start or not end):
+            return jsonify({
+                'error': 'Try to type some query or select a time frame.'
+            }), 400
+
+        and_filters = []
+
+        if start and end:
+            start_date = datetime.strptime(start, '%Y-%m-%d')
+            end_date = datetime.strptime(end, '%Y-%m-%d')
+            end_date += timedelta(days=1)
+            and_filters.append(DebtPayment.created_at.between(start_date, end_date))
+
+        if query: 
+            q = f'%{query}%'
+
+            is_cash = _evaluate_boolean_columns(query, 'yes', 'no')    
+            is_active = _evaluate_boolean_columns(query, 'active', 'paid')
+
+            if is_cash is not None:
+                and_filters.append(DebtPayment.is_cash == is_cash)
+            elif is_active is not None:
+                and_filters.append(DebtPayment.is_active == is_active)
+            else:
+                text_filters = db.or_(
+                    (DebtPayment.amount.ilike(q)),
+                    (DebtPayment.code.ilike(q)),
+                    (BankAccount.nick_name.ilike(q))
+                )
+
+                and_filters.append(text_filters)
+
+        debt_payments = (
+            DebtPayment.query
+            .outerjoin(DebtPayment.bank_account) #allows to show expense without a bank account        
+            .filter(db.and_(*and_filters))
+            .order_by(DebtPayment.created_at.desc())
+            .all()
+        )
+
+        debt_payment_list = []
+        for l in debt_payments:
+            debt_payment_list.append(l.to_dict())
+        
+        return jsonify({
+            'debt_payments': debt_payment_list,
+            'total': total_amount(debt_payments)
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        traceback.print_exc()
+        return jsonify({'error': 'Internal server error'}), 500  
 
 def _update_debt_is_active(debt):
     db.session.refresh(debt)  # <-- refresh from DB
@@ -180,3 +242,11 @@ def _update_bank_account_money_on_update(old_ba_id, new_ba_id, old_amount, new_a
     except Exception as e:
         traceback.print_exc()
         raise e
+    
+def _evaluate_boolean_columns(query, reference_for_true, reference_for_false):
+    q = query.lower()
+    if q == reference_for_true.lower():
+        return True
+    if q == reference_for_false.lower():
+        return False
+    return None

@@ -178,10 +178,8 @@ def filter_all():
                 and_filters.append(Loan.is_active == is_active)
             else:
                 text_filters = db.or_(
-                    (LoanPayment.person_name.ilike(q)),
                     (LoanPayment.amount.ilike(q)),
                     (LoanPayment.code.ilike(q)),
-                    (LoanPayment.description.ilike(q)),
                     (BankAccount.nick_name.ilike(q))
                 )
 

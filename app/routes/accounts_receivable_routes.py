@@ -8,6 +8,7 @@ from app.models.loan import Loan
 from app.models.loan_payment import LoanPayment
 from app.models.bank_account import BankAccount
 from app.utils.numeric_casting import format_amount, total_amount
+from app.utils.date_handling import get_years
 
 accounts_receivable_bp = Blueprint('accounts_receivable', __name__, url_prefix='/accounts_receivable')
 
@@ -25,6 +26,7 @@ def index():
         'actives': active_loans,
         'paids': paid_loans,
         'remaining_to_collect': loan_controller.calculate_all_remainings(),
+        'get_years': get_years,
         'format_amount': format_amount,
         'total_amount': total_amount,
     }
@@ -70,6 +72,7 @@ def associated_records(loan_id):
             'bank_accounts': bank_accounts,
             'format_amount': format_amount,
             'total_amount': total_amount,
+            'get_years': get_years,
         }
         return render_template('accounts_receivable/associated_records.html', **context)
     except Exception as e:
@@ -147,6 +150,7 @@ def see_all_loan_payments():
             'loan_payments': LoanPayment.query.all(),
             'format_amount': format_amount,
             'total_amount': total_amount,
+            'get_years': get_years,
         }
         return render_template('accounts_receivable/loan_payments.html', **context)
     except Exception as e:

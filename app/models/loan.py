@@ -37,6 +37,7 @@ class Loan(db.Model):
         return {
             'id': self.id,
             'person_name': self.person_name,
+            'code': self.code,
             'amount': str(self.amount),
             'is_active': self.is_active,
             'f_is_active': 'ACTIVE' if self.is_active else 'PAID',

@@ -53,7 +53,7 @@
 
         <section>
             <div class="d-flex flex-column">
-                <label id="monthly-total-id">Total This Month: ${{ total_amount(loan_payments) }}</label>
+                <label id="lbl-total">Total This Month: ${{ total_amount(loan_payments) }}</label>
             </div>
         </section>
     </div>
@@ -82,7 +82,7 @@
         <input  type="hidden" name="" id="yearly-single-model-report-endpoint" value="{{ url_for('stats.yearly_single_model_report' ) }}">
     </div>
     
-    <input type="hidden" name="" id="filter-data-endpoint" value="#">
+    <input type="hidden" name="" id="filter-data-endpoint" value="{{ url_for('accounts_receivable.filter_loans_payments_all' ) }}">
     
     
     <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
@@ -94,7 +94,7 @@
     <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
     <script type="module" src="{{ url_for('static', filename='scripts/utils/numericHandling.js' ) }}"></script>
     <script type="module" src="{{ url_for('static', filename='scripts/utils/asyncHanlding.js' ) }}"></script>
-    <script type="module" src="{{ url_for('static', filename='scripts/accounts_receivable/filterData.js' ) }}"></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/accounts_receivable/loan_payments/filterData.js' ) }}"></script>
     <script type="module" src="{{ url_for('static', filename='scripts/accounts_receivable/loan_payments/stats.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='scripts/utils/generateChart.js' ) }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

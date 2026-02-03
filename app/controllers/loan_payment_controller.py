@@ -164,7 +164,7 @@ def filter_all():
             start_date = datetime.strptime(start, '%Y-%m-%d')
             end_date = datetime.strptime(end, '%Y-%m-%d')
             end_date += timedelta(days=1)
-            and_filters.append(Loan.created_at.between(start_date, end_date))
+            and_filters.append(LoanPayment.created_at.between(start_date, end_date))
 
         if query: 
             q = f'%{query}%'
@@ -173,9 +173,9 @@ def filter_all():
             is_active = evaluate_boolean_columns(query, 'active', 'paid')
 
             if is_cash is not None:
-                and_filters.append(Loan.is_cash == is_cash)
+                and_filters.append(LoanPayment.is_cash == is_cash)
             elif is_active is not None:
-                and_filters.append(Loan.is_active == is_active)
+                and_filters.append(LoanPayment.is_active == is_active)
             else:
                 text_filters = db.or_(
                     (LoanPayment.amount.ilike(q)),

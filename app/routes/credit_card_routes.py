@@ -7,6 +7,7 @@ from app.models.bank import Bank
 from app.models.bank_account import BankAccount
 from app.models.credit_card_payment import CreditCardPayment
 from app.utils.numeric_casting import total_amount, format_amount
+from app.utils.date_handling import get_years
 
 credit_card_bp = Blueprint('credit_card', __name__, url_prefix='/credit_cards')
 
@@ -64,12 +65,14 @@ def delete(id):
 @credit_card_bp.route('/associated_records/<int:id>', methods=['GET'])
 def associated_records(id):
     credit_card = CreditCard.query.get(id)
-    bank_accounts = BankAccount.query.all() 
+    bank_accounts = BankAccount.query.all()
+    years = get_years()
     context = {
         'credit_card': credit_card,
         'bank_accounts': bank_accounts,
         'format_amount': format_amount, #function
         'total_amount': total_amount, #function
+        'years': years,
     }
 
     return render_template('/credit_cards/associated_records.html', **context)

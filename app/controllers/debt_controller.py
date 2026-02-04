@@ -27,8 +27,9 @@ def create():
 
         selected_bank_account_id = request.form.get('select-bank-account')
     
-
-        if not is_cash:
+        if not is_cash and selected_bank_account_id.lower() == 'none':
+            pass
+        elif not is_cash:
             if selected_bank_account_id == 'none' or not selected_bank_account_id:
                 raise NoBankProductSelected('No bank account was selected for this debt')
             
@@ -70,8 +71,10 @@ def update(id):
         
         selected_bank_account_id = request.form.get('select-bank-account')
 
-
-        if not is_cash:
+        if not is_cash and selected_bank_account_id.lower() == 'none':
+            if debt.bank_account:
+                debt.bank_account.amount_available += debt.amount
+        elif not is_cash:
             if selected_bank_account_id == 'none' or not selected_bank_account_id:
                 raise NoBankProductSelected('No bank product was selected for this debt')
             

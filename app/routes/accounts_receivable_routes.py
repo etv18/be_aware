@@ -8,6 +8,7 @@ from app.models.loan import Loan
 from app.models.loan_payment import LoanPayment
 from app.models.bank_account import BankAccount
 from app.utils.numeric_casting import format_amount, total_amount
+from app.utils.date_handling import get_years
 
 accounts_receivable_bp = Blueprint('accounts_receivable', __name__, url_prefix='/accounts_receivable')
 
@@ -18,6 +19,7 @@ def index():
     paid_loans = Loan.query.filter(Loan.is_active == False).count()
     remaining_to_collect = Loan.query.filter(Loan.is_active == True).with_entities(func.sum(Loan.amount)).scalar()
     bank_accounts = BankAccount.query.all()
+    years = get_years()
 
     context = {
         'loans': loans,
@@ -25,6 +27,7 @@ def index():
         'actives': active_loans,
         'paids': paid_loans,
         'remaining_to_collect': loan_controller.calculate_all_remainings(),
+        'years': years,
         'format_amount': format_amount,
         'total_amount': total_amount,
     }
@@ -142,11 +145,13 @@ def delete_loan_payment(loan_payment_id):
     
 @accounts_receivable_bp.route('/see/all/loan/payments', methods=['GET'])
 def see_all_loan_payments():
+    years = get_years()
     try:
         context = {
             'loan_payments': LoanPayment.query.all(),
             'format_amount': format_amount,
             'total_amount': total_amount,
+            'years': years,
         }
         return render_template('accounts_receivable/loan_payments.html', **context)
     except Exception as e:

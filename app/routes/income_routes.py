@@ -6,6 +6,7 @@ from app.models.income import Income
 from app.models.bank_account import BankAccount
 from app.controllers import income_controller
 from app.utils.numeric_casting import total_amount, format_amount
+from app.utils.date_handling import get_years
 
 income_bp = Blueprint('income', __name__, url_prefix='/incomes')
 
@@ -19,6 +20,7 @@ def index():
         'bank_accounts': bank_accounts,
         'format_amount': format_amount,
         'total_amount': total_amount,
+        'years': get_years(),
     }
 
     return render_template('incomes/index.html', **context)

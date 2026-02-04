@@ -78,7 +78,15 @@ async function generateMontlyChart(canvas, type, data) {
                 datasets: [{
                     label: 'Amount',
                     data: [data.incomes, data.expenses],
-                    borderWidth: 1
+                    borderWidth: 1,
+                    backgroundColor: [
+                        '#2563eb', // blue → incomes
+                        '#dc2626'  // red → expenses
+                    ],
+                    borderColor: [
+                        '#85a1ff',
+                        '#f57777'
+                    ],
                 }]
             },
             options: {
@@ -107,15 +115,15 @@ if (yearlyIncomesAndOutgoingsChartInstance) {
             labels: data.months,
             datasets: [
                 {
-                    label: 'Outgoings',
-                    data: data.outgoings,
+                    label: 'Expenses',
+                    data: data.report.expenses,
                     backgroundColor: "rgb(243, 0, 53)",
                     borderColor: "rgba(255, 99, 132, 1)",
                     borderWidth: 1
                 },
                 {
-                    label: 'Incomings',
-                    data: data.incomings,
+                    label: 'Incomes',
+                    data: data.report.incomes,
                     backgroundColor: "rgb(21, 75, 255)",
                     borderColor: "rgba(75, 192, 192, 1)",
                     borderWidth: 1
@@ -229,11 +237,13 @@ document.addEventListener('DOMContentLoaded',async (event) => {
     //yearlyData = await getYearlyIncomeAndExpenseData();
     //generateYearlyChart(yearlyIncomesAndExpensesChart, 'bar', yearlyData);
 
-    const yearlyData = await getData(yearlyIncomesAndOutgoingsEndpoint, {year: 2026})
-    generateYearlyIncomesAndExpensesChart(yearlyIncomesAndExpensesChart, 'bar', yearlyData)
+    let years = selectYearElement.options;
+    let payload = {year: years[0].value};
 
-    const allModelsData = await getData(yearlyStatsAllModelsEndpoint, {year: 2026});
-    generateYearlyAllModelsChart(yearlyStatsAllModelsChart, 'line', allModelsData);
+    let allModelsYearlyData = await getData(yearlyStatsAllModelsEndpoint, payload);
+
+    generateYearlyAllModelsChart(yearlyStatsAllModelsChart, 'line', allModelsYearlyData);
+    generateYearlyIncomesAndExpensesChart(yearlyIncomesAndExpensesChart, 'bar', allModelsYearlyData);
 });
 
 selectYearElement.addEventListener('change', async (event) => {
@@ -242,9 +252,9 @@ selectYearElement.addEventListener('change', async (event) => {
         year: selectedYear
     };
 
-    const yearlyData = await getData(yearlyIncomesAndOutgoingsEndpoint, payload);
-    generateYearlyIncomesAndExpensesChart(yearlyIncomesAndExpensesChart, 'bar', yearlyData);
-
     let allModelsData = await getData(yearlyStatsAllModelsEndpoint, payload);
+
     generateYearlyAllModelsChart(yearlyStatsAllModelsChart, 'line', allModelsData);
+    generateYearlyIncomesAndExpensesChart(yearlyIncomesAndExpensesChart, 'bar', allModelsData);
+
 });

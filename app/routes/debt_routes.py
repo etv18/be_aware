@@ -5,6 +5,7 @@ from app.controllers import debt_controller as controller
 from app.models.debt import Debt
 from app.models.bank_account import BankAccount
 from app.utils.numeric_casting import format_amount, total_amount
+from app.utils.date_handling import get_years
 
 debt_bp = Blueprint('debt', __name__, url_prefix='/debts')
 
@@ -14,6 +15,7 @@ def index():
     bank_accounts = BankAccount.query.all()
     actives_debts = Debt.query.filter(Debt.is_active == True).count()
     paids_debts = Debt.query.filter(Debt.is_active == False).count()
+    years = get_years()
 
     context = {
         'debts': debts,
@@ -23,6 +25,7 @@ def index():
         'ramaining_to_pay': controller.calculate_all_remainings(),
         'actives': actives_debts,
         'paids': paids_debts,
+        'years': years,
     }
     return render_template('accounts_payable/index.html', **context)
 

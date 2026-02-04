@@ -5,16 +5,19 @@ from app.controllers import debt_payment_controller as controller
 from app.models.bank_account import BankAccount
 from app.utils.numeric_casting import format_amount, total_amount
 from app.models.debt_payment import DebtPayment
+from app.utils.date_handling import get_years
 
 debt_payment_bp = Blueprint('debt_payment', __name__, url_prefix='/debt_payments')
 
 @debt_payment_bp.route('/index')
 def index():
     bank_accounts = BankAccount.query.all()
+    years = get_years()
     context = {
         'bank_accounts': bank_accounts,
         'format_amount': format_amount,
         'total_amount': total_amount,
+        'years': years,
     }
     return render_template('debts/index.html', **context)
 
@@ -41,11 +44,13 @@ def delete(id):
 
 @debt_payment_bp.route('/see/all/debt/payments', methods=['GET'])
 def see_all_debt_payments():
+    years = get_years()
     try:
         context = {
             'debt_payments': DebtPayment.query.all(),
             'format_amount': format_amount,
             'total_amount': total_amount,
+            'years': years,
         }
         return render_template('accounts_payable/debt_payments.html', **context)
     except Exception as e:

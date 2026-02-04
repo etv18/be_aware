@@ -33,8 +33,9 @@ class CashLedger(db.Model):
     @staticmethod
     def create(transaction):
         try:
-            if not isinstance(transaction, ctc.get_all()):
-                return
+            if not isinstance(transaction, ctc.get_all()): return
+            
+            if not ctc.is_a_cash_transaction(transaction): return
             
             '''
             this if statement checks if a transaction can be arithmetically operated with CashLedger model, in 

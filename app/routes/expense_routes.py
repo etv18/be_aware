@@ -7,6 +7,7 @@ from app.models.expense import Expense
 from app.controllers import expense_controller
 from app.models import credit_card, expense_category, bank_account, expense
 from app.utils.numeric_casting import format_amount, total_amount
+from app.utils.date_handling import get_years
 
 expense_bp = Blueprint('expense', __name__, url_prefix='/expenses')
 
@@ -17,6 +18,7 @@ def index():
     bank_accounts = bank_account.BankAccount.query.all()
     expenses = expense_controller.get_monthly_expenses_records()
     monthly = expense_controller.money_limit_spent_left_for_expenses(expenses)
+    years = get_years()
 
     context = {
         'credit_cards': credit_cards,
@@ -26,6 +28,7 @@ def index():
         'monthly': monthly,
         'format_amount': format_amount, #function
         'total_amount': total_amount, #function
+        'years': years,
     }
 
     return render_template('expenses/index.html', **context)

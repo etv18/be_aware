@@ -1,6 +1,6 @@
 let yearlyStatsExpenseChartInstance = null; //This it'll be needed to be able to update the chart's data when a user selects a different year
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 export const CURRENT_YEAR = new Date().getFullYear();
 
 export async function getData(url, payload) {

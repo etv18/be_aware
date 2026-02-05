@@ -1,12 +1,13 @@
 from flask import Flask
 from flask_migrate import Migrate
+from flask_babel import format_datetime, format_date, format_time
 
 import os
 import logging
 from logging.handlers import RotatingFileHandler
 
 from app.config import Config
-from app.extensions import db
+from app.extensions import db, babel
 from app.routes import (
     home_routes, 
     bank_routes, 
@@ -44,6 +45,13 @@ def create_app():
 def register_extensions(app):
     db.init_app(app)
     migrate = Migrate(app, db)
+    babel.init_app(app)
+
+
+    # REGISTER BABEL FILTERS MANUALLY (Flask-Babel 4.x)
+    app.jinja_env.filters['format_datetime'] = format_datetime
+    app.jinja_env.filters['format_date'] = format_date
+    app.jinja_env.filters['format_time'] = format_time
 
 def register_resources(app):
     app.register_blueprint(home_routes.home_bp)

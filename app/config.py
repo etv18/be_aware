@@ -3,3 +3,5 @@ class Config:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///be_aware.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     TEMPLATES_AUTO_RELOAD = True
+    BABEL_DEFAULT_LOCALE = 'en'
+    BABEL_DEFAULT_TIMEZONE = 'America/Santo_Domingo'

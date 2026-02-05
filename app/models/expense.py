@@ -1,3 +1,5 @@
+from flask_babel import format_datetime
+
 from sqlalchemy import event
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
@@ -51,7 +53,8 @@ class Expense(db.Model):
             'bank_account_id': self.bank_account_id,
             'expense_category_id': self.expense_category_id,
             'description': self.description,  
-            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'created_at': format_datetime(self.created_at, 'EEE, dd MMM yyyy hh:mm a'),
+            'raw_created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
             
             # Related external properties of credit_card, bank_account and expense_category

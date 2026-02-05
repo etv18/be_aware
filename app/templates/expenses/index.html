@@ -208,7 +208,7 @@
                         <td>{{ expense.credit_card.nick_name or '-' }}</td>
                         <td>{{ expense.bank_account.nick_name or '-' }}</td>
                         <td>{{ expense.expense_category.name.lower().title() or '-' }}</td>
-                        <td>{{ expense.created_at }}</td>
+                        <td>{{ expense.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                         <td>
                             <div class="d-flex gap-2">
                                 <button 

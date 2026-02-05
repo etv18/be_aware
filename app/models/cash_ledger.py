@@ -7,6 +7,7 @@ from decimal import Decimal
 
 from app.utils import cash_transactional_classes as ctc
 from app.utils.normalize_string import normalize_string
+from app.utils.date_handling import utcnow
 
 class CashLedger(db.Model):
     __tablename__ = 'cash_ledger' 
@@ -17,8 +18,15 @@ class CashLedger(db.Model):
     type = db.Column(db.String(100), nullable=False)
     reference_code = db.Column(db.String(100), nullable=False)
 
-    created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
-    updated_at = db.Column(db.DateTime(timezone=True), onupdate=func.now())
+    created_at = db.Column(
+        db.DateTime(timezone=True),
+        default=utcnow, #internally sqlalchemy will exectute the function so dont add the parentheses otherwise it'll break down when creating the record in the db
+        nullable=False
+    )
+    updated_at = db.Column(
+        db.DateTime(timezone=True), 
+        onupdate=utcnow, #internally sqlalchemy will exectute the function so dont add the parentheses otherwise it'll break down when creating the record in the db
+    )
 
     def to_dict(self):
         return {

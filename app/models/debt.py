@@ -7,6 +7,7 @@ from decimal import Decimal
 
 from app.utils.code_generator import generate_montly_sequence
 from app.utils import prefixes
+from app.utils.date_handling import utcnow
 
 class Debt(db.Model):
     __tablename__ = 'debts'
@@ -16,12 +17,19 @@ class Debt(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     is_cash = db.Column(db.Boolean)
     code = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.String(200))
 
     bank_account_id = db.Column(db.Integer, db.ForeignKey('bank_accounts.id'))
     
-    created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
-    updated_at = db.Column(db.DateTime(timezone=True), onupdate=func.now())
-    description = db.Column(db.String(200))
+    created_at = db.Column(
+        db.DateTime(timezone=True),
+        default=utcnow, #internally sqlalchemy will exectute the function so dont add the parentheses otherwise it'll break down when creating the record in the db
+        nullable=False
+    )
+    updated_at = db.Column(
+        db.DateTime(timezone=True), 
+        onupdate=utcnow, #internally sqlalchemy will exectute the function so dont add the parentheses otherwise it'll break down when creating the record in the db
+    )
 
     debt_payments = relationship('DebtPayment', back_populates='debt', order_by='desc(DebtPayment.created_at)', cascade='all, delete-orphan')
     bank_account = relationship('BankAccount', back_populates='debts')

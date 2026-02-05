@@ -2,6 +2,9 @@ from app.extensions import db
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
+from app.utils.date_handling import utcnow
+
+
 class BankAccount(db.Model):
     __tablename__ = 'bank_accounts'
     id = db.Column(db.Integer, primary_key=True)
@@ -12,8 +15,15 @@ class BankAccount(db.Model):
 
     bank_id = db.Column(db.Integer, db.ForeignKey('banks.id'))
     
-    created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
-    updated_at = db.Column(db.DateTime(timezone=True), onupdate=func.now())
+    created_at = db.Column(
+        db.DateTime(timezone=True),
+        default=utcnow, #internally sqlalchemy will exectute the function so dont add the parentheses otherwise it'll break down when creating the record in the db
+        nullable=False
+    )
+    updated_at = db.Column(
+        db.DateTime(timezone=True), 
+        onupdate=utcnow, #internally sqlalchemy will exectute the function so dont add the parentheses otherwise it'll break down when creating the record in the db
+    )
 
     bank = relationship('Bank', back_populates='bank_accounts')
     expenses = relationship('Expense', back_populates='bank_account', order_by='desc(Expense.created_at)')

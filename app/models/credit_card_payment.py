@@ -5,6 +5,7 @@ from sqlalchemy import event
 
 from app.utils import prefixes
 from app.utils.code_generator import generate_montly_sequence
+from app.utils.date_handling import utcnow
 
 class CreditCardPayment(db.Model):
     __tablename__ = 'credit_card_payments'
@@ -15,8 +16,15 @@ class CreditCardPayment(db.Model):
     credit_card_id = db.Column(db.Integer, db.ForeignKey('credit_cards.id'), nullable=False)
     bank_account_id = db.Column(db.Integer, db.ForeignKey('bank_accounts.id', name='bank_account_id'), nullable=False)
 
-    created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
-    updated_at = db.Column(db.DateTime(timezone=True), onupdate=func.now())
+    created_at = db.Column(
+        db.DateTime(timezone=True),
+        default=utcnow, #internally sqlalchemy will exectute the function so dont add the parentheses otherwise it'll break down when creating the record in the db
+        nullable=False
+    )
+    updated_at = db.Column(
+        db.DateTime(timezone=True), 
+        onupdate=utcnow, #internally sqlalchemy will exectute the function so dont add the parentheses otherwise it'll break down when creating the record in the db
+    )
 
     credit_card = relationship('CreditCard', back_populates='payments')
     bank_account = relationship('BankAccount', back_populates='credit_card_payments')

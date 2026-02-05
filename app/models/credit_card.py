@@ -2,6 +2,8 @@ from app.extensions import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
+from app.utils.date_handling import utcnow
+
 class CreditCard(db.Model):
     __tablename__ = 'credit_cards'
 
@@ -15,8 +17,15 @@ class CreditCard(db.Model):
     #Setting up foreign key from banks table
     bank_id = db.Column(db.Integer, db.ForeignKey('banks.id'), nullable=False)
 
-    created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
-    updated_at = db.Column(db.DateTime(timezone=True), onupdate=func.now())
+    created_at = db.Column(
+        db.DateTime(timezone=True),
+        default=utcnow, #internally sqlalchemy will exectute the function so dont add the parentheses otherwise it'll break down when creating the record in the db
+        nullable=False
+    )
+    updated_at = db.Column(
+        db.DateTime(timezone=True), 
+        onupdate=utcnow, #internally sqlalchemy will exectute the function so dont add the parentheses otherwise it'll break down when creating the record in the db
+    )
 
     #This allows sqlalchemy to navigated between relationships in python code
     bank = relationship('Bank', back_populates='credit_cards')

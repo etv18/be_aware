@@ -33,28 +33,32 @@ class CashLedger(db.Model):
     @staticmethod
     def create(transaction):
         try:
+            
             if not isinstance(transaction, ctc.get_all()): return
-            
-            if not ctc.is_a_cash_transaction(transaction): return
-            
+                        
             '''
             this if statement checks if a transaction can be arithmetically operated with CashLedger model, in 
             other words make sure only objects from Withdrawal or Models which have an is_cash=True property can
             be saved into cash_ledger table in the database
             '''
-            if isinstance(transaction, (ctc.Withdrawal, ctc.LoanPayment)) or transaction.is_cash:
-                amount = transaction.amount
-                if isinstance(transaction, (ctc.Expense, ctc.Loan, ctc.DebtPayment, ctc.Deposit)):
-                    amount = -amount
+            
+            amount = Decimal('0')
+            if isinstance(transaction, (ctc.Withdrawal, ctc.LoanPayment, ctc.Income, ctc.Debt)):
                 
-                ledger = CashLedger(
-                    amount=amount,
-                    type=normalize_string(transaction.__class__.__tablename__),
-                    reference_code=transaction.code
-                )
+                amount = transaction.amount
+            if isinstance(transaction, (ctc.Expense, ctc.Loan, ctc.DebtPayment, ctc.Deposit)):
+                amount = -transaction.amount
+                
 
-                db.session.add(ledger)
-                db.session.commit()
+            ledger = CashLedger(
+                amount=amount,
+                type=normalize_string(transaction.__class__.__tablename__),
+                reference_code=transaction.code
+            )
+            
+            db.session.add(ledger)
+            db.session.commit()
+            
         except Exception as e:
             print('Error on cash ledger file: ', e)
             traceback.print_exc()

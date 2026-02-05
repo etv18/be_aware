@@ -49,8 +49,8 @@ def create_loan():
         db.session.add(loan)
         db.session.commit()
 
-        CashLedger.create(loan)
-        if loan.bank_account_id: BankAccountTransactionsLedger.create(loan)
+        if loan.is_cash         : CashLedger.create(loan)
+        if loan.bank_account_id : BankAccountTransactionsLedger.create(loan)
 
     except SQLAlchemyError as e:
         db.session.rollback()

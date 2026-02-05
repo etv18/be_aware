@@ -48,8 +48,8 @@ def create_loan_payment():
         db.session.add(loan_payment)
         db.session.commit()
         
-        CashLedger.create(loan_payment)
-        if loan_payment.bank_account_id: BankAccountTransactionsLedger.create(loan_payment)
+        if loan_payment.is_cash         : CashLedger.create(loan_payment)
+        if loan_payment.bank_account_id : BankAccountTransactionsLedger.create(loan_payment)
 
         update_loan_is_active(loan)
 

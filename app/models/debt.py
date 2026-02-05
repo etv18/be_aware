@@ -1,3 +1,5 @@
+from flask_babel import format_datetime
+
 from app.extensions import db
 from sqlalchemy import event
 from sqlalchemy.sql import func
@@ -52,7 +54,7 @@ class Debt(db.Model):
             'f_is_cash': 'YES' if self.is_cash else 'NO',
             'bank_account_id': self.bank_account_id,
             'bank_account_nick_name': self.bank_account.nick_name if self.bank_account else '-',
-            'created_at': self.created_at.isoformat() if self.created_at else '-',
+            'created_at': format_datetime(self.created_at, 'EEE, dd MMM yyyy hh:mm a'),
             'updated_at': self.updated_at.isoformat() if self.updated_at else '-',
             'description': self.description,
             'total_payments': str(self.total_payments()),

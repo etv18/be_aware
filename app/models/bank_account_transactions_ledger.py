@@ -1,3 +1,4 @@
+from flask_babel import format_datetime
 from app.extensions import db
 from sqlalchemy.sql import func
 
@@ -45,7 +46,7 @@ class BankAccountTransactionsLedger(db.Model):
             'before_update_balance': self.before_update_balance,
             'after_update_balance': self.after_update_balance,
             'bank_account_nick_name': self.bank_account.nick_name,
-            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'created_at': format_datetime(self.created_at, 'EEE, dd MMM yyyy hh:mm a'),
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
         }
 

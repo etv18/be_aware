@@ -94,8 +94,8 @@ def update(id):
         debt.bank_account_id = bank_account_id
     
         db.session.commit()
-
-        CashLedger.update_or_delete(debt)
+        delete = True if not is_cash else False
+        CashLedger.update_or_delete(debt, delete)
         BankAccountTransactionsLedger.update(debt)
         
         return jsonify({'data': 'Debt updated successfully'}), 200

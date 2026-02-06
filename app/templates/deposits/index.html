@@ -142,7 +142,7 @@
                         <td>{{ format_amount(deposit.amount) }}</td>
                         <td>{{ deposit.description if deposit.description else '-'}}</td>
                         <td>{{ deposit.bank_account.nick_name }}</td>
-                        <td>{{ deposit.created_at }}</td>
+                        <td>{{ deposit.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a")}}</td>
                         <td>
                             <div class="d-flex gap-2">
                                 <button 

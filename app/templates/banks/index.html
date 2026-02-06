@@ -74,7 +74,7 @@
                     <tr>
                         <th scope="row">{{ bank.id }}</th>
                         <td class="text-start">{{ bank.name }}</td>
-                        <td>{{ bank.created_at }}</td>
+                        <td>{{ bank.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                         <td>
                             <div  class="d-flex justify-content-center">
                                 <div class="d-flex gap-2 justify-content-center">

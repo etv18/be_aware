@@ -234,7 +234,7 @@
                         <td>{{ loan.description }}</td>
                         <td>{{ 'YES' if loan.is_cash else 'NO'  }}</td>
                         <td>{{ loan.bank_account.nick_name if loan.bank_account else '-' }}</td>
-                        <td>{{ loan.created_at }}</td>
+                        <td>{{ loan.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                         <td>
                             <div class="d-flex gap-2">
                                 <button 

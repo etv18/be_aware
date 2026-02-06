@@ -198,7 +198,7 @@
                 <td>{{ format_amount(credit_card.amount_available) }}</td>
                 <td>{{ format_amount(money_used(credit_card)) }}</td>
                 <td>{{ credit_card.is_active }}</td>
-                <td>{{ credit_card.created_at }}</td>
+                <td>{{ credit_card.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                 <td>
                     <div class="d-flex gap-2">
                         <button 

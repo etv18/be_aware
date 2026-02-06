@@ -87,7 +87,7 @@
                         </td>                        
                         <td>{{ '.' if transfer.from_bank_account.id == bank_account.id else transfer.from_bank_account.nick_name }}</td>
                         <td>{{ '.' if transfer.to_bank_account.id == bank_account.id else transfer.to_bank_account.nick_name }}</td>
-                        <td>{{ transfer.created_at }}</td>
+                        <td>{{ transfer.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                         <td>
                             {% if transfer.from_bank_account_id == bank_account.id %}
                                 <div class="d-flex gap-2">
@@ -154,7 +154,7 @@
                         <td class="text-start"> {{ expense.description or '-' }} </td>
                         <td>{{ expense.bank_account.nick_name }}</td>
                         <td class="text-start">{{ expense.expense_category.name }}</td>
-                        <td>{{ expense.created_at }}</td>
+                        <td>{{ expense.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                     </tr>
                     {% endfor %}
                     
@@ -203,7 +203,7 @@
                         <td>{{ 'ACTIVE' if debt.is_active else 'PAID'  }}</td>
                         <td class="text-start">{{ debt.description }}</td>
                         <td>{{ debt.bank_account.nick_name }}</td>
-                        <td>{{ debt.created_at }}</td>
+                        <td>{{ debt.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                     </tr>
                   {% endfor %}
                 </tbody>
@@ -243,7 +243,7 @@
                         <th scope="row">{{ payment.id }}</th>
                         <td class="text-start">{{ format_amount(payment.amount) }}</td>
                         <td>{{ payment.bank_account.nick_name }}</td>
-                        <td>{{ payment.created_at }}</td>
+                        <td>{{ payment.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -286,7 +286,7 @@
                         <td class="text-start">{{ format_amount(income.amount) }}</td>
                         <td class="text-start">{{ income.description if income.description else '-'}}</td>
                         <td>{{ income.bank_account.nick_name }}</td>
-                        <td>{{ income.created_at }}</td>
+                        <td>{{ income.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                     </tr>
                   {% endfor %}
                 </tbody>
@@ -329,7 +329,7 @@
                         <td class="text-start">{{ format_amount(deposit.amount) }}</td>
                         <td class="text-start">{{ deposit.description if deposit.description else '-'}}</td>
                         <td>{{ deposit.bank_account.nick_name }}</td>
-                        <td>{{ deposit.created_at }}</td>
+                        <td>{{ deposit.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                     </tr>
                   {% endfor %}
                 </tbody>
@@ -373,7 +373,7 @@
                         <td class="text-start">{{ format_amount(withdrawal.amount) }}</td>
                         <td class="text-start">{{ withdrawal.description if withdrawal.description else '-'}}</td>
                         <td>{{ withdrawal.bank_account.nick_name }}</td>
-                        <td>{{ withdrawal.created_at }}</td>
+                        <td>{{ withdrawal.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                     </tr>
                   {% endfor %}
                 </tbody>
@@ -422,7 +422,7 @@
                         <td>{{ 'ACTIVE' if loan.is_active else 'PAID'  }}</td>
                         <td class="text-start">{{ loan.description }}</td>
                         <td>{{ loan.bank_account.nick_name }}</td>
-                        <td>{{ loan.created_at }}</td>
+                        <td>{{ loan.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                     </tr>
                   {% endfor %}
                 </tbody>
@@ -462,7 +462,7 @@
                         <th scope="row">{{ payment.id }}</th>
                         <td class="text-start">{{ format_amount(payment.amount) }}</td>
                         <td>{{ payment.bank_account.nick_name }}</td>
-                        <td>{{ payment.created_at }}</td>
+                        <td>{{ payment.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -505,7 +505,7 @@
                         <td class="text-start">{{ format_amount(payment.amount) }}</td>
                         <td>{{ payment.credit_card.nick_name or '-' }}</td>
                         <td>{{ payment.bank_account.nick_name or '-' }}</td>
-                        <td>{{ payment.created_at }}</td>
+                        <td>{{ payment.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                     </tr>
                     {% endfor %}
                     

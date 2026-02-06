@@ -44,7 +44,7 @@
                         <td>{{ 'YES' if payment.is_cash else 'NO'}}</td>
                         <td>{{ payment.loan.code if payment.loan else '-'}}</td>
                         <td>{{ payment.bank_account.nick_name or '-' }}</td>
-                        <td>{{ payment.created_at }}</td>
+                        <td>{{ payment.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                     </tr>
                   {% endfor %} 
                 </tbody>

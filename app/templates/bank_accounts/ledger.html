@@ -54,7 +54,7 @@
                         <td>{{ format_amount(ledger.amount) }}</td>
                         <td>{{ format_amount(ledger.before_update_balance) }}</td>
                         <td>{{ format_amount(ledger.after_update_balance) }}</td>
-                        <td>{{ ledger.created_at }}</td>
+                        <td>{{ ledger.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                     </tr>
                   {% endfor %}
                 </tbody>

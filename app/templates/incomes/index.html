@@ -159,7 +159,7 @@
                         <td>{{ 'YES' if income.is_cash else 'NO'}}</td>
                         <td>{{ income.description if income.description else '-'}}</td>
                         <td>{{ income.bank_account.nick_name }}</td>
-                        <td>{{ income.created_at }}</td>
+                        <td>{{ income.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                         <td>
                             <div class="d-flex gap-2">
                                 <button 

@@ -28,7 +28,7 @@
                         <th scope="col">Credit Card</th>
                         <th scope="col">Bank Account</th>
                         <th scope="col" class="text-start">Category</th>
-                        <th scope="col">Create at</th>
+                        <th scope="col" class="text-start">Create at</th>
                     </tr>
                 </thead>
                 <tbody id="expenses-table-body">
@@ -41,7 +41,7 @@
                         <td>{{ expense.credit_card.nick_name or '-' }}</td>
                         <td>{{ expense.bank_account.nick_name }}</td>
                         <td class="text-start">{{ expense.expense_category.name }}</td>
-                        <td>{{ expense.created_at }}</td>
+                        <td class="text-start">{{ expense.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                     </tr>
                     {% endfor %}
                     

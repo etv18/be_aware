@@ -48,7 +48,7 @@
                         <td class="text-start">{{ ledger.reference_code }}</td>
                         <td class="text-start">{{ ledger.type | replace('_', ' ') | lower | title }}</td>
                         <td class="text-start">{{ ledger.amount }}</td>
-                        <td>{{ ledger.created_at }}</td>
+                        <td>{{ ledger.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                     </tr>
                   {% endfor %}
                 </tbody>

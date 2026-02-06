@@ -104,7 +104,7 @@
                         <td>{{ expense.credit_card.nick_name or '-' }}</td>
                         <td>{{ expense.bank_account.nick_name }}</td>
                         <td class="text-start">{{ expense.expense_category.name }}</td>
-                        <td>{{ expense.created_at }}</td>
+                        <td>{{ expense.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                     </tr>
                     {% endfor %}
                     
@@ -148,7 +148,7 @@
                         <td class="text-start">{{ format_amount(payment.amount) }}</td>
                         <td>{{ payment.credit_card.nick_name or '-' }}</td>
                         <td>{{ payment.bank_account.nick_name or '-' }}</td>
-                        <td>{{ payment.created_at }}</td>
+                        <td>{{ payment.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                         <td class="d-flex justify-content-center">
                             <div class="d-flex gap-2">
                                 <button 

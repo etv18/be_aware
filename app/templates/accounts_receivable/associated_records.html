@@ -85,7 +85,7 @@
                         <td class="text-start">{{ format_amount(payment.amount) }}</td>
                         <td>{{ 'YES' if payment.is_cash else 'NO' }}</td>
                         <td class="text-start">{{ payment.bank_account.nick_name if payment.bank_account else '-' }}</td>
-                        <td>{{ payment.created_at }}</td>
+                        <td>{{ payment.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                         <td>
                             <div class="d-flex gap-2 justify-content-center">
                                 <button 

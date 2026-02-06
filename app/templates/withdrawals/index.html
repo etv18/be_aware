@@ -141,7 +141,7 @@
                         <td>{{ format_amount(withdrawal.amount) }}</td>
                         <td>{{ withdrawal.description if withdrawal.description else '-'}}</td>
                         <td>{{ withdrawal.bank_account.nick_name }}</td>
-                        <td>{{ withdrawal.created_at }}</td>
+                        <td>{{ withdrawal.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                         <td>
                             <div class="d-flex gap-2">
                                 <button 

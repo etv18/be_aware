@@ -147,7 +147,11 @@ def get_associated_records_in_json(bank_account_id):
         traceback.print_exc()
         return jsonify({'error': str(e)}), 400
     
-def get_cash_flow_info(bank_account_id, year=None):
+def get_cash_flow_info():
+    data = request.get_json(silent=True) or {}
+    
+    bank_account_id = data.get('bank_account_id')
+    year = data.get('year')
 
     outgoing_classes = [Expense, Withdrawal, Loan, CreditCardPayment, DebtPayment]
     incoming_classes = [LoanPayment, Income, Deposit, Debt]
@@ -181,7 +185,11 @@ def get_cash_flow_info(bank_account_id, year=None):
     return jsonify(data), 200
 
     
-def get_yearly_total_per_association_info(bank_account_id, year=None):
+def get_yearly_total_per_association_info(): 
+    data = request.get_json(silent=True) or {}
+
+    bank_account_id = data.get('bank_account_id')
+    year = data.get('year')
 
     associations = [Expense, Withdrawal, Loan, CreditCardPayment, DebtPayment, LoanPayment, Income, Deposit, Debt]
 

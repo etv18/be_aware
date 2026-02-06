@@ -84,10 +84,10 @@ def get_associated_records_in_json(bank_account_id):
     except Exception as e:
         raise e
     
-@bank_account_bp.route('/cash/flow/info/<int:bank_account_id>')
-def get_cash_flow_info(bank_account_id):
+@bank_account_bp.route('/cash/flow/info', methods=['POST'])
+def get_cash_flow_info():
     try:
-        return ba_controller.get_cash_flow_info(bank_account_id)
+        return ba_controller.get_cash_flow_info()
     except Exception as e:
         raise e
     
@@ -98,10 +98,10 @@ def get_total_monthly_per_associated_record_info(bank_account_id):
     except Exception as e:
         raise e
     
-@bank_account_bp.route('/yearly/total/per/association/info/<int:bank_account_id>')
-def get_yearly_total_per_association_info(bank_account_id):
+@bank_account_bp.route('/yearly/total/per/association/info', methods=['POST'])
+def get_yearly_total_per_association_info():
     try:
-        return ba_controller.get_yearly_total_per_association_info(bank_account_id)
+        return ba_controller.get_yearly_total_per_association_info()
     except Exception as e:
         raise e
     

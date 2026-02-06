@@ -21,7 +21,7 @@ const expensesTemplateFn = (expense) => `
     <td>${expense.credit_card_name ?? '-'}</td>
     <td>${expense.bank_account_name ?? '-'}</td>
     <td class="text-start">${expense.expense_category_name ?? '-'}</td>
-    <td>${expense.created_at}</td>
+    <td class="text-start">${expense.created_at}</td>
 `;
 
 const incomesTemplateFn = (income) => `

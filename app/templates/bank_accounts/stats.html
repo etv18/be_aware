@@ -47,7 +47,7 @@
 
 <div class="container border rounded-3 mt-2">
     <div class="row align-items-stretch text-center my-2">
-         <h3>Yearly Cash Flow Chart</h3>
+         <h3>Yearly Cash Flow Stats - <span id="yearly-cash-flow-year-span"></span></h3>
         <div class=" d-flex justify-content-center">
             <div class="chart-box">
                 <canvas id="yearly-stats"></canvas>
@@ -59,7 +59,7 @@
 
 <div class="container border rounded-3 mt-2">
     <div class="row align-items-stretch text-center my-2">
-        <h3>Yearly Total Per Bank Account Association</h3>
+        <h3>Yearly Stats All Models - <span id="yearly-all-models-year-span"></span></h3>
         <div class=" d-flex justify-content-center">
             <div class="chart-box">
                 <canvas id="yearly-total-per-association-chart"></canvas>
@@ -329,11 +329,13 @@
     </div>
 </div>
 
-<input type="hidden" name="" id="yearly-cash-flow-endpoint-id" value="{{ url_for('bank_account.get_cash_flow_info', bank_account_id=bank_account.id ) }}">
+<input type="hidden" name="" id="yearly-cash-flow-endpoint-id" value="{{ url_for('bank_account.get_cash_flow_info' ) }}">
 <input type="hidden" name="" id="total-monthly-per-associated-record-info-endpoint-id" value="{{ url_for('bank_account.get_total_monthly_per_associated_record_info', bank_account_id=bank_account.id ) }}">
-<input type="hidden" name="" id="yearly-total-per-association-endpoint-id" value="{{ url_for('bank_account.get_yearly_total_per_association_info', bank_account_id=bank_account.id ) }}">
+<input type="hidden" name="" id="yearly-total-per-association-endpoint-id" value="{{ url_for('bank_account.get_yearly_total_per_association_info') }}">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="{{ url_for('static', filename='scripts/bank_accounts/stats.js' ) }}"></script>
+<script type="module" src="{{ url_for('static', filename='scripts/bank_accounts/stats.js' ) }}"></script>
 <script src="{{ url_for('static', filename='scripts/bank_accounts/cardStats.js' ) }}"></script>
+<script type="module" src="{{ url_for('static', filename='scripts/utils/generateChart.js' ) }}"></script>
+
 {% endblock %}

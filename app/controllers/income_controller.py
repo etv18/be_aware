@@ -38,8 +38,8 @@ def create_income():
             db.session.add(income)
             db.session.commit()
 
-            CashLedger.create(income)
-            if income.bank_account_id: BankAccountTransactionsLedger.create(income)
+            if income.is_cash         : CashLedger.create(income)
+            if income.bank_account_id : BankAccountTransactionsLedger.create(income)
 
         except (AmountIsLessThanOrEqualsToZero, BankAccountDoesNotExists) as e:
             db.session.rollback()

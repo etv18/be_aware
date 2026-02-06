@@ -47,8 +47,8 @@ def create():
         db.session.add(debt)
         db.session.commit()
 
-        CashLedger.create(debt)
-        if debt.bank_account_id: BankAccountTransactionsLedger.create(debt)
+        if debt.is_cash         : CashLedger.create(debt)
+        if debt.bank_account_id : BankAccountTransactionsLedger.create(debt)
 
         return jsonify({'message': 'debt created successfully'}), 200
     except Exception as e:

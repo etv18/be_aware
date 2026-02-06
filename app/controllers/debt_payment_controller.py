@@ -46,8 +46,8 @@ def create():
 
         _update_debt_is_active(debt)
         
-        CashLedger.create(debt_payment)
-        if debt_payment.bank_account_id: BankAccountTransactionsLedger.create(debt_payment)
+        if debt_payment.is_cash         :  CashLedger.create(debt_payment)
+        if debt_payment.bank_account_id : BankAccountTransactionsLedger.create(debt_payment)
 
         return jsonify({'message': 'Debt payment created successfully'}), 201
     except Exception as e:

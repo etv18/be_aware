@@ -67,10 +67,9 @@ def create_expense():
         db.session.add(expense)
         db.session.commit()
 
-        CashLedger.create(expense)
-        if expense.bank_account_id: BankAccountTransactionsLedger.create(expense)
-        if expense.credit_card_id: CreditCardTransactionsLedger.create(expense)
-
+        if expense.is_cash         : CashLedger.create(expense)
+        if expense.bank_account_id : BankAccountTransactionsLedger.create(expense)
+        if expense.credit_card_id  : CreditCardTransactionsLedger.create(expense)
 
     except (
         AmountGreaterThanAvailableMoney,

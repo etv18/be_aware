@@ -31,3 +31,24 @@ def monthly_incomings_and_outgoings():
         return controller.monthly_incomings_and_outgoings()
     except Exception as e:
         raise e
+
+@stats_bp.route('/bank_account/yearly/report/using/source', methods=['POST'])
+def bank_account_yearly_report_using_source():
+    try: 
+        return controller.bank_account_yearly_report_using_source()
+    except Exception as e:
+        raise e
+
+@stats_bp.route('/credit_card/yearly/report/using/source', methods=['POST'])
+def credit_card_yearly_report_using_source():
+    try: 
+        return controller.credit_card_yearly_report_using_source()
+    except Exception as e:
+        raise e
+    
+@stats_bp.route('/cash/yearly/report/using/source', methods=['POST'])
+def cash_yearly_report_using_source():
+    try: 
+        return controller.cash_yearly_report_using_source()
+    except Exception as e:
+        raise e

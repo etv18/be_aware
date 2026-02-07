@@ -8,7 +8,8 @@ import traceback
 
 from app.extensions import db
 import app.utils.bank_transactional_classes as btc
-from app.utils.filter_data import get_yearly_total_amount_info, get_monthly_total_amount_info
+import app.utils.cash_transactional_classes as ctc
+from app.utils.filter_data import get_yearly_total_amount_info, get_monthly_total_amount_info, get_yearly_total_amount_info_using_source
 from app.utils.date_handling import MONTHS
 
 def yearly_single_model_report():
@@ -109,6 +110,83 @@ def monthly_incomings_and_outgoings():
         'incomings': incomings_monthly_total,
         'outgoings': outgoings_monthly_total,
     }), 200
+
+def bank_account_yearly_report_using_source():
+    data = request.get_json(silent=True) or {}
+    year = data.get('year')
+   
+    source = 'bank'
+    models = btc.get_all()
+    reports = {}
+
+    for model in models:
+        if model is not btc.BankTransfer: #Only execute when model is not BankTransfer Class
+            report = get_yearly_total_amount_info_using_source(
+                CustomModel=model,
+                year=year,
+                source=source
+            )
+            key_name = model.__tablename__
+            reports[key_name] = report
+
+    model = _get_model('bank_transfers')
+    report = get_yearly_total_amount_info(
+        CustomModel=model,
+        year=year,
+    )
+    key_name = model.__tablename__
+    reports[key_name] = report
+        
+    return jsonify({
+        'months': MONTHS,
+        'report': reports,
+    }), 200
+
+def credit_card_yearly_report_using_source():
+    data = request.get_json(silent=True) or {}
+    year = data.get('year')
+   
+    source = 'card'
+    models = (btc.CreditCardPayment, btc.Expense)
+    reports = {}
+
+    for model in models:
+        report = get_yearly_total_amount_info_using_source(
+            CustomModel=model,
+            year=year,
+            source=source
+        )
+        key_name = model.__tablename__
+        reports[key_name] = report
+        
+    return jsonify({
+        'months': MONTHS,
+        'report': reports,
+    }), 200
+
+def cash_yearly_report_using_source():
+    data = request.get_json(silent=True) or {}
+    year = data.get('year')
+   
+    source = 'cash'
+    models = (ctc.Loan, ctc.LoanPayment, ctc.Income, ctc.Expense, ctc.Debt, ctc.DebtPayment)
+    reports = {}
+
+    for model in models:
+        report = get_yearly_total_amount_info_using_source(
+            CustomModel=model,
+            year=year,
+            source=source
+        )
+        key_name = model.__tablename__
+        reports[key_name] = report
+        
+    return jsonify({
+        'months': MONTHS,
+        'report': reports,
+    }), 200
+
+
 
 def _get_model(model_str: str):
     if   model_str == 'expenses'             : return btc.Expense

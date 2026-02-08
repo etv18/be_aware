@@ -97,3 +97,23 @@ def get_monthly_total_amount_info(CustomModel, year, month) -> Decimal:
         db.session.rollback()
         traceback.print_exc()
         raise e
+    
+def get_active_records(model):
+    keep_executing = getattr(model, 'is_active', False)
+    if not keep_executing : return None
+
+    return (
+        model.query
+        .filter(model.is_active == True)
+        .all()
+    )
+
+def get_not_deleted_records(model):
+    keep_executing = getattr(model, 'is_deleted', False)
+    if not keep_executing : return None
+
+    return (
+        model.query
+        .filter(model.is_deleted == None)
+        .all()
+    )

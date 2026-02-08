@@ -8,14 +8,15 @@ from app.controllers import expense_controller
 from app.models import credit_card, expense_category, bank_account, expense
 from app.utils.numeric_casting import format_amount, total_amount
 from app.utils.date_handling import get_years
+from app.utils.filter_data import get_not_deleted_records
 
 expense_bp = Blueprint('expense', __name__, url_prefix='/expenses')
 
 @expense_bp.route('/index', methods=['GET'])
 def index():
-    credit_cards = credit_card.CreditCard.query.filter(credit_card.CreditCard.is_deleted == None).all()
-    expense_categories = expense_category.ExpenseCategory.query.all()
-    bank_accounts = bank_account.BankAccount.query.all()
+    credit_cards = get_not_deleted_records(model=credit_card.CreditCard)
+    expense_categories = get_not_deleted_records(model=expense_category.ExpenseCategory)
+    bank_accounts = get_not_deleted_records(model=bank_account.BankAccount)
     expenses = expense_controller.get_monthly_expenses_records()
     monthly = expense_controller.money_limit_spent_left_for_expenses(expenses)
     years = get_years()

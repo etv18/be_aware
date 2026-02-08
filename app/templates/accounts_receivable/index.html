@@ -90,6 +90,12 @@
                                             Cash
                                         </label>
                                     </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="is-active" id="e-is-active-id">
+                                        <label class="form-check-label" for="checkDefault">
+                                            Paid
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
@@ -380,12 +386,13 @@
             const oldBankAccountId = button.getAttribute('data-bank-account-id');
             const oldAmount = button.getAttribute('data-amount');
             const loanId = button.getAttribute('data-loan-id');
-            const isActive = button.getAttribute('data-is-active');
+            const isActive = button.getAttribute('data-is-active').toLowerCase() === 'true';
             const description = button.getAttribute('data-description');
             const personName = button.getAttribute('data-person-name');
 
             document.getElementById('e-amount-id').value = oldAmount;
             document.getElementById('e-is-cash-id').checked = oldIsCash;
+            document.getElementById('e-is-active-id').checked = !isActive;
             document.getElementById('e-loan-id').value = loanId;
             document.getElementById('e-select-bank-account-id').value = oldBankAccountId; //If on the db its value it's Null flask will convert it into 'None' which the browser interprets it as String value in js
             if(oldBankAccountId === 'None') {

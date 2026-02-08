@@ -114,6 +114,6 @@ def get_not_deleted_records(model):
 
     return (
         model.query
-        .filter(model.is_deleted == None)
+        .filter(model.is_deleted == False)
         .all()
     )

@@ -9,7 +9,7 @@ expense_category_bp = Blueprint('expense_category',__name__, url_prefix='/expens
 
 @expense_category_bp.route('/index', methods=['GET'])
 def index():
-    expense_categories = ExpenseCategory.query.order_by(ExpenseCategory.name).all()
+    expense_categories = ExpenseCategory.query.filter_by(is_deleted = False).order_by(ExpenseCategory.name).all()
     context = {
         'expense_categories': expense_categories,
         'format_amount': format_amount,

@@ -7,15 +7,14 @@ from app.models.bank_account import BankAccount
 from app.models.bank import Bank
 from app.utils.numeric_casting import format_amount, total_amount
 from app.utils.date_handling import get_years
-
-
+from app.utils.filter_data import get_not_deleted_records
 
 bank_account_bp = Blueprint('bank_account', __name__, url_prefix='/bank_accounts')
 
 @bank_account_bp.route('/index', methods=['GET'])
 def index():
     banks = Bank.query.all()
-    bank_accounts = BankAccount.query.all()
+    bank_accounts = get_not_deleted_records(model=BankAccount)
     total_money = Decimal()
     years = get_years()
 

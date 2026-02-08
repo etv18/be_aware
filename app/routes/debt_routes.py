@@ -6,13 +6,14 @@ from app.models.debt import Debt
 from app.models.bank_account import BankAccount
 from app.utils.numeric_casting import format_amount, total_amount
 from app.utils.date_handling import get_years
+from app.utils.filter_data import get_not_deleted_records
 
 debt_bp = Blueprint('debt', __name__, url_prefix='/debts')
 
 @debt_bp.route('/index')
 def index():
     debts = Debt.query.order_by(Debt.created_at.desc()).all()
-    bank_accounts = BankAccount.query.all()
+    bank_accounts = get_not_deleted_records(model=BankAccount)
     actives_debts = Debt.query.filter(Debt.is_active == True).count()
     paids_debts = Debt.query.filter(Debt.is_active == False).count()
     years = get_years()
@@ -32,7 +33,7 @@ def index():
 @debt_bp.route('/associated/records/<int:id>')
 def associated_records(id):
     debt = Debt.query.get(id)
-    bank_accounts = BankAccount.query.all()
+    bank_accounts = get_not_deleted_records(model=BankAccount)
     context = {
         'debt': debt,
         'bank_accounts': bank_accounts,

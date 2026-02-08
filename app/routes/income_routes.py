@@ -7,13 +7,14 @@ from app.models.bank_account import BankAccount
 from app.controllers import income_controller
 from app.utils.numeric_casting import total_amount, format_amount
 from app.utils.date_handling import get_years
+from app.utils.filter_data import get_not_deleted_records
 
 income_bp = Blueprint('income', __name__, url_prefix='/incomes')
 
 @income_bp.route('/index', methods=['GET', 'POST'])
 def index():
     incomes = income_controller.get_monthly_incomes_records()
-    bank_accounts = BankAccount.query.all()
+    bank_accounts = get_not_deleted_records(model=BankAccount)
 
     context = {
         'incomes': incomes,

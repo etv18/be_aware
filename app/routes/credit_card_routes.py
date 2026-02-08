@@ -16,7 +16,7 @@ credit_card_bp = Blueprint('credit_card', __name__, url_prefix='/credit_cards')
 def index():
     banks = Bank.query.all()
     credit_cards = get_not_deleted_records(model=CreditCard)
-    bank_accounts = BankAccount.query.all()
+    bank_accounts = get_not_deleted_records(model=BankAccount)
     years = get_years()
 
     context = {
@@ -68,7 +68,7 @@ def delete(id):
 @credit_card_bp.route('/associated_records/<int:id>', methods=['GET'])
 def associated_records(id):
     credit_card = CreditCard.query.get(id)
-    bank_accounts = BankAccount.query.all()
+    bank_accounts = get_not_deleted_records(model=BankAccount)
     years = get_years()
     context = {
         'credit_card': credit_card,

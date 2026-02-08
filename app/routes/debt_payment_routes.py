@@ -6,12 +6,13 @@ from app.models.bank_account import BankAccount
 from app.utils.numeric_casting import format_amount, total_amount
 from app.models.debt_payment import DebtPayment
 from app.utils.date_handling import get_years
+from app.utils.filter_data import get_not_deleted_records
 
 debt_payment_bp = Blueprint('debt_payment', __name__, url_prefix='/debt_payments')
 
 @debt_payment_bp.route('/index')
 def index():
-    bank_accounts = BankAccount.query.all()
+    bank_accounts = get_not_deleted_records(model=BankAccount)
     years = get_years()
     context = {
         'bank_accounts': bank_accounts,

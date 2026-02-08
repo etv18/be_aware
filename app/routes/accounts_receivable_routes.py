@@ -9,6 +9,7 @@ from app.models.loan_payment import LoanPayment
 from app.models.bank_account import BankAccount
 from app.utils.numeric_casting import format_amount, total_amount
 from app.utils.date_handling import get_years
+from app.utils.filter_data import get_not_deleted_records
 
 accounts_receivable_bp = Blueprint('accounts_receivable', __name__, url_prefix='/accounts_receivable')
 
@@ -18,7 +19,7 @@ def index():
     active_loans = Loan.query.filter(Loan.is_active == True).count()
     paid_loans = Loan.query.filter(Loan.is_active == False).count()
     remaining_to_collect = Loan.query.filter(Loan.is_active == True).with_entities(func.sum(Loan.amount)).scalar()
-    bank_accounts = BankAccount.query.all()
+    bank_accounts = get_not_deleted_records(model=BankAccount)
     years = get_years()
 
     context = {
@@ -64,7 +65,7 @@ def delete_loan(loan_id):
 def associated_records(loan_id):
     try:
         loan = Loan.query.get(loan_id)
-        bank_accounts = BankAccount.query.all()
+        bank_accounts = get_not_deleted_records(model=BankAccount)
 
         if not loan:
             return jsonify({'error': 'Loan record was not found'}), 400

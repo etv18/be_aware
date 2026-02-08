@@ -6,13 +6,14 @@ from app.models.deposit import Deposit
 from app.models.bank_account import BankAccount
 from app.utils.numeric_casting import format_amount, total_amount
 from app.utils.date_handling import get_years
+from app.utils.filter_data import get_not_deleted_records
 
 deposit_bp = Blueprint('deposit', __name__, url_prefix='/deposits')
 
 @deposit_bp.route('/index')
 def index():
     deposits = Deposit.query.order_by(Deposit.created_at.desc()).all()
-    bank_accounts = BankAccount.query.all()
+    bank_accounts = get_not_deleted_records(model=BankAccount)
     years = get_years()
     context = {
         'deposits': deposits,

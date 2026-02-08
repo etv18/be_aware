@@ -66,6 +66,7 @@ def update_loan(loan):
         
         amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else Decimal('0')
         is_cash = request.form.get('is-cash') == 'on'
+        is_active = not request.form.get('is-active') == 'on'
         person_name = request.form.get('person-name')
         description = request.form.get('description')
         bank_account_id = None
@@ -87,6 +88,7 @@ def update_loan(loan):
 
         loan.amount = amount
         loan.is_cash = is_cash
+        loan.is_active = is_active
         loan.person_name = person_name
         loan.description = description
         loan.bank_account_id = bank_account_id

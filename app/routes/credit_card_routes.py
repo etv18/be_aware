@@ -16,6 +16,7 @@ def index():
     banks = Bank.query.all()
     credit_cards = CreditCard.query.filter(CreditCard.is_deleted == None).all()
     bank_accounts = BankAccount.query.all()
+    years = get_years()
 
     context = {
         'banks': banks,
@@ -24,6 +25,7 @@ def index():
         'money_used': cc_controller.h_get_money_used_on_credit_card, #function
         'format_amount': format_amount, #function
         'total_amount': total_amount, #function
+        'years': years,
     }
     return render_template('credit_cards/index.html', **context)
 

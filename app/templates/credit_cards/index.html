@@ -3,6 +3,34 @@
 {% block title %}Credit Cards{% endblock %}
 
 {% block content %}
+<style>
+    .chart-scroll {
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    /* Force chart to stay wide */
+    .chart-box {
+        width: 100%;
+        min-width: 100%;   /* 👈 key: forces horizontal scroll */
+        height: 450px;
+    }
+
+    .chart-box canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    /* Mobile tweaks */
+    @media (max-width: 576px) {
+        .chart-box {
+            min-width: 700px;  /* smaller but still scrollable */
+            height: 280px;
+        }
+    }
+</style>
+
     <h2>Credit Cards</h2>
     <section class="modal fade" tabindex="-1" id="create-credit-card">
         <form action="{{ url_for('credit_card.create' ) }}" method="POST" id="create-credit-card-form">
@@ -232,11 +260,46 @@
         </tbody>
             </table>
         </div>
+
+    <!-- Fancy Dark Mode Card -->
+    <div class="d-flex justify-content-center">
+        <div class="d-flex justify-content-cente w-100" style="max-width: 320px;">
+        <div class="border-top border-start border-end border-bottom rounded-3 p-3 w-100">
+            <h5 class="mb-3 text-light">Select a year for the report</h5>
+        
+            <select class="form-select dark-select" id="year-select">
+                {% for year in years %}    
+                    <option value="{{ year }}">{{ year }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        </div>
+    </div>
+
+    <div class="container w-100 border rounded-3 mt-2">
+        <div class="row text-center my-2">
+            <h3>
+                Yearly Stats - 
+                <span id="credit-card-yearly-report-year-span"></span>
+            </h3>
+
+            <div class="chart-scroll">
+                <div class="chart-box">
+                    <canvas id="yearly-stats"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input type="hidden" name="" id="credit-card-yearly-report-endpoint" value="{{ url_for('stats.credit_card_yearly_report_using_source') }}">
     
     <script type="module" src="{{ url_for('static', filename='scripts/credit_cards/script.js' ) }}"></script>
     <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
     <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/credit_cards/yearlyReport.js' ) }}"></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/utils/generateChart.js' ) }}"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

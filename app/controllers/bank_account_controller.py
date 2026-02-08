@@ -71,7 +71,8 @@ def update_bank_account(bank_account):
 
 def delete_bank_account(bank_account):
     try:        
-        db.session.delete(bank_account)
+        if bank_account:
+            bank_account.is_deleted = True
         db.session.commit()
     except SQLAlchemyError as e:
         db.session.rollback()

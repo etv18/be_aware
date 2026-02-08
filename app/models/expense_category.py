@@ -12,6 +12,8 @@ class ExpenseCategory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     limit = db.Column(db.Numeric(10,2), server_default='0')
+    is_deleted = db.Column(db.Boolean, default=False)
+
     created_at = db.Column(
         db.DateTime(timezone=True),
         default=utcnow, #internally sqlalchemy will exectute the function so dont add the parentheses otherwise it'll break down when creating the record in the db

@@ -56,7 +56,8 @@ def update_expense_category(expense_category):
 
 def delete_expense_category(expense_category):
     try:
-        db.session.delete(expense_category)
+        if expense_category:
+            expense_category.is_deleted = True
         db.session.commit()
     except SQLAlchemyError as e:
         db.session.rollback()

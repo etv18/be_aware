@@ -8,13 +8,14 @@ from app.models.bank_account import BankAccount
 from app.models.credit_card_payment import CreditCardPayment
 from app.utils.numeric_casting import total_amount, format_amount
 from app.utils.date_handling import get_years
+from app.utils.filter_data import get_not_deleted_records
 
 credit_card_bp = Blueprint('credit_card', __name__, url_prefix='/credit_cards')
 
 @credit_card_bp.route('/index', methods=['GET'])
 def index():
     banks = Bank.query.all()
-    credit_cards = CreditCard.query.filter(CreditCard.is_deleted == None).all()
+    credit_cards = get_not_deleted_records(model=CreditCard)
     bank_accounts = BankAccount.query.all()
     years = get_years()
 

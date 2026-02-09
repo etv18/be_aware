@@ -84,6 +84,8 @@ def associated_records_in_json(id):
         category = ExpenseCategory.query.get(id)
         if not category: 
             return jsonify({'error': 'Expense category not found'}), 404
+        if category.is_deleted: 
+            return jsonify({'error': 'Expense category not found'}), 404
 
         associations = [
             category.expenses,
@@ -103,13 +105,13 @@ def get_monthly_data():
     now = datetime.now()
     data = {}
     try:
-        category_names = ExpenseCategory.query.with_entities(ExpenseCategory.name).all()
+        category_names = ExpenseCategory.query.filter_by(is_deleted = False).with_entities(ExpenseCategory.name).all()
         ids = ExpenseCategory.query.with_entities(ExpenseCategory.id).all()
         total_per_category = []
 
         category_names_list = []
         for item in category_names:
-            category_names_list.append(item[0])
+            category_names_list.append(item[0].title())
 
         ids_list = []
         for item in ids:

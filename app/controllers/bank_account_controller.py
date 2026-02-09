@@ -161,26 +161,26 @@ def get_cash_flow_info():
     #managed individually to get each group separetly
     transfers = get_yearly_total_amount_info_of_transfers(id=bank_account_id, year=year)
 
-    outgoings = h_get_total_amount_info_using_models(
+    expenses = h_get_total_amount_info_using_models(
         id=bank_account_id, 
         models=outgoing_classes,
         transfers=transfers.get('outgoings'),
         year=year
     )
 
-    incomings = h_get_total_amount_info_using_models(
+    incomes = h_get_total_amount_info_using_models(
         id=bank_account_id, 
         models=incoming_classes,
         transfers=transfers.get('incomings'),
         year=year
     )
 
-    balances = h_get_balances(outgoings=outgoings, incomings=incomings)
+    balances = h_get_balances(outgoings=expenses, incomings=incomes)
 
     data = {
         'months': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        'outgoings': outgoings,
-        'incomings': incomings,
+        'expenses': expenses,
+        'incomes': incomes,
         'balances': balances
     }
     return jsonify(data), 200

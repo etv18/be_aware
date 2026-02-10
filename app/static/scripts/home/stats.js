@@ -231,6 +231,72 @@ if (yearlyStatsAllModelsChartInstance) {
     });
 }
 
+function toTitle(str) {
+  return str
+    .replace(/_/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase()
+    .replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function buildYearlyReportTable(data) {
+    const table = document.getElementById("yearly-report-table");
+    table.innerHTML = ""; // reset
+
+    /* ---------- THEAD ---------- */
+    const thead = document.createElement("thead");
+    const headRow = document.createElement("tr");
+    
+    thead.classList.add('table-primary');
+
+    // First column
+    const thLabel = document.createElement("th");
+    thLabel.textContent = "Months";
+    headRow.appendChild(thLabel);
+
+    // Month headers
+    data.months.forEach(month => {
+        const th = document.createElement("th");
+        th.textContent = month;
+        th.classList.add("text-end"); // Bootstrap utility
+        headRow.appendChild(th);
+    });
+
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    /* ---------- TBODY ---------- */
+    const tbody = document.createElement("tbody");
+
+    Object.entries(data.report).forEach(([module, values]) => {
+       if(module.toString().toLowerCase() === 'bank_transfers') return;
+
+        const row = document.createElement("tr");
+
+        // Row title
+        const rowHeader = document.createElement("th");
+        rowHeader.textContent = toTitle(module);
+        row.appendChild(rowHeader);
+
+        // Values
+        values.forEach(value => {
+            const td = document.createElement("td");
+            td.classList.add("text-end");
+            td.textContent = parseFloat(value).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            row.appendChild(td);
+        });
+
+        tbody.appendChild(row);
+    });
+
+    table.appendChild(tbody);
+}
+
+
 document.addEventListener('DOMContentLoaded',async (event) => {
     monthlyData = await getMonthlyIncomeAndExpenseData();
     generateMontlyChart(monthlyIncomesAndExpensesChart, 'doughnut', monthlyData);
@@ -244,6 +310,7 @@ document.addEventListener('DOMContentLoaded',async (event) => {
 
     generateYearlyAllModelsChart(yearlyStatsAllModelsChart, 'line', allModelsYearlyData);
     generateYearlyIncomesAndExpensesChart(yearlyIncomesAndExpensesChart, 'bar', allModelsYearlyData);
+    buildYearlyReportTable(allModelsYearlyData);
 });
 
 selectYearElement.addEventListener('change', async (event) => {
@@ -256,5 +323,5 @@ selectYearElement.addEventListener('change', async (event) => {
 
     generateYearlyAllModelsChart(yearlyStatsAllModelsChart, 'line', allModelsData);
     generateYearlyIncomesAndExpensesChart(yearlyIncomesAndExpensesChart, 'bar', allModelsData);
-
+    buildYearlyReportTable(allModelsData);
 });

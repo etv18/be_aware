@@ -2,10 +2,59 @@ from flask import request, jsonify
 
 import traceback
 from datetime import datetime, timedelta
+from decimal import Decimal
 
 from app.extensions import db
 from app.models.cash_ledger import CashLedger
 from app.utils.numeric_casting import total_amount
+from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero
+from app.utils.numeric_casting import is_decimal_type
+from app.utils.prefixes import ADJUSTMENT
+from app.utils.code_generator import generate_montly_sequence
+
+'''
+def create():
+    try: 
+        amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else Decimal('0')
+
+        description = request.form.get('description')
+        bank_account_id = None
+        
+        if(amount <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
+
+        db.session.add(withdrawal)
+        db.session.commit()
+
+    except Exception as e:
+        db.session.rollback()
+        raise e
+'''
+def create_adjustment():
+    try:
+        amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else Decimal('0')
+        
+        if(amount <= 0): 
+           return jsonify({'error': 'Introduce a number bigger than 0'}), 400
+
+        ref_code = generate_montly_sequence(
+            prefix=ADJUSTMENT,
+            model=CashLedger,
+            field_name='reference_code'
+        )
+
+        ledger = CashLedger(
+            amount=amount,
+            type='ADJUSTMENT',
+            reference_code=ref_code
+        )
+
+        db.session.add(ledger)
+        db.session.commit()
+
+        return jsonify({'message': 'Adjustment created successfully!'}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 def filter_by_field(query):
     try:

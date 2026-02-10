@@ -3,11 +3,36 @@
 {% block title %}Cash Ledger{% endblock %}
 
 {% block content %}
+    <section class="modal fade" tabindex="-1" id="create-adjustment">
+        <form id="create-adjustment-form">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">New Adjustment</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-sm">
+                            <div class="form-floating mt-2">
+                                <input type="text" name="amount" id="amount-id" class="form-control"
+                                    placeholder="Amount" required>
+                                <label for="amount-id">Amount</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" onclick="createAdjustment()">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </section>
 
     <div class="container w-100">
 
         <h2>Cash Ledger</h2>
-        <div class="d-flex justify-content-end gap-1 flex-wrap flex-md-nowrap mt-2">
+        <div class="d-flex justify-content-start gap-1 flex-wrap flex-md-nowrap mt-2">
             <!--<div class="d-flex gap-1 w-100 align-items-center" style="max-width: 320px;">
                 <div class="w-md-auto mt-md-0">
                     <label for="" class="fs-6 fw-bold">Filter by: </label>
@@ -19,7 +44,16 @@
                     </select>
                 </div>
             </div>-->
-            <div class="w-100 w-md-auto mt-md-0" style="max-width: 320px;">
+            <button 
+                type="button"
+                id="btn-create-expense-id"
+                class="btn btn-outline-warning me-auto fw-bold me-md-auto w-100 w-md-auto" 
+                style="max-width: 300px;"
+                data-bs-toggle="modal"
+                data-bs-target="#create-adjustment"
+            >Make An Adjustment</i>
+            </button>
+            <div class="d-flex gap-1 w-100 align-items-center" style="max-width: 320px;">
                 <input type="text" class="form-control" id="filter-byfiled-input-id" placeholder="Enter some text...">
             </div>
             <div class="d-flex gap-1 w-100" style="max-width: 350px;">
@@ -58,7 +92,8 @@
         <p id="lbl-total">Available Cash: {{ sum_result }}</p>
     </div>
 
-<input type="hidden" name="" id="filter-data-endpoint" value="{{ url_for('cashledger.filter_all' ) }}">
+    <input type="hidden" name="" id="filter-data-endpoint" value="{{ url_for('cashledger.filter_all' ) }}">
+    <input type="hidden" name="" id="create-adjustment-endpoint" value="{{ url_for('cashledger.create_adjustment' ) }}">
 
 <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -70,5 +105,40 @@
 <script type="module" src="{{ url_for('static', filename='scripts/cashledger/filterData.js' ) }}"></script>
 <script type="module" src="{{ url_for('static', filename='scripts/utils/asyncHanlding.js' ) }}"></script>
 
+<script>
+        async function createAdjustment(){
+        const endpoint = document.getElementById('create-adjustment-endpoint').value;
+        const form = document.getElementById('create-adjustment-form');
+        const formData = new FormData(form);
 
+        try {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                body: formData,
+            });
+
+            const data = await response.json();
+
+            if(!response.ok){
+                console.log(response.json());
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error || 'Something went wrong while creating the income.'
+                });
+                return;
+            }
+            location.reload();//Reload the current page to see the new added income
+        
+        } catch (error) {
+            console.error('Fetch error:', error);
+
+            Swal.fire({
+            icon: 'error',
+            title: 'Network Error',
+            text: error.message || 'Could not connect to server.'
+            });
+        }        
+    }
+</script>
 {% endblock %}

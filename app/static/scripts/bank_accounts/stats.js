@@ -213,8 +213,8 @@ function buildRow(label, values, tag){
 function buildCashFlowTable(data){
     theadCashFlow.innerHTML = buildRow('Months', data.months, 'th');
     tbodyCashFlow.innerHTML = `
-        ${buildRow('Incomes', data.incomes, 'td')}
-        ${buildRow('Expenses', data.expenses, 'td')}
+        ${buildRow('Incomings', data.incomings, 'td')}
+        ${buildRow('Outgoings', data.outgoings, 'td')}
         ${buildRow('Balances', data.balances, 'td')}
     `;
 }

@@ -66,6 +66,7 @@ def update(id):
         is_cash = request.form.get('is-cash') == 'on'
         person_name = request.form.get('person-name')
         description = request.form.get('description')
+        is_active = not request.form.get('is-active') == 'on'
         bank_account_id = None
         if amount <= 0: raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
         
@@ -89,6 +90,7 @@ def update(id):
 
         debt.amount = amount
         debt.is_cash = is_cash
+        debt.is_active = is_active
         debt.person_name = person_name
         debt.description = description
         debt.bank_account_id = bank_account_id

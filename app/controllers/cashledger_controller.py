@@ -12,29 +12,12 @@ from app.utils.numeric_casting import is_decimal_type
 from app.utils.prefixes import ADJUSTMENT
 from app.utils.code_generator import generate_montly_sequence
 
-'''
-def create():
-    try: 
-        amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else Decimal('0')
-
-        description = request.form.get('description')
-        bank_account_id = None
-        
-        if(amount <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
-
-        db.session.add(withdrawal)
-        db.session.commit()
-
-    except Exception as e:
-        db.session.rollback()
-        raise e
-'''
 def create_adjustment():
     try:
-        amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else Decimal('0')
+        amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else None
         
-        if(amount <= 0): 
-           return jsonify({'error': 'Introduce a number bigger than 0'}), 400
+        if not amount: 
+           return jsonify({'error': 'Introduce a valid number'}), 400
 
         ref_code = generate_montly_sequence(
             prefix=ADJUSTMENT,
@@ -52,6 +35,18 @@ def create_adjustment():
         db.session.commit()
 
         return jsonify({'message': 'Adjustment created successfully!'}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+    
+def delete_adjustment(id):
+    try:
+        adjustment = CashLedger.query.get(id)
+        if adjustment:
+            db.session.delete(adjustment)
+            db.session.commit()
+            return jsonify({'message': 'Adjustment deleted successfully!'}), 200
+        return jsonify({'error': 'record not found'}), 404
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500

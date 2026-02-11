@@ -23,6 +23,13 @@ def create_adjustment():
     except Exception as e:
         raise e
 
+@cashlegder_bp.route('/delete/adjustment/<int:id>', methods=['DELETE'])
+def delete_adjustment(id):
+    try:
+       return cashledger_controller.delete_adjustment(id)
+    except Exception as e:
+        raise e
+
 @cashlegder_bp.route('/filter/cashledger/by/field')
 def filter_by_field():
     try:

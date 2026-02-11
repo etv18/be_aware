@@ -329,6 +329,7 @@
     </div>
 </div>
 
+<input type="hidden" name="" id="bank-account-id" value="{{ bank_account.id}}">
 <input type="hidden" name="" id="yearly-cash-flow-endpoint-id" value="{{ url_for('bank_account.get_cash_flow_info' ) }}">
 <input type="hidden" name="" id="total-monthly-per-associated-record-info-endpoint-id" value="{{ url_for('bank_account.get_total_monthly_per_associated_record_info', bank_account_id=bank_account.id ) }}">
 <input type="hidden" name="" id="yearly-total-per-association-endpoint-id" value="{{ url_for('bank_account.get_yearly_total_per_association_info') }}">

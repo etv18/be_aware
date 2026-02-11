@@ -6,21 +6,6 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css' ) }}">
 
 <h5>Home</h5>
-<div class="row align-items-stretch">
-    <!-- MONTHLY -->
-    <div class="col-sm d-flex justify-content-center">
-        <div class="chart-box">
-            <canvas id="incomes-and-expenses-monthly"></canvas>
-        </div>
-    </div>
-    <!-- YEARLY -->
-    <div class="col-sm d-flex justify-content-center">
-        <div class="chart-box">
-            <canvas id="incomes-and-expenses-yearly"></canvas>
-        </div>
-    </div>
-</div>
-
 <!-- Fancy Dark Mode Card -->
 <div class="d-flex justify-content-center my-2">
     <div class="d-flex justify-content-cente w-100" style="max-width: 320px;">
@@ -36,8 +21,23 @@
     </div>
 </div>
 
+<div class="row align-items-stretch mt-2">
+    <!-- MONTHLY -->
+    <div class="col-sm d-flex justify-content-center">
+        <div class="chart-box">
+            <canvas id="incomes-and-expenses-monthly"></canvas>
+        </div>
+    </div>
+    <!-- YEARLY -->
+    <div class="col-sm d-flex justify-content-center">
+        <div class="chart-box">
+            <canvas id="incomes-and-expenses-yearly"></canvas>
+        </div>
+    </div>
+</div>
+
 <div class="table-responsive border rounded-3 my-2">
-    <table id="cash-flow-table" class="table table-hover table-bordered text-start">
+    <table id="cash-flow-table" class="table table-hover table-sm text-start">
         
     </table>
 </div>
@@ -51,14 +51,14 @@
 </div>
 
 <div class="table-responsive border rounded-3 my-2">
-    <table id="yearly-report-table" class="table table-hover table-bordered text-start">
+    <table id="yearly-report-table" class="table table-hover  text-start">
         
     </table>
 </div>
 
 
 <input type="hidden" name="" id="yearly-stats-all-models-endpoint" value="{{ url_for('stats.yearly_all_model_reports' ) }}">
-<input type="hidden" name="" id="yearly-incomes-and-outgoings-endpoint" value="{{ url_for('stats.yearly_incomes_and_outgoings' ) }}">
+<input type="hidden" name="" id="yearly-cash-flow-endpoint" value="{{ url_for('stats.cash_flow_info' ) }}">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="../../static/scripts/home/stats.js"></script>

@@ -296,6 +296,69 @@ function buildYearlyReportTable(data) {
     table.appendChild(tbody);
 }
 
+function canBeNumberStrict(value) {
+    return value !== '' && value !== null && !Number.isNaN(Number(value));
+}
+
+function buildRow(label, values, tag){
+    let row = '<tr>'; //open row
+
+    row += `<${tag} class="fs-6 fw-bold table-active">${label}</${tag}>`; //this will display the name of the row
+
+    values.forEach(val => {
+        const isNumber = canBeNumberStrict(val);
+        const numericValue = isNumber ? Number(val) : null;
+
+        let textClass = '';
+
+        if(label.toLowerCase() === 'balances'){
+            if(isNumber && numericValue < 0){
+                textClass = 'text-danger';
+            } else if (isNumber && numericValue > 0){
+                textClass = 'text-primary';
+            }
+        }
+
+        if(!isNumber) textClass += ' table-active';
+
+        row += `
+            <${tag} class="${textClass}">
+                ${canBeNumberStrict(val) 
+                    ? Number(val).toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }) 
+                    : val}
+            </${tag}>
+        `;
+    });
+
+    row += '</tr>'; //close row
+    return row;
+}
+
+function buildCashFlowTable(data, table){
+    table.innerHTML = ""; // reset
+
+    /* ---------- THEAD ---------- */
+    const thead = document.createElement("thead");
+    const headRow = document.createElement("tr");
+    
+    headRow.innerHTML = buildRow('Months', data.months, 'th');
+
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    /* ---------- TBODY ---------- */
+    const tbody = document.createElement('tbody');
+    for(const key in data.report){
+        tbody.innerHTML += `${buildRow(toTitle(key.toString()), data.report[key], 'td')}`
+        console.log("Key:", key);
+        console.log("Values:", data.report[key]);
+    }
+    table.appendChild(tbody);
+}
+
 
 document.addEventListener('DOMContentLoaded',async (event) => {
     monthlyData = await getMonthlyIncomeAndExpenseData();
@@ -311,6 +374,8 @@ document.addEventListener('DOMContentLoaded',async (event) => {
     generateYearlyAllModelsChart(yearlyStatsAllModelsChart, 'line', allModelsYearlyData);
     generateYearlyIncomesAndExpensesChart(yearlyIncomesAndExpensesChart, 'bar', allModelsYearlyData);
     buildYearlyReportTable(allModelsYearlyData);
+    const cashFLowTable = document.getElementById('cash-flow-table');
+    buildCashFlowTable(allModelsYearlyData, cashFLowTable);
 });
 
 selectYearElement.addEventListener('change', async (event) => {

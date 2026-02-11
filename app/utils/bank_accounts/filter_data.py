@@ -184,3 +184,43 @@ def get_yearly_total_amount_info_of_transfers(id, year=None) -> list:
         db.session.rollback()
         traceback.print_exc()
         raise e
+
+from datetime import datetime
+from decimal import Decimal
+from sqlalchemy import func
+
+
+def get_yearly_total_amount_info_by_filter_through_custom_model_and_fk(id, CustomModel, fk_column_name: str, year: int = None) -> list:
+    try:
+        if year is None:
+            year = datetime.now().year
+
+        # Dynamically get the FK column from the model
+        fk_column = getattr(CustomModel, fk_column_name)
+
+        results = (
+            CustomModel.query
+            .filter(
+                fk_column == id,
+                func.extract('year', CustomModel.created_at) == year
+            )
+            .with_entities(
+                func.extract('month', CustomModel.created_at).label('month'),
+                func.sum(CustomModel.amount).label('total')
+            )
+            .group_by(func.extract('month', CustomModel.created_at))
+            .all()
+        )
+
+        # Initialize all 12 months with 0
+        monthly_totals = {month: Decimal('0.00') for month in range(1, 13)}
+
+        # Fill months that have data
+        for month, total in results:
+            monthly_totals[int(month)] = total or Decimal('0.00')
+
+        # Return ordered list (Jan → Dec)
+        return [monthly_totals[m] for m in range(1, 13)]
+
+    except Exception as e:
+        raise e

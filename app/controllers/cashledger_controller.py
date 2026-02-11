@@ -43,6 +43,7 @@ def delete_adjustment(id):
     try:
         adjustment = CashLedger.query.get(id)
         if adjustment:
+            if adjustment.type.lower() != 'adjustment': return
             db.session.delete(adjustment)
             db.session.commit()
             return jsonify({'message': 'Adjustment deleted successfully!'}), 200

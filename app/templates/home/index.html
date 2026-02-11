@@ -8,7 +8,7 @@
 <h5>Home</h5>
 <!-- Fancy Dark Mode Card -->
 <div class="d-flex justify-content-center my-2">
-    <div class="d-flex justify-content-cente w-100" style="max-width: 320px;">
+    <div class="d-flex justify-content-cente w-100" style="max-width: 320px; height: 110px;">
       <div class="border-top border-start border-end border-bottom rounded-3 p-3 w-100">
         <h5 class="mb-3 text-light">Select a year for the report</h5>
     
@@ -22,26 +22,42 @@
 </div>
 
 <div class="row align-items-stretch mt-2">
+    
     <!-- MONTHLY -->
-    <div class="col-sm d-flex justify-content-center">
+    <div class="col-sm d-flex flex-column align-items-center">
+        
+        <div class="w-100 text-light fw-bold text-center">
+            <p class="fs-4 p-2 mb-0">Current Month</p>
+        </div>
+
         <div class="chart-box">
             <canvas id="incomes-and-expenses-monthly"></canvas>
         </div>
+
     </div>
+
     <!-- YEARLY -->
-    <div class="col-sm d-flex justify-content-center">
+    <div class="col-sm d-flex flex-column align-items-center">
+        
+        <div class="w-100 text-light fw-bold text-center">
+            <p class="fs-4 p-2 mb-0">Yearly Cash Flow</p>
+        </div>
+
         <div class="chart-box">
             <canvas id="incomes-and-expenses-yearly"></canvas>
         </div>
+
     </div>
+
 </div>
+
 
 <div class="table-responsive border rounded-3 my-2">
     <div 
         class="d-flex justify-content-center align-items-center w-100 text-light fw-bold rounded-top-2" 
         style="background-color: #3cb45cad; height: 42px;"
     >
-        <p class="fs-4 p-2">Cash Flow (Table)</p>
+        <p class="fs-4 p-2">Yearly Cash Flow (Table)</p>
     </div>
     <table id="cash-flow-table" class="table table-hover table-sm text-start">
         

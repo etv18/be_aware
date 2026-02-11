@@ -186,7 +186,22 @@ def cash_yearly_report_using_source():
         'report': reports,
     }), 200
 
+def cash_flow_info():
+    data = request.get_json(silent=True) or {}
+    year = data.get('year')
 
+    expenses = get_yearly_total_amount_info(btc.Expense, year)
+    incomes  = get_yearly_total_amount_info(btc.Income, year)
+    balances = _get_balances(expenses, incomes)
+    
+    return jsonify({
+        'months': MONTHS,
+        'report': {
+            'incomes': incomes,
+            'expenses': expenses,
+            'balances': balances,
+        },
+    }), 200
 
 def _get_model(model_str: str):
     if   model_str == 'expenses'             : return btc.Expense
@@ -227,5 +242,13 @@ def _total_monthly(models, year, month) -> Decimal:
             month=month
         )
     return total
+
+def _get_balances(outgoings: list, incomings: list) -> list:
+    balances = []
+    for month in range(0, 12):
+        balances.append(
+            incomings[month] - outgoings[month] 
+        )
+    return balances
         
 

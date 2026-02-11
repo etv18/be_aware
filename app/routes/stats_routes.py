@@ -52,3 +52,10 @@ def cash_yearly_report_using_source():
         return controller.cash_yearly_report_using_source()
     except Exception as e:
         raise e
+    
+@stats_bp.route('/cash/flow/info', methods=['POST'])
+def cash_flow_info():
+    try: 
+        return controller.cash_flow_info()
+    except Exception as e:
+        raise e

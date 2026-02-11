@@ -1,5 +1,7 @@
 import { getData, CURRENT_YEAR } from '../utils/generateChart.js';
 
+const bankAccountId = document.getElementById('bank-account-id').value;
+
 const yearlyCashFlowEndPoint = document.getElementById('yearly-cash-flow-endpoint-id').value;
 const yearlyTotalPerAssociationEndPoint = document.getElementById('yearly-total-per-association-endpoint-id').value;
 const yearlyCashFlowCanvas = document.getElementById('yearly-stats');
@@ -221,7 +223,7 @@ function buildCashFlowTable(data){
 
 document.addEventListener('DOMContentLoaded', async e => {
     let payload = {
-        "bank_account_id": 19,
+        "bank_account_id": bankAccountId,
         "year": CURRENT_YEAR
     }
     var data = await getData(yearlyCashFlowEndPoint, payload);
@@ -238,7 +240,7 @@ document.addEventListener('DOMContentLoaded', async e => {
 yearSelect.addEventListener('change', async (event) => {
     const selectedYear = event.target.value;
     let payload = {
-        "bank_account_id": 19,
+        "bank_account_id": bankAccountId,
         "year": selectedYear
     }
     var data = await getData(yearlyCashFlowEndPoint, payload);

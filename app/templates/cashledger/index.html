@@ -22,7 +22,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" onclick="createAdjustment()">Save</button>
+                        <button type="button" class="btn btn-primary" onclick="createAdjustment()">Save</button>
                     </div>
                 </div>
             </div>
@@ -64,14 +64,15 @@
             </div>
         </div>
         <div class="table-responsive overflow-y-auto border rounded-3 mt-1" style="max-height: 457px;">
-            <table class="table table-borderless table-hover text-center">
+            <table class="table table-hover">
                 <thead class="sticky-top">
                     <tr class="table-secondary">
-                    <th scope="col"># Id</th>
-                    <th scope="col" class="text-start">Ref. Code</th>
-                    <th scope="col" class="text-start">Type</th>
-                    <th scope="col" class="text-start">Amount</th>
-                    <th scope="col">Create at</th>
+                        <th scope="col"># Id</th>
+                        <th scope="col">Ref. Code</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Create at</th>
+                        <th scope="col">Action</th>
                     </tr>
                 </thead>
                 
@@ -79,10 +80,16 @@
                   {% for ledger in ledgers %}
                     <tr>
                         <th scope="row">{{ ledger.id }}</th>
-                        <td class="text-start">{{ ledger.reference_code }}</td>
-                        <td class="text-start">{{ ledger.type | replace('_', ' ') | lower | title }}</td>
-                        <td class="text-start">{{ ledger.amount }}</td>
+                        <td>{{ ledger.reference_code }}</td>
+                        <td>{{ ledger.type | replace('_', ' ') | lower | title }}</td>
+                        <td>{{ ledger.amount }}</td>
                         <td>{{ ledger.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
+                        <td>{% if ledger.type.lower() == 'adjustment' %}
+                                <a href="{{ url_for('cashledger.delete_adjustment', id=ledger.id ) }}" class="text-danger" style="width: 35px; height: 35px;">
+                                    remove
+                                </a>
+                            {% endif %}
+                        </td>
                     </tr>
                   {% endfor %}
                 </tbody>
@@ -140,5 +147,42 @@
             });
         }        
     }
+</script>
+
+<script>
+document.addEventListener('click', async e => {
+    const btn = e.target.closest('a.text-danger');
+    if(!btn) return;
+
+    e.preventDefault();
+
+    const deleteUrl = btn.getAttribute('href');
+
+    Swal.fire({
+        title: "Are you sure?",
+        text: "This record will be deleted.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!"
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            const res = await fetch(deleteUrl, {
+                method: 'DELETE'
+            });
+
+            let data = await res.json();
+            console.log(data);
+
+            
+            if (res.ok) {
+                location.reload();
+            } else {
+                Swal.fire("Error", data.error, "error");
+            }
+        }
+    });
+});
 </script>
 {% endblock %}

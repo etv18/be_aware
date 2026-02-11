@@ -183,6 +183,8 @@
     </div>
     <p class="d-none" id="associated-records-endpoint-id">{{ url_for('credit_card.associated_records_in_json', id=credit_card.id ) }}</p>
     <input type="hidden" name="" id="yearly-single-model-report-endpoint" value="{{ url_for('stats.yearly_single_model_report' ) }}">
+    <input type="hidden" name="" id="get-yearly-total-per-association-info" value="{{ url_for('credit_card.get_yearly_total_per_association_info' ) }}">
+    <input type="hidden" name="" id="credit-card-id" value="{{ credit_card.id }}">
 
 
     <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css" rel="stylesheet">
@@ -190,7 +192,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script> 
     <script type="module" src="{{ url_for('static', filename='scripts/utils/dynamicTables.js' ) }}"></script>
-    <script type="module" src="{{ url_for('static', filename='scripts/credit_cards/filterAssociatedRecords.js' ) }}"></script>
+    <script type="module" src="{{ url_for('static', filename='scripts/credit_cards/filterAssociatedRecords.js' ) }}"></script> 
     <script type="module" src="{{ url_for('static', filename='scripts/credit_cards/stats.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='scripts/utils/generateChart.js' ) }}"></script>
 

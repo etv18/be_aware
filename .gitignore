@@ -4,3 +4,5 @@ logs
 error.log
 migrations
 app_structure.txt
+.idx
+*.nix

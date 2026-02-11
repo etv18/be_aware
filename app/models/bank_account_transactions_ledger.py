@@ -207,18 +207,9 @@ class BankAccountTransactionsLedger(db.Model):
 
     def _delete_ledger_for_bank_transfer(transaction):
         try:
-            transfer_ledgers = BankAccountTransactionsLedger.query.filter_by(reference_code = transaction.code).all()
-            origin_ledger = None
-            destination_ledger = None
-
-            for ledger in transfer_ledgers:
-                if ledger.amount >= 0:
-                    destination_ledger = ledger
-                else:
-                    origin_ledger = ledger
-
-            db.session.delete(origin_ledger)
-            db.session.delete(destination_ledger)
+            BankAccountTransactionsLedger.query.filter_by(
+                reference_code=transaction.code
+            ).delete()
 
             db.session.commit()
 

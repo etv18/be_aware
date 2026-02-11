@@ -9,6 +9,8 @@ from app.extensions import db
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero
 from app.utils.numeric_casting import is_decimal_type
 from app.utils.parse_structures import get_data_as_dictionary
+from app.utils.bank_accounts.filter_data import get_yearly_total_amount_info_by_filter_through_custom_model_and_fk
+from app.utils.bank_transactional_classes import Expense, CreditCardPayment
 
 def create_credit_card():
     try:
@@ -68,9 +70,6 @@ def delete_credit_card(credit_card):
     except Exception as e:
         db.session.rollback()
         raise e
-    
-def h_get_money_used_on_credit_card(cc):
-    return cc.limit - cc.amount_available
 
 def associated_records_in_json(id):
     try:
@@ -92,3 +91,31 @@ def associated_records_in_json(id):
     except Exception as e:
         traceback.print_exc()
         return jsonify({'error': str(e)}), 400
+
+def get_yearly_total_per_association_info(): 
+    data = request.get_json(silent=True) or {}
+
+    credit_card_id = data.get('credit_card_id')
+    year = data.get('year')
+
+    associations_info = {}
+
+    for association in (Expense, CreditCardPayment):
+        table_name = association.__tablename__
+        yearly_info = get_yearly_total_amount_info_by_filter_through_custom_model_and_fk(
+            id=credit_card_id,
+            CustomModel=association,
+            fk_column_name='credit_card_id',
+            year=year
+        )
+        associations_info[table_name] = yearly_info
+
+    data = {
+        'months': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        'associations_info': associations_info,
+    }
+    return jsonify(data), 200
+
+
+def h_get_money_used_on_credit_card(cc):
+    return cc.limit - cc.amount_available

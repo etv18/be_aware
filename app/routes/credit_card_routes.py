@@ -86,3 +86,10 @@ def associated_records_in_json(id):
         return cc_controller.associated_records_in_json(id)
     except Exception as e:
         raise e
+
+@credit_card_bp.route('/get/yearly/total/per/association/info', methods=['POST'])
+def get_yearly_total_per_association_info():
+    try:
+        return cc_controller.get_yearly_total_per_association_info()
+    except Exception as e:
+        raise e

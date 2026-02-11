@@ -5,7 +5,7 @@ const yearlyStatsAllModelsChart = document.getElementById('yearly-stats-all-mode
 const selectYearElement = document.getElementById('year-select');
 
 const yearlyStatsAllModelsEndpoint = document.getElementById('yearly-stats-all-models-endpoint').value;
-const yearlyIncomesAndOutgoingsEndpoint = document.getElementById('yearly-incomes-and-outgoings-endpoint').value;
+const yearlyCashFlowEndpoint = document.getElementById('yearly-cash-flow-endpoint').value;
 
 let yearlyStatsAllModelsChartInstance = null;
 let yearlyIncomesAndOutgoingsChartInstance = null;
@@ -240,70 +240,14 @@ function toTitle(str) {
     .replace(/\b\w/g, c => c.toUpperCase());
 }
 
-function buildYearlyReportTable(data) {
-    const table = document.getElementById("yearly-report-table");
-    table.innerHTML = ""; // reset
-
-    /* ---------- THEAD ---------- */
-    const thead = document.createElement("thead");
-    const headRow = document.createElement("tr");
-    
-    thead.classList.add('table-primary');
-
-    // First column
-    const thLabel = document.createElement("th");
-    thLabel.textContent = "Months";
-    headRow.appendChild(thLabel);
-
-    // Month headers
-    data.months.forEach(month => {
-        const th = document.createElement("th");
-        th.textContent = month;
-        th.classList.add("text-end"); // Bootstrap utility
-        headRow.appendChild(th);
-    });
-
-    thead.appendChild(headRow);
-    table.appendChild(thead);
-
-    /* ---------- TBODY ---------- */
-    const tbody = document.createElement("tbody");
-
-    Object.entries(data.report).forEach(([module, values]) => {
-       if(module.toString().toLowerCase() === 'bank_transfers') return;
-
-        const row = document.createElement("tr");
-
-        // Row title
-        const rowHeader = document.createElement("th");
-        rowHeader.textContent = toTitle(module);
-        row.appendChild(rowHeader);
-
-        // Values
-        values.forEach(value => {
-            const td = document.createElement("td");
-            td.classList.add("text-end");
-            td.textContent = parseFloat(value).toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-            row.appendChild(td);
-        });
-
-        tbody.appendChild(row);
-    });
-
-    table.appendChild(tbody);
-}
-
 function canBeNumberStrict(value) {
     return value !== '' && value !== null && !Number.isNaN(Number(value));
 }
 
-function buildRow(label, values, tag){
+function buildRow(label, values, tag, rowclass){
     let row = '<tr>'; //open row
 
-    row += `<${tag} class="fs-6 fw-bold table-active">${label}</${tag}>`; //this will display the name of the row
+    row += `<${tag} class="fs-6 fw-bold table-active text-start">${label}</${tag}>`; //this will display the name of the row
 
     values.forEach(val => {
         const isNumber = canBeNumberStrict(val);
@@ -313,13 +257,17 @@ function buildRow(label, values, tag){
 
         if(label.toLowerCase() === 'balances'){
             if(isNumber && numericValue < 0){
-                textClass = 'text-danger';
+                textClass = 'fw-bold text-danger';
             } else if (isNumber && numericValue > 0){
-                textClass = 'text-primary';
+                textClass = 'fw-bold text-primary';
             }
         }
 
-        if(!isNumber) textClass += ' table-active';
+        if(!isNumber){
+            textClass += ' table-active text-end';
+        } else {
+            textClass += ' text-end';
+        }
 
         row += `
             <${tag} class="${textClass}">
@@ -337,25 +285,115 @@ function buildRow(label, values, tag){
     return row;
 }
 
-function buildCashFlowTable(data, table){
+function buildRow2(label, values, tag, options = {}) {
+    const {
+        rowClass = '',
+        labelClass = '',
+        cellClass = '',
+        classForNonNumberTxt = ''
+    } = options;
+
+    let row = `<tr class="${rowClass}">`;
+
+    // LABEL CELL (always text-start)
+    row += `
+        <${tag} class="fs-6 fw-bold text-start ${labelClass}">
+            ${label}
+        </${tag}>
+    `;
+
+    values.forEach(val => {
+        const isNumber = canBeNumberStrict(val);
+        const numericValue = isNumber ? Number(val) : null;
+
+        let textClass = '';
+
+        // 🔥 Hardcoded Balances logic (kept as requested)
+        if (label.toLowerCase() === 'balances') {
+            if (isNumber && numericValue < 0) {
+                textClass = 'fw-bold text-danger';
+            } else if (isNumber && numericValue > 0) {
+                textClass = 'fw-bold text-primary';
+            }
+        }
+
+        // Content always text-end
+        textClass += isNumber
+            ? ' text-end'
+            : `${classForNonNumberTxt} text-end`;
+
+        // Add custom cell class if provided
+        textClass += ` ${cellClass}`;
+
+        row += `
+            <${tag} class="${textClass}">
+                ${isNumber
+                    ? numericValue.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    })
+                    : val}
+            </${tag}>
+        `;
+    });
+
+    row += '</tr>';
+    return row;
+}
+
+
+function buildYearlyReportTable(data, table){
     table.innerHTML = ""; // reset
 
     /* ---------- THEAD ---------- */
     const thead = document.createElement("thead");
-    const headRow = document.createElement("tr");
-    
-    headRow.innerHTML = buildRow('Months', data.months, 'th');
 
-    thead.appendChild(headRow);
+    thead.classList.add('text-end');
+    thead.innerHTML = buildRow2('Months', data.months, 'th', {
+        rowClass: 'table-primary'
+    });
+
     table.appendChild(thead);
 
     /* ---------- TBODY ---------- */
     const tbody = document.createElement('tbody');
     for(const key in data.report){
-        tbody.innerHTML += `${buildRow(toTitle(key.toString()), data.report[key], 'td')}`
+        tbody.innerHTML += `${buildRow2(toTitle(key.toString()), data.report[key], 'td', {
+                labelClass: 'table-active'
+            }
+        )}`;
         console.log("Key:", key);
         console.log("Values:", data.report[key]);
     }
+    table.appendChild(tbody);
+}
+
+function buildCashFlowTable(data, table){
+    table.innerHTML = ""; // reset
+
+    /* ---------- THEAD ---------- */
+    const thead = document.createElement("thead");    
+    thead.innerHTML = buildRow2('Months', data.months, 'th', {
+        rowClass: 'table-success',
+        labelClass: 'table-success'
+    });
+
+    table.appendChild(thead);
+
+    /* ---------- TBODY ---------- */
+    const tbody = document.createElement('tbody');
+    tbody.innerHTML = `
+        ${buildRow2('Incomes', data.report.incomes, 'td', {
+            rowClass: '',
+            labelClass: 'table-active'
+        })}
+        ${buildRow2('Expenses', data.report.expenses, 'td', {
+            labelClass: 'table-active'
+        })}
+        ${buildRow2('Balances', data.report.balances, 'td', {
+            labelClass: 'table-active'
+        })}
+    `;
     table.appendChild(tbody);
 }
 
@@ -369,13 +407,22 @@ document.addEventListener('DOMContentLoaded',async (event) => {
     let years = selectYearElement.options;
     let payload = {year: years[0].value};
 
-    let allModelsYearlyData = await getData(yearlyStatsAllModelsEndpoint, payload);
-
-    generateYearlyAllModelsChart(yearlyStatsAllModelsChart, 'line', allModelsYearlyData);
-    generateYearlyIncomesAndExpensesChart(yearlyIncomesAndExpensesChart, 'bar', allModelsYearlyData);
-    buildYearlyReportTable(allModelsYearlyData);
+    let allModelsData = await getData(yearlyStatsAllModelsEndpoint, payload);
+    generateYearlyAllModelsChart(yearlyStatsAllModelsChart, 'line', allModelsData);
+    generateYearlyIncomesAndExpensesChart(yearlyIncomesAndExpensesChart, 'bar', allModelsData);
+    
+    const yearlyReportTable = document.getElementById('yearly-report-table');
+    buildYearlyReportTable(
+        allModelsData, 
+        yearlyReportTable
+    );
+    
+    let cashFlowData = await getData(yearlyCashFlowEndpoint, payload);
     const cashFLowTable = document.getElementById('cash-flow-table');
-    buildCashFlowTable(allModelsYearlyData, cashFLowTable);
+    buildCashFlowTable(
+        cashFlowData, 
+        cashFLowTable
+    );
 });
 
 selectYearElement.addEventListener('change', async (event) => {
@@ -385,8 +432,13 @@ selectYearElement.addEventListener('change', async (event) => {
     };
 
     let allModelsData = await getData(yearlyStatsAllModelsEndpoint, payload);
-
     generateYearlyAllModelsChart(yearlyStatsAllModelsChart, 'line', allModelsData);
     generateYearlyIncomesAndExpensesChart(yearlyIncomesAndExpensesChart, 'bar', allModelsData);
-    buildYearlyReportTable(allModelsData);
+
+    const yearlyReportTable = document.getElementById('yearly-report-table');
+    buildYearlyReportTable(allModelsData, yearlyReportTable);
+
+    let cashFlowData = await getData(yearlyCashFlowEndpoint, payload);
+    const cashFLowTable = document.getElementById('cash-flow-table');
+    buildCashFlowTable(cashFlowData, cashFLowTable);
 });

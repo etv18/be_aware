@@ -78,10 +78,18 @@ def create_error_logger(app):
         os.makedirs('logs')
 
     formatter = logging.Formatter(
-        "%(asctime)s [%(levelname)s] %(message)s in %(pathname)s:%(lineno)d"
+        "\n\n" +
+        "=" * 156 + "\n"
+        "%(asctime)s | %(levelname)s\n"
+        "Message: %(message)s\n"
+        "File: %(pathname)s:%(lineno)d\n"
+        + "=" * 156 + ""
     )
 
-    # 🔴 ERROR FILE
+    # Remove default handlers
+    app.logger.handlers.clear()
+
+    # ERROR FILE
     error_handler = RotatingFileHandler(
         'logs/error.log',
         maxBytes=10240,
@@ -90,7 +98,7 @@ def create_error_logger(app):
     error_handler.setLevel(logging.ERROR)
     error_handler.setFormatter(formatter)
 
-    # 🔵 GENERAL FILE
+    # GENERAL FILE
     info_handler = RotatingFileHandler(
         'logs/app.log',
         maxBytes=10240,
@@ -99,7 +107,9 @@ def create_error_logger(app):
     info_handler.setLevel(logging.INFO)
     info_handler.setFormatter(formatter)
 
+    app.logger.setLevel(logging.INFO)
+    app.logger.propagate = False
+
     app.logger.addHandler(error_handler)
     app.logger.addHandler(info_handler)
 
-    app.logger.setLevel(logging.INFO)

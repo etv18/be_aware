@@ -244,48 +244,7 @@ function canBeNumberStrict(value) {
     return value !== '' && value !== null && !Number.isNaN(Number(value));
 }
 
-function buildRow(label, values, tag, rowclass){
-    let row = '<tr>'; //open row
-
-    row += `<${tag} class="fs-6 fw-bold table-active text-start">${label}</${tag}>`; //this will display the name of the row
-
-    values.forEach(val => {
-        const isNumber = canBeNumberStrict(val);
-        const numericValue = isNumber ? Number(val) : null;
-
-        let textClass = '';
-
-        if(label.toLowerCase() === 'balances'){
-            if(isNumber && numericValue < 0){
-                textClass = 'fw-bold text-danger';
-            } else if (isNumber && numericValue > 0){
-                textClass = 'fw-bold text-primary';
-            }
-        }
-
-        if(!isNumber){
-            textClass += ' table-active text-end';
-        } else {
-            textClass += ' text-end';
-        }
-
-        row += `
-            <${tag} class="${textClass}">
-                ${canBeNumberStrict(val) 
-                    ? Number(val).toLocaleString('en-US', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    }) 
-                    : val}
-            </${tag}>
-        `;
-    });
-
-    row += '</tr>'; //close row
-    return row;
-}
-
-function buildRow2(label, values, tag, options = {}) {
+function buildRow(label, values, tag, options = {}) {
     const {
         rowClass = '',
         labelClass = '',
@@ -349,7 +308,7 @@ function buildYearlyReportTable(data, table){
     const thead = document.createElement("thead");
 
     thead.classList.add('text-end');
-    thead.innerHTML = buildRow2('Months', data.months, 'th', {
+    thead.innerHTML = buildRow('Months', data.months, 'th', {
         rowClass: 'table-primary'
     });
 
@@ -358,7 +317,7 @@ function buildYearlyReportTable(data, table){
     /* ---------- TBODY ---------- */
     const tbody = document.createElement('tbody');
     for(const key in data.report){
-        tbody.innerHTML += `${buildRow2(toTitle(key.toString()), data.report[key], 'td', {
+        tbody.innerHTML += `${buildRow(toTitle(key.toString()), data.report[key], 'td', {
                 labelClass: 'table-active'
             }
         )}`;
@@ -373,7 +332,7 @@ function buildCashFlowTable(data, table){
 
     /* ---------- THEAD ---------- */
     const thead = document.createElement("thead");    
-    thead.innerHTML = buildRow2('Months', data.months, 'th', {
+    thead.innerHTML = buildRow('Months', data.months, 'th', {
         rowClass: 'table-success',
         labelClass: 'table-success'
     });
@@ -383,14 +342,14 @@ function buildCashFlowTable(data, table){
     /* ---------- TBODY ---------- */
     const tbody = document.createElement('tbody');
     tbody.innerHTML = `
-        ${buildRow2('Incomes', data.report.incomes, 'td', {
+        ${buildRow('Incomes', data.report.incomes, 'td', {
             rowClass: '',
             labelClass: 'table-active'
         })}
-        ${buildRow2('Expenses', data.report.expenses, 'td', {
+        ${buildRow('Expenses', data.report.expenses, 'td', {
             labelClass: 'table-active'
         })}
-        ${buildRow2('Balances', data.report.balances, 'td', {
+        ${buildRow('Balances', data.report.balances, 'td', {
             labelClass: 'table-active'
         })}
     `;

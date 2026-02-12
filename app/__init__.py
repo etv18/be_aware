@@ -76,19 +76,30 @@ def register_resources(app):
 def create_error_logger(app):
     if not os.path.exists('logs'):
         os.makedirs('logs')
-    
-    log_file = os.path.join('logs', 'error.log')
-    
-    handler = RotatingFileHandler(
-        log_file,
-        maxBytes=10240, #The file will store data up 10KB
-        backupCount=10 #There will be a maximum of 10 backup files of errors
+
+    formatter = logging.Formatter(
+        "%(asctime)s [%(levelname)s] %(message)s in %(pathname)s:%(lineno)d"
     )
 
-    formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s in %(pathname)s:%(lineno)d")
+    # 🔴 ERROR FILE
+    error_handler = RotatingFileHandler(
+        'logs/error.log',
+        maxBytes=10240,
+        backupCount=10
+    )
+    error_handler.setLevel(logging.ERROR)
+    error_handler.setFormatter(formatter)
 
-    handler.setFormatter(formatter)
-    handler.setLevel(logging.ERROR)
+    # 🔵 GENERAL FILE
+    info_handler = RotatingFileHandler(
+        'logs/app.log',
+        maxBytes=10240,
+        backupCount=10
+    )
+    info_handler.setLevel(logging.INFO)
+    info_handler.setFormatter(formatter)
 
-    app.logger.addHandler(handler)
-    app.logger.setLevel(logging.ERROR)
+    app.logger.addHandler(error_handler)
+    app.logger.addHandler(info_handler)
+
+    app.logger.setLevel(logging.INFO)

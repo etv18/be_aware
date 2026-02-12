@@ -60,7 +60,7 @@ async function showChart(year, endpoint){
         }
     );
 
-    generateYearlyChart(yearlyExpenseCanvas, 'line', data.expenses, data.credit_card_payments);
+    generateYearlyChart(yearlyExpenseCanvas, 'line', data.associations_info.expenses, data.associations_info.credit_card_payments);
 }
 
 document.addEventListener('DOMContentLoaded',async (event) => {

@@ -8,54 +8,75 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
   <body>
-    <nav class="navbar navbar-expand-lg bg-primary fixed-top mx-2 mx-auto">
+    <nav class="navbar navbar-expand-lg bg-primary fixed-top mx-2 mx-auto navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+
+            <!-- LEFT SIDE -->
+            <a class="navbar-brand" href="{{ url_for('home.index') }}">Home</a>
+
+            <button class="navbar-toggler" type="button" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
+            <!-- RIGHT SIDE -->
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav ms-auto">
+
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ url_for('home.index' ) }}">Home</a>
+                        <a class="nav-link" href="{{ url_for('bank.index') }}">Banks</a>
                     </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            Bank Products
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('bank_account.index') }}">Bank Accounts</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('credit_card.index') }}">Credit Cards</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            Cash Flow
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('income.index') }}">Incomes</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('expense.index') }}">Expenses</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('cashledger.index') }}">Cash ledger</a></li>
+                        </ul>
+                    </li>
+
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('bank.index' ) }}">Banks</a>
+                        <a class="nav-link" href="{{ url_for('expense_category.index') }}">Expense Categories</a>
                     </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            Accounts
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('accounts_receivable.index') }}">Receivable (Loans)</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('debt.index') }}">Payable (Debts)</a></li>
+                        </ul>
+                    </li>
+
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('bank_account.index' ) }}">Bank Accounts</a>
+                        <a class="nav-link" href="{{ url_for('withdrawal.index') }}">Withdrawals</a>
                     </li>
+
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('credit_card.index' ) }}">Credit Cards</a>
+                        <a class="nav-link" href="{{ url_for('deposit.index') }}">Deposits</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('income.index' ) }}">Incomes</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('expense.index' ) }}">Expenses</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('expense_category.index' ) }}">Expense Category</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('accounts_receivable.index' ) }}">Accounts Receivable</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('withdrawal.index' ) }}">Withdrawals</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('cashledger.index' ) }}">Cash</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('debt.index' ) }}">Accounts Payable</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('deposit.index' ) }}">Deposits</a>
-                    </li>
+
                 </ul>
             </div>
         </div>
     </nav>
+
 
     <main class="container w-100 mt-5 p-4">
     {% block content %}

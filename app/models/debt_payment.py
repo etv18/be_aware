@@ -42,7 +42,8 @@ class DebtPayment(db.Model):
             'bank_account_nick_name': self.bank_account.nick_name if self.bank_account else '-',
             'code': self.code,
             'created_at': format_datetime(self.created_at, 'EEE, dd MMM yyyy hh:mm a'),
-            'updated_at': self.updated_at.isoformat() if self.updated_at else None
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+            'raw_created_at': self.created_at.isoformat() if self.created_at else None,
         }
 
     @event.listens_for(db.session, 'before_flush')

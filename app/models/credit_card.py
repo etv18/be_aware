@@ -12,7 +12,7 @@ class CreditCard(db.Model):
     amount_available = db.Column(db.Numeric(10,2), nullable=False, default=0.00)
     limit = db.Column(db.Numeric(10,2), nullable=False, default=0.00)
     is_active = db.Column(db.Boolean, default=True)
-    is_deleted = db.Column(db.Boolean, default=False)
+    is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
     #Setting up foreign key from banks table
     bank_id = db.Column(db.Integer, db.ForeignKey('banks.id'), nullable=False)

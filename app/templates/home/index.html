@@ -3,6 +3,33 @@
 {% block title %}home{% endblock %}
 
 {% block content %}
+<style>
+    .chart-scroll-2 {
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    /* Force chart to stay wide */
+    .chart-box-2 {
+        width: 100%;
+        min-width: 100%;   /* key: forces horizontal scroll */
+        height: 420px;
+    }
+
+    .chart-box-2 canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    /* Mobile tweaks */
+    @media (max-width: 576px) {
+        .chart-box-2 {
+            min-width: 700px;  /* smaller but still scrollable */
+            height: 280px;
+        }
+    }
+</style>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css' ) }}">
 
 <h5>Home</h5>
@@ -64,11 +91,15 @@
     </table>
 </div>
 
-<div class="border rounded-3 w-100 p-2">
-    <h3 class="text-center">Yearly Total All Modules</h3>
+<div class="container w-100 border rounded-3 mt-2">
+    <div class="row text-center my-2">
+        <h3 class="text-center">Yearly Total All Modules</h3>
 
-    <div class="chart-container">
-        <canvas id="yearly-stats-all-models"></canvas>
+        <div class="chart-scroll-2">
+            <div class="chart-box-2">
+                <canvas id="yearly-stats-all-models"></canvas>
+            </div>
+        </div>
     </div>
 </div>
 

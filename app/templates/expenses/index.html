@@ -3,6 +3,13 @@
 {% block title %}Expenses{% endblock %}
 
 {% block content %}
+    <style>
+        .custom-header th {
+            background-color: #ad1a1a;
+            color: white;
+        }
+    </style>
+
     <div class=" w-100">
         <h2>Expenses</h2>
         <section class="modal fade" tabindex="-1" id="create-expense">
@@ -184,8 +191,8 @@
         </div>
 
         <div class="table-responsive overflow-y-auto border rounded-3 mt-1" style="max-height: 357px;">
-            <table class="table table-striped table-hover" id="expenses-table">
-                <thead class="sticky-top">
+            <table class="table table-hover" id="expenses-table">
+                <thead class="custom-header sticky-top">
                     <tr>
                         <th scope="col"># Id</th>
                         <th scope="col">Amount</th>
@@ -203,7 +210,7 @@
                     <tr>
                         <th scope="row">{{ expense.id }}</th>
                         <td>{{ format_amount(expense.amount) or '-' }}</td>
-                        <td><a id="filter-by-cash" class="filter_link" data-is-cash-value="{{ expense.is_cash }}">{{ 'YES' if expense.is_cash else 'NO' }}</a></td>
+                        <td>{{ 'YES' if expense.is_cash else 'NO' }}</td>
                         <td> {{ expense.description or '-' }} </td>
                         <td>{{ expense.credit_card.nick_name or '-' }}</td>
                         <td>{{ expense.bank_account.nick_name or '-' }}</td>

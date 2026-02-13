@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, current_app as ca
 from sqlalchemy.exc import SQLAlchemyError
 
 from decimal import Decimal
@@ -47,6 +47,7 @@ def create_credit_card_payment():
 
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception("Unexpected error creating credit card payment with credit_card_id")
         raise e
 
 def update_credit_card_payment(id):
@@ -85,6 +86,7 @@ def update_credit_card_payment(id):
         CreditCardTransactionsLedger.update(payment)
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error updating credit card payment with id {id}")
         raise e
     
 
@@ -102,6 +104,7 @@ def delete_credit_card_payment(id):
         db.session.commit()
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error deleting credit card payment with id {id}")
         raise e  
 
 #HELPERS

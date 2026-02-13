@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, current_app as ca
 
 from decimal import Decimal
 import traceback
@@ -22,6 +22,7 @@ def create():
 
         debt = Debt.query.get(debt_id)
         if not debt:
+            ca.logger.error(f"Debt with id {debt_id} not found for creating debt payment.")
             return jsonify({'error': 'Debt record was not found'}), 400
 
         if debt.total_payments() >= debt.amount:
@@ -53,12 +54,14 @@ def create():
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error creating debt payment")
         return jsonify({'error': str(e)}), 400
     
 def update(id):
     try:
         debt_payment = DebtPayment.query.get(id)
         if not debt_payment:
+            ca.logger.error(f"Debt payment with id {id} not found for updating.")
             return jsonify({'error': 'Debt payment record was not found'}), 400
 
         new_amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else Decimal('0')
@@ -103,12 +106,14 @@ def update(id):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error updating debt payment with id {id}")
         return jsonify({'error': str(e)}), 400
     
 def delete(id):
     try:
         debt_payment = DebtPayment.query.get(id)
         if not debt_payment:
+            ca.logger.error(f"Debt payment with id {id} not found for deleting.")
             return jsonify({'error': 'Debt payment record was not found'}), 400
         
         debt = Debt.query.get(debt_payment.debt_id)
@@ -128,6 +133,7 @@ def delete(id):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error deleting debt payment with id {id}")
         return jsonify({'error': str(e)}), 400
     
 def filter_all():
@@ -139,6 +145,7 @@ def filter_all():
         end = data.get('end')
 
         if not query and (not start or not end):
+            ca.logger.error(f"Missing query and/or start/end date for filtering debt payments. Query: {query}, Start: {start}, End: {end}")
             return jsonify({
                 'error': 'Try to type some query or select a time frame.'
             }), 400
@@ -189,6 +196,7 @@ def filter_all():
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error filtering debt payments with query: {query}, start: {start} and end: {end}")
         return jsonify({'error': 'Internal server error'}), 500  
 
 def _update_debt_is_active(debt):

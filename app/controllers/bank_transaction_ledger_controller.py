@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, current_app as ca
 
 import traceback
 from datetime import datetime, timedelta
@@ -40,11 +40,13 @@ def filter_by_field(query):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error filtering bank transaction ledger by field with query: {query}")
         raise e
 
 def filter_by_time(start, end):
     try:
         if not start or not end:
+            ca.logger.error(f"Missing start or end date for filtering bank transaction ledger by time. Start: {start}, End: {end}")
             return jsonify({'error': 'Missing data range.'})
 
         start_date = datetime.strptime(start, '%Y-%m-%d')
@@ -69,6 +71,7 @@ def filter_by_time(start, end):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error filtering bank transaction ledger by time with start: {start} and end: {end}")
         raise e
     
 def filter_all():
@@ -80,6 +83,7 @@ def filter_all():
         end = data.get('end')
 
         if not query and (not start or not end):
+            ca.logger.error(f"Missing query and/or start/end date for filtering bank transaction ledger. Query: {query}, Start: {start}, End: {end}")
             return jsonify({
                 'error': 'Try to type some query or select a time frame.'
             }), 400
@@ -129,4 +133,5 @@ def filter_all():
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error filtering bank transaction ledger with query: {query}, start: {start}, end: {end}")
         return jsonify({'error': 'Internal server error'}), 500

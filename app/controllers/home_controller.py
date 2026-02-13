@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, current_app as ca
 
 from sqlalchemy import extract, func
 
@@ -19,6 +19,7 @@ def get_monthly_income_and_expense_data():
         total_amount_incomes = h_get_monthly_records(Income, current_year, current_month)
     except Exception as e:
         print(e)
+        ca.logger.exception(f"Unexpected error getting monthly income and expense data for year {current_year} and month {current_month}")
         raise e
     
     return {'incomes': total_amount_incomes, 'expenses': total_amount_expenses}
@@ -39,6 +40,7 @@ def get_yearly_income_and_expense_data():
         }
     except Exception as e:
         print(e)
+        ca.logger.exception(f"Unexpected error getting yearly income and expense data for year {current_year}")
         raise e
     
     return data

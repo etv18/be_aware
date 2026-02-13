@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, current_app as ca
 
 import traceback
 from datetime import datetime, timedelta
@@ -40,6 +40,7 @@ def filter_by_field(query):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error filtering credit card transaction ledger by field with query: {query}")
         raise e
 
 def filter_by_time(start, end):
@@ -69,6 +70,7 @@ def filter_by_time(start, end):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error filtering credit card transaction ledger by time with start: {start} and end: {end}")
         raise e
     
    
@@ -127,4 +129,5 @@ def filter_all():
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error filtering credit card transaction ledger with query: {query}, start: {start} and end: {end}")
         return jsonify({'error': 'Internal server error'}), 500   

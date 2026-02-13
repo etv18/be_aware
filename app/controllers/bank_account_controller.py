@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, current_app as ca
 from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -44,9 +44,11 @@ def create_bank_account():
             db.session.commit()
     except SQLAlchemyError as e:
         db.session.rollback()
+        ca.logger.exception(f"Database error creating bank account")
         raise e
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error creating bank account")
         raise e
 
 def update_bank_account(bank_account):
@@ -64,9 +66,11 @@ def update_bank_account(bank_account):
             db.session.commit()
     except SQLAlchemyError as e:
         db.session.rollback()
+        ca.logger.exception(f"Database error updating bank account")
         raise e
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error updating bank account")
         raise e
 
 def delete_bank_account(bank_account):
@@ -76,9 +80,11 @@ def delete_bank_account(bank_account):
         db.session.commit()
     except SQLAlchemyError as e:
         db.session.rollback()
+        ca.logger.exception(f"Database error deleting bank account")
         raise e
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error deleting bank account")
         raise e
 
 def get_associated_records(bank_account_id):
@@ -103,6 +109,7 @@ def get_associated_records(bank_account_id):
         }
         return data
     except BankAccountDoesNotExists as e:
+        ca.logger.warning(f"Bank account with id {bank_account_id} does not exist")
         raise BankAccountDoesNotExists('Bank account does not exists.')
     except Exception as e:
         raise e
@@ -146,6 +153,7 @@ def get_associated_records_in_json(bank_account_id):
             }), 200
     except Exception as e:
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error getting associated records for bank account with id {bank_account_id}")
         return jsonify({'error': str(e)}), 400
     
 def get_cash_flow_info():

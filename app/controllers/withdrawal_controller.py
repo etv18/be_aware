@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, current_app as ca
 from sqlalchemy import func, or_
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -44,6 +44,7 @@ def create_withdrawal():
 
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error creating withdrawal")
         raise e
     
 def update_withdrawal(id):
@@ -79,6 +80,7 @@ def update_withdrawal(id):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error updating withdrawal with id {id}")
         raise e
     
 def delete_withdrawal(id):
@@ -96,6 +98,7 @@ def delete_withdrawal(id):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error deleting withdrawal with id {id}")
         raise e
     
 def filter_withdrawals_by_field(query):
@@ -126,6 +129,7 @@ def filter_withdrawals_by_field(query):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error filtering withdrawals by field with query: {query}")
         raise e
     
 def filter_all():
@@ -137,6 +141,7 @@ def filter_all():
         end = data.get('end')
 
         if not query and (not start or not end):
+            ca.logger.error(f"Missing query and/or time frame for filtering withdrawals. Query: {query}, Start: {start}, End: {end}")
             return jsonify({
                 'error': 'Try to type some query or select a time frame.'
             }), 400
@@ -179,11 +184,13 @@ def filter_all():
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error filtering withdrawals with query: {query}, start: {start}, end: {end}")
         return jsonify({'error': 'Internal server error'}), 500   
     
 def filter_withdrawals_by_timeframe(start, end):
     try:
         if not start or not end:
+            ca.logger.error(f"Missing start and/or end date for filtering withdrawals by timeframe. Start: {start}, End: {end}")
             return jsonify({'error': 'Missing data range.'})
         
         start_date = datetime.strptime(start, '%Y-%m-%d')
@@ -209,6 +216,7 @@ def filter_withdrawals_by_timeframe(start, end):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error filtering withdrawals by timeframe with start: {start} and end: {end}")
         raise e
     
 

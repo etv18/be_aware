@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, current_app as ca
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import func, or_
 
@@ -77,12 +77,15 @@ def create_expense():
         NoAvailableMoney
     ) as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error creating expense")
         raise e #will automatically sends to the controller the error msg I defined before on update_bank_account_money_on_create(account_id, amount) function
     except SQLAlchemyError as e:
         db.session.rollback()
+        ca.logger.exception(f"Database error creating expense")
         raise Exception('Database error occurred: ' + str(e))
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error creating expense")
         raise e
 
 def update_expense(expense):
@@ -172,12 +175,15 @@ def update_expense(expense):
         NoAvailableMoney
     ) as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error updating expense with id {expense.id}")
         raise e #will automatically sends to the controller the error msg I defined before on update_bank_account_money_on_create(account_id, amount) function
     except SQLAlchemyError as e:
         db.session.rollback()
+        ca.logger.exception(f"Database error updating expense with id {expense.id}")
         raise Exception('Database error occurred: ' + str(e))
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error updating expense with id {expense.id}")
         raise e 
 
 def delete_expense(expense):
@@ -193,9 +199,11 @@ def delete_expense(expense):
         db.session.commit()
     except SQLAlchemyError as e:
         db.session.rollback()
+        ca.logger.exception(f"Database error deleting expense with id {expense.id}")
         raise Exception('Database error occurred: ' + str(e))
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error deleting expense with id {expense.id}")
         raise e 
 
 def filter_by_time(start, end):
@@ -204,6 +212,7 @@ def filter_by_time(start, end):
     try:
 
         if not start or not end:
+            ca.logger.error("Missing date range for filtering expenses")
             return jsonify({'error', 'Missing date range'}), 400
         
         start_date = datetime.strptime(start, '%Y-%m-%d')
@@ -223,6 +232,7 @@ def filter_by_time(start, end):
         }), 200
 
     except Exception as e:
+        ca.logger.exception(f"Unexpected error filtering expenses by time with start: {start} and end: {end}")
         return jsonify({'error': str(e)}), 400
     
 def filter_weekly_basis_expenses_info():
@@ -277,6 +287,7 @@ def filter_expenses_by_is_cash(is_cash):
             'total': total,
         }
     except Exception as e:
+        ca.logger.exception(f"Unexpected error filtering expenses by is_cash with value {is_cash}")
         return jsonify({'error': str(e)})
 
     return jsonify(data)
@@ -319,6 +330,7 @@ def filter_by_field(query):
     
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error filtering expenses by field with query: {query}")
         raise e
     
    
@@ -331,6 +343,7 @@ def filter_all():
         end = data.get('end')
 
         if not query and (not start or not end):
+            ca.logger.error("Missing query and date range for filtering expenses")
             return jsonify({
                 'error': 'Try to type some query or select a time frame.'
             }), 400
@@ -383,6 +396,7 @@ def filter_all():
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception("Unexpected error filtering expenses with filter_all function")
         return jsonify({'error': 'Internal server error'}), 500   
 
 

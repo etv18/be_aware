@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, current_app as ca
 from sqlalchemy import func, or_
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -35,6 +35,7 @@ def yearly_single_model_report():
         return jsonify({}), 200
     except Exception as e:
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error getting yearly single model report for model {model_str} and year {year}")
         return jsonify({'error': str(e)}), 500   
 
 def yearly_all_model_reports():

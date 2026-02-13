@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, current_app as ca
 from sqlalchemy import func, or_
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -54,9 +54,11 @@ def create_loan():
 
     except SQLAlchemyError as e:
         db.session.rollback()
+        ca.logger.exception("Database error creating loan")
         raise e
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception("Unexpected error creating loan")
         raise e
     
 def update_loan(loan):
@@ -103,10 +105,12 @@ def update_loan(loan):
     except SQLAlchemyError as e:
         print(f'Error on update_loan handler: {e}')
         db.session.rollback()
+        ca.logger.exception(f"Database error updating loan with id {loan.id}")
         raise e
     except Exception as e:
         print(f'Error on update_loan handler: {e}')
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error updating loan with id {loan.id}")
         raise e
 
 def delete_loan(loan):
@@ -131,10 +135,12 @@ def delete_loan(loan):
     except SQLAlchemyError as e:
         print(f'Error on delete_loan handler: {e}')
         db.session.rollback()
+        ca.logger.exception(f"Database error deleting loan with id {loan.id}")
         raise e
     except Exception as e:
         print(f'Error on delete_loan handler: {e}')
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error deleting loan with id {loan.id}")
         raise e
     
 def filter_loans_by_field(query):
@@ -173,6 +179,7 @@ def filter_loans_by_field(query):
         }), 200
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error filtering loans by field with query: {query}")
         raise e
 
 def filter_all():
@@ -184,6 +191,7 @@ def filter_all():
         end = data.get('end')
 
         if not query and (not start or not end):
+            ca.logger.error(f"Missing query and/or time frame for filtering loans. Query: {query}, Start: {start}, End: {end}")
             return jsonify({
                 'error': 'Try to type some query or select a time frame.'
             }), 400
@@ -236,11 +244,13 @@ def filter_all():
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error filtering loans with query: {query}, start: {start} and end: {end}")
         return jsonify({'error': 'Internal server error'}), 500   
 
 def filter_loans_by_timeframe(start, end):
     try:
         if not start or not end:
+            ca.logger.error(f"Missing start and/or end date for filtering loans by timeframe. Start: {start}, End: {end}")
             return jsonify({'error': 'Missing data range.'})
 
         start_date = datetime.strptime(start, '%Y-%m-%d')
@@ -266,12 +276,14 @@ def filter_loans_by_timeframe(start, end):
         }), 200
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error filtering loans by timeframe with start: {start} and end: {end}")
         raise e
     
 def associated_records_in_json(id):
     try:
         loan = Loan.query.get(id)
         if not loan: 
+            ca.logger.error(f"Loan with id {id} not found")
             return jsonify({'error': 'Loan not found'}), 404
 
         associations = [
@@ -286,6 +298,7 @@ def associated_records_in_json(id):
         return jsonify({'records': data}), 200
     except Exception as e:
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error getting associated records in json for loan with id {id}")
         return jsonify({'error': str(e)}), 400
     
 def calculate_all_remainings():
@@ -308,6 +321,7 @@ def calculate_all_remainings():
         return total_remaining
     except Exception as e:
         traceback.print_exc()
+        ca.logger.exception("Unexpected error calculating all remainings for active loans")
         raise e
 
 #HELPERS

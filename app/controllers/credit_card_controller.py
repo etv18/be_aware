@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, current_app as ca
 from sqlalchemy.exc import SQLAlchemyError
 
 from decimal import Decimal
@@ -33,9 +33,11 @@ def create_credit_card():
             db.session.commit()
     except SQLAlchemyError as e:
         db.session.rollback()
+        ca.logger.exception(f"Database error creating credit card with nick_name")
         raise e
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Database error creating credit card with nick_name")
         raise e
 
 def update_credit_card(credit_card):
@@ -54,9 +56,11 @@ def update_credit_card(credit_card):
             db.session.commit()
     except SQLAlchemyError as e:
         db.session.rollback()
+        ca.logger.exception(f"Database error updating credit card with id {credit_card.id}")
         raise e
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error updating credit card with id {credit_card.id}")
         raise e
 
 def delete_credit_card(credit_card):
@@ -66,15 +70,18 @@ def delete_credit_card(credit_card):
         db.session.commit()
     except SQLAlchemyError as e:
         db.session.rollback()
+        ca.logger.exception(f"Database error deleting credit card with id {credit_card.id}")
         raise e
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error deleting credit card with id {credit_card.id}")
         raise e
 
 def associated_records_in_json(id):
     try:
         credit_card = CreditCard.query.get(id)
-        if not credit_card: 
+        if not credit_card:
+            ca.logger.error(f"Credit card with id {id} not found for getting associated records in json")
             return jsonify({'error': 'Credit card not found'}), 404
 
         associations = [
@@ -90,6 +97,7 @@ def associated_records_in_json(id):
         return jsonify({'records': data}), 200
     except Exception as e:
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error getting associated records in json for credit card with id {id}")
         return jsonify({'error': str(e)}), 400
 
 def get_yearly_total_per_association_info(): 

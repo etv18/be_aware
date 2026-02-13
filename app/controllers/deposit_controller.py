@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, current_app as ca
 from sqlalchemy import func, or_
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -50,6 +50,7 @@ def create():
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error creating deposit with amount") 
         return jsonify({'error': str(e)}), 400
  
 def update(id):
@@ -89,6 +90,7 @@ def update(id):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error updating deposit with id")
         return jsonify({'error': str(e)}), 400
 
 def delete(id):
@@ -112,6 +114,7 @@ def delete(id):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error deleting deposit with id {id}")
         return jsonify({'error': str(e)}), 400
 
 def filter_by_field():
@@ -145,6 +148,7 @@ def filter_by_field():
         }), 200
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error filtering deposits by field with query: {query}")
         raise e
     
 def filter_all():
@@ -156,6 +160,7 @@ def filter_all():
         end = data.get('end')
 
         if not query and (not start or not end):
+            ca.logger.error(f"Missing query and/or start/end date for filtering deposits. Query: {query}, Start: {start}, End: {end}")
             return jsonify({
                 'error': 'Try to type some query or select a time frame.'
             }), 400
@@ -199,6 +204,7 @@ def filter_all():
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error filtering deposits with query: {query}, start: {start} and end: {end}")
         return jsonify({'error': 'Internal server error'}), 500   
 
 def filter_by_time():
@@ -207,6 +213,7 @@ def filter_by_time():
         end = request.args.get('end')
 
         if not start or not end:
+            ca.logger.error(f"Missing start and/or end date for filtering deposits by time. Start: {start}, End: {end}")
             return jsonify({'error': 'Missing data range.'}), 400
         
         start_date = datetime.strptime(start, '%Y-%m-%d')
@@ -233,6 +240,7 @@ def filter_by_time():
         }), 200
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error filtering deposits by time with start: {start} and end: {end}")
         raise e
 
 

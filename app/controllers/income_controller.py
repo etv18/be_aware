@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, current_app as ca
 from sqlalchemy.exc import SQLAlchemyError
 
 from decimal import Decimal, ConversionSyntax
@@ -43,12 +43,15 @@ def create_income():
 
         except (AmountIsLessThanOrEqualsToZero, BankAccountDoesNotExists) as e:
             db.session.rollback()
+            ca.logger.exception(f"Error creating income")
             raise e
         except SQLAlchemyError as e:
             db.session.rollback()
+            ca.logger.exception(f"Database error creating income")
             raise Exception('Database error occurred: ' + str(e))
         except Exception as e:
             db.session.rollback()
+            ca.logger.exception(f"Unexpected error creating income")
             raise e
 
 def update_income(income):
@@ -82,12 +85,15 @@ def update_income(income):
 
     except (AmountIsLessThanOrEqualsToZero, BankAccountDoesNotExists) as e:
         db.session.rollback()
+        ca.logger.exception(f"Error updating income with id {income.id}")
         raise e
     except SQLAlchemyError as e:
         db.session.rollback()
+        ca.logger.exception(f"Database error updating income with id {income.id}")
         raise Exception('Database error occurred: ' + str(e))
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error updating income with id {income.id}")
         raise e
 
 def delete_income(income):
@@ -101,9 +107,11 @@ def delete_income(income):
         db.session.commit()
     except SQLAlchemyError as e:
         db.session.rollback()
+        ca.logger.exception(f"Database error deleting income with id {income.id}")
         raise Exception('Database error occurred: ' + str(e))
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error deleting income with id {income.id}")
         raise e 
     
 
@@ -137,6 +145,7 @@ def filter_incomes_by_field(query):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error filtering incomes by field with query: {query}")
         raise e
     
 def filter_incomes_by_time(start, end):
@@ -167,6 +176,7 @@ def filter_incomes_by_time(start, end):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error filtering incomes by time with start: {start} and end: {end}")
         raise e
     
    
@@ -227,6 +237,7 @@ def filter_all():
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error filtering incomes with query: {query}, start: {start} and end: {end}")
         return jsonify({'error': 'Internal server error'}), 500   
 
 def update_bank_account_money_on_create(id, amount):

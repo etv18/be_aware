@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, current_app as ca
 
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -26,8 +26,10 @@ def delete_bank(bank):
         db.session.commit()
     except SQLAlchemyError as e:
         db.session.rollback()
+        ca.logger.exception(f"Database error deleting bank with id {bank.id}")
         raise e
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error deleting bank with id {bank.id}")
         raise e
     

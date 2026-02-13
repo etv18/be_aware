@@ -1,4 +1,4 @@
-from flask import request, jsonify, redirect, url_for
+from flask import request, jsonify, redirect, url_for, current_app as ca
 from sqlalchemy import func, or_
 
 import traceback
@@ -54,6 +54,7 @@ def create():
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error creating debt with amount")
         return jsonify({'error': str(e)}), 400
     
 def update(id):
@@ -105,6 +106,7 @@ def update(id):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error updating debt with id {id}")
         return jsonify({'error': str(e)}), 400 
     
 def delete(id):
@@ -125,6 +127,7 @@ def delete(id):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error deleting debt with id {id}")
         return jsonify({'error': str(e)}), 400
     
 def filter_by_field():
@@ -168,6 +171,7 @@ def filter_by_field():
         }), 200
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error filtering debts by field with query: {query}")
         raise e
     
 
@@ -180,6 +184,7 @@ def filter_all():
         end = data.get('end')
 
         if not query and (not start or not end):
+            ca.logger.error(f"Missing query and start or end date for filtering debts. Query: {query}, Start: {start}, End: {end}")
             return jsonify({
                 'error': 'Try to type some query or select a time frame.'
             }), 400
@@ -232,6 +237,7 @@ def filter_all():
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error filtering debts with query: {query}, start: {start} and end: {end}")
         return jsonify({'error': 'Internal server error'}), 500   
     
 def filter_by_time():
@@ -240,6 +246,7 @@ def filter_by_time():
         end = request.args.get('end')
 
         if not start or not end:
+            ca.logger.error(f"Missing start or end date for filtering debts by time. Start: {start}, End: {end}")
             return jsonify({'error': 'Missing data range.'}), 400
         
         start_date = datetime.strptime(start, '%Y-%m-%d')
@@ -266,12 +273,14 @@ def filter_by_time():
         }), 200
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error filtering debts by time with start: {start} and end: {end}")
         raise e
 
 def associated_records_in_json(id):
     try:
         debt = Debt.query.get(id)
-        if not debt: 
+        if not debt:
+            ca.logger.warning(f"Debt with id {id} not found.")
             return jsonify({'error': 'Debt not found'}), 404
 
         associations = [
@@ -286,6 +295,7 @@ def associated_records_in_json(id):
         return jsonify({'records': data}), 200
     except Exception as e:
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error getting associated records in json for debt with id {id}")
         return jsonify({'error': str(e)}), 400
     
 def calculate_all_remainings():
@@ -309,6 +319,7 @@ def calculate_all_remainings():
         return total_remaining
     except Exception as e:
         traceback.print_exc()
+        ca.logger.exception("Unexpected error calculating total remaining amount for active debts")
         raise e
 
 def _add_money_to_back_account(id, amount):

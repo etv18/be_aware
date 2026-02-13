@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, current_app as ca
 from sqlalchemy import func, extract
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -33,6 +33,7 @@ def create_expense_category():
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error creating expense category with name") 
         return jsonify({'error': str(e)}), 400
 
 def update_expense_category(expense_category):
@@ -52,6 +53,7 @@ def update_expense_category(expense_category):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error updating expense category with id {expense_category.id}")
         return jsonify({'error': str(e)}), 400
 
 def delete_expense_category(expense_category):
@@ -61,9 +63,11 @@ def delete_expense_category(expense_category):
         db.session.commit()
     except SQLAlchemyError as e:
         db.session.rollback()
+        ca.logger.exception(f"Database error deleting expense category with id {expense_category.id}")
         raise Exception('Database error occurred: ' + str(e))
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error deleting expense category with id {expense_category.id}")
         raise e
 
 def get_associated_records(category_id):
@@ -76,15 +80,18 @@ def get_associated_records(category_id):
             'total_amount': total_amount, #function
         }
     except Exception as e:
+        ca.logger.exception(f"Unexpected error getting associated records for expense category with id {category_id}")
         raise e
     return data
     
 def associated_records_in_json(id):
     try:
         category = ExpenseCategory.query.get(id)
-        if not category: 
+        if not category:
+            ca.logger.error(f"Expense category with id {id} not found")
             return jsonify({'error': 'Expense category not found'}), 404
-        if category.is_deleted: 
+        if category.is_deleted:
+            ca.logger.error(f"Expense category with id {id} is marked as deleted")
             return jsonify({'error': 'Expense category not found'}), 404
 
         associations = [
@@ -99,6 +106,7 @@ def associated_records_in_json(id):
         return jsonify({'records': data}), 200
     except Exception as e:
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error getting associated records in json for expense category with id {id}")
         return jsonify({'error': str(e)}), 400
 
 def get_monthly_data():
@@ -136,6 +144,7 @@ def get_monthly_data():
 
         return data
     except Exception as e:
+        ca.logger.exception("Unexpected error getting monthly data for expense categories")
         return jsonify({'error': str(e)}), 400
 
 def validName(name: str):

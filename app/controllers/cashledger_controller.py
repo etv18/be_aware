@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, current_app as ca
 
 import traceback
 from datetime import datetime, timedelta
@@ -16,7 +16,8 @@ def create_adjustment():
     try:
         amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else None
         
-        if not amount: 
+        if not amount:
+           ca.logger.error(f"Invalid amount for creating cash ledger adjustment: {request.form.get('amount')}")
            return jsonify({'error': 'Introduce a valid number'}), 400
 
         ref_code = generate_montly_sequence(
@@ -37,6 +38,7 @@ def create_adjustment():
         return jsonify({'message': 'Adjustment created successfully!'}), 201
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error creating cash ledger adjustment with amount: {request.form.get('amount')}")
         return jsonify({'error': str(e)}), 500
     
 def delete_adjustment(id):
@@ -50,6 +52,7 @@ def delete_adjustment(id):
         return jsonify({'error': 'record not found'}), 404
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error deleting cash ledger adjustment with id: {id}")
         return jsonify({'error': str(e)}), 500
 
 def filter_by_field(query):
@@ -79,11 +82,13 @@ def filter_by_field(query):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error filtering cash ledger by field with query: {query}")
         raise e
     
 def filter_by_time(start, end):
     try:
         if not start or not end:
+            ca.logger.error(f"Missing start or end date for filtering cash ledger by time. Start: {start}, End: {end}")
             return jsonify({'error': 'Missing data range.'})
 
         start_date = datetime.strptime(start, '%Y-%m-%d')
@@ -108,6 +113,7 @@ def filter_by_time(start, end):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error filtering cash ledger by time with start: {start} and end: {end}")
         raise e
     
 def filter_all():
@@ -119,6 +125,7 @@ def filter_all():
         end = data.get('end')
 
         if not query and (not start or not end):
+            ca.logger.error(f"Missing query and/or start/end date for filtering cash ledger. Query: {query}, Start: {start}, End: {end}")
             return jsonify({
                 'error': 'Try to type some query or select a time frame.'
             }), 400
@@ -161,5 +168,6 @@ def filter_all():
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error filtering cash ledger with query: {query}, start: {start}, end: {end}")
         return jsonify({'error': 'Internal server error'}), 500   
     

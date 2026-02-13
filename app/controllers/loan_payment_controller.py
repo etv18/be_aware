@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, current_app as ca
 from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -25,6 +25,7 @@ def create_loan_payment():
 
         loan = Loan.query.get(loan_id)
         if not loan:
+            ca.logger.error(f"Loan with id {loan_id} not found for creating loan payment")
             return jsonify({'error': 'Loan record was not found'}), 400
 
         if loan.total_payments() >= loan.amount:
@@ -56,15 +57,18 @@ def create_loan_payment():
         return jsonify({'message': 'Loan payment created successfully'}), 201
     except SQLAlchemyError as e:
         db.session.rollback()
+        ca.logger.exception(f"Database error creating loan payment")
         raise e
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error creating loan payment")
         raise e
 
 
 def update_loan_payment(loan_payment):
     try:
         if not loan_payment:
+            ca.logger.error(f"Loan payment with id {loan_payment.id} not found for updating")
             return jsonify({'error': 'Loan payment record was not found'}), 400
         
         new_amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else Decimal('0')
@@ -79,6 +83,7 @@ def update_loan_payment(loan_payment):
 
         loan = Loan.query.get(loan_id)
         if not loan:
+            ca.logger.error(f"Loan with id {loan_id} not found for updating loan payment with id {loan_payment.id}")
             return jsonify({'error': 'Loan record was not found'}), 400
 
         #expected_total_payments = (loan.total_payments() - loan_payment.amount) + new_amount
@@ -109,14 +114,17 @@ def update_loan_payment(loan_payment):
 
     except SQLAlchemyError as e:
         db.session.rollback()
+        ca.logger.exception(f"Database error updating loan payment with id {loan_payment.id}")
         raise e
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error updating loan payment with id {loan_payment.id}")
         raise e
     
 def delete_loan_payment(loan_payment):
     try:
         if not loan_payment:
+            ca.logger.error(f"Loan payment with id {loan_payment.id} not found for deleting")
             return jsonify({'error': 'Loan payment record was not found'}), 400
         
         loan = loan_payment.loan
@@ -135,9 +143,11 @@ def delete_loan_payment(loan_payment):
 
     except SQLAlchemyError as e:
         db.session.rollback()
+        ca.logger.exception(f"Database error deleting loan payment with id {loan_payment.id}")
         raise e
     except Exception as e:
         db.session.rollback()
+        ca.logger.exception(f"Unexpected error deleting loan payment with id {loan_payment.id}")
         raise e
 
 def update_loan_is_active(loan):
@@ -154,6 +164,7 @@ def filter_all():
         end = data.get('end')
 
         if not query and (not start or not end):
+            ca.logger.error(f"Missing query and/or time frame for filtering loan payments. Query: {query}, Start: {start}, End: {end}")
             return jsonify({
                 'error': 'Try to type some query or select a time frame.'
             }), 400
@@ -204,6 +215,7 @@ def filter_all():
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error filtering loan payments with query: {query}, start: {start}, end: {end}")
         return jsonify({'error': 'Internal server error'}), 500  
     
 def evaluate_boolean_columns(query, reference_for_true, reference_for_false):

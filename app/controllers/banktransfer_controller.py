@@ -1,4 +1,4 @@
-from flask import request, jsonify, redirect, url_for
+from flask import request, jsonify, redirect, url_for, current_app as ca
 
 import traceback
 from decimal import Decimal
@@ -46,6 +46,7 @@ def create_banktransfer():
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error creating bank transfer with from_bank_account_id: {from_bank_account_id}, to_bank_account_id: {to_bank_account_id}, amount: {amount}")
         return jsonify({'error': str(e)}), 400
 
 def update_banktransfer(id):
@@ -77,6 +78,7 @@ def update_banktransfer(id):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error updating bank transfer with id {id}, new to_bank_account_id: {to_bank_account_id}, new amount: {amount}")
         return jsonify({'error': str(e)}), 400
 
 def delete_banktransfer(id):
@@ -94,6 +96,7 @@ def delete_banktransfer(id):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error deleting bank transfer with id {id}")
         return jsonify({'error': str(e)}), 400
     
 def get_record(id):
@@ -103,6 +106,7 @@ def get_record(id):
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
+        ca.logger.exception(f"Unexpected error getting bank transfer record with id {id}")
         return jsonify({'error': str(e)}), 400
     
 def h_update_bank_accounts_money_on_create(origin, destination, amount):

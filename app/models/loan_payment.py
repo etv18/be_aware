@@ -37,6 +37,7 @@ class LoanPayment(db.Model):
             'id': self.id,
             'amount': self.amount,
             'is_cash': self.is_cash,
+            'f_is_cash': 'YES' if self.is_cash else 'NO',
             'loan_id': self.loan_id,
             'bank_account_id': self.bank_account_id,
             'bank_account_nick_name': self.bank_account.nick_name if self.bank_account else '-',

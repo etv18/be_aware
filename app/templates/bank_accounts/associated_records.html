@@ -179,7 +179,7 @@
             </div>
         </div>
         <div id="debts-table-container" class="table-responsive overflow-y-auto" style="max-height: 322px;">
-            <table class="table table-borderless table-hover text-center">
+            <table class="table table-borderless table-hover text-start">
                 <thead class="sticky-top">
                     <tr class="table-info">
                         <th scope="col"># Id</th>
@@ -200,7 +200,13 @@
                         <td class="text-start">{{ format_amount(debt.amount) }}</td>
                         <td>{{ debt.person_name }}</td>
                         <td> {{ debt.remaining_amount() }} </td>
-                        <td>{{ 'ACTIVE' if debt.is_active else 'PAID'  }}</td>
+                        <td>
+                            {% if debt.is_active %}
+                                <span class="badge text-bg-primary">ACTIVE</span>
+                            {% else %}
+                                <span class="badge text-bg-success">PAID</span>
+                            {% endif %}
+                        </td>
                         <td class="text-start">{{ debt.description }}</td>
                         <td>{{ debt.bank_account.nick_name }}</td>
                         <td>{{ debt.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
@@ -398,7 +404,7 @@
             </div>
         </div>
         <div id="expenses-table-container" class="table-responsive overflow-y-auto" style="max-height: 322px;">
-            <table class="table table-borderless text-center  table-hover">
+            <table class="table table-borderless text-start table-hover">
                 <thead class="sticky-top">
                     <tr class="table-warning">
                         <th scope="col"># Id</th>
@@ -419,7 +425,13 @@
                         <td class="text-start">{{ format_amount(loan.amount) }}</td>
                         <td>{{ loan.person_name }}</td>
                         <td> {{ loan.remaining_amount() }} </td>
-                        <td>{{ 'ACTIVE' if loan.is_active else 'PAID'  }}</td>
+                        <td>
+                            {% if loan.is_active %}
+                                <span class="badge text-bg-primary">ACTIVE</span>
+                            {% else %}
+                                <span class="badge text-bg-success">PAID</span>
+                            {% endif %}
+                        </td>
                         <td class="text-start">{{ loan.description }}</td>
                         <td>{{ loan.bank_account.nick_name }}</td>
                         <td>{{ loan.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>

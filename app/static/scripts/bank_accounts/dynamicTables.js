@@ -79,7 +79,7 @@ const loansTemplateFn = (loan) => `
     <td class="text-start">${formatNumber(loan.amount)}</td>
     <td>${loan.person_name ?? '-'}</td>
     <td> ${formatNumber(loan.remaining_amount)} </td>
-    <td>${loan.is_active ? 'ACTIVE' : 'PAID'}</td>
+    <td>${loan.is_active ? '<span class="badge text-bg-primary">ACTIVE</span>' : '<span class="badge text-bg-success">PAID</span>'}</td>
     <td class="text-start">${loan.description ?? '-'}</td>
     <td>${loan.bank_account_nick_name ?? '-'}</td>
     <td>${loan.created_at}</td>
@@ -143,7 +143,7 @@ const debtsTemplateFn = (debt) => `
     <td class="text-start">${formatNumber(debt.amount)}</td>
     <td>${debt.person_name ?? '-'}</td>
     <td> ${formatNumber(debt.remaining_amount)} </td>
-    <td>${debt.is_active ? 'ACTIVE' : 'PAID'}</td>
+    <td>${debt.is_active ? '<span class="badge text-bg-primary">ACTIVE</span>' : '<span class="badge text-bg-success">PAID</span>'}</td>
     <td class="text-start">${debt.description ?? '-'}</td>
     <td>${debt.bank_account_nick_name ?? '-'}</td>
     <td>${debt.created_at}</td>

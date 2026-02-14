@@ -50,9 +50,17 @@ function renderDataTable(debts){
             <td>${debt.person_name}</td>
             <td>${formatNumber(debt.amount)}</td>
             <td> ${formatNumber(debt.remaining_amount)} </td>
-            <td>${debt.is_active ? 'ACTIVE' : 'PAID'}</td>
+            <td>
+                ${
+                    debt.is_active ? '<span class="badge text-bg-primary">ACTIVE</span>' : '<span class="badge text-bg-success">PAID</span>'
+                }
+            </td>
             <td>${debt.description}</td>
-            <td>${debt.is_cash ? 'YES' : 'NO'}</td>
+            <td>
+                ${
+                    debt.is_cash ? '<span class="badge text-bg-light">YES</span>' : '<span class="badge text-bg-secondary">NO</span>'
+                }
+            </td>
             <td>${debt.bank_account_nick_name}</td>
             <td>${debt.created_at}</td>
             <td>

@@ -248,9 +248,21 @@
                         <td>{{ debt.person_name }}</td>
                         <td>{{ format_amount(debt.amount) }}</td>
                         <td> {{ format_amount(debt.remaining_amount()) }} </td>
-                        <td>{{ 'ACTIVE' if debt.is_active else 'PAID'  }}</td>
+                        <td>
+                            {% if debt.is_active %}
+                                <span class="badge text-bg-primary">ACTIVE</span>
+                            {% else %}
+                                <span class="badge text-bg-success">PAID</span>
+                            {% endif %}
+                        </td>
                         <td>{{ debt.description }}</td>
-                        <td>{{ 'YES' if debt.is_cash else 'NO'  }}</td>
+                        <td>
+                            {% if debt.is_cash %}
+                                <span class="badge text-bg-light">YES</span>
+                            {% else %}
+                                <span class="badge text-bg-secondary">NO</span>
+                            {% endif %}
+                        </td>
                         <td>{{ debt.bank_account.nick_name if debt.bank_account else '-' }}</td>
                         <td>{{ debt.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                         <td>

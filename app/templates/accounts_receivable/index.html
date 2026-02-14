@@ -243,9 +243,21 @@
                         <td>{{ loan.person_name }}</td>
                         <td>{{ format_amount(loan.amount) }}</td>
                         <td> {{ format_amount(loan.remaining_amount()) }} </td>
-                        <td>{{ 'ACTIVE' if loan.is_active else 'PAID'  }}</td>
+                        <td>
+                            {% if loan.is_active %}
+                                <span class="badge text-bg-primary">ACTIVE</span>
+                            {% else %}
+                                <span class="badge text-bg-success">PAID</span>
+                            {% endif %}
+                        </td>
                         <td>{{ loan.description }}</td>
-                        <td>{{ 'YES' if loan.is_cash else 'NO'  }}</td>
+                        <td>
+                            {% if loan.is_cash %}
+                                <span class="badge text-bg-light">YES</span>
+                            {% else %}
+                                <span class="badge text-bg-secondary">NO</span>
+                            {% endif %}
+                        </td>
                         <td>{{ loan.bank_account.nick_name if loan.bank_account else '-' }}</td>
                         <td>{{ loan.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                         <td>

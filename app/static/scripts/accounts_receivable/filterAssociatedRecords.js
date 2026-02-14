@@ -9,7 +9,11 @@ let data;
 const loanPaymentsTemplateFn = (loanPayment) => `
     <th scope="row">${ loanPayment.id }</th>
     <td class="text-start">${ loanPayment.amount }</td>
-    <td>${ loanPayment.is_cash ? 'YES' : 'NO' }</td>
+    <td>
+        ${
+            loanPayment.is_cash ? '<span class="badge text-bg-light">YES</span>' : '<span class="badge text-bg-secondary">NO</span>'
+        }
+    </td>
     <td class="text-start">${ loanPayment.bank_account_nick_name ?? '-'}</td>
     <td>${ loanPayment.created_at }</td>
     <td>

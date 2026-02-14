@@ -83,7 +83,13 @@
                     <tr>
                         <th scope="row">{{ payment.id }}</th>
                         <td class="text-start">{{ format_amount(payment.amount) }}</td>
-                        <td>{{ 'YES' if payment.is_cash else 'NO' }}</td>
+                        <td>
+                            {% if payment.is_cash %}
+                                <span class="badge text-bg-light">YES</span>
+                            {% else %}
+                                <span class="badge text-bg-secondary">NO</span>
+                            {% endif %}
+                        </td>
                         <td class="text-start">{{ payment.bank_account.nick_name if payment.bank_account else '-' }}</td>
                         <td>{{ payment.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                         <td>

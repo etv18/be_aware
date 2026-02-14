@@ -211,7 +211,13 @@
                     <tr>
                         <th scope="row">{{ expense.id }}</th>
                         <td>{{ format_amount(expense.amount) or '-' }}</td>
-                        <td>{{ 'YES' if expense.is_cash else 'NO' }}</td>
+                        <td>
+                            {% if expense.is_cash %}
+                                <span class="badge text-bg-light">YES</span>
+                            {% else %}
+                                <span class="badge text-bg-secondary">NO</span>
+                            {% endif %}
+                        </td>
                         <td> {{ expense.description or '-' }} </td>
                         <td>{{ expense.credit_card.nick_name or '-' }}</td>
                         <td>{{ expense.bank_account.nick_name or '-' }}</td>

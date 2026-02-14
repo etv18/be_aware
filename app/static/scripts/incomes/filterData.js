@@ -42,7 +42,9 @@ function renderDataTable(incomes){
         tableRow.innerHTML = `
             <th scope="row">${ income.id }</th>
             <td>${ formatNumber(income.amount) }</td>
-            <td>${ income.is_cash ? 'YES' : 'NO' }</td>
+            <td>
+                ${ income.is_cash ? '<span class="badge text-bg-light">YES</span>' : '<span class="badge text-bg-secondary">NO</span>' }
+            </td>
             <td>${ income.description ? income.description : '-' }</td>
             <td>${ income.bank_nick_name }</td>
             <td>${ income.created_at }</td>

@@ -46,7 +46,9 @@ export function renderExpensesTable(data){
         tableRow.innerHTML = `
             <th scope="row">${expense.id}</th>
             <td>${formatNumber(expense.amount)}</td>
-            <td>${expense.is_cash ? 'YES' : 'NO'}</td>
+            <td>
+                ${ expense.is_cash ? '<span class="badge text-bg-light">YES</span>' : '<span class="badge text-bg-secondary">NO</span>' }
+            </td>            
             <td>${expense.description || '-'}</td>
             <td>${expense.credit_card_name || '-'}</td>
             <td>${expense.bank_account_name || '-'}</td>

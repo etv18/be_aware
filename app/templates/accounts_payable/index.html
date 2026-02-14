@@ -190,12 +190,14 @@
         <div class="w-100">
             <div class="d-flex flex-column flex-md-row align-items-stretch align-items-md-center gap-2">
                 <div class="d-flex gap-2">
-                    <button type="button" 
-                            class="btn btn-outline-primary" 
-                            style="max-width: 200px;"
-                            data-bs-toggle="modal" 
-                            data-bs-target="#create-account-payable">
-                        New Account Payable
+                    <button 
+                        type="button" 
+                        class="btn btn-debts-outline-custom" 
+                        style="max-width: 200px;"
+                        data-bs-toggle="modal" 
+                        data-bs-target="#create-account-payable"
+                    >
+                        <span class="fw-bold">New Account Payable</span>
                     </button>
                     <a 
                         href="{{ url_for('debt_payment.see_all_debt_payments' ) }}" 

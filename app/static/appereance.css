@@ -1,0 +1,65 @@
+.btn-expenses-outline-custom {
+    color: #ad1a1a;
+    border: 2px solid #ad1a1a;
+    background-color: transparent;
+}
+
+.btn-expenses-outline-custom:hover {
+    background-color: #ad1a1a;
+    color: white;
+}
+
+.btn-incomes-outline-custom {
+    color: #1A2CA3;
+    border: 2px solid #1A2CA3;
+    background-color: transparent;
+}
+
+.btn-incomes-outline-custom:hover {
+    background-color: #1A2CA3;
+    color: white;
+}
+
+.btn-loans-outline-custom {
+    color: #c0993d;
+    border: 2px solid #c0993d;
+    background-color: transparent;
+}
+
+.btn-loans-outline-custom:hover {
+    background-color: #c0993d;
+    color: white;
+}
+
+.btn-debts-outline-custom {
+    color: #ac8981;
+    border: 2px solid #ac8981;
+    background-color: transparent;
+}
+
+.btn-debts-outline-custom:hover {
+    background-color: #ac8981;
+    color: white;
+}
+
+.btn-withdrawal-outline-custom {
+    color: #94b369;
+    border: 2px solid #94b369;
+    background-color: transparent;
+}
+
+.btn-withdrawal-outline-custom:hover {
+    background-color: #94b369;
+    color: white;
+}
+
+.btn-deposits-outline-custom {
+    color: #624ea2;
+    border: 2px solid #624ea2;
+    background-color: transparent;
+}
+
+.btn-deposits-outline-custom:hover {
+    background-color: #624ea2;
+    color: white;
+}

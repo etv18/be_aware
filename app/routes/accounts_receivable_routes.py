@@ -149,7 +149,7 @@ def see_all_loan_payments():
     years = get_years()
     try:
         context = {
-            'loan_payments': LoanPayment.query.all(),
+            'loan_payments': LoanPayment.query.order_by(LoanPayment.created_at.desc()).all(),
             'format_amount': format_amount,
             'total_amount': total_amount,
             'years': years,

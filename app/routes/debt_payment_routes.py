@@ -48,7 +48,7 @@ def see_all_debt_payments():
     years = get_years()
     try:
         context = {
-            'debt_payments': DebtPayment.query.all(),
+            'debt_payments': DebtPayment.query.order_by(DebtPayment.created_at.desc()).all(),
             'format_amount': format_amount,
             'total_amount': total_amount,
             'years': years,

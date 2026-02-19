@@ -30,5 +30,6 @@ class CreditCard(db.Model):
     #This allows sqlalchemy to navigated between relationships in python code
     bank = relationship('Bank', back_populates='credit_cards')
     expenses = relationship('Expense', back_populates='credit_card', order_by='desc(Expense.created_at)')
-    payments = relationship('CreditCardPayment', back_populates='credit_card', order_by='desc(CreditCardPayment.created_at)') 
-    transaction_ledger = relationship('CreditCardTransactionsLedger', back_populates='credit_card', order_by='desc(CreditCardTransactionsLedger.created_at)', cascade='all, delete-orphan')  
+    payments = relationship('CreditCardPayment', back_populates='credit_card', order_by='desc(CreditCardPayment.created_at)')
+    loans = relationship('Loan', back_populates='credit_card', order_by='desc(Loan.created_at)')
+    transaction_ledger = relationship('CreditCardTransactionsLedger', back_populates='credit_card', order_by='desc(CreditCardTransactionsLedger.created_at)', cascade='all, delete-orphan') 

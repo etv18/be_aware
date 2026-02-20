@@ -11,8 +11,9 @@ from app.models.loan import Loan
 from app.models.loan_payment import LoanPayment
 from app.models.bank_account import BankAccount
 from app.models.cash_ledger import CashLedger
+from app.models.credit_card import CreditCard
 from app.models.bank_account_transactions_ledger import BankAccountTransactionsLedger
-from app.controllers.expense_controller import update_bank_account_money_on_create, update_bank_account_money_on_update, update_credit_card_money_on_create
+from app.controllers.expense_controller import update_bank_account_money_on_create, update_bank_account_money_on_update, update_credit_card_money_on_create, update_credit_card_money_on_update
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero, NoBankProductSelected
 from app.utils.numeric_casting import is_decimal_type, total_amount
 from app.utils.parse_structures import get_data_as_dictionary
@@ -79,42 +80,73 @@ def update_loan(loan):
     try:
         if not loan:
             return jsonify({'error': 'Loan record was not found'}), 400
-        
-        amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else Decimal('0')
+
+        new_amount = Decimal(request.form.get('amount')) \
+            if is_decimal_type(request.form.get('amount')) else Decimal('0')
+
+        if new_amount <= 0:
+            raise AmountIsLessThanOrEqualsToZero(
+                'Introduce a number bigger than 0'
+            )
+
         is_cash = request.form.get('is-cash') == 'on'
-        is_active = not request.form.get('is-active') == 'on'
         person_name = request.form.get('person-name')
         description = request.form.get('description')
-        bank_account_id = None
-        if amount <= 0: raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
-        
-        selected_bank_account_id = request.form.get('select-bank-account')
 
-        if not is_cash and selected_bank_account_id.lower() == 'none':
-            if loan.bank_account:
-                return_money_to_bank_account(loan)
-        elif not is_cash:
-            if selected_bank_account_id == 'none' or not selected_bank_account_id:
-                raise NoBankProductSelected('No bank product was selected for this loan')
-            
-            bank_account_id = int(selected_bank_account_id)
-            update_bank_account_money_on_update(loan.bank_account_id, bank_account_id, loan.amount, amount)
-        elif is_cash and loan.bank_account_id:
-            return_money_to_bank_account(loan)
+        selected_bank_account = request.form.get('select-bank-account')
+        selected_credit_card = request.form.get('select-credit-card')
 
-        loan.amount = amount
+        # Determine OLD source
+        old_source = None
+        if loan.bank_account_id:
+            old_source = BankAccount.query.get(loan.bank_account_id)
+        elif loan.credit_card_id:
+            old_source = CreditCard.query.get(loan.credit_card_id)
+
+        # Determine NEW source
+        new_source = None
+
+        if not is_cash:
+
+            if (not selected_bank_account or selected_bank_account == 'none') and \
+               (not selected_credit_card or selected_credit_card == 'none'):
+                raise NoBankProductSelected( 'You must select either a credit card or bank account.')
+
+            if selected_bank_account and selected_bank_account != 'none':
+                new_source = BankAccount.query.get(int(selected_bank_account))
+
+            elif selected_credit_card and selected_credit_card != 'none':
+                new_source = CreditCard.query.get(int(selected_credit_card))
+
+        # Adjust balances safely
+        adjust_funding_source(
+            old_source=old_source,
+            new_source=new_source,
+            old_amount=loan.amount,
+            new_amount=new_amount
+        )
+
+        # Update loan fields
+        loan.amount = new_amount
         loan.is_cash = is_cash
-        loan.is_active = is_active
         loan.person_name = person_name
         loan.description = description
-        loan.bank_account_id = bank_account_id
-    
+        loan.is_active = not loan.is_active # Toggle the active status
+
+        loan.bank_account_id = (
+            new_source.id if isinstance(new_source, BankAccount) else None
+        )
+
+        loan.credit_card_id = (
+            new_source.id if isinstance(new_source, CreditCard) else None
+        )
+
         db.session.commit()
 
         CashLedger.update_or_delete(loan)
         BankAccountTransactionsLedger.update(loan)
-        
-        return jsonify({'data': 'Loan updated successfully'}), 200
+
+        return jsonify({"message": "Loan updated successfully"}), 200
     
     except SQLAlchemyError as e:
         print(f'Error on update_loan handler: {e}')
@@ -359,5 +391,38 @@ def delete_loan_payments_ledgers(payments):
             payment.bank_account.amount_available -= payment.amount
             BankAccountTransactionsLedger.delete(payment)
 
+def return_money(loan):
 
+    if loan.bank_account:
+        loan.bank_account.amount_available += loan.amount
+    else:
+        loan.credit_card.amount_available += loan.amount
+
+def adjust_funding_source(old_source, new_source, old_amount, new_amount):
+    """
+    Handles:
+    - Same source, amount changed
+    - Switching sources
+    - Removing funding (to cash)
+    - Adding funding (from cash)
+    """
+
+    # Case 1: Same funding source
+    if old_source and new_source and old_source.id == new_source.id:
+        difference = new_amount - old_amount
+
+        if difference > 0:
+            new_source.amount_available -= difference
+        elif difference < 0:
+            new_source.amount_available += abs(difference)
+
+        return
+
+    # Case 2: Return money to old source
+    if old_source:
+        old_source.amount_available += old_amount
+
+    # Case 3: Take money from new source
+    if new_source:
+        new_source.amount_available -= new_amount
 

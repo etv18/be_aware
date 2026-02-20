@@ -166,8 +166,10 @@ def delete_loan(loan):
         
         #if the loan is deleted and it was made with a bank account
         #this code will return the money which was used before.
+        if not loan.is_cash:
+            return_money(loan)
+
         if loan.bank_account:
-            return_money_to_bank_account(loan)
             BankAccountTransactionsLedger.delete(loan)
         
         delete_loan_payments_ledgers(loan.loan_payments)

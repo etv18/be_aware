@@ -56,6 +56,7 @@ def create_loan():
             is_cash=is_cash,
             person_name=person_name,
             bank_account_id=bank_account_id,
+            credit_card_id=credit_card_id,
             description=description
         )
 

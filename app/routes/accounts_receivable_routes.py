@@ -7,6 +7,7 @@ from app.controllers import loan_payment_controller
 from app.models.loan import Loan
 from app.models.loan_payment import LoanPayment
 from app.models.bank_account import BankAccount
+from app.models.credit_card import CreditCard
 from app.utils.numeric_casting import format_amount, total_amount
 from app.utils.date_handling import get_years
 from app.utils.filter_data import get_not_deleted_records
@@ -20,6 +21,7 @@ def index():
     paid_loans = Loan.query.filter(Loan.is_active == False).count()
     remaining_to_collect = Loan.query.filter(Loan.is_active == True).with_entities(func.sum(Loan.amount)).scalar()
     bank_accounts = get_not_deleted_records(model=BankAccount)
+    credit_cards = get_not_deleted_records(model=CreditCard)
     years = get_years()
 
     context = {
@@ -31,6 +33,7 @@ def index():
         'years': years,
         'format_amount': format_amount,
         'total_amount': total_amount,
+        'credit_cards': credit_cards,
     }
     return render_template('accounts_receivable/index.html', **context)
 

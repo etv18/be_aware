@@ -13,6 +13,7 @@ from app.models.bank_account import BankAccount
 from app.models.cash_ledger import CashLedger
 from app.models.credit_card import CreditCard
 from app.models.bank_account_transactions_ledger import BankAccountTransactionsLedger
+from app.models.credit_card_transactions_ledger import CreditCardTransactionsLedger
 from app.controllers.expense_controller import update_bank_account_money_on_create, update_bank_account_money_on_update, update_credit_card_money_on_create, update_credit_card_money_on_update
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero, NoBankProductSelected
 from app.utils.numeric_casting import is_decimal_type, total_amount
@@ -66,6 +67,7 @@ def create_loan():
 
         if loan.is_cash         : CashLedger.create(loan)
         if loan.bank_account_id : BankAccountTransactionsLedger.create(loan)
+        if loan.credit_card_id  : CreditCardTransactionsLedger.create(loan)
 
     except SQLAlchemyError as e:
         db.session.rollback()
@@ -145,6 +147,7 @@ def update_loan(loan):
 
         CashLedger.update_or_delete(loan)
         BankAccountTransactionsLedger.update(loan)
+        CreditCardTransactionsLedger.update(loan)
 
         return jsonify({"message": "Loan updated successfully"}), 200
     
@@ -171,6 +174,9 @@ def delete_loan(loan):
 
         if loan.bank_account:
             BankAccountTransactionsLedger.delete(loan)
+
+        if loan.credit_card:
+            CreditCardTransactionsLedger.delete(loan)
         
         delete_loan_payments_ledgers(loan.loan_payments)
 

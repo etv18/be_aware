@@ -22,7 +22,7 @@ class Loan(db.Model):
     description = db.Column(db.String(200))
 
     bank_account_id = db.Column(db.Integer, db.ForeignKey('bank_accounts.id'))
-    credit_card_id = db.Column(db.Integer, db.ForeignKey('credit_cards.id'))
+    credit_card_id = db.Column(db.Integer, db.ForeignKey('credit_cards.id', name='credit_card_id'), default=None)
     
     created_at = db.Column(
         db.DateTime(timezone=True),

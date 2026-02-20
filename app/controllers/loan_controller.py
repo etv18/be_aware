@@ -12,7 +12,7 @@ from app.models.loan_payment import LoanPayment
 from app.models.bank_account import BankAccount
 from app.models.cash_ledger import CashLedger
 from app.models.bank_account_transactions_ledger import BankAccountTransactionsLedger
-from app.controllers.expense_controller import update_bank_account_money_on_create, update_bank_account_money_on_update
+from app.controllers.expense_controller import update_bank_account_money_on_create, update_bank_account_money_on_update, update_credit_card_money_on_create
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero, NoBankProductSelected
 from app.utils.numeric_casting import is_decimal_type, total_amount
 from app.utils.parse_structures import get_data_as_dictionary
@@ -23,20 +23,33 @@ def create_loan():
         is_cash = request.form.get('is-cash') == 'on'
         person_name = request.form.get('person-name')
         description = request.form.get('description')
-        bank_account_id = None
         
         if(amount <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
 
-        selected_bank_account_id = request.form.get('select-bank-account')
-    
-        if not is_cash and selected_bank_account_id.lower() == 'none':
-            pass
-        elif not is_cash:
-            if selected_bank_account_id == 'none' or not selected_bank_account_id:
-                raise NoBankProductSelected('No bank account was selected for this loan')
+        selected_credit_card = request.form.get('select-credit-card')
+        selected_bank_account = request.form.get('select-bank-account')
+
+        credit_card_id = None
+        bank_account_id = None
+
+        if not is_cash:
+
+            credit_selected = selected_credit_card and selected_credit_card != 'none'
+            bank_selected = selected_bank_account and selected_bank_account != 'none'
+
+            if not credit_selected and not bank_selected:
+                raise NoBankProductSelected('You must select either a credit card or bank account.')
+
+            if credit_selected and bank_selected:
+                raise Exception('You cannot select both credit card and bank account.')
             
-            bank_account_id = int(selected_bank_account_id)
-            update_bank_account_money_on_create(bank_account_id, amount)
+            if credit_selected:
+                credit_card_id = int(selected_credit_card)
+                update_credit_card_money_on_create(credit_card_id, amount)
+
+            if bank_selected:
+                bank_account_id = int(selected_bank_account)
+                update_bank_account_money_on_create(bank_account_id, amount)
 
         loan = Loan(
             amount=amount,
@@ -191,7 +204,7 @@ def filter_all():
         end = data.get('end')
 
         if not query and (not start or not end):
-            ca.logger.error(f"Missing query and/or time frame for filtering loans. Query: {query}, Start: {start}, End: {end}")
+            ca.logger.error(f"Missing query and/or time frame for filtering loans. Query: {query}\n, Start: {start}\n, End: {end}")
             return jsonify({
                 'error': 'Try to type some query or select a time frame.'
             }), 400
@@ -244,13 +257,13 @@ def filter_all():
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()
-        ca.logger.exception(f"Unexpected error filtering loans with query: {query}, start: {start} and end: {end}")
+        ca.logger.exception(f"Unexpected error filtering loans with query: {query}\n, start: {start} and end: {end}")
         return jsonify({'error': 'Internal server error'}), 500   
 
 def filter_loans_by_timeframe(start, end):
     try:
         if not start or not end:
-            ca.logger.error(f"Missing start and/or end date for filtering loans by timeframe. Start: {start}, End: {end}")
+            ca.logger.error(f"Missing start and/or end date for filtering loans by timeframe. Start: {start}\n, End: {end}")
             return jsonify({'error': 'Missing data range.'})
 
         start_date = datetime.strptime(start, '%Y-%m-%d')

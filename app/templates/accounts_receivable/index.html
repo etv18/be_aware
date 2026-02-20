@@ -53,14 +53,29 @@
                                     <label for="description-id" class="p-3">Description</label>
                                 </div>
 
-                                <div class="form-floating mt-2">
-                                    <select name="select-bank-account" id="select-bank-account-id" class="form-select">
-                                        <option value="none">...Select...</option>
-                                        {% for ba in bank_accounts %}
-                                        <option value="{{ ba.id }}">{{ ba.nick_name }}</option>                                        
-                                        {% endfor %}
-                                    </select>
-                                    <label for="e-select-bank-account-id" class="p-3">Bank Account</label>
+                                <div class="row" id="bank-products-id">
+                                    <div class="col-sm">
+                                        <div class="form-floating mt-2">
+                                            <select name="select-credit-card" id="select-credit-card-id" class="form-select">
+                                                <option value="none">...Select...</option>
+                                                {% for cc in credit_cards %}
+                                                <option value="{{ cc.id }}">{{ cc.nick_name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <label for="select-credit-card-id" class="p-3">Credit Card</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm">
+                                        <div class="form-floating mt-2">
+                                            <select name="select-bank-account" id="select-bank-account-id" class="form-select">
+                                                <option value="none">...Select...</option>
+                                                {% for ba in bank_accounts %}
+                                                <option value="{{ ba.id }}">{{ ba.nick_name }}</option>                                        
+                                                {% endfor %}
+                                            </select>
+                                            <label for="select-bank-account-id" class="p-3">Bank Account</label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

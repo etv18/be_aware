@@ -92,9 +92,9 @@ def update_loan(loan):
             )
 
         is_cash = request.form.get('is-cash') == 'on'
+        is_active = not request.form.get('is-active') == 'on'
         person_name = request.form.get('person-name')
         description = request.form.get('description')
-
         selected_bank_account = request.form.get('select-bank-account')
         selected_credit_card = request.form.get('select-credit-card')
 
@@ -133,7 +133,7 @@ def update_loan(loan):
         loan.is_cash = is_cash
         loan.person_name = person_name
         loan.description = description
-        loan.is_active = not loan.is_active # Toggle the active status
+        loan.is_active = is_active # Toggle the active status
 
         loan.bank_account_id = (
             new_source.id if isinstance(new_source, BankAccount) else None

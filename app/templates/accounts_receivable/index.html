@@ -52,15 +52,32 @@
                                         placeholder="Description" required>
                                     <label for="description-id" class="p-3">Description</label>
                                 </div>
-
-                                <div class="form-floating mt-2">
-                                    <select name="select-bank-account" id="select-bank-account-id" class="form-select">
-                                        <option value="none">...Select...</option>
-                                        {% for ba in bank_accounts %}
-                                        <option value="{{ ba.id }}">{{ ba.nick_name }}</option>                                        
-                                        {% endfor %}
-                                    </select>
-                                    <label for="e-select-bank-account-id" class="p-3">Bank Account</label>
+                                <div class="container">
+                                    <div class="row g-2" id="bank-products-id">
+                                        <div class="col-md-6">
+                                            <div class="form-floating mt-2">
+                                                <select name="select-credit-card" id="select-credit-card-id" class="form-select">
+                                                    <option value="none">...Select...</option>
+                                                    {% for cc in credit_cards %}
+                                                    <option value="{{ cc.id }}">{{ cc.nick_name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <label for="select-credit-card-id" class="p-3">Credit Card</label>
+                                            </div>
+                                        </div>
+    
+                                        <div class="col-md-6">
+                                            <div class="form-floating mt-2">
+                                                <select name="select-bank-account" id="select-bank-account-id" class="form-select">
+                                                    <option value="none">...Select...</option>
+                                                    {% for ba in bank_accounts %}
+                                                    <option value="{{ ba.id }}">{{ ba.nick_name }}</option>                                        
+                                                    {% endfor %}
+                                                </select>
+                                                <label for="select-bank-account-id" class="p-3">Bank Account</label>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -117,16 +134,33 @@
                                         placeholder="Description" required>
                                     <label for="description-id" class="p-3">Description</label>
                                 </div>
-
-                                <div class="form-floating mt-2">
-                                    <select name="select-bank-account" id="e-select-bank-account-id" class="form-select">
-                                        <option value="none">...Select...</option>
-                                        {% for ba in bank_accounts %}
-                                        <option value="{{ ba.id }}">{{ ba.nick_name }}</option>                                        
-                                        {% endfor %}
-                                    </select>
-                                    <label for="e-select-bank-account-id" class="p-3">Bank Account</label>
+                                <div class="container">
+                                    <div class="row g-2" id="e-bank-products-id">
+                                        <div class="col-md-6">
+                                            <div class="form-floating mt-2">
+                                                <select name="select-credit-card" id="e-select-credit-card-id" class="form-select">
+                                                    <option value="none">...Select...</option>
+                                                    {% for cc in credit_cards %}
+                                                    <option value="{{ cc.id }}">{{ cc.nick_name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <label for="e-select-credit-card-id" class="p-3">Credit Card</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-floating mt-2">
+                                                <select name="select-bank-account" id="e-select-bank-account-id" class="form-select">
+                                                    <option value="none">...Select...</option>
+                                                    {% for ba in bank_accounts %}
+                                                    <option value="{{ ba.id }}">{{ ba.nick_name }}</option>                                        
+                                                    {% endfor %}
+                                                </select>
+                                                <label for="e-select-bank-account-id" class="p-3">Bank Account</label>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
+
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -230,6 +264,7 @@
                     <th scope="col">Status</th>
                     <th scope="col">Description</th>
                     <th scope="col">Is Cash</th>
+                    <th scope="col">Credit Card</th>
                     <th scope="col">Bank Account</th>
                     <th scope="col">Create at</th>
                     <th scope="col">Acctions</th>
@@ -258,6 +293,7 @@
                                 <span class="badge text-bg-secondary">NO</span>
                             {% endif %}
                         </td>
+                        <td>{{ loan.credit_card.nick_name if loan.credit_card else '-' }}</td>
                         <td>{{ loan.bank_account.nick_name if loan.bank_account else '-' }}</td>
                         <td>{{ loan.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                         <td>
@@ -284,6 +320,7 @@
                                     data-description="{{ loan.description }}"
                                     data-person-name="{{ loan.person_name }}"
                                     data-bank-account-id="{{ loan.bank_account_id }}"
+                                    data-credit-card-id="{{ loan.credit_card_id }}"
                                 >
                                     <i class="bi bi-pen"></i>
                                 </button>
@@ -373,6 +410,24 @@
                 select.disabled = checkbox.checked;
             }
         }
+
+        function toggleBankProducts(checkbox, dynamicSection) {
+            if (checkbox.checked) {
+                dynamicSection.classList.add("d-none");
+            } else {
+                dynamicSection.classList.remove("d-none");
+            }
+        }
+
+        function editableAndDisableSelects(editableSelect, disableSelect){
+            if (editableSelect.value != "none") {
+                disableSelect.disabled = true;
+                disableSelect.value = "none";
+            } else {
+                disableSelect.disabled = false;                      
+            }
+        }
+
         function selectBankAccountOption(checkbox, select, event){
             if(!checkbox.checked && select.value == 'none') {
                 event.preventDefault();
@@ -388,12 +443,35 @@
         createAccountReceivableModal.addEventListener('show.bs.modal', () => {
             const isCash = document.getElementById('is-cash-id');
             const bankAccountsSelect = document.getElementById('select-bank-account-id');
+            const cBankProducts = document.getElementById("bank-products-id");
 
-            toggleBankAccount(isCash, bankAccountsSelect);
-            isCash.addEventListener('change', () => toggleBankAccount(isCash, bankAccountsSelect));
+            //toggleBankAccount(isCash, bankAccountsSelect);
+            toggleBankProducts(isCash, cBankProducts);
+            isCash.addEventListener('change', () => toggleBankProducts(isCash, cBankProducts));
+
+
+            const cSelectBankAccounts = document.getElementById("select-bank-account-id");
+            const cSelectCreditCards = document.getElementById("select-credit-card-id");
+
+            cSelectBankAccounts.value = "none";
+            cSelectCreditCards.value = "none";
+
+            cSelectBankAccounts.disabled = false;
+            cSelectCreditCards.disabled = false;
+
+            cSelectBankAccounts.addEventListener("change", () => {
+                editableAndDisableSelects(cSelectBankAccounts, cSelectCreditCards);
+            });
+            cSelectCreditCards.addEventListener("change", () => {
+                editableAndDisableSelects(cSelectCreditCards, cSelectBankAccounts);
+            });
+
         });
         
         editAccountReceivableModal.addEventListener('show.bs.modal', (event) => {
+            const eSelectBankAccounts = document.getElementById("e-select-bank-account-id");
+            const eSelectCreditCards = document.getElementById("e-select-credit-card-id");
+
             const button = event.relatedTarget;
             const btnSubmitEdition = document.getElementById('btn-submit-edition');
             const editAccountReceivableForm = document.getElementById('edit-account-receivable-form');
@@ -403,6 +481,7 @@
 
             const oldIsCash = button.getAttribute('data-is-cash').toLowerCase() === 'true';
             const oldBankAccountId = button.getAttribute('data-bank-account-id');
+            const oldCreditCardId = button.getAttribute('data-credit-card-id');
             const oldAmount = button.getAttribute('data-amount');
             const loanId = button.getAttribute('data-loan-id');
             const isActive = button.getAttribute('data-is-active').toLowerCase() === 'true';
@@ -414,14 +493,29 @@
             document.getElementById('e-is-active-id').checked = !isActive;
             document.getElementById('e-loan-id').value = loanId;
             document.getElementById('e-select-bank-account-id').value = oldBankAccountId; //If on the db its value it's Null flask will convert it into 'None' which the browser interprets it as String value in js
+            document.getElementById('e-select-credit-card-id').value = oldCreditCardId; //If on the db its value it's Null flask will convert it into 'None' which the browser interprets it as String value in js
             if(oldBankAccountId === 'None') {
                 document.getElementById('e-select-bank-account-id').value = 'none';
+            }
+            if(oldCreditCardId === 'None') {
+                document.getElementById('e-select-credit-card-id').value = 'none';
             }
             document.getElementById('e-person-name-id').value = personName;
             document.getElementById('e-description-id').value = description;
             
-            toggleBankAccount(editIsCash, editBankAccountsSelect);
-            editIsCash.addEventListener('change', () => toggleBankAccount(editIsCash, editBankAccountsSelect));
+            //toggleBankAccount(editIsCash, editBankAccountsSelect);
+            //editIsCash.addEventListener('change', () => toggleBankAccount(editIsCash, editBankAccountsSelect));
+
+            eSelectBankAccounts.addEventListener("change", () => editableAndDisableSelects(eSelectBankAccounts, eSelectCreditCards));
+            eSelectCreditCards.addEventListener("change", () => editableAndDisableSelects(eSelectCreditCards, eSelectBankAccounts));
+
+            //Will load the selected bank product enabled 
+            eSelectCreditCards.disabled = (eSelectBankAccounts.value != 'none');
+            eSelectBankAccounts.disabled = (eSelectCreditCards.value != 'none');
+
+            const eBankProducts = document.getElementById("e-bank-products-id");
+            toggleBankProducts(editIsCash, eBankProducts);
+            editIsCash.addEventListener('change', () => toggleBankProducts(editIsCash, eBankProducts));
 
             editAccountReceivableForm.addEventListener('submit', (event) => {
                 selectBankAccountOption(editIsCash, editBankAccountsSelect, event);

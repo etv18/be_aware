@@ -7,6 +7,7 @@ import traceback
 from decimal import Decimal
 
 from app.models.credit_card_payment import CreditCardPayment
+from app.models.loan import Loan
 from app.models.expense import Expense
 from app.utils.normalize_string import normalize_string
 from app.utils.date_handling import utcnow
@@ -57,7 +58,7 @@ class CreditCardTransactionsLedger(db.Model):
     def create(transaction):
         try:
             
-            if not isinstance(transaction, (Expense, CreditCardPayment)) or not transaction.credit_card_id: return
+            if not isinstance(transaction, (Expense, CreditCardPayment, Loan)) or not transaction.credit_card_id: return
 
             amount = Decimal('0')
             before_update_balance = Decimal('0')
@@ -67,7 +68,7 @@ class CreditCardTransactionsLedger(db.Model):
                 amount = transaction.amount
                 before_update_balance = transaction.credit_card.amount_available - transaction.amount #if the available amount increased to get the before update balance, it must be taken off the amount of the transaction. Eg: amount_available = 1, transaction.amount = 2, 1 + 2 = 3 -> 3 - 2 = 1 = before_update_amount 
             
-            elif isinstance(transaction, Expense):
+            elif isinstance(transaction, (Expense, Loan)):
                 amount = -transaction.amount
                 before_update_balance = transaction.credit_card.amount_available + transaction.amount
 
@@ -93,7 +94,7 @@ class CreditCardTransactionsLedger(db.Model):
             if is_a_cash_transaction(transaction) or not transaction.credit_card_id: return CreditCardTransactionsLedger.delete(transaction)
 
             
-            if not isinstance(transaction, (Expense, CreditCardPayment)) or not transaction.credit_card_id: return
+            if not isinstance(transaction, (Expense, CreditCardPayment, Loan)) or not transaction.credit_card_id: return
 
             ledger = CreditCardTransactionsLedger.query.filter_by(reference_code = transaction.code).one_or_none()
             if not ledger: return CreditCardTransactionsLedger.create(transaction)
@@ -107,7 +108,7 @@ class CreditCardTransactionsLedger(db.Model):
                 amount = transaction.amount
                 before_update_balance = transaction.credit_card.amount_available - transaction.amount #if the available amount increased to get the before update balance, it must be taken off the amount of the transaction. Eg: amount_available = 1, transaction.amount = 2, 1 + 2 = 3 -> 3 - 2 = 1 = before_update_amount 
             
-            elif isinstance(transaction, Expense):
+            elif isinstance(transaction, (Expense, Loan)):
                 amount = -transaction.amount
                 before_update_balance = transaction.credit_card.amount_available + transaction.amount
 
@@ -128,7 +129,7 @@ class CreditCardTransactionsLedger(db.Model):
     def delete(transaction):
         try:
 
-            if not isinstance(transaction, (Expense, CreditCardPayment)) and not transaction.credit_card_id: return
+            if not isinstance(transaction, (Expense, CreditCardPayment, Loan)) and not transaction.credit_card_id: return
             
             ledger = CreditCardTransactionsLedger.query.filter_by(reference_code=transaction.code).first()
 

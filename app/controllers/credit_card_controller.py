@@ -5,6 +5,7 @@ from decimal import Decimal
 import traceback
 
 from app.models.credit_card import CreditCard
+from app.models.loan import Loan
 from app.extensions import db
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero
 from app.utils.numeric_casting import is_decimal_type
@@ -87,6 +88,7 @@ def associated_records_in_json(id):
         associations = [
             credit_card.expenses,
             credit_card.payments,
+            credit_card.loans,
         ]
         data = {}
         for a in associations:
@@ -108,7 +110,7 @@ def get_yearly_total_per_association_info():
 
     associations_info = {}
 
-    for association in (Expense, CreditCardPayment):
+    for association in (Expense, CreditCardPayment, Loan):
         table_name = association.__tablename__
         yearly_info = get_yearly_total_amount_info_by_filter_through_custom_model_and_fk(
             id=credit_card_id,

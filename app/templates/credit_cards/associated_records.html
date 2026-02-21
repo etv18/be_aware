@@ -44,7 +44,11 @@
             </div>
         </form>
     </section>
-    <a href="{{ url_for('credit_card.index') }}" class="btn btn-light fs-6"><i class="bi bi-arrow-return-left"></i> Go back</a>
+
+    <div class="mt-2">
+        <p class="fs-2 fw-bold text-light">{{ credit_card.nick_name }}</p>
+        <a href="{{ url_for('credit_card.index') }}" class="btn btn-light fs-6"><i class="bi bi-arrow-return-left"></i></a>
+    </div>
 
     <div id="stats-container">
         <div class="d-flex justify-content-center my-2">
@@ -181,6 +185,61 @@
             </div>
         </div>
     </div>
+
+    <div class="my-5 border rounded-3">
+        <div class="bg-warning rounded-top d-flex align-items-center justify-content-center p-2" style="height: 60px; color: #4a3b00;">
+            <div class="me-auto">
+                <h4 class="d-flex justify-content-center">Loans</h4>
+            </div>                
+            <div class="w-100" style="max-width: 217px;">
+                <input type="text" name="filter-input-loan" id="filter-input-loan-id" class="form-control"placeholder="Search...">
+            </div>
+        </div>
+        <div id="expenses-table-container" class="table-responsive overflow-y-auto" style="max-height: 322px;">
+            <table class="table table-borderless text-start table-hover">
+                <thead class="sticky-top">
+                    <tr class="table-warning">
+                        <th scope="col"># Id</th>
+                        <th scope="col" class="text-start">Amount</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Remaining</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-start">Description</th>
+                        <th scope="col">Credit Card</th>
+                        <th scope="col">Create at</th>
+                    </tr>
+                </thead>
+                
+                <tbody id="loans-table-body">
+                  {% for loan in credit_card.loans %}
+                    <tr class="loan-row" data-loan-id="{{ loan.id }}" data-url-associated-records = "{{ url_for('accounts_receivable.associated_records', loan_id=loan.id) }}">
+                        <th scope="row">{{ loan.id }}</th>
+                        <td class="text-start">{{ format_amount(loan.amount) }}</td>
+                        <td>{{ loan.person_name }}</td>
+                        <td> {{ loan.remaining_amount() }} </td>
+                        <td>
+                            {% if loan.is_active %}
+                                <span class="badge text-bg-primary">ACTIVE</span>
+                            {% else %}
+                                <span class="badge text-bg-success">PAID</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-start">{{ loan.description }}</td>
+                        <td>{{ loan.credit_card.nick_name }}</td>
+                        <td>{{ loan.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="p-1 border rounded-end rounded-bottom w-100 d-flex justify-content-center align-items-center" style="max-width: 200px;">
+            <div class="row text-center">
+                <p class="fs-6 fw-bold" id="total-amounts-loans-id">TOTAL: {{ total_amount(credit_card.loans) }}</p>
+                <p class="fs-6 fw-bold" id="total-count-loans-id">RECORDS: {{ credit_card.loans | length }}</p>
+            </div>
+        </div>
+    </div>
+
     <p class="d-none" id="associated-records-endpoint-id">{{ url_for('credit_card.associated_records_in_json', id=credit_card.id ) }}</p>
     <input type="hidden" name="" id="yearly-single-model-report-endpoint" value="{{ url_for('stats.yearly_single_model_report' ) }}">
     <input type="hidden" name="" id="get-yearly-total-per-association-info" value="{{ url_for('credit_card.get_yearly_total_per_association_info' ) }}">

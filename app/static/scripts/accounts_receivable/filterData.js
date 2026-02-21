@@ -32,7 +32,7 @@ function renderDataTable(loans){
     if(loans.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="10" class="text-center text-muted">No results found.</td>
+                <td colspan="11" class="text-center text-muted">No results found.</td>
             </tr>  
         `;
         return;
@@ -62,6 +62,7 @@ function renderDataTable(loans){
                     loan.is_cash ? '<span class="badge text-bg-light">YES</span>' : '<span class="badge text-bg-secondary">NO</span>'
                 }
             </td>
+            <td>${loan.credit_card_nick_name}</td>
             <td>${loan.bank_account_nick_name}</td>
             <td>${loan.created_at}</td>
             <td>
@@ -88,6 +89,7 @@ function renderDataTable(loans){
                         data-description="${loan.description}"
                         data-person-name="${loan.person_name}"
                         data-bank-account-id="${loan.bank_account_id}"
+                        data-credit-card-id="${loan.credit_card_id}"
                     >
                         <i class="bi bi-pen"></i>
                     </button>

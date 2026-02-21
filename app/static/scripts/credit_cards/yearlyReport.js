@@ -32,6 +32,13 @@ function generateYearlyTotalPerAssociationChart(canvas, type, data){
                             borderColor: "#48b626",
                             borderWidth: 1 
                         },
+                        {
+                            label: 'Loans',
+                            data: data.report.loans,
+                            backgroundColor: "#ffc106",
+                            borderColor: "#ffc106",
+                            borderWidth: 1 
+                        },
                     ]
                 },
                 options: {

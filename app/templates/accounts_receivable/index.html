@@ -473,8 +473,12 @@
             document.getElementById('e-person-name-id').value = personName;
             document.getElementById('e-description-id').value = description;
             
-            toggleBankAccount(editIsCash, editBankAccountsSelect);
-            editIsCash.addEventListener('change', () => toggleBankAccount(editIsCash, editBankAccountsSelect));
+            //toggleBankAccount(editIsCash, editBankAccountsSelect);
+            //editIsCash.addEventListener('change', () => toggleBankAccount(editIsCash, editBankAccountsSelect));
+
+            const eBankProducts = document.getElementById("e-bank-products-id");
+            toggleBankProducts(editIsCash, eBankProducts);
+            editIsCash.addEventListener('change', () => toggleBankProducts(editIsCash, eBankProducts));
 
             editAccountReceivableForm.addEventListener('submit', (event) => {
                 selectBankAccountOption(editIsCash, editBankAccountsSelect, event);

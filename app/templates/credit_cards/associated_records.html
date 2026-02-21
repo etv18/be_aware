@@ -44,7 +44,11 @@
             </div>
         </form>
     </section>
-    <a href="{{ url_for('credit_card.index') }}" class="btn btn-light fs-6"><i class="bi bi-arrow-return-left"></i> Go back</a>
+
+    <div class="mt-2">
+        <p class="fs-2 fw-bold text-light">{{ credit_card.nick_name }}</p>
+        <a href="{{ url_for('credit_card.index') }}" class="btn btn-light fs-6"><i class="bi bi-arrow-return-left"></i></a>
+    </div>
 
     <div id="stats-container">
         <div class="d-flex justify-content-center my-2">
@@ -182,44 +186,49 @@
         </div>
     </div>
 
-    <div class="my-3 border rounded-3">
-        <div class="rounded-top d-flex align-items-center justify-content-center p-2" style="height: 60px; background-color: #dba400;">
+    <div class="my-5 border rounded-3">
+        <div class="bg-warning rounded-top d-flex align-items-center justify-content-center p-2" style="height: 60px; color: #4a3b00;">
             <div class="me-auto">
                 <h4 class="d-flex justify-content-center">Loans</h4>
-            </div>
+            </div>                
             <div class="w-100" style="max-width: 217px;">
-                <input type="text" name="filter-input-expense" id="filter-input-expense-id" class="form-control"
-                    placeholder="Search...">
+                <input type="text" name="filter-input-loan" id="filter-input-loan-id" class="form-control"placeholder="Search...">
             </div>
         </div>
-        <div id="loans-table-container" class="table-responsive overflow-y-auto" style="max-height: 322px;">
-            <table class="table table-borderless table-hover text-center" id="loans-table">
-                <thead class="sticky-top" >
+        <div id="expenses-table-container" class="table-responsive overflow-y-auto" style="max-height: 322px;">
+            <table class="table table-borderless text-start table-hover">
+                <thead class="sticky-top">
                     <tr class="table-warning">
                         <th scope="col"># Id</th>
                         <th scope="col" class="text-start">Amount</th>
-                        <th scope="col">Is Cash</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Remaining</th>
+                        <th scope="col">Status</th>
                         <th scope="col" class="text-start">Description</th>
                         <th scope="col">Credit Card</th>
-                        <th scope="col">Bank Account</th>
-                        <th scope="col" class="text-start">Category</th>
                         <th scope="col">Create at</th>
                     </tr>
                 </thead>
+                
                 <tbody id="loans-table-body">
-                    {% for expense in credit_card.loans %}                
-                    <tr>
-                        <th scope="row">{{ expense.id }}</th>
-                        <td class="text-start">{{ format_amount(expense.amount) }}</td>
-                        <td>{{ 'YES' if expense.is_cash else 'NO' }}</td>
-                        <td class="text-start"> {{ expense.description or '-' }} </td>
-                        <td>{{ expense.credit_card.nick_name or '-' }}</td>
-                        <td>{{ expense.bank_account.nick_name }}</td>
-                        <td class="text-start">{{ expense.expense_category.name }}</td>
-                        <td>{{ expense.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
+                  {% for loan in credit_card.loans %}
+                    <tr class="loan-row" data-loan-id="{{ loan.id }}" data-url-associated-records = "{{ url_for('accounts_receivable.associated_records', loan_id=loan.id) }}">
+                        <th scope="row">{{ loan.id }}</th>
+                        <td class="text-start">{{ format_amount(loan.amount) }}</td>
+                        <td>{{ loan.person_name }}</td>
+                        <td> {{ loan.remaining_amount() }} </td>
+                        <td>
+                            {% if loan.is_active %}
+                                <span class="badge text-bg-primary">ACTIVE</span>
+                            {% else %}
+                                <span class="badge text-bg-success">PAID</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-start">{{ loan.description }}</td>
+                        <td>{{ loan.credit_card.nick_name }}</td>
+                        <td>{{ loan.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                     </tr>
-                    {% endfor %}
-                    
+                  {% endfor %}
                 </tbody>
             </table>
         </div>

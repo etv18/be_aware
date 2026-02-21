@@ -419,6 +419,15 @@
             }
         }
 
+        function editableAndDisableSelects(editableSelect, disableSelect){
+            if (editableSelect.value != "none") {
+                disableSelect.disabled = true;
+                disableSelect.value = "none";
+            } else {
+                disableSelect.disabled = false;                      
+            }
+        }
+
         function selectBankAccountOption(checkbox, select, event){
             if(!checkbox.checked && select.value == 'none') {
                 event.preventDefault();
@@ -439,6 +448,24 @@
             //toggleBankAccount(isCash, bankAccountsSelect);
             toggleBankProducts(isCash, cBankProducts);
             isCash.addEventListener('change', () => toggleBankProducts(isCash, cBankProducts));
+
+
+            const cSelectBankAccounts = document.getElementById("select-bank-account-id");
+            const cSelectCreditCards = document.getElementById("select-credit-card-id");
+
+            cSelectBankAccounts.value = "none";
+            cSelectCreditCards.value = "none";
+
+            cSelectBankAccounts.disabled = false;
+            cSelectCreditCards.disabled = false;
+            
+            cSelectBankAccounts.addEventListener("change", () => {
+                editableAndDisableSelects(cSelectBankAccounts, cSelectCreditCards);
+            });
+            cSelectCreditCards.addEventListener("change", () => {
+                editableAndDisableSelects(cSelectCreditCards, cSelectBankAccounts);
+            });
+
         });
         
         editAccountReceivableModal.addEventListener('show.bs.modal', (event) => {

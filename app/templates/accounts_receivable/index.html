@@ -458,7 +458,7 @@
 
             cSelectBankAccounts.disabled = false;
             cSelectCreditCards.disabled = false;
-            
+
             cSelectBankAccounts.addEventListener("change", () => {
                 editableAndDisableSelects(cSelectBankAccounts, cSelectCreditCards);
             });
@@ -469,6 +469,9 @@
         });
         
         editAccountReceivableModal.addEventListener('show.bs.modal', (event) => {
+            const eSelectBankAccounts = document.getElementById("e-select-bank-account-id");
+            const eSelectCreditCards = document.getElementById("e-select-credit-card-id");
+
             const button = event.relatedTarget;
             const btnSubmitEdition = document.getElementById('btn-submit-edition');
             const editAccountReceivableForm = document.getElementById('edit-account-receivable-form');
@@ -502,6 +505,13 @@
             
             //toggleBankAccount(editIsCash, editBankAccountsSelect);
             //editIsCash.addEventListener('change', () => toggleBankAccount(editIsCash, editBankAccountsSelect));
+
+            eSelectBankAccounts.addEventListener("change", () => editableAndDisableSelects(eSelectBankAccounts, eSelectCreditCards));
+            eSelectCreditCards.addEventListener("change", () => editableAndDisableSelects(eSelectCreditCards, eSelectBankAccounts));
+
+            //Will load the selected bank product enabled 
+            eSelectCreditCards.disabled = (eSelectBankAccounts.value != 'none');
+            eSelectBankAccounts.disabled = (eSelectCreditCards.value != 'none');
 
             const eBankProducts = document.getElementById("e-bank-products-id");
             toggleBankProducts(editIsCash, eBankProducts);

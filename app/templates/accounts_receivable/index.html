@@ -52,28 +52,30 @@
                                         placeholder="Description" required>
                                     <label for="description-id" class="p-3">Description</label>
                                 </div>
-
-                                <div class="row w-100" id="bank-products-id">
-                                    <div class="col-sm">
-                                        <div class="form-floating mt-2">
-                                            <select name="select-credit-card" id="select-credit-card-id" class="form-select">
-                                                <option value="none">...Select...</option>
-                                                {% for cc in credit_cards %}
-                                                <option value="{{ cc.id }}">{{ cc.nick_name }}</option>
-                                                {% endfor %}
-                                            </select>
-                                            <label for="select-credit-card-id" class="p-3">Credit Card</label>
+                                <div class="container">
+                                    <div class="row g-2" id="bank-products-id">
+                                        <div class="col-md-6">
+                                            <div class="form-floating mt-2">
+                                                <select name="select-credit-card" id="select-credit-card-id" class="form-select">
+                                                    <option value="none">...Select...</option>
+                                                    {% for cc in credit_cards %}
+                                                    <option value="{{ cc.id }}">{{ cc.nick_name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <label for="select-credit-card-id" class="p-3">Credit Card</label>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-sm">
-                                        <div class="form-floating mt-2">
-                                            <select name="select-bank-account" id="select-bank-account-id" class="form-select">
-                                                <option value="none">...Select...</option>
-                                                {% for ba in bank_accounts %}
-                                                <option value="{{ ba.id }}">{{ ba.nick_name }}</option>                                        
-                                                {% endfor %}
-                                            </select>
-                                            <label for="select-bank-account-id" class="p-3">Bank Account</label>
+    
+                                        <div class="col-md-6">
+                                            <div class="form-floating mt-2">
+                                                <select name="select-bank-account" id="select-bank-account-id" class="form-select">
+                                                    <option value="none">...Select...</option>
+                                                    {% for ba in bank_accounts %}
+                                                    <option value="{{ ba.id }}">{{ ba.nick_name }}</option>                                        
+                                                    {% endfor %}
+                                                </select>
+                                                <label for="select-bank-account-id" class="p-3">Bank Account</label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -132,28 +134,29 @@
                                         placeholder="Description" required>
                                     <label for="description-id" class="p-3">Description</label>
                                 </div>
-
-                                <div class="row w-100" id="bank-products-id">
-                                    <div class="col-sm">
-                                        <div class="form-floating mt-2">
-                                            <select name="select-credit-card" id="e-select-credit-card-id" class="form-select">
-                                                <option value="none">...Select...</option>
-                                                {% for cc in credit_cards %}
-                                                <option value="{{ cc.id }}">{{ cc.nick_name }}</option>
-                                                {% endfor %}
-                                            </select>
-                                            <label for="e-select-credit-card-id" class="p-3">Credit Card</label>
+                                <div class="container">
+                                    <div class="row g-2" id="e-bank-products-id">
+                                        <div class="col-md-6">
+                                            <div class="form-floating mt-2">
+                                                <select name="select-credit-card" id="e-select-credit-card-id" class="form-select">
+                                                    <option value="none">...Select...</option>
+                                                    {% for cc in credit_cards %}
+                                                    <option value="{{ cc.id }}">{{ cc.nick_name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <label for="e-select-credit-card-id" class="p-3">Credit Card</label>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-sm">
-                                        <div class="form-floating mt-2">
-                                            <select name="select-bank-account" id="e-select-bank-account-id" class="form-select">
-                                                <option value="none">...Select...</option>
-                                                {% for ba in bank_accounts %}
-                                                <option value="{{ ba.id }}">{{ ba.nick_name }}</option>                                        
-                                                {% endfor %}
-                                            </select>
-                                            <label for="e-select-bank-account-id" class="p-3">Bank Account</label>
+                                        <div class="col-md-6">
+                                            <div class="form-floating mt-2">
+                                                <select name="select-bank-account" id="e-select-bank-account-id" class="form-select">
+                                                    <option value="none">...Select...</option>
+                                                    {% for ba in bank_accounts %}
+                                                    <option value="{{ ba.id }}">{{ ba.nick_name }}</option>                                        
+                                                    {% endfor %}
+                                                </select>
+                                                <label for="e-select-bank-account-id" class="p-3">Bank Account</label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -407,6 +410,15 @@
                 select.disabled = checkbox.checked;
             }
         }
+
+        function toggleBankProducts(checkbox, dynamicSection) {
+            if (checkbox.checked) {
+                dynamicSection.classList.add("d-none");
+            } else {
+                dynamicSection.classList.remove("d-none");
+            }
+        }
+
         function selectBankAccountOption(checkbox, select, event){
             if(!checkbox.checked && select.value == 'none') {
                 event.preventDefault();
@@ -422,9 +434,11 @@
         createAccountReceivableModal.addEventListener('show.bs.modal', () => {
             const isCash = document.getElementById('is-cash-id');
             const bankAccountsSelect = document.getElementById('select-bank-account-id');
+            const cBankProducts = document.getElementById("bank-products-id");
 
-            toggleBankAccount(isCash, bankAccountsSelect);
-            isCash.addEventListener('change', () => toggleBankAccount(isCash, bankAccountsSelect));
+            //toggleBankAccount(isCash, bankAccountsSelect);
+            toggleBankProducts(isCash, cBankProducts);
+            isCash.addEventListener('change', () => toggleBankProducts(isCash, cBankProducts));
         });
         
         editAccountReceivableModal.addEventListener('show.bs.modal', (event) => {

@@ -33,6 +33,10 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css' ) }}">
 
 <p class="fs-4 fw-bold text-light">Home</p>
+<div class="d-flex gap-1">
+    <span class="badge text-bg-light fs-6">Active Debts: {{ active_debts }}</span>
+    <span class="badge text-bg-warning fs-6">Active Loans: {{ active_loans }}</span>
+</div>
 <!-- Fancy Dark Mode Card -->
 <div class="d-flex justify-content-center my-2">
     <div class="d-flex justify-content-cente w-100" style="max-width: 320px; height: 110px;">

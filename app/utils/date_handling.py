@@ -5,7 +5,7 @@ MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 
 def utcnow():
     return datetime.now(timezone.utc)
 
-def get_years(starting_year=2020) -> list:
+def get_years(starting_year=2025) -> list:
     current_year = int(datetime.now().year)
     years = []
 

@@ -4,6 +4,9 @@ import {renderDataTable, filterTableData, colSpan, expensesTemplateFn} from '../
 
 const expenseFilterInput = document.getElementById('filter-input-expense-id');
 const creditCardPaymentFilterInput = document.getElementById('filter-input-credit-card-payment-id');
+const loanFilterInput = document.getElementById('filter-input-loan-id');
+
+const tBodyLoan = document.getElementById('loans-table-body');
 const tBodyCreditCardPayment = document.getElementById('credit-card-payment-table-body');
 const tBodyExpense = document.getElementById('expenses-table-body');
 
@@ -31,6 +34,17 @@ const creditCardPaymentsTemplateFn = (creditCardPayment) => `
             <a href="/credit_card_payments/delete/${ creditCardPayment.id }" class="btn btn-danger"><i class="bi bi-trash"></i></a>
         </div>
     </td>
+`;
+
+const loansTemplateFn = (loan) => `
+    <th scope="row">${loan.id}</th>
+    <td class="text-start">${formatNumber(loan.amount)}</td>
+    <td>${loan.person_name ?? '-'}</td>
+    <td> ${formatNumber(loan.remaining_amount)} </td>
+    <td>${loan.is_active ? '<span class="badge text-bg-primary">ACTIVE</span>' : '<span class="badge text-bg-success">PAID</span>'}</td>
+    <td class="text-start">${loan.description ?? '-'}</td>
+    <td>${loan.credit_card_nick_name ?? '-'}</td>
+    <td>${loan.created_at}</td>
 `;
 
 let data;
@@ -81,6 +95,19 @@ creditCardPaymentFilterInput.addEventListener('input', debounce(async e => {
         totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
         totalCount.textContent = `RECORDS: ${filteredList.length}`;
 
+    })
+);
+
+loanFilterInput.addEventListener('input', debounce(async e => {
+        const totatAmounts = document.getElementById('total-amounts-loans-id');
+        const totalCount = document.getElementById('total-count-loans-id');
+        var query = loanFilterInput.value;
+
+        const filteredList = filterTableData(data.records.loans, query);
+
+        renderDataTable(filteredList, tBodyLoan, loansTemplateFn, colSpan.LOANS);
+        totatAmounts.textContent = (`TOTAL: ${formatNumber(getTotalSumOfAmounts(filteredList))}`)
+        totalCount.textContent = `RECORDS: ${filteredList.length}`;
     })
 );
 

@@ -148,7 +148,7 @@ def credit_card_yearly_report_using_source():
     year = data.get('year')
    
     source = 'card'
-    models = (btc.CreditCardPayment, btc.Expense)
+    models = (btc.CreditCardPayment, btc.Expense, btc.Loan)
     reports = {}
 
     for model in models:

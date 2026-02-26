@@ -12,7 +12,7 @@ const chartTitleTextContent = document.getElementById('chart-title').textContent
 
 let yearlyChartInstance = null;
 
-function generateYearlyChart(canvas, type, expensesData, creditCardPaymentsData){
+function generateYearlyChart(canvas, type, expensesData, creditCardPaymentsData, loansData) {
 if (yearlyChartInstance) {
         yearlyChartInstance.destroy();
     }
@@ -35,7 +35,14 @@ if (yearlyChartInstance) {
                     backgroundColor: "#48b626",
                     borderColor: "#00f784",
                     borderWidth: 1
-                }                                          
+                },
+                {
+                    label: 'Loans',
+                    data: loansData,
+                    backgroundColor: "#ffc106",
+                    borderColor: "#ffc106",
+                    borderWidth: 1 
+                },                                        
             ]
         },
         options: {
@@ -60,7 +67,13 @@ async function showChart(year, endpoint){
         }
     );
 
-    generateYearlyChart(yearlyExpenseCanvas, 'line', data.associations_info.expenses, data.associations_info.credit_card_payments);
+    generateYearlyChart(
+        yearlyExpenseCanvas, 
+        'line', 
+        data.associations_info.expenses, 
+        data.associations_info.credit_card_payments,
+        data.associations_info.loans
+    );
 }
 
 document.addEventListener('DOMContentLoaded',async (event) => {

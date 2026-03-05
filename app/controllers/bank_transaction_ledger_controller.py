@@ -83,36 +83,56 @@ def filter_all():
         end = data.get('end')
 
         if not query and (not start or not end):
-            ca.logger.error(f"Missing query and/or start/end date for filtering bank transaction ledger. Query: {query}, Start: {start}, End: {end}")
+            ca.logger.error(
+                f"Missing query and/or start/end date for filtering bank transaction ledger. "
+                f"Query: {query}, Start: {start}, End: {end}"
+            )
             return jsonify({
                 'error': 'Try to type some query or select a time frame.'
             }), 400
 
         and_filters = []
 
+        # Date filter
         if start and end:
             start_date = datetime.strptime(start, '%Y-%m-%d')
-            end_date = datetime.strptime(end, '%Y-%m-%d')
-            end_date += timedelta(days=1)
-            and_filters.append(BankAccountTransactionsLedger.created_at.between(start_date, end_date))
+            end_date = datetime.strptime(end, '%Y-%m-%d') + timedelta(days=1)
 
-        if query: 
-            q = f'%{query}%'
-
-        #            .outerjoin(Expense.bank_account) #allows to show expense without a bank account
-
-
-            text_filters = db.or_(
-                (BankAccountTransactionsLedger.amount.ilike(q)),
-                (BankAccountTransactionsLedger.before_update_balance.ilike(q)),
-                (BankAccountTransactionsLedger.after_update_balance.ilike(q)),
-                (BankAccountTransactionsLedger.reference_code.ilike(q)),
-                (BankAccountTransactionsLedger.transaction_type.ilike(q)),
-                (BankAccountTransactionsLedger.created_at.ilike(q)),
-                (BankAccount.nick_name.ilike(q))
+            and_filters.append(
+                BankAccountTransactionsLedger.created_at.between(start_date, end_date)
             )
 
-            and_filters.append(text_filters)
+        # Query filter
+        if query:
+            terms = [t.strip() for t in query.split(",") if t.strip()]
+
+            # ONE TERM → search everywhere
+            if len(terms) == 1:
+                q = f"%{terms[0]}%"
+
+                text_filters = db.or_(
+                    db.cast(BankAccountTransactionsLedger.amount, db.String).ilike(q),
+                    db.cast(BankAccountTransactionsLedger.before_update_balance, db.String).ilike(q),
+                    db.cast(BankAccountTransactionsLedger.after_update_balance, db.String).ilike(q),
+                    BankAccountTransactionsLedger.reference_code.ilike(q),
+                    BankAccountTransactionsLedger.transaction_type.ilike(q),
+                    db.cast(BankAccountTransactionsLedger.created_at, db.String).ilike(q),
+                    BankAccount.nick_name.ilike(q)
+                )
+
+                and_filters.append(text_filters)
+
+            # TWO TERMS → nickname AND transaction type
+            elif len(terms) == 2:
+                nickname = f"%{terms[0]}%"
+                transaction = f"%{terms[1]}%"
+
+                and_filters.append(
+                    db.and_(
+                        BankAccount.nick_name.ilike(nickname),
+                        BankAccountTransactionsLedger.transaction_type.ilike(transaction)
+                    )
+                )
 
         ledgers = (
             BankAccountTransactionsLedger.query
@@ -122,14 +142,13 @@ def filter_all():
             .all()
         )
 
-        ledgers_list = []
-        for l in ledgers:
-            ledgers_list.append(l.to_dict())
-        
+        ledgers_list = [l.to_dict() for l in ledgers]
+
         return jsonify({
             'ledgers': ledgers_list,
             'total': total_amount(ledgers)
         }), 200
+    
     except Exception as e:
         db.session.rollback()
         traceback.print_exc()

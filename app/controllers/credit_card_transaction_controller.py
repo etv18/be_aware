@@ -91,24 +91,42 @@ def filter_all():
 
         if start and end:
             start_date = datetime.strptime(start, '%Y-%m-%d')
-            end_date = datetime.strptime(end, '%Y-%m-%d')
-            end_date += timedelta(days=1)
-            and_filters.append(CreditCardTransactionsLedger.created_at.between(start_date, end_date))
+            end_date = datetime.strptime(end, '%Y-%m-%d') + timedelta(days=1)
 
-        if query: 
-            q = f'%{query}%'
-
-            text_filters = db.or_(
-                (CreditCardTransactionsLedger.amount.ilike(q)),
-                (CreditCardTransactionsLedger.before_update_balance.ilike(q)),
-                (CreditCardTransactionsLedger.after_update_balance.ilike(q)),
-                (CreditCardTransactionsLedger.reference_code.ilike(q)),
-                (CreditCardTransactionsLedger.transaction_type.ilike(q)),
-                (CreditCardTransactionsLedger.created_at.ilike(q)),
-                (CreditCard.nick_name.ilike(q))
+            and_filters.append(
+                CreditCardTransactionsLedger.created_at.between(start_date, end_date)
             )
 
-            and_filters.append(text_filters)
+        if query:
+            terms = [t.strip() for t in query.split(",") if t.strip()]
+
+            # ONE TERM → search everywhere
+            if len(terms) == 1:
+                q = f"%{terms[0]}%"
+
+                text_filters = db.or_(
+                    db.cast(CreditCardTransactionsLedger.amount, db.String).ilike(q),
+                    db.cast(CreditCardTransactionsLedger.before_update_balance, db.String).ilike(q),
+                    db.cast(CreditCardTransactionsLedger.after_update_balance, db.String).ilike(q),
+                    CreditCardTransactionsLedger.reference_code.ilike(q),
+                    CreditCardTransactionsLedger.transaction_type.ilike(q),
+                    db.cast(CreditCardTransactionsLedger.created_at, db.String).ilike(q),
+                    CreditCard.nick_name.ilike(q)
+                )
+
+                and_filters.append(text_filters)
+
+            # TWO TERMS → nickname AND transaction type
+            elif len(terms) == 2:
+                nickname = f"%{terms[0]}%"
+                transaction = f"%{terms[1]}%"
+
+                and_filters.append(
+                    db.and_(
+                        CreditCard.nick_name.ilike(nickname),
+                        CreditCardTransactionsLedger.transaction_type.ilike(transaction)
+                    )
+                )
 
         ledgers = (
             CreditCardTransactionsLedger.query
@@ -118,10 +136,8 @@ def filter_all():
             .all()
         )
 
-        ledgers_list = []
-        for l in ledgers:
-            ledgers_list.append(l.to_dict())
-        
+        ledgers_list = [l.to_dict() for l in ledgers]
+
         return jsonify({
             'ledgers': ledgers_list,
             'total': total_amount(ledgers)

@@ -6,3 +6,4 @@ migrations
 app_structure.txt
 .idx
 *.nix
+.env

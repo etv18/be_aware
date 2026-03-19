@@ -46,6 +46,16 @@ function renderDataTable(ledgers){
             <td class="text-start">${ titleCase(ledger.type) }</td>
             <td class="text-start">${ formatNumber(ledger.amount) }</td>
             <td>${ ledger.created_at }</td>
+            <td>
+                ${ ledger.type.toLowerCase() === 'adjustment'    
+                    ?  
+                        `<a href=/cashledger/delete/adjustment/${ledger.id} class="text-danger" style="width: 35px; height: 35px;">
+                            remove
+                        </a>`
+                    :
+                    ``
+                }
+            </td>
         `;
 
         tbody.appendChild(tableRow);

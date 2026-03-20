@@ -55,6 +55,16 @@ def register_extensions(app):
     crsf.init_app(app)
     login_manager.init_app(app)
 
+    #LOGIN MANAGER
+    from app.models.user import User
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id)) 
+
+    @login_manager.unauthorized_handler
+    def unauthorized_callback():
+        return render_template('auth/login.html')
+
     #GLOBAL rate limiter
     limiter.default_limits = ['50 per minute']
 

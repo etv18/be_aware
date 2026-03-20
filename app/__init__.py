@@ -1,13 +1,14 @@
 from flask import Flask
 from flask_migrate import Migrate
 from flask_babel import format_datetime, format_date, format_time
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 import os
 import logging
 from logging.handlers import RotatingFileHandler
 
 from app.config import Config
-from app.extensions import db, babel
+from app.extensions import db, babel, limiter
 from app.routes import (
     home_routes, 
     bank_routes, 
@@ -27,11 +28,15 @@ from app.routes import (
     deposit_routes,
     credit_card_transaction_routes,
     stats_routes,
+    auth_routes,
 )
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+
+    # Fix real IP (VERY IMPORTANT with Nginx)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
 
     register_extensions(app)
     register_resources(app)
@@ -46,7 +51,10 @@ def register_extensions(app):
     db.init_app(app)
     migrate = Migrate(app, db)
     babel.init_app(app)
+    limiter.init_app(app)
 
+    #GLOBAL rate limiter
+    limiter.default_limits = ['50 per minute']
 
     # REGISTER BABEL FILTERS MANUALLY (Flask-Babel 4.x)
     app.jinja_env.filters['format_datetime'] = format_datetime
@@ -72,6 +80,7 @@ def register_resources(app):
     app.register_blueprint(deposit_routes.deposit_bp)
     app.register_blueprint(credit_card_transaction_routes.credit_card_ledger_bp)
     app.register_blueprint(stats_routes.stats_bp)
+    app.register_blueprint(auth_routes.auth)
 
 def create_error_logger(app):
     if not os.path.exists('logs'):

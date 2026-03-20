@@ -17,15 +17,21 @@
                 </p>
             </div>
 
-            <form>
+            {% if error %}
+            <div class="alert alert-danger text-center w-100" role="alert">
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <form action="{{ url_for('auth.login' ) }}" method="POST">
                 <div class="mb-3">
-                    <label name="username" for="email" class="form-label small text-secondary">Username</label>
-                    <input type="email" class="form-control bg-dark-subtle" id="email" placeholder="username">
+                    <label for="email" class="form-label small text-secondary">Username</label>
+                    <input name="username" type="text" class="form-control bg-dark-subtle" id="email" placeholder="username">
                 </div>
                 
                 <div class="my-3">
-                    <label name="password" for="password" class="form-label small text-secondary">Password</label>
-                    <input type="password" class="form-control bg-dark-subtle" id="password" placeholder="••••••••">
+                    <label for="password" class="form-label small text-secondary">Password</label>
+                    <input name="password" type="password" class="form-control bg-dark-subtle" id="password" placeholder="••••••••">
                 </div>
                 <div class="my-4">
                     <button type="submit" class="btn btn-primary w-100 py-2 fw-bold mb-3">

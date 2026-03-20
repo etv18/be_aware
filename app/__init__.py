@@ -52,7 +52,7 @@ def register_extensions(app):
     migrate = Migrate(app, db)
     babel.init_app(app)
     limiter.init_app(app)
-    crsf.init_app(app)
+    #crsf.init_app(app)
     login_manager.init_app(app)
 
     #LOGIN MANAGER

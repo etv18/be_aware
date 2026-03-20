@@ -1,6 +1,8 @@
 from flask import request, render_template, redirect, url_for, session, jsonify
 from flask_login import login_user, logout_user, current_user
 
+from app.utils.auth import verify_password
+
 from app.models.user import User
 
 def authenticate_user():

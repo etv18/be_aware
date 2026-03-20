@@ -1,12 +1,13 @@
 from app.extensions import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+from flask_login import UserMixin
 
 from app.utils.date_handling import utcnow
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = 'users'
-    
+
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), nullable=False)
     password = db.Column(db.String(255), nullable=False)

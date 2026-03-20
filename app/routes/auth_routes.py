@@ -8,3 +8,9 @@ auth = Blueprint('auth', __name__)
 @limiter.limit('20 per hour')
 def login():
     return 'hi'
+
+@auth.route('/login', methods=['GET'])
+@limiter.limit('6 per minute')
+@limiter.limit('20 per hour')
+def get_login():
+    return render_template('auth/login.html')

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, jsonify
+from flask import Blueprint, render_template
 from app.extensions import limiter
 
 auth = Blueprint('auth', __name__)

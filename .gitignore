@@ -8,4 +8,4 @@ app_structure.txt
 *.nix
 .env
 /instance
-*.db
+.db

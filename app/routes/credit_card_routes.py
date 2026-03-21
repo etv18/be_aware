@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, request, jsonify
+from flask_login import current_user, logout_user, login_required
 
 from app.controllers import credit_card_controller as cc_controller
 from app.models.credit_card import CreditCard
@@ -13,6 +14,7 @@ from app.utils.filter_data import get_not_deleted_records
 credit_card_bp = Blueprint('credit_card', __name__, url_prefix='/credit_cards')
 
 @credit_card_bp.route('/index', methods=['GET'])
+@login_required
 def index():
     banks = Bank.query.all()
     credit_cards = get_not_deleted_records(model=CreditCard)
@@ -31,6 +33,7 @@ def index():
     return render_template('credit_cards/index.html', **context)
 
 @credit_card_bp.route('/create', methods=['POST'])
+@login_required
 def create():
     try:
         cc_controller.create_credit_card()
@@ -40,6 +43,7 @@ def create():
         return jsonify({'error': str(e)}), 400
 
 @credit_card_bp.route('/update', methods=['PUT'])
+@login_required
 def update():
     try:
         credit_card_id = request.form['id']
@@ -54,6 +58,7 @@ def update():
         return jsonify({'error': str(e)}), 400
 
 @credit_card_bp.route('/delete/<int:id>', methods=['DELETE'])
+@login_required
 def delete(id):
     try:
         credit_card = CreditCard.query.get(id)
@@ -66,6 +71,7 @@ def delete(id):
         return jsonify({'error': str(e)}), 400
     
 @credit_card_bp.route('/associated_records/<int:id>', methods=['GET'])
+@login_required
 def associated_records(id):
     credit_card = CreditCard.query.get(id)
     bank_accounts = get_not_deleted_records(model=BankAccount)
@@ -81,6 +87,7 @@ def associated_records(id):
     return render_template('/credit_cards/associated_records.html', **context)
 
 @credit_card_bp.route('/associated/records/in/json/<int:id>', methods=['GET'])
+@login_required
 def associated_records_in_json(id):
     try:
         return cc_controller.associated_records_in_json(id)
@@ -88,6 +95,7 @@ def associated_records_in_json(id):
         raise e
 
 @credit_card_bp.route('/get/yearly/total/per/association/info', methods=['POST'])
+@login_required
 def get_yearly_total_per_association_info():
     try:
         return cc_controller.get_yearly_total_per_association_info()

@@ -1,4 +1,5 @@
 from flask import request, redirect, url_for, render_template, Blueprint, jsonify
+from flask_login import current_user, logout_user, login_required
 
 from decimal import Decimal
 
@@ -13,6 +14,7 @@ from app.utils.filter_data import get_not_deleted_records
 expense_bp = Blueprint('expense', __name__, url_prefix='/expenses')
 
 @expense_bp.route('/index', methods=['GET'])
+@login_required
 def index():
     credit_cards = get_not_deleted_records(model=credit_card.CreditCard)
     expense_categories = get_not_deleted_records(model=expense_category.ExpenseCategory)
@@ -35,6 +37,7 @@ def index():
     return render_template('expenses/index.html', **context)
 
 @expense_bp.route('/create', methods=['GET', 'POST'])
+@login_required
 def create():
     try:
         expense_controller.create_expense()
@@ -51,6 +54,7 @@ def create():
         raise e
 
 @expense_bp.route('/update/<int:id>', methods=['GET', 'PUT'])
+@login_required
 def update(id):
     try:
         expense = Expense.query.get(id)
@@ -70,6 +74,7 @@ def update(id):
         raise e
 
 @expense_bp.route('/delete/<int:id>', methods=['DELETE'])
+@login_required
 def delete(id):
     try:
         expense = Expense.query.get(id)
@@ -84,6 +89,7 @@ def delete(id):
         return jsonify({'error': str(e)}), 400
 
 @expense_bp.route('/filter_by_time', methods=['GET'])
+@login_required
 def filter_by_time():
     #get start date and end date of expenses you want to see in a certain time frame
     start = request.args.get('start') 
@@ -93,6 +99,7 @@ def filter_by_time():
 
 
 @expense_bp.route('/filter_expenses_by_cash/<int:is_cash>', methods=['GET'])
+@login_required
 def filter_expenses_by_cash(is_cash):
     try: 
         ic = bool(is_cash) #parse 1 or 0 to True or False
@@ -102,6 +109,7 @@ def filter_expenses_by_cash(is_cash):
       raise e
 
 @expense_bp.route('/filter_by_field', methods=['GET'])
+@login_required
 def filter_by_field():
     try:
         query = request.args.get('query')
@@ -111,6 +119,7 @@ def filter_by_field():
         return jsonify({'error': str(e)}), 400
 
 @expense_bp.route('/filter/all', methods=['POST'])
+@login_required
 def filter_all():
     try:
         return expense_controller.filter_all()

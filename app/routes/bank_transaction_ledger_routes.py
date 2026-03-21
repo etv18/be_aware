@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request, render_template
+from flask_login import current_user, logout_user, login_required
 
 from app.models.bank_account_transactions_ledger import BankAccountTransactionsLedger
 from app.controllers import bank_transaction_ledger_controller as controller
@@ -7,6 +8,7 @@ from app.utils.numeric_casting import format_amount, total_amount
 bank_transaction_ledger_bp = Blueprint('bank_transaction_ledger', __name__, url_prefix='/bank_transaction_ledger')
 
 @bank_transaction_ledger_bp.route('/index')
+@login_required
 def index():
     ledgers = (
         BankAccountTransactionsLedger.query
@@ -21,6 +23,7 @@ def index():
     return render_template('bank_accounts/ledger.html', **context)
 
 @bank_transaction_ledger_bp.route('/filter/by/field')
+@login_required
 def filter_by_field():
     try:
         query = request.args.get('query')
@@ -29,6 +32,7 @@ def filter_by_field():
         raise e
 
 @bank_transaction_ledger_bp.route('/filter/by/time')
+@login_required
 def filter_by_time():
     try:
         start = request.args.get('start')
@@ -38,6 +42,7 @@ def filter_by_time():
         raise e
     
 @bank_transaction_ledger_bp.route('/filter/all', methods=['POST'])
+@login_required
 def filter_all():
     try:
         return controller.filter_all() 

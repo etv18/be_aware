@@ -1,4 +1,5 @@
 from flask import Blueprint, redirect, render_template, request, url_for, jsonify
+from flask_login import current_user, logout_user, login_required
 from sqlalchemy import func
 
 from app.controllers import debt_controller as controller
@@ -11,6 +12,7 @@ from app.utils.filter_data import get_not_deleted_records
 debt_bp = Blueprint('debt', __name__, url_prefix='/debts')
 
 @debt_bp.route('/index')
+@login_required
 def index():
     debts = Debt.query.order_by(Debt.created_at.desc()).all()
     bank_accounts = get_not_deleted_records(model=BankAccount)
@@ -31,6 +33,7 @@ def index():
     return render_template('accounts_payable/index.html', **context)
 
 @debt_bp.route('/associated/records/<int:id>')
+@login_required
 def associated_records(id):
     debt = Debt.query.get(id)
     bank_accounts = get_not_deleted_records(model=BankAccount)
@@ -43,6 +46,7 @@ def associated_records(id):
     return render_template('accounts_payable/associated_records.html', **context)
 
 @debt_bp.route('/create', methods=['POST'])
+@login_required
 def create():
     try:
         return controller.create()
@@ -50,6 +54,7 @@ def create():
         raise e
 
 @debt_bp.route('/update/<int:id>', methods=['PUT'])
+@login_required
 def update(id):
     try:
         return controller.update(id)
@@ -57,6 +62,7 @@ def update(id):
         raise e
 
 @debt_bp.route('/delete/<int:id>', methods=['DELETE'])
+@login_required
 def delete(id):
     try:
         return controller.delete(id)
@@ -64,6 +70,7 @@ def delete(id):
         raise e
 
 @debt_bp.route('/filter/by/field')
+@login_required
 def filter_by_field():
     try:
         return controller.filter_by_field()
@@ -71,6 +78,7 @@ def filter_by_field():
         raise e
 
 @debt_bp.route('/associated/records/in/json/<int:id>')
+@login_required
 def associated_records_in_json(id):
     try:
         return controller.associated_records_in_json(id)
@@ -78,6 +86,7 @@ def associated_records_in_json(id):
         raise e
 
 @debt_bp.route('/filter/by/time')
+@login_required
 def filter_by_time():
     try:
         return controller.filter_by_time()
@@ -85,6 +94,7 @@ def filter_by_time():
         raise e
     
 @debt_bp.route('/filter/all', methods=['POST'])
+@login_required
 def filter_all():
     try:
         return controller.filter_all()

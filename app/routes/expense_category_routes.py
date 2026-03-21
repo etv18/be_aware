@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, request, jsonify
+from flask_login import current_user, logout_user, login_required
 
 from app.controllers import expense_category_controller as ec_controller
 from app.models.expense_category import ExpenseCategory
@@ -8,6 +9,7 @@ from app.utils.numeric_casting import format_amount, total_amount
 expense_category_bp = Blueprint('expense_category',__name__, url_prefix='/expense_categories')
 
 @expense_category_bp.route('/index', methods=['GET'])
+@login_required
 def index():
     expense_categories = ExpenseCategory.query.filter_by(is_deleted = False).order_by(ExpenseCategory.name).all()
     context = {
@@ -19,6 +21,7 @@ def index():
     return render_template('expense_categories/index.html', **context)
 
 @expense_category_bp.route('/create', methods=['POST'])
+@login_required
 def create():
     try:
         return ec_controller.create_expense_category()
@@ -27,6 +30,7 @@ def create():
         
 
 @expense_category_bp.route('/update', methods=['PUT'])
+@login_required
 def update():
     try:
         expense_category_id = request.form['id']
@@ -38,6 +42,7 @@ def update():
         raise e
 
 @expense_category_bp.route('/delete/<int:id>', methods=['DELETE'])
+@login_required
 def delete(id):
     try:
         expense_category = ExpenseCategory.query.get(id)
@@ -52,6 +57,7 @@ def delete(id):
     return redirect(url_for('income.index'))
 
 @expense_category_bp.route('/associated_records/<int:category_id>')
+@login_required
 def show_associated_records(category_id):
     try:
         data = ec_controller.get_associated_records(category_id)
@@ -60,6 +66,7 @@ def show_associated_records(category_id):
         return jsonify({'error': str(e)}), 400
 
 @expense_category_bp.route('/monthly/chart')
+@login_required
 def populate_monthly_chart():
     try: 
         data = ec_controller.get_monthly_data()
@@ -68,6 +75,7 @@ def populate_monthly_chart():
         raise e
 
 @expense_category_bp.route('/associated/records/in/json/<int:id>', methods=['GET'])
+@login_required
 def associated_records_in_json(id):
     try: 
        return ec_controller.associated_records_in_json(id)

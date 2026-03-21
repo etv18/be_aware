@@ -1,4 +1,5 @@
 from flask import Blueprint, redirect, render_template, request, url_for, jsonify
+from flask_login import current_user, logout_user, login_required
 from sqlalchemy import func
 
 from app.controllers import debt_payment_controller as controller
@@ -11,6 +12,7 @@ from app.utils.filter_data import get_not_deleted_records
 debt_payment_bp = Blueprint('debt_payment', __name__, url_prefix='/debt_payments')
 
 @debt_payment_bp.route('/index')
+@login_required
 def index():
     bank_accounts = get_not_deleted_records(model=BankAccount)
     years = get_years()
@@ -23,6 +25,7 @@ def index():
     return render_template('debts/index.html', **context)
 
 @debt_payment_bp.route('/create', methods=['POST'])
+@login_required
 def create():
     try:
         return controller.create()
@@ -30,6 +33,7 @@ def create():
         raise e
 
 @debt_payment_bp.route('/update/<int:id>', methods=['PUT'])
+@login_required
 def update(id):
     try:
         return controller.update(id)
@@ -37,6 +41,7 @@ def update(id):
         raise e
 
 @debt_payment_bp.route('/delete/<int:id>', methods=['DELETE'])
+@login_required
 def delete(id):
     try:
         return controller.delete(id)
@@ -44,6 +49,7 @@ def delete(id):
         raise e
 
 @debt_payment_bp.route('/see/all/debt/payments', methods=['GET'])
+@login_required
 def see_all_debt_payments():
     years = get_years()
     try:
@@ -59,6 +65,7 @@ def see_all_debt_payments():
         return jsonify({'error': str(e)}), 400
     
 @debt_payment_bp.route('/filter/all', methods=['POST'])
+@login_required
 def filter_all():
     try:
         return controller.filter_all()

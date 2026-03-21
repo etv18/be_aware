@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, request, jsonify
+from flask_login import current_user, logout_user, login_required
 
 from app.controllers import credit_card_payment_controller
 from app.models.credit_card_payment import CreditCardPayment
@@ -6,6 +7,7 @@ from app.models.credit_card_payment import CreditCardPayment
 credit_card_payment_bp = Blueprint('credit_card_payment', __name__, url_prefix='/credit_card_payments')
 
 @credit_card_payment_bp.route('/create', methods=['POST'])
+@login_required
 def create():
     try:
         credit_card_payment_controller.create_credit_card_payment()
@@ -15,6 +17,7 @@ def create():
         return jsonify({'error': str(e)}), 400
     
 @credit_card_payment_bp.route('/update/<int:id>', methods=['PUT'])
+@login_required
 def update(id):
     try:
         credit_card_payment_controller.update_credit_card_payment(id)
@@ -24,6 +27,7 @@ def update(id):
         return jsonify({'error': str(e)}), 400
     
 @credit_card_payment_bp.route('/delete/<int:id>', methods=['DELETE'])
+@login_required
 def delete(id):
     try:
         credit_card_payment_controller.delete_credit_card_payment(id)

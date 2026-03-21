@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, request, jsonify
+from flask_login import current_user, logout_user, login_required
 
 from decimal import Decimal
 
@@ -12,6 +13,7 @@ from app.utils.filter_data import get_not_deleted_records
 bank_account_bp = Blueprint('bank_account', __name__, url_prefix='/bank_accounts')
 
 @bank_account_bp.route('/index', methods=['GET'])
+@login_required
 def index():
     banks = Bank.query.all()
     bank_accounts = get_not_deleted_records(model=BankAccount)
@@ -36,6 +38,7 @@ def index():
     return render_template('bank_accounts/index.html', **context)
 
 @bank_account_bp.route('/create', methods=['GET', 'POST'])
+@login_required
 def create():
     try:
         ba_controller.create_bank_account()
@@ -44,6 +47,7 @@ def create():
         return jsonify({'error': str(e)}), 400
 
 @bank_account_bp.route('/update', methods=['PUT'])
+@login_required
 def update():
     try:
         bank_account_id = request.form['id']
@@ -57,6 +61,7 @@ def update():
         return jsonify({'error': str(e)}), 400
 
 @bank_account_bp.route('/delete/<int:id>', methods=['DELETE'])
+@login_required
 def delete(id):
     try:
         bank_account = BankAccount.query.get(id)
@@ -68,6 +73,7 @@ def delete(id):
         return jsonify({'error': str(e)}), 400
 
 @bank_account_bp.route('/associated_records/<int:bank_account_id>')
+@login_required
 def associated_records(bank_account_id):
     try:
         data = ba_controller.get_associated_records(bank_account_id)
@@ -77,6 +83,7 @@ def associated_records(bank_account_id):
         return jsonify({'error': str(e)}), 400
 
 @bank_account_bp.route('/associated/records/json/<int:bank_account_id>')
+@login_required
 def get_associated_records_in_json(bank_account_id):
     try:
         return ba_controller.get_associated_records_in_json(bank_account_id)
@@ -84,6 +91,7 @@ def get_associated_records_in_json(bank_account_id):
         raise e
     
 @bank_account_bp.route('/cash/flow/info', methods=['POST'])
+@login_required
 def get_cash_flow_info():
     try:
         return ba_controller.get_cash_flow_info()
@@ -91,6 +99,7 @@ def get_cash_flow_info():
         raise e
     
 @bank_account_bp.route('/total/monthly/per/associated/record/info/<int:bank_account_id>')
+@login_required
 def get_total_monthly_per_associated_record_info(bank_account_id):
     try:
         return ba_controller.total_monthly_per_associated_record(bank_account_id)
@@ -98,6 +107,7 @@ def get_total_monthly_per_associated_record_info(bank_account_id):
         raise e
     
 @bank_account_bp.route('/yearly/total/per/association/info', methods=['POST'])
+@login_required
 def get_yearly_total_per_association_info():
     try:
         return ba_controller.get_yearly_total_per_association_info()
@@ -105,6 +115,7 @@ def get_yearly_total_per_association_info():
         raise e
     
 @bank_account_bp.route('/stats/<int:bank_account_id>')
+@login_required
 def stats(bank_account_id):
     years = get_years()
     try:

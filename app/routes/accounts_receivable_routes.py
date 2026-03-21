@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, request, jsonify
+from flask_login import current_user, logout_user, login_required
 
 from sqlalchemy import func
 
@@ -15,6 +16,7 @@ from app.utils.filter_data import get_not_deleted_records
 accounts_receivable_bp = Blueprint('accounts_receivable', __name__, url_prefix='/accounts_receivable')
 
 @accounts_receivable_bp.route('/index', methods=['GET'])
+@login_required
 def index():
     loans = Loan.query.order_by(Loan.created_at.desc()).all()
     active_loans = Loan.query.filter(Loan.is_active == True).count()
@@ -38,6 +40,7 @@ def index():
     return render_template('accounts_receivable/index.html', **context)
 
 @accounts_receivable_bp.route('/create_loan', methods=['POST'])
+@login_required
 def create_loan():
     try:
         loan_controller.create_loan()
@@ -47,6 +50,7 @@ def create_loan():
         return jsonify({'error': str(e)}), 400
     
 @accounts_receivable_bp.route('/update_loan/<int:loan_id>', methods=['PUT'])
+@login_required
 def update_loan(loan_id):
     try:
         loan = Loan.query.get(loan_id)
@@ -56,6 +60,7 @@ def update_loan(loan_id):
         return jsonify({'error': str(e)}), 400
     
 @accounts_receivable_bp.route('/delete/<int:loan_id>', methods=['DELETE'])
+@login_required
 def delete_loan(loan_id):
     try:
         loan = Loan.query.get(loan_id)
@@ -65,6 +70,7 @@ def delete_loan(loan_id):
         return jsonify({'error': str(e)}), 400
     
 @accounts_receivable_bp.route('associated_records/<int:loan_id>', methods=['GET'])
+@login_required
 def associated_records(loan_id):
     try:
         loan = Loan.query.get(loan_id)
@@ -84,6 +90,7 @@ def associated_records(loan_id):
         return jsonify({'error': str(e)}), 400
     
 @accounts_receivable_bp.route('loans/associated/records/in/json/<int:id>', methods=['GET'])
+@login_required
 def associated_records_in_json(id):
     try:
         return loan_controller.associated_records_in_json(id)
@@ -93,6 +100,7 @@ def associated_records_in_json(id):
     
 
 @accounts_receivable_bp.route('/filter_loans_by_field', methods=['GET'])
+@login_required
 def filter_loans_by_field():
     try:
         query = request.args.get('query')
@@ -102,6 +110,7 @@ def filter_loans_by_field():
         return jsonify({'error': str(e)}), 400
     
 @accounts_receivable_bp.route('/filter_loans_by_timeframe', methods=['GET'])
+@login_required
 def filter_loans_by_timeframe():
     try:
         start = request.args.get('start')
@@ -112,6 +121,7 @@ def filter_loans_by_timeframe():
         return jsonify({'error': str(e)}), 400
     
 @accounts_receivable_bp.route('/filter/loans/all', methods=['POST'])
+@login_required
 def filter_loans_all():
     try:
         return loan_controller.filter_all()
@@ -122,6 +132,7 @@ def filter_loans_all():
 '''LOAN PAYMENTS ENDPOINTS'''
 
 @accounts_receivable_bp.route('/create_loan_payment', methods=['POST'])
+@login_required
 def create_loan_payment():
     try:
         return loan_payment_controller.create_loan_payment()
@@ -130,6 +141,7 @@ def create_loan_payment():
         return jsonify({'error': str(e)}), 400
     
 @accounts_receivable_bp.route('/update_loan_payment/<int:loan_payment_id>', methods=['PUT'])
+@login_required
 def update_loan_payment(loan_payment_id):
     try:
         loan_payment = LoanPayment.query.get(loan_payment_id)
@@ -139,6 +151,7 @@ def update_loan_payment(loan_payment_id):
         return jsonify({'error': str(e)}), 400
     
 @accounts_receivable_bp.route('/delete_loan_payment/<int:loan_payment_id>', methods=['DELETE'])
+@login_required
 def delete_loan_payment(loan_payment_id):
     try:
         loan_payment = LoanPayment.query.get(loan_payment_id)
@@ -148,6 +161,7 @@ def delete_loan_payment(loan_payment_id):
         return jsonify({'error': str(e)}), 400
     
 @accounts_receivable_bp.route('/see/all/loan/payments', methods=['GET'])
+@login_required
 def see_all_loan_payments():
     years = get_years()
     try:
@@ -164,6 +178,7 @@ def see_all_loan_payments():
     
     
 @accounts_receivable_bp.route('/filter/loan/payments/all', methods=['POST'])
+@login_required
 def filter_loans_payments_all():
     try:
         return loan_payment_controller.filter_all()

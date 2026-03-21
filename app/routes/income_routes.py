@@ -1,4 +1,5 @@
 from flask import Blueprint, redirect, render_template, request, url_for, jsonify
+from flask_login import current_user, logout_user, login_required
 
 from app.extensions import db
 from app.models import income, bank_account
@@ -12,6 +13,7 @@ from app.utils.filter_data import get_not_deleted_records
 income_bp = Blueprint('income', __name__, url_prefix='/incomes')
 
 @income_bp.route('/index', methods=['GET', 'POST'])
+@login_required
 def index():
     incomes = income_controller.get_monthly_incomes_records()
     bank_accounts = get_not_deleted_records(model=BankAccount)
@@ -27,6 +29,7 @@ def index():
     return render_template('incomes/index.html', **context)
 
 @income_bp.route('/create', methods=['GET', 'POST'])
+@login_required
 def create():
     try:
         income_controller.create_income()
@@ -44,6 +47,7 @@ def create():
         raise e
 
 @income_bp.route('/update/<int:id>', methods=['PUT'])
+@login_required
 def update(id):
     income = Income.query.get(id)
     try:
@@ -63,6 +67,7 @@ def update(id):
             return jsonify({'error': str(e)}), 400
 
 @income_bp.route('/delete/<int:id>', methods=['DELETE'])
+@login_required
 def delete(id):
     try:
         income = Income.query.get(id)
@@ -76,6 +81,7 @@ def delete(id):
         return jsonify({'error': str(e)}), 400
     
 @income_bp.route('/filter/incomes/by/field', methods=['GET'])
+@login_required
 def filter_incomes_by_field():
     try:
         query = request.args.get('query')
@@ -85,6 +91,7 @@ def filter_incomes_by_field():
         return jsonify({'error': str(e)}), 400
     
 @income_bp.route('/filter/incomes/by/time', methods=['GET'])
+@login_required
 def filter_incomes_by_time():
     try:
         start = request.args.get('start')
@@ -95,6 +102,7 @@ def filter_incomes_by_time():
         return jsonify({'error': str(e)}), 400
     
 @income_bp.route('/filter/all', methods=['POST'])
+@login_required
 def filter_all():
     try:
         return income_controller.filter_all()

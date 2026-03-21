@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_migrate import Migrate
 from flask_babel import format_datetime, format_date, format_time
 from werkzeug.middleware.proxy_fix import ProxyFix

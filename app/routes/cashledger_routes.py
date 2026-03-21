@@ -1,4 +1,5 @@
 from flask import Blueprint, redirect, render_template, request, url_for, jsonify
+from flask_login import current_user, logout_user, login_required
 from sqlalchemy import func
 
 from app.models.cash_ledger import CashLedger
@@ -7,6 +8,7 @@ from app.controllers import cashledger_controller
 cashlegder_bp = Blueprint('cashledger', __name__, url_prefix='/cashledger')
 
 @cashlegder_bp.route('/index')
+@login_required
 def index():
     ledgers = CashLedger.query.order_by(CashLedger.created_at.desc()).all()
     sum_result = CashLedger.query.with_entities(func.sum(CashLedger.amount)).scalar() or 0
@@ -17,6 +19,7 @@ def index():
     return render_template('cashledger/index.html', **context)
 
 @cashlegder_bp.route('/create/adjustment', methods=['POST'])
+@login_required
 def create_adjustment():
     try:
        return cashledger_controller.create_adjustment()
@@ -24,6 +27,7 @@ def create_adjustment():
         raise e
 
 @cashlegder_bp.route('/delete/adjustment/<int:id>', methods=['DELETE'])
+@login_required
 def delete_adjustment(id):
     try:
        return cashledger_controller.delete_adjustment(id)
@@ -31,6 +35,7 @@ def delete_adjustment(id):
         raise e
 
 @cashlegder_bp.route('/filter/cashledger/by/field')
+@login_required
 def filter_by_field():
     try:
        query = request.args.get('query') 
@@ -39,6 +44,7 @@ def filter_by_field():
         raise e
     
 @cashlegder_bp.route('/filter/cashledger/by/time')
+@login_required
 def filter_by_time():
     try:
        start = request.args.get('start')
@@ -48,6 +54,7 @@ def filter_by_time():
         raise e
     
 @cashlegder_bp.route('/filter/all', methods=['POST'])
+@login_required
 def filter_all():
     try:
        return cashledger_controller.filter_all()

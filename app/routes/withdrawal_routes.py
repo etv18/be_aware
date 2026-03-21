@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request, render_template
+from flask_login import current_user, logout_user, login_required
 
 from app.controllers import withdrawal_controller
 from app.models.withdrawal import Withdrawal
@@ -10,6 +11,7 @@ from app.utils.filter_data import get_not_deleted_records
 withdrawal_bp = Blueprint('withdrawal', __name__, url_prefix='/withdrawals')
 
 @withdrawal_bp.route('index', methods=['GET'])
+@login_required
 def index():
     withdrawals = Withdrawal.query.order_by(Withdrawal.created_at.desc()).all()
     bank_accounts = get_not_deleted_records(model=BankAccount)
@@ -24,6 +26,7 @@ def index():
     return render_template('withdrawals/index.html', **context)
 
 @withdrawal_bp.route('/create', methods=['POST'])
+@login_required
 def create():
     try:
         withdrawal_controller.create_withdrawal()
@@ -33,6 +36,7 @@ def create():
         return jsonify({'error': str(e)}), 400
 
 @withdrawal_bp.route('/update/<int:id>', methods=['PUT'])
+@login_required
 def update(id):
     try:
         withdrawal_controller.update_withdrawal(id)
@@ -42,6 +46,7 @@ def update(id):
         return jsonify({'error': str(e)}), 400
     
 @withdrawal_bp.route('/delete/<int:id>', methods=['DELETE'])
+@login_required
 def delete(id):
     try:
         withdrawal_controller.delete_withdrawal(id)
@@ -51,6 +56,7 @@ def delete(id):
         return jsonify({'error': str(e)}), 400
     
 @withdrawal_bp.route('/filter_withdrawals_by_field', methods=['GET'])
+@login_required
 def filter_withdrawals_by_field():
     try:
         query = request.args.get('query')
@@ -60,6 +66,7 @@ def filter_withdrawals_by_field():
         return jsonify({'error': str(e)}), 400
     
 @withdrawal_bp.route('/filter/withdrawals/by/timeframe', methods=['GET'])
+@login_required
 def filter_withdrawals_by_timeframe():
     try:
         start = request.args.get('start')
@@ -70,6 +77,7 @@ def filter_withdrawals_by_timeframe():
         return jsonify({'error': str(e)}), 400
     
 @withdrawal_bp.route('/filter/all', methods=['POST'])
+@login_required
 def filter_all():
     try:
         return withdrawal_controller.filter_all()

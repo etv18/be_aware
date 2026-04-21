@@ -16,7 +16,7 @@ class DebtPayment(db.Model):
     is_cash = db.Column(db.Boolean, nullable=False)
     
     debt_id = db.Column(db.Integer, db.ForeignKey('debts.id'))
-    bank_account_id = db.Column(db.Integer, db.ForeignKey('bank_accounts.id', name='bank_account_id'))
+    bank_account_id = db.Column(db.Integer, db.ForeignKey('bank_accounts.id', name='fk_debt_payment_bank_account_id'))
     code = db.Column(db.String(50), nullable=False, server_default='TEMP')
 
     created_at = db.Column(

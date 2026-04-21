@@ -16,7 +16,7 @@ class CreditCardPayment(db.Model):
     
     code = db.Column(db.String(50), nullable=False, server_default='TEMP')
     credit_card_id = db.Column(db.Integer, db.ForeignKey('credit_cards.id'), nullable=False)
-    bank_account_id = db.Column(db.Integer, db.ForeignKey('bank_accounts.id', name='bank_account_id'), nullable=False)
+    bank_account_id = db.Column(db.Integer, db.ForeignKey('bank_accounts.id', name='fk_credit_card_payment_bank_account_id'), nullable=False)
 
     created_at = db.Column(
         db.DateTime(timezone=True),

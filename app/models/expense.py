@@ -7,7 +7,7 @@ from sqlalchemy.orm import relationship
 from app.extensions import db
 from app.utils.code_generator import generate_montly_sequence
 from app.utils import prefixes
-from app.utils.date_handling import utcnow
+from app.utils.date_handling import utcnow, format_datetime_filter
 
 class Expense(db.Model):
 
@@ -53,7 +53,7 @@ class Expense(db.Model):
             'bank_account_id': self.bank_account_id,
             'expense_category_id': self.expense_category_id,
             'description': self.description,  
-            'created_at': format_datetime(self.created_at, 'EEE, dd MMM yyyy hh:mm a'),
+            'created_at': format_datetime_filter(self.created_at),
             'raw_created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
             

@@ -7,7 +7,7 @@ from sqlalchemy import event
 
 from app.utils.code_generator import generate_montly_sequence
 from app.utils import prefixes
-from app.utils.date_handling import utcnow
+from app.utils.date_handling import utcnow, format_datetime_filter
 
 class Income(db.Model):
     __tablename__ = 'incomes'
@@ -48,7 +48,7 @@ class Income(db.Model):
             'description': self.description,
             'bank_account_id': self.bank_account_id,
             'bank_nick_name': self.bank_account.nick_name if self.bank_account else '-',
-            'created_at': format_datetime(self.created_at, 'EEE, dd MMM yyyy hh:mm a'),
+            'created_at': format_datetime_filter(self.created_at),
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
             'raw_created_at': self.created_at.isoformat() if self.created_at else None,
         }

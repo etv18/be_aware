@@ -15,3 +15,19 @@ def get_years(starting_year=2025) -> list:
     years.reverse()
 
     return years
+
+
+def format_datetime_filter(value, format_str="%a, %d %b %Y %I:%M %p"):
+    """
+    Custom Jinja filter to format datetime objects.
+    Default format: Fri, 01 May 2026 04:45 PM
+    """
+    if value is None:
+        return ""
+    
+    # If it's a string (from some databases), try to parse it first
+    if isinstance(value, str):
+        # Adjust the format here if your DB returns a specific string format
+        value = datetime.fromisoformat(value)
+        
+    return value.strftime(format_str)

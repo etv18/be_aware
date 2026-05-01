@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, app, render_template
 from flask_migrate import Migrate
 from flask_babel import format_datetime, format_date, format_time
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -8,6 +8,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 from app.config import Config
+from app.utils.date_handling import format_datetime_filter
 from app.extensions import db, babel, limiter, crsf, login_manager
 from app.routes import (
     home_routes, 
@@ -72,6 +73,9 @@ def register_extensions(app):
     app.jinja_env.filters['format_datetime'] = format_datetime
     app.jinja_env.filters['format_date'] = format_date
     app.jinja_env.filters['format_time'] = format_time
+
+    # Register custom the filter with Jinja
+    app.jinja_env.filters['format_datetime_custom'] = format_datetime_filter
 
 def register_resources(app):
     app.register_blueprint(home_routes.home_bp)

@@ -24,6 +24,7 @@ def create_expense():
         is_cash = request.form.get('is-cash') == 'on'
         expense_category_id = int(request.form['select-expense-category'])
         description = request.form.get('description')
+        created_at = request.form.get('created_at')
         credit_card_id = None
         bank_account_id = None
 
@@ -60,7 +61,8 @@ def create_expense():
             expense_category_id=expense_category_id,
             credit_card_id=credit_card_id,
             bank_account_id=bank_account_id,
-            description=description
+            description=description,
+            created_at=datetime.strptime(created_at, '%Y-%m-%d %H:%M')
         )
 
 

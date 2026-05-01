@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 
 MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
@@ -31,3 +32,6 @@ def format_datetime_filter(value, format_str="%a, %d %b %Y %I:%M %p"):
         value = datetime.fromisoformat(value)
         
     return value.strftime(format_str)
+
+def get_time_now():
+    return datetime.now(ZoneInfo("America/Santo_Domingo"))

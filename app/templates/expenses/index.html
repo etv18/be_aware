@@ -40,6 +40,12 @@
                             </div>
                             <div class="row">
                                 <div class="form-floating mt-2">
+                                    <input type="text" name="created_at" id="createdat-id" class="form-control"
+                                        placeholder="Date" required>
+                                    <label for="createdat-id" class="p-3">Date</label>
+                                </div>
+
+                                <div class="form-floating mt-2">
                                     <select name="select-expense-category" id="select-expense-category-id" class="form-select">
                                         {% for category in expense_categories %}
                                         <option value="{{ category.id }}">{{ category.name.lower().title() }}</option>
@@ -117,6 +123,11 @@
                                 </div>
                             </div>
                             <div class="row">
+                                <div class="form-floating mt-2">
+                                    <input type="text" name="created_at" id="e-createdat-id" class="form-control"
+                                        placeholder="Date" required>
+                                    <label for="e-createdat-id" class="p-3">Date</label>
+                                </div>
                                 <div class="form-floating mt-2">
                                     <select name="select-expense-category" id="e-select-expense-category-id" class="form-select">
                                         {% for category in expense_categories %}
@@ -222,7 +233,7 @@
                         <td>{{ expense.credit_card.nick_name or '-' }}</td>
                         <td>{{ expense.bank_account.nick_name or '-' }}</td>
                         <td>{{ expense.expense_category.name.lower().title() or '-' }}</td>
-                        <td>{{ expense.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
+                        <td>{{ expense.created_at | format_datetime_custom }}</td>
                         <td>
                             <div class="d-flex gap-2">
                                 <button 
@@ -237,6 +248,7 @@
                                     data-select-credit-card-id="{{ expense.credit_card_id }}"
                                     data-select-bank-account-id="{{ expense.bank_account_id }}"
                                     data-description="{{ expense.description }}"
+                                    data-created-at="{{ expense.created_at }}"
                                 >
                                     <i class="bi bi-pen"></i>
                                 </button>
@@ -311,6 +323,17 @@
     <script src="{{ url_for('static', filename='scripts/utils/utils.js' ) }}"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
+            const createdAtInput = document.getElementById("createdat-id");
+            flatpickr("#createdat-id", {
+                enableTime: true,
+                dateFormat: "Y-m-d H:i", // Standard format: 2026-05-01 14:30
+                altInput: true,          // Human-friendly display
+                altFormat: "F j, Y", // Shows as: May 1, 2026 (02:30 PM)
+                defaultDate: "today",    // Pre-fills with today's date
+                time_24hr: false,         // Use AM/PM for the user
+                defaultDate: new Date()
+            });
+
             const cCheckbox = document.getElementById("checkNativeSwitch");
             const eCheckbox = document.getElementById("e-checkNativeSwitch");
 
@@ -370,6 +393,17 @@
                 const creditCardId = button.getAttribute("data-select-credit-card-id");
                 const bankAccountId = button.getAttribute("data-select-bank-account-id");
                 const description = button.getAttribute("data-description");
+                const createdAt = button.getAttribute("data-created-at");
+                
+                flatpickr("#e-createdat-id", {
+                    enableTime: true,
+                    dateFormat: "Y-m-d H:i", // Standard format: 2026-05-01 14:30
+                    altInput: true,          // Human-friendly display
+                    altFormat: "F j, Y", // Shows as: May 1, 2026 (02:30 PM)
+                    defaultDate: "today",    // Pre-fills with today's date
+                    time_24hr: false,         // Use AM/PM for the user
+                    defaultDate: createdAt ? new Date(createdAt) : new Date()
+                });
 
                 document.getElementById("e-expense-id").value = expenseId;
                 document.getElementById("e-amount-id").value = amount;

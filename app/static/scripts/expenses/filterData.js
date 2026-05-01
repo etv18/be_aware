@@ -68,6 +68,7 @@ export function renderExpensesTable(data){
                         data-select-credit-card-id="${expense.credit_card_id}"
                         data-select-bank-account-id="${expense.bank_account_id}"
                         data-description="${expense.description}"
+                        data-created-at="${expense.raw_created_at}"
                     ><i class="bi bi-pen"></i></button>
                     <a href="/expenses/delete/${expense.id}" class="btn btn-danger"><i class="bi bi-trash"></i></a>
                 </div>

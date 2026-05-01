@@ -16,6 +16,7 @@ from app.models.bank_account_transactions_ledger import BankAccountTransactionsL
 from app.models.credit_card_transactions_ledger import CreditCardTransactionsLedger
 from app.exceptions.bankProductsException import *
 from app.utils.numeric_casting import is_decimal_type, total_amount
+from app.utils.date_handling import get_time_now
 
 #HANDLERS
 def create_expense():
@@ -24,7 +25,7 @@ def create_expense():
         is_cash = request.form.get('is-cash') == 'on'
         expense_category_id = int(request.form['select-expense-category'])
         description = request.form.get('description')
-        created_at = request.form.get('created_at')
+        created_at = request.form.get('created_at') if request.form.get('created_at') else get_time_now()
         credit_card_id = None
         bank_account_id = None
 
@@ -96,6 +97,9 @@ def update_expense(expense):
         is_cash = request.form.get('is-cash') == 'on'
         expense_category_id = int(request.form['select-expense-category'])
         description = request.form.get('description')
+        created_at_str = request.form.get('created_at')
+        created_at = datetime.strptime(created_at_str, '%Y-%m-%d %H:%M') if created_at_str else None
+        
         print(f'value {expense_category_id} of {type(expense_category_id)}')
         new_credit_card_id = None
         new_bank_account_id = None
@@ -162,6 +166,7 @@ def update_expense(expense):
         expense.credit_card_id = new_credit_card_id
         expense.bank_account_id = new_bank_account_id
         expense.description = description
+        expense.created_at = created_at if created_at else expense.created_at
 
         db.session.commit()
 

@@ -40,6 +40,11 @@
                                 </div>
                             </div>
                             <div class="row">
+                                <div class="form-floating mt-2">
+                                    <input type="text" name="created_at" id="createdat-id" class="form-control"
+                                        placeholder="Date" required>
+                                    <label for="createdat-id" class="p-3">Date</label>
+                                </div>
                                 <div class="">
                                     <div class="form-floating mt-2">
                                         <input type="text" name="description" id="description-id" class="form-control"
@@ -94,6 +99,11 @@
                                 </div>
                             </div>
                             <div class="row">
+                                <div class="form-floating mt-2">
+                                    <input type="text" name="created_at" id="e-createdat-id" class="form-control"
+                                        placeholder="Date" required>
+                                    <label for="e-createdat-id" class="p-3">Date</label>
+                                </div>
                                 <div class="">
                                     <div class="form-floating mt-2">
                                         <input type="text" name="description" id="e-description-id" class="form-control"
@@ -185,6 +195,7 @@
                                     data-is-cash="{{ income.is_cash }}"
                                     data-description="{{ income.description if income.description else '' }}"
                                     data-bank-account-id="{{ income.bank_account_id }}"
+                                    data-created-at="{{ income.created_at }}"
                                 >
                                     <i class="bi bi-pen"></i>
                                 </button>
@@ -248,6 +259,17 @@
 
 <script> 
     document.addEventListener('DOMContentLoaded', () => {
+        const formatTimeInput = {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i", // Standard format: 2026-05-01 14:30
+            altInput: true,          // Human-friendly display
+            altFormat: "F j, Y", // Shows as: May 1, 2026 (02:30 PM)
+            defaultDate: "today",    // Pre-fills with today's date
+            time_24hr: false,         // Use AM/PM for the user
+            defaultDate: new Date()
+        }          
+        flatpickr("#createdat-id", formatTimeInput);
+
         const createIncomeModal = document.getElementById('create-income');
         const editIncomeModal = document.getElementById('edit-income');
 
@@ -301,6 +323,9 @@
             if(oldBankAccountId === 'None') {
                 document.getElementById('e-select-bank-account-id').value = 'none';
             }
+            const createdAt = button.getAttribute('data-created-at');
+            formatTimeInput.defaultDate = createdAt ? new Date(createdAt) : new Date();
+            flatpickr("#e-createdat-id", formatTimeInput);
             
             toggleBankAccount(editIsCash, editBankAccountsSelect);
             editIsCash.addEventListener('change', () => toggleBankAccount(editIsCash, editBankAccountsSelect));

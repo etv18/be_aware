@@ -11,6 +11,7 @@ from app.models.cash_ledger import CashLedger
 from app.models.bank_account_transactions_ledger import BankAccountTransactionsLedger
 from app.exceptions.bankProductsException import BankAccountDoesNotExists, AmountIsLessThanOrEqualsToZero, NoBankProductSelected
 from app.extensions import db
+from app.utils.date_handling import get_time_now
 from app.utils.numeric_casting import is_decimal_type, total_amount, format_amount
 
 def create_income():
@@ -18,6 +19,7 @@ def create_income():
             amount = Decimal(request.form['amount']) if is_decimal_type(request.form['amount']) else Decimal('0')
             is_cash = request.form.get('is-cash') == 'on'
             description = request.form.get('description')
+            created_at = request.form.get('created_at') if request.form.get('created_at') else get_time_now()
             bank_account_id = None
 
             if(amount <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
@@ -32,7 +34,8 @@ def create_income():
                 amount=amount,
                 is_cash=is_cash,
                 bank_account_id=bank_account_id,
-                description=description
+                description=description,
+                created_at=created_at
             )
 
             db.session.add(income)
@@ -61,6 +64,8 @@ def update_income(income):
         description = request.form.get('description')
         new_bank_account_id = None
         selected_bank_account = request.form.get('select-bank-account')
+        created_at_str = request.form.get('created_at')
+        created_at = datetime.strptime(created_at_str, '%Y-%m-%d %H:%M') if created_at_str else None
         
         if(amount <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
 
@@ -77,7 +82,7 @@ def update_income(income):
         income.description = description
         income.is_cash = is_cash
         income.bank_account_id = new_bank_account_id
-
+        income.created_at = created_at if created_at else income.created_at
         db.session.commit()
 
         CashLedger.update_or_delete(income)

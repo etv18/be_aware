@@ -59,6 +59,8 @@ function renderDataTable(incomes){
                         data-amount="${ income.amount }"
                         data-is-cash="${ income.is_cash }"
                         data-bank-account-id="${ income.bank_account_id }"
+                        data-description="${ income.description ? income.description : '' }"
+                        data-created-at="${ income.raw_created_at }"
                     >
                     <i class="bi bi-pen"></i>
                     </button>

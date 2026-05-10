@@ -6,6 +6,7 @@ const filterByFieldInput = document.getElementById('filter-byfiled-input-id');
 const filterByTimeInput = document.getElementById('filter-bytime-input-id');
 const btnSearch = document.getElementById('btn-search-id');
 const lblTotalLoans = document.getElementById('total-loans-id');
+const lblTotalRemainings = document.getElementById('remainings');
 const filterDataEndpoint = document.getElementById('filter-data-endpoint').value;
 
 let startDate = null;
@@ -159,6 +160,7 @@ async function filterData(){
     renderDataTable(data.loans);
 
     lblTotalLoans.textContent = 'Total: $' + data.total;
+    lblTotalRemainings.textContent = 'Remaining to Collect: $' + data.remainings;
 
     //startDate = null;
     //endDate = null;

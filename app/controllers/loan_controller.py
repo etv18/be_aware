@@ -293,7 +293,8 @@ def filter_all():
         
         return jsonify({
             'loans': loans_list,
-            'total': total_amount(loans)
+            'total': total_amount(loans),
+            'remainings': calculate_remainings_when_filtering(loans)
         }), 200
     except Exception as e:
         db.session.rollback()
@@ -434,3 +435,17 @@ def adjust_funding_source(old_source, new_source, old_amount, new_amount):
     if new_source:
         new_source.amount_available -= new_amount
 
+def calculate_remainings_when_filtering(loans) -> Decimal:
+    total = Decimal('0.0')
+    for l in loans:
+        if l.is_active:
+            total += l.amount
+            payments_sum = (
+                LoanPayment.query
+                .filter(LoanPayment.loan_id == l.id)
+                .with_entities(func.sum(LoanPayment.amount))
+                .scalar() or Decimal('0.0')
+            )
+            total -= payments_sum
+
+    return total

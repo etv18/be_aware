@@ -15,3 +15,5 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     SECRET_KEY = os.getenv('SECRET_KEY')
+
+    NAV_BAR_BACKGROUND_COLOR = os.getenv('NAV_BAR_BACKGROUND_COLOR', 'bg-primary')

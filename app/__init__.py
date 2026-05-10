@@ -44,6 +44,12 @@ def create_app():
 
     create_error_logger(app)
 
+    @app.context_processor
+    def inject_theme():
+        return {
+            'nav_bar_backgroud': app.config['NAV_BAR_BACKGROUND_COLOR']
+        }
+
     from app import models
 
     return app

@@ -12,7 +12,7 @@ from app.models.cash_ledger import CashLedger
 from app.models.bank_account_transactions_ledger import BankAccountTransactionsLedger
 from app.models.bank_account import BankAccount
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero, NoBankProductSelected, AmountGreaterThanAvailableMoney, NoAvailableMoney, BankAccountDoesNotExists
-from app.utils.numeric_casting import is_decimal_type, total_amount
+from app.utils.numeric_casting import is_decimal_type, total_amount, format_amount
 from app.utils.parse_structures import get_data_as_dictionary
 
 def create():
@@ -229,10 +229,15 @@ def filter_all():
         debts_list = []
         for l in debts:
             debts_list.append(l.to_dict())
+
+        debts_number_of_active_and_paid = calculate_active_and_paid_debts(debts)
         
         return jsonify({
             'debts': debts_list,
-            'total': total_amount(debts)
+            'total': total_amount(debts),
+            'remainings': format_amount(_calculate_remainings_when_filtering(debts)),
+            'active_debts': debts_number_of_active_and_paid['actives'],
+            'paid_debts': debts_number_of_active_and_paid['paids']
         }), 200
     except Exception as e:
         db.session.rollback()
@@ -364,6 +369,21 @@ def _evaluate_boolean_columns(query, reference_for_true, reference_for_false):
         return False
     return None
 
+def _calculate_remainings_when_filtering(debts) -> Decimal:
+    total = Decimal('0.0')
+    for d in debts:
+        if d.is_active:
+            total += d.amount
+            payments_sum = (
+                DebtPayment.query
+                .filter(DebtPayment.debt_id == d.id)
+                .with_entities(func.sum(DebtPayment.amount))
+                .scalar() or Decimal('0.0')
+            )
+            total -= payments_sum
+
+    return total
+
 def evaluate_boolean_columns(query, reference_for_true, reference_for_false):
     q = query.lower()
     if q == reference_for_true.lower():
@@ -371,4 +391,14 @@ def evaluate_boolean_columns(query, reference_for_true, reference_for_false):
     if q == reference_for_false.lower():
         return False
     return None
+
+def calculate_active_and_paid_debts(debts) -> dict:
+    paids = 0
+    actives = 0
+    for d in debts:
+        if d.is_active:
+            actives += 1
+        else:
+            paids += 1
+    return {'paids': paids, 'actives': actives}
 

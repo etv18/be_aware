@@ -6,6 +6,9 @@ const filterByFieldInput = document.getElementById('filter-byfiled-input-id');
 const filterByTimeInput = document.getElementById('filter-bytime-input-id');
 const btnSearch = document.getElementById('btn-search-id');
 const lblTotal = document.getElementById('lbl-total');
+const lblRemainings = document.getElementById('lbl-remainings');
+const lblActiveDebts = document.getElementById('active-debts');
+const lblPaidDebts = document.getElementById('paid-debts');
 const filterDataEndpoint = document.getElementById('filter-data-endpoint').value;
 
 let startDate = null;
@@ -157,7 +160,9 @@ async function filterData(){
     renderDataTable(data.debts);
 
     lblTotal.textContent = 'Total: $'+ data.total;
-
+    lblRemainings.textContent = 'Remaining to Pay: $'+ data.remainings;
+    lblPaidDebts.textContent = 'Paid Debts: ' + data.paid_debts;
+    lblActiveDebts.textContent = 'Active Debts: ' + data.active_debts;
    // startDate = null;
     // endDate = null;
 }

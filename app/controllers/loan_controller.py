@@ -16,7 +16,7 @@ from app.models.bank_account_transactions_ledger import BankAccountTransactionsL
 from app.models.credit_card_transactions_ledger import CreditCardTransactionsLedger
 from app.controllers.expense_controller import update_bank_account_money_on_create, update_bank_account_money_on_update, update_credit_card_money_on_create, update_credit_card_money_on_update
 from app.exceptions.bankProductsException import AmountIsLessThanOrEqualsToZero, NoBankProductSelected
-from app.utils.numeric_casting import is_decimal_type, total_amount
+from app.utils.numeric_casting import is_decimal_type, total_amount, format_amount
 from app.utils.parse_structures import get_data_as_dictionary
 
 def create_loan():
@@ -291,10 +291,14 @@ def filter_all():
         for l in loans:
             loans_list.append(l.to_dict())
         
+        loans_number_of_active_and_paid = calculate_active_and_paid_loans(loans)
+
         return jsonify({
             'loans': loans_list,
             'total': total_amount(loans),
-            'remainings': calculate_remainings_when_filtering(loans)
+            'remainings': format_amount(calculate_remainings_when_filtering(loans)),
+            'active_loans': loans_number_of_active_and_paid['actives'],
+            'paid_loans': loans_number_of_active_and_paid['paids']
         }), 200
     except Exception as e:
         db.session.rollback()
@@ -449,3 +453,13 @@ def calculate_remainings_when_filtering(loans) -> Decimal:
             total -= payments_sum
 
     return total
+
+def calculate_active_and_paid_loans(loans) -> dict:
+    paids = 0
+    actives = 0
+    for l in loans:
+        if l.is_active:
+            actives += 1
+        else:
+            paids += 1
+    return {'paids': paids, 'actives': actives}

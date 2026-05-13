@@ -274,14 +274,16 @@ def filter_all():
                     (Loan.amount.ilike(q)),
                     (Loan.code.ilike(q)),
                     (Loan.description.ilike(q)),
-                    (BankAccount.nick_name.ilike(q))
+                    (BankAccount.nick_name.ilike(q)),
+                    (CreditCard.nick_name.ilike(q))
                 )
 
                 and_filters.append(text_filters)
 
         loans = (
             Loan.query
-            .outerjoin(Loan.bank_account) #allows to show expense without a bank account        
+            .outerjoin(Loan.bank_account) #allows to show expense without a bank account   
+            .outerjoin(Loan.credit_card) #allows to show expense without a credit card    
             .filter(db.and_(*and_filters))
             .order_by(Loan.created_at.desc())
             .all()

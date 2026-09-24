@@ -40,7 +40,8 @@ def create_loan():
             bank_selected = selected_bank_account and selected_bank_account != 'none'
 
             if not credit_selected and not bank_selected:
-                raise NoBankProductSelected('You must select either a credit card or bank account.')
+                # raise NoBankProductSelected('You must select either a credit card or bank account.')
+                pass
 
             if credit_selected and bank_selected:
                 raise Exception('You cannot select both credit card and bank account.')
@@ -112,7 +113,8 @@ def update_loan(loan):
 
             if (not selected_bank_account or selected_bank_account == 'none') and \
                (not selected_credit_card or selected_credit_card == 'none'):
-                raise NoBankProductSelected( 'You must select either a credit card or bank account.')
+                # raise NoBankProductSelected( 'You must select either a credit card or bank account.')
+                pass
 
             if selected_bank_account and selected_bank_account != 'none':
                 new_source = BankAccount.query.get(int(selected_bank_account))

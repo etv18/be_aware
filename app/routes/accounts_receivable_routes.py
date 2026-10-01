@@ -12,6 +12,7 @@ from app.models.credit_card import CreditCard
 from app.utils.numeric_casting import format_amount, total_amount
 from app.utils.date_handling import get_years
 from app.utils.filter_data import get_not_deleted_records
+from sqlalchemy import and_
 
 accounts_receivable_bp = Blueprint('accounts_receivable', __name__, url_prefix='/accounts_receivable')
 
@@ -22,8 +23,8 @@ def index():
     active_loans = Loan.query.filter(Loan.is_active == True).count()
     paid_loans = Loan.query.filter(Loan.is_active == False).count()
     remaining_to_collect = Loan.query.filter(Loan.is_active == True).with_entities(func.sum(Loan.amount)).scalar()
-    bank_accounts = get_not_deleted_records(model=BankAccount)
-    credit_cards = get_not_deleted_records(model=CreditCard)
+    bank_accounts = BankAccount.query.filter(and_(BankAccount.is_deleted == False, BankAccount.is_active == True)).all()
+    credit_cards = CreditCard.query.filter(and_(CreditCard.is_deleted == False, CreditCard.is_active == True)).all()
     years = get_years()
 
     context = {

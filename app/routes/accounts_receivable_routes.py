@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, jsonify
 from flask_login import current_user, logout_user, login_required
 
-from sqlalchemy import func
+from sqlalchemy import func, and_
 
 from app.controllers import loan_controller
 from app.controllers import loan_payment_controller
@@ -12,7 +12,6 @@ from app.models.credit_card import CreditCard
 from app.utils.numeric_casting import format_amount, total_amount
 from app.utils.date_handling import get_years
 from app.utils.filter_data import get_not_deleted_records
-from sqlalchemy import and_
 
 accounts_receivable_bp = Blueprint('accounts_receivable', __name__, url_prefix='/accounts_receivable')
 

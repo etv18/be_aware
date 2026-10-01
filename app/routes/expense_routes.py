@@ -1,10 +1,14 @@
 from flask import request, redirect, url_for, render_template, Blueprint, jsonify
 from flask_login import current_user, logout_user, login_required
 
+from sqlalchemy import and_
+
 from decimal import Decimal
 
 from app.extensions import db
 from app.models.expense import Expense
+from app.models.bank_account import BankAccount
+from app.models.credit_card import CreditCard
 from app.controllers import expense_controller
 from app.models import credit_card, expense_category, bank_account, expense
 from app.utils.numeric_casting import format_amount, total_amount
@@ -16,9 +20,9 @@ expense_bp = Blueprint('expense', __name__, url_prefix='/expenses')
 @expense_bp.route('/index', methods=['GET'])
 @login_required
 def index():
-    credit_cards = get_not_deleted_records(model=credit_card.CreditCard)
+    bank_accounts = BankAccount.query.filter(and_(BankAccount.is_deleted == False, BankAccount.is_active == True)).all()
+    credit_cards = CreditCard.query.filter(and_(CreditCard.is_deleted == False, CreditCard.is_active == True)).all()
     expense_categories = get_not_deleted_records(model=expense_category.ExpenseCategory)
-    bank_accounts = get_not_deleted_records(model=bank_account.BankAccount)
     expenses = expense_controller.get_monthly_expenses_records()
     monthly = expense_controller.money_limit_spent_left_for_expenses(expenses)
     years = get_years()

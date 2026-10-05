@@ -225,7 +225,13 @@
                 <td>{{ format_amount(credit_card.limit) }}</td>
                 <td>{{ format_amount(credit_card.amount_available) }}</td>
                 <td>{{ format_amount(money_used(credit_card)) }}</td>
-                <td>{{ credit_card.is_active }}</td>
+                <td>
+                    {% if credit_card.is_active %}
+                        <span class="badge text-bg-success">ACTIVE</span>
+                    {% else %}
+                        <span class="badge text-bg-danger">CANCELED</span>
+                    {% endif %}
+                </td>
                 <td>{{ credit_card.created_at | format_datetime("EEE, dd MMM yyyy hh:mm a") }}</td>
                 <td>
                     <div class="d-flex gap-2">

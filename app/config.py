@@ -12,7 +12,7 @@ class Config:
     BABEL_DEFAULT_LOCALE = 'en'
     BABEL_DEFAULT_TIMEZONE = 'America/Santo_Domingo'
 
-    SQLALCHEMY_DATABASE_URI = db_url #os.getenv('DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = db_url
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     SECRET_KEY = os.getenv('SECRET_KEY')

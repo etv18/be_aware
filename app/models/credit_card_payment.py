@@ -52,4 +52,5 @@ class CreditCardPayment(db.Model):
             'created_at': format_datetime(self.created_at, 'EEE, dd MMM yyyy hh:mm a'),
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
             'raw_created_at': self.created_at.isoformat() if self.created_at else None,
+            'is_cashback': self.is_cashback,
         }

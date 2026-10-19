@@ -13,10 +13,11 @@ class CreditCardPayment(db.Model):
     __tablename__ = 'credit_card_payments'
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Numeric(10,2), nullable=False)
+    is_cashback = db.Column(db.Boolean, nullable=False)
     
     code = db.Column(db.String(50), nullable=False, server_default='TEMP')
     credit_card_id = db.Column(db.Integer, db.ForeignKey('credit_cards.id'), nullable=False)
-    bank_account_id = db.Column(db.Integer, db.ForeignKey('bank_accounts.id', name='fk_credit_card_payment_bank_account_id'), nullable=False)
+    bank_account_id = db.Column(db.Integer, db.ForeignKey('bank_accounts.id', name='fk_credit_card_payment_bank_account_id'))
 
     created_at = db.Column(
         db.DateTime(timezone=True),
@@ -47,7 +48,7 @@ class CreditCardPayment(db.Model):
             'credit_card_id': self.credit_card_id,
             'bank_account_id': self.bank_account_id,
             'credit_card_nick_name': self.credit_card.nick_name if self.credit_card.nick_name else '-',
-            'bank_account_nick_name': self.bank_account.nick_name if self.bank_account.nick_name else '-',
+            'bank_account_nick_name': self.bank_account.nick_name if self.bank_account else '-',
             'created_at': format_datetime(self.created_at, 'EEE, dd MMM yyyy hh:mm a'),
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
             'raw_created_at': self.created_at.isoformat() if self.created_at else None,

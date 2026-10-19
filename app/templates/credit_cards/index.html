@@ -150,11 +150,19 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div class="">
+                            <div class="col-sm">
                                 <div class="form-floating mt-2">
                                     <input type="text" name="amount" id="p-amount-id" class="form-control"
                                         placeholder="Amount" required>
                                     <label for="amount-id">Amount</label>
+                                </div>
+                            </div>
+                            <div class="col-sm">
+                                <div class="form-check form-switch mt-2">
+                                    <input class="form-check-input" type="checkbox" name="is-cashback" id="p-is-cashback-id" switch>
+                                    <label class="form-check-label" for="checkNativeSwitch">
+                                        Cash
+                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -329,6 +337,29 @@
                 document.getElementById('p-credit-card-id').value = creditCardId; //Set the loan id to the hidden input so backend can process it as part of the form
                 const bankAccountsSelect = document.getElementById('p-select-bank-account-id');
             });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const cashToggle = document.getElementById('p-is-cashback-id');
+            const bankSelect = document.getElementById('p-select-bank-account-id');
+            const modal = document.getElementById('pay-credit-card');
+
+            function syncBankSelect() {
+                bankSelect.disabled = cashToggle.checked;
+                if (cashToggle.checked) {
+                    bankSelect.value = 'none';   // clear any previous selection
+                }
+            }
+
+            cashToggle.addEventListener('change', syncBankSelect);
+
+            // Reset to the default state whenever the modal closes
+            modal.addEventListener('hidden.bs.modal', () => {
+                cashToggle.checked = false;
+                syncBankSelect();
+            });
+
+            syncBankSelect(); // set the initial state on page load
         });
     </script>
 {% endblock %}

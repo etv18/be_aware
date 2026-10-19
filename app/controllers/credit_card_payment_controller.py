@@ -17,6 +17,7 @@ from app.utils.numeric_casting import is_decimal_type
 def create_credit_card_payment():
     try:
         amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else Decimal('0')
+        is_cashback = request.form.get('is-cashback') == 'on'
 
         credit_card_id = request.form.get('credit-card-id') 
         bank_account_id = request.form.get('select-bank-account')
@@ -26,18 +27,20 @@ def create_credit_card_payment():
         credit_card = CreditCard.query.get(credit_card_id)
         if not credit_card: raise CreditCardDoesNotExists('Credit card record was not found.')
         
-        bank_account = BankAccount.query.get(bank_account_id)
-        if not bank_account: raise BankAccountDoesNotExists('You need to select a bank account.')
+        bank_account = BankAccount.query.get(bank_account_id) or None
+        if not bank_account and not is_cashback: raise BankAccountDoesNotExists('You need to select a bank account.')
 
         credit_card_payment = CreditCardPayment(
             amount=amount,
             bank_account_id=bank_account_id,
             credit_card_id=credit_card_id,
+            is_cashback=is_cashback
         )
 
         credit_card.amount_available += amount
 
-        h_update_bank_account_money_on_create(bank_account_id, amount)
+        if not is_cashback:
+            h_update_bank_account_money_on_create(bank_account_id, amount)
 
         db.session.add(credit_card_payment)
         db.session.commit()
@@ -57,18 +60,25 @@ def update_credit_card_payment(id):
 
         amount = Decimal(request.form.get('amount')) if is_decimal_type(request.form.get('amount')) else Decimal('0')
         bank_account_id = request.form.get('select-bank-account')
+        is_cashback = request.form.get('is-cashback') == 'on'
 
         if(amount <= 0): raise AmountIsLessThanOrEqualsToZero('Introduce a number bigger than 0')
 
-        bank_account = BankAccount.query.get(bank_account_id)
-        if not bank_account: raise BankAccountDoesNotExists('You need to select a bank account.')
-        
-        h_update_bank_account_money_on_update(
-            payment.bank_account_id, 
-            bank_account_id,
-            payment.amount,
-            amount
-        )
+        bank_account = BankAccount.query.get(bank_account_id) or None
+        if not bank_account and not is_cashback: raise BankAccountDoesNotExists('You need to select a bank account.')
+
+        # this evaluates if the persisted payment has a bank account and the updated value of cashback is true
+        if payment.bank_account and is_cashback:
+            payment.bank_account.amount_available += amount #add the new amount
+            payment.bank_account = None
+
+        else:
+            h_update_bank_account_money_on_update(
+                payment.bank_account_id, 
+                bank_account_id,
+                payment.amount,
+                amount
+            )
 
         h_update_credit_card_amount_available_on_update(
             credit_card=payment.credit_card, 
@@ -78,6 +88,7 @@ def update_credit_card_payment(id):
 
         payment.amount=amount
         payment.bank_account_id=bank_account_id
+        payment.is_cashback=is_cashback
 
         db.session.commit()
 
@@ -94,8 +105,10 @@ def delete_credit_card_payment(id):
     try:
         payment = CreditCardPayment.query.get(id)
         if not payment: raise CreditCardPaymentDoesNotExists('This credit card payment was not found.')
-        
-        payment.bank_account.amount_available += payment.amount #return the money used to the bank account
+
+        if not payment.is_cashback:
+            payment.bank_account.amount_available += payment.amount #return the money used to the bank account
+
         payment.credit_card.amount_available -= payment.amount #reduce the amount available of the credit card 'cause you are deleting the payment
 
         BankAccountTransactionsLedger.delete(payment)

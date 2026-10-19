@@ -13,6 +13,7 @@ const tBodyExpense = document.getElementById('expenses-table-body');
 const creditCardPaymentsTemplateFn = (creditCardPayment) => `
     <th scope="row">${ creditCardPayment.id }</th>
     <td class="text-start">${ formatNumber(creditCardPayment.amount) }</td>
+    <td>${ creditCardPayment.is_cashback ? 'YES' : 'NO' }</td>
     <td>${ creditCardPayment.credit_card_nick_name ?? '-' }</td>
     <td>${ creditCardPayment.bank_account_nick_name ?? '-' }</td>
     <td>${ creditCardPayment.created_at }</td>
@@ -28,6 +29,8 @@ const creditCardPaymentsTemplateFn = (creditCardPayment) => `
                 data-amount="${ creditCardPayment.amount }"
                 data-credit-card-id="${ creditCardPayment.credit_card_id }"
                 data-bank-account-id="${ creditCardPayment.bank_account_id }"
+                data-bank-account-id="${ creditCardPayment.bank_account_id }"
+                data-is-cashback="${ creditCardPayment.is_cashback }"
             >
                 <i class="bi bi-pen"></i>
             </button>

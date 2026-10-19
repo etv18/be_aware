@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, jsonify
 from flask_login import current_user, logout_user, login_required
 
-from sqlalchemy import func
+from sqlalchemy import func, and_
 
 from app.controllers import loan_controller
 from app.controllers import loan_payment_controller
@@ -22,8 +22,8 @@ def index():
     active_loans = Loan.query.filter(Loan.is_active == True).count()
     paid_loans = Loan.query.filter(Loan.is_active == False).count()
     remaining_to_collect = Loan.query.filter(Loan.is_active == True).with_entities(func.sum(Loan.amount)).scalar()
-    bank_accounts = get_not_deleted_records(model=BankAccount)
-    credit_cards = get_not_deleted_records(model=CreditCard)
+    bank_accounts = BankAccount.query.filter(and_(BankAccount.is_deleted == False, BankAccount.is_active == True)).all()
+    credit_cards = CreditCard.query.filter(and_(CreditCard.is_deleted == False, CreditCard.is_active == True)).all()
     years = get_years()
 
     context = {

@@ -14,10 +14,3 @@ db_url = URL.create(
     port=os.getenv('PORT'),
     database=os.getenv('DATABASE'),
 )
-
-# os.getenv('DATABASE_URL')
-# USERNAME="dba_etv"
-# PASSWORD="Tav18%Etv@03!"
-# HOST="localhost"
-# PORT=3306
-# DATABASE="be_aware"

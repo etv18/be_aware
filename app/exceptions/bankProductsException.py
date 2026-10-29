@@ -1,0 +1,26 @@
+class NoAvailableMoney(Exception):
+    pass
+
+class AmountGreaterThanAvailableMoney(Exception):
+    pass
+
+class BankAccountDoesNotExists(Exception):
+    pass
+
+class CreditCardDoesNotExists(Exception):
+    pass
+
+class AmountIsLessThanOrEqualsToZero(Exception):
+    pass
+
+class NoBankProductSelected(Exception):
+    pass
+
+class CreditCardPaymentDoesNotExists(Exception):
+    pass
+
+class CreditAmountAvailableGreaterThanLimit(Exception):
+    pass
+
+class SameBankAccountSelected(Exception):
+    pass

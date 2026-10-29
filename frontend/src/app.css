@@ -1,0 +1,243 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------ colors
+   Channels (r g b) so Tailwind can add opacity: bg-ink/10. Light is the default; the dark values apply
+   when <html data-theme="dark"> (set by the theme button, falling back to the system preference). */
+:root {
+  --canvas: 247 247 245;
+  --surface: 255 255 255;
+  --sunken: 243 243 240;
+  --line: 229 229 224;
+  --ink: 24 24 27;
+  --ink-inverse: 255 255 255;
+  --muted: 113 113 122;
+  --faint: 161 161 170;
+  --positive: 21 128 61;
+  --negative: 185 28 28;
+  --warning: 180 83 9;
+  --info: 29 78 216;
+  /* one color per module: the menu, the module badge, the top line and the primary button follow it */
+  --m-home: 71 85 105;
+  --m-banks: 8 145 178;
+  --m-accounts: 13 148 136;
+  --m-cards: 219 39 119;
+  --m-incomes: 37 99 235;
+  --m-expenses: 220 38 38;
+  --m-categories: 192 38 211;
+  --m-loans: 161 98 7;
+  --m-debts: 79 70 229;
+  --m-withdrawals: 194 65 12;
+  --m-deposits: 109 40 217;
+  --m-cash: 4 120 87;
+  --module: var(--ink);
+  --on-module: var(--ink-inverse);
+  --c-expenses: var(--m-expenses);
+  --c-incomes: var(--m-incomes);
+  --c-loans: var(--m-loans);
+  --c-debts: var(--m-debts);
+  --c-withdrawals: var(--m-withdrawals);
+  --c-deposits: var(--m-deposits);
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --canvas: 14 14 15;
+  --surface: 24 24 27;
+  --sunken: 33 33 37;
+  --line: 45 45 50;
+  --ink: 244 244 245;
+  --ink-inverse: 24 24 27;
+  --muted: 161 161 170;
+  --faint: 113 113 122;
+  --positive: 74 222 128;
+  --negative: 248 113 113;
+  --warning: 251 191 36;
+  --info: 96 165 250;
+  --m-home: 148 163 184;
+  --m-banks: 34 211 238;
+  --m-accounts: 45 212 191;
+  --m-cards: 244 114 182;
+  --m-incomes: 96 165 250;
+  --m-expenses: 248 113 113;
+  --m-categories: 232 121 249;
+  --m-loans: 251 191 36;
+  --m-debts: 129 140 248;
+  --m-withdrawals: 251 146 60;
+  --m-deposits: 167 139 250;
+  --m-cash: 52 211 153;
+  color-scheme: dark;
+}
+
+/* the page sets <body data-module="expenses">; anything can then use `module` as a color */
+[data-module='home'] { --module: var(--m-home); --on-module: 255 255 255; }
+[data-module='banks'] { --module: var(--m-banks); --on-module: 255 255 255; }
+[data-module='accounts'] { --module: var(--m-accounts); --on-module: 255 255 255; }
+[data-module='cards'] { --module: var(--m-cards); --on-module: 255 255 255; }
+[data-module='incomes'] { --module: var(--m-incomes); --on-module: 255 255 255; }
+[data-module='expenses'] { --module: var(--m-expenses); --on-module: 255 255 255; }
+[data-module='categories'] { --module: var(--m-categories); --on-module: 255 255 255; }
+[data-module='loans'] { --module: var(--m-loans); --on-module: 255 255 255; }
+[data-module='debts'] { --module: var(--m-debts); --on-module: 255 255 255; }
+[data-module='withdrawals'] { --module: var(--m-withdrawals); --on-module: 255 255 255; }
+[data-module='deposits'] { --module: var(--m-deposits); --on-module: 255 255 255; }
+[data-module='cash'] { --module: var(--m-cash); --on-module: 255 255 255; }
+:root[data-theme='dark'] [data-module] { --on-module: 24 24 27; }
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body { @apply bg-canvas text-ink font-sans antialiased; }
+  h1, h2, h3 { @apply tracking-tight; }
+  :focus-visible { @apply outline-none ring-2 ring-module/50 ring-offset-2 ring-offset-canvas; }
+  /* a thin line in the module color across the top of every page */
+  body[data-module]::before { content: ''; @apply fixed inset-x-0 top-0 z-50 h-[3px] bg-module; }
+  ::selection { @apply bg-ink text-ink-inverse; }
+  /* the numbers in tables and cards line up */
+  .num { font-variant-numeric: tabular-nums; }
+}
+
+@layer components {
+  /* ---------------------------------------------------------------- buttons */
+  .btn {
+    @apply inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-lg px-3.5 text-sm font-medium
+           transition-colors disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-primary { @apply bg-module text-on-module hover:bg-module/90; }
+  .btn-outline { @apply border border-line bg-surface text-ink hover:bg-sunken; }
+  .btn-ghost { @apply text-muted hover:bg-sunken hover:text-ink; }
+  .btn-danger { @apply bg-negative text-white hover:bg-negative/90; }
+  .btn-icon { @apply inline-flex size-8 items-center justify-center rounded-lg text-muted transition-colors hover:bg-sunken hover:text-ink; }
+  .btn-icon-danger { @apply hover:bg-negative/10 hover:text-negative; }
+
+  /* ---------------------------------------------------------------- forms */
+  .label { @apply mb-1.5 block text-xs font-medium text-muted; }
+  .input, .select, .textarea {
+    @apply block w-full rounded-lg border border-line bg-surface px-3 text-sm text-ink placeholder:text-faint
+           transition-colors hover:border-faint focus:border-module focus:outline-none focus:ring-0;
+  }
+  .input, .select { @apply h-9; }
+  .textarea { @apply min-h-[4.5rem] py-2; }
+  .select { @apply appearance-none bg-no-repeat pr-8; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-position: right 0.6rem center; }
+  .input[aria-invalid='true'], .select[aria-invalid='true'] { @apply border-negative; }
+  .field-error { @apply mt-1 text-xs text-negative; }
+
+  /* a row of mutually exclusive choices ("Cash | Bank account | Credit card") */
+  .segmented { @apply inline-flex w-full rounded-lg bg-sunken p-0.5; }
+  .segmented label { @apply flex-1 cursor-pointer; }
+  .segmented span { @apply flex h-8 items-center justify-center rounded-md px-3 text-sm text-muted transition-colors; }
+  .segmented input:checked + span { @apply bg-surface font-medium text-module ring-1 ring-line; }
+  .segmented input:focus-visible + span { @apply ring-2 ring-module/50; }
+
+  .tabs { @apply inline-flex gap-1 rounded-lg bg-sunken p-0.5; }
+  .tabs button { @apply flex h-8 items-center gap-1.5 whitespace-nowrap rounded-md px-3 text-sm text-muted transition-colors hover:text-ink; }
+  .tabs button[aria-selected='true'] { @apply bg-surface font-medium text-module ring-1 ring-line; }
+
+  .switch { @apply appearance-none relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full bg-line transition-colors; }
+  .switch::after { content: ''; @apply absolute left-0.5 size-4 rounded-full bg-surface transition-transform; }
+  .switch:checked { @apply bg-module; }
+  .switch:checked::after { @apply translate-x-4 bg-on-module; }
+
+  /* ---------------------------------------------------------------- surfaces */
+  .card { @apply rounded-xl border border-line bg-surface; }
+  .card-pad { @apply p-4 sm:p-5; }
+  /* ---------------------------------------------------------------- top navbar */
+  .nav-link { @apply inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-lg px-2 text-sm text-ink/80 transition-colors hover:bg-sunken hover:text-ink lg:gap-2 lg:px-3; }
+  .nav-link > svg:first-child { @apply text-muted; }
+  .nav-link-active { @apply bg-module/10 font-medium text-module hover:bg-module/15 hover:text-module; }
+  .nav-link-active > svg:first-child { @apply text-module; }
+  .menu-panel { @apply absolute left-0 top-full z-40 mt-2 w-60 rounded-xl border border-line bg-surface p-1.5; }
+  .menu-item { @apply flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm text-ink transition-colors hover:bg-sunken; }
+  .menu-icon { @apply flex size-7 items-center justify-center rounded-md bg-module/10 text-module; }
+  .menu-icon > svg { @apply size-4; }
+  .menu-item-active { @apply bg-module/10 font-medium; }
+  /* which environment is running (APP_ENV) */
+  .env-badge { @apply inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold tracking-wide; }
+  .env-badge[data-env='development'] { @apply bg-warning/15 text-warning; }
+  .env-badge[data-env='production'] { @apply bg-negative/10 text-negative; }
+  .env-badge[data-env='testing'] { @apply bg-sunken text-muted; }
+
+  /* the small pill that says which module you are in */
+  .module-badge { @apply inline-flex items-center gap-1.5 rounded-full bg-module/10 py-1 pl-2 pr-3 text-xs font-medium text-module; }
+  .tag { @apply inline-flex items-center gap-1.5 rounded-md bg-sunken px-2 py-0.5 text-xs font-medium text-muted; }
+  .tag-positive { @apply bg-positive/10 text-positive; }
+  .dot { @apply inline-block size-2 rounded-full; }
+
+  /* ---------------------------------------------------------------- tables */
+  .table-wrap { @apply overflow-x-auto; }
+  /* a long list scrolls inside its card instead of stretching the page; the header stays in view */
+  .table-scroll { @apply overflow-auto; max-height: min(70vh, 36rem); }
+  .table-scroll .table :where(th) { @apply sticky top-0 z-10 bg-sunken; }
+  .cards-scroll { @apply overflow-y-auto; max-height: min(75vh, 40rem); }
+  .row-open tbody tr, .row-open li[data-row] { @apply cursor-pointer; touch-action: manipulation; }
+  .table { @apply w-full min-w-full border-collapse text-sm; }
+  .table :where(th) { @apply whitespace-nowrap border-b border-line bg-sunken/60 px-4 py-2.5 text-left text-xs font-medium text-muted; }
+  .table td { @apply border-b border-line px-4 py-3 align-middle; }
+  .table tbody tr:last-child td { @apply border-b-0; }
+  .table tbody tr { @apply transition-colors hover:bg-sunken/50; }
+  .table .right { @apply text-right; }
+
+  /* ---------------------------------------------------------------- dialogs */
+  dialog.modal {
+    @apply m-auto w-[calc(100%-2rem)] max-w-lg rounded-xl border border-line bg-surface p-0 text-ink;
+    box-shadow: 0 24px 64px -12px rgb(0 0 0 / 0.35);
+  }
+  dialog.modal::backdrop { background: rgb(10 10 10 / 0.5); }
+  dialog.modal[open] { animation: modal-in 140ms ease-out; }
+  @media (max-width: 639px) {
+    /* on a phone a dialog is a sheet from the bottom edge */
+    dialog.modal { @apply mb-0 mt-auto w-full max-w-none rounded-b-none; }
+    dialog.modal[open] { animation: sheet-in 180ms ease-out; }
+  }
+  @keyframes modal-in { from { opacity: 0; transform: translateY(6px) scale(0.99); } }
+  @keyframes sheet-in { from { transform: translateY(24px); opacity: 0; } }
+}
+
+@layer utilities {
+  .icon { width: 1.125rem; height: 1.125rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .skeleton { @apply animate-pulse rounded-md bg-sunken; }
+  /* keeps a wide table from stretching the page on a phone */
+  .scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+
+/* ---------------------------------------------------------------- date picker (flatpickr, vendored)
+   The library's own stylesheet is loaded first; this only gives it the colors of the app, light and dark. */
+.flatpickr-calendar {
+  width: 19.25rem; padding: 0.25rem 0 0; box-sizing: border-box; border: 1px solid rgb(var(--line)); border-radius: 0.75rem;
+  background: rgb(var(--surface)); color: rgb(var(--ink)); box-shadow: 0 16px 40px -12px rgb(0 0 0 / 0.35);
+  font-family: inherit; z-index: 80;
+}
+.flatpickr-innerContainer, .flatpickr-rContainer, .flatpickr-days, .dayContainer { width: 100%; min-width: 100%; max-width: 100%; }
+.dayContainer { padding: 0 0.25rem; box-sizing: border-box; }
+.flatpickr-day { max-width: none; height: 2.25rem; line-height: 2.25rem; flex-basis: 14.2857%; }
+.flatpickr-calendar.arrowTop::before, .flatpickr-calendar.arrowTop::after,
+.flatpickr-calendar.arrowBottom::before, .flatpickr-calendar.arrowBottom::after { display: none; }
+.flatpickr-calendar.inline, .flatpickr-calendar.static { margin-top: 0.25rem; }
+.flatpickr-months .flatpickr-month, .flatpickr-current-month, .flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month input.cur-year { color: rgb(var(--ink)); fill: rgb(var(--ink)); font-weight: 500; }
+.flatpickr-current-month .flatpickr-monthDropdown-months { background: transparent; }
+.flatpickr-current-month .flatpickr-monthDropdown-months:hover, .flatpickr-current-month .numInputWrapper:hover { background: rgb(var(--sunken)); }
+.flatpickr-current-month .flatpickr-monthDropdown-months .flatpickr-monthDropdown-month { background: rgb(var(--surface)); color: rgb(var(--ink)); }
+.flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month { color: rgb(var(--muted)); fill: rgb(var(--muted)); }
+.flatpickr-months .flatpickr-prev-month:hover svg, .flatpickr-months .flatpickr-next-month:hover svg { fill: rgb(var(--ink)); }
+span.flatpickr-weekday { background: transparent; color: rgb(var(--muted)); font-weight: 600; }
+.flatpickr-day { color: rgb(var(--ink)); border-radius: 9999px; border-color: transparent; }
+.flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay, .flatpickr-day.flatpickr-disabled { color: rgb(var(--faint)); }
+.flatpickr-day:hover, .flatpickr-day:focus { background: rgb(var(--sunken)); border-color: transparent; }
+.flatpickr-day.today { border-color: rgb(var(--module, var(--ink))); }
+.flatpickr-day.today:hover { background: rgb(var(--sunken)); color: rgb(var(--ink)); }
+.flatpickr-day.selected, .flatpickr-day.selected:hover, .flatpickr-day.selected:focus {
+  background: rgb(var(--module, var(--ink))); border-color: rgb(var(--module, var(--ink))); color: rgb(var(--on-module, var(--surface)));
+}
+.flatpickr-time { border-top: 1px solid rgb(var(--line)) !important; }
+.flatpickr-time input, .flatpickr-time .flatpickr-time-separator, .flatpickr-time .flatpickr-am-pm { color: rgb(var(--ink)); background: transparent; font-weight: 500; }
+.flatpickr-time input:hover, .flatpickr-time .flatpickr-am-pm:hover, .flatpickr-time input:focus, .flatpickr-time .flatpickr-am-pm:focus { background: rgb(var(--sunken)); }
+.numInputWrapper span { border-color: rgb(var(--line)); }
+.numInputWrapper span:hover { background: rgb(var(--sunken)); }
+.numInputWrapper span.arrowUp::after { border-bottom-color: rgb(var(--muted)); }
+.numInputWrapper span.arrowDown::after { border-top-color: rgb(var(--muted)); }

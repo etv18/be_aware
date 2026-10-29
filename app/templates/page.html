@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div id="app"{% for name, value in params.items() %} data-{{ name }}="{{ value }}"{% endfor %}></div>
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="{{ url_for('static', filename='js/pages/' ~ script ~ '.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+{% from 'partials/ui.html' import page_header, stat_row, table_card, row_actions, chart_card, form_dialog, amount_field, date_field, text_field, select_field %}
+
+{% block title %}Deposits{% endblock %}
+
+{% block content %}
+    {{ page_header('Deposits', 'Cash you put into a bank account.', new_label='New deposit') }}
+
+    {{ stat_row([('total', 'Total', true)]) }}
+
+    {% call table_card([('Description', ''), ('Into account', 'hidden sm:table-cell'), ('Date', 'hidden sm:table-cell'), ('Amount', 'text-right')],
+                       placeholder='Search description or account…') %}
+        <tr>
+            <td class="max-w-[22ch] sm:max-w-[34ch]">
+                <span class="block truncate font-medium" data-cell="description"></span>
+                <span class="block truncate text-xs text-muted sm:hidden" data-cell="meta"></span>
+            </td>
+            <td class="hidden sm:table-cell" data-cell="account"></td>
+            <td class="hidden whitespace-nowrap text-muted sm:table-cell" data-cell="date"></td>
+            <td class="num text-right font-medium" data-cell="amount"></td>
+            {{ row_actions() }}
+        </tr>
+    {% endcall %}
+
+    {{ chart_card('Deposits per month') }}
+
+    {% call form_dialog('record-dialog', 'New deposit') %}
+        {{ amount_field() }}
+        {{ date_field() }}
+        {{ select_field('bank_account_id', 'Deposit into') }}
+        {{ text_field('description', 'Description', optional=true) }}
+    {% endcall %}
+
+    {% include 'partials/confirm_dialog.html' %}
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="{{ url_for('static', filename='js/deposits.js') }}"></script>
+{% endblock %}

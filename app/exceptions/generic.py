@@ -1,0 +1,2 @@
+class NotRecordFound(Exception):
+    pass

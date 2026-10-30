@@ -1,0 +1,33 @@
+# Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Secrets and local settings (never commit these)
+.env
+.env.*
+!.env.example
+
+# Local data: databases, uploads, logs
+/instance/
+*.db
+*.sqlite3
+logs/
+*.log
+error.log
+
+# Front-end tooling: reinstall with "npm install" in /frontend
+node_modules/
+
+# Editors, OS and tooling noise
+.idx/
+*.nix
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+app_structure.txt

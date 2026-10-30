@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+{% from 'partials/ui.html' import icon, page_header, table_card, row_actions, form_dialog, text_field %}
+
+{% block title %}Banks{% endblock %}
+
+{% block content %}
+    {{ page_header('Banks', 'The institutions your accounts and cards belong to.', new_label='New bank') }}
+
+    {% call table_card([('Bank', ''), ('Added', 'hidden sm:table-cell')], filters=false) %}
+        <tr>
+            <td><span class="inline-flex items-center gap-2 font-medium"><span class="text-muted">{{ icon('landmark') }}</span><span data-cell="name"></span></span></td>
+            <td class="hidden whitespace-nowrap text-muted sm:table-cell" data-cell="added"></td>
+            {{ row_actions() }}
+        </tr>
+    {% endcall %}
+
+    {% call form_dialog('record-dialog', 'New bank') %}
+        {{ text_field('name', 'Bank name') }}
+    {% endcall %}
+
+    {% include 'partials/confirm_dialog.html' %}
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="{{ url_for('static', filename='js/banks.js') }}"></script>
+{% endblock %}

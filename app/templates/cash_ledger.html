@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+{% from 'partials/ui.html' import page_header, stat_row, table_card, row_actions, form_dialog, amount_field, date_field %}
+
+{% block title %}Cash ledger{% endblock %}
+
+{% block content %}
+    {{ page_header('Cash ledger', 'Every movement of the cash you hold.', new_label='Adjust cash') }}
+
+    {{ stat_row([('cash', 'Cash on hand', false)]) }}
+
+    {% call table_card([('Reference', ''), ('Type', 'hidden sm:table-cell'), ('Date', 'hidden sm:table-cell'), ('Amount', 'text-right')],
+                       placeholder='Search reference or type…') %}
+        <tr>
+            <td>
+                <span class="block font-mono text-xs font-medium" data-cell="reference"></span>
+                <span class="block text-xs text-muted sm:hidden" data-cell="meta"></span>
+            </td>
+            <td class="hidden sm:table-cell"><span class="tag" data-cell="type"></span></td>
+            <td class="hidden whitespace-nowrap text-muted sm:table-cell" data-cell="date"></td>
+            <td class="num text-right" data-cell="amount"></td>
+            {# only manual adjustments can be deleted: the script hides the button on the other rows #}
+            {{ row_actions(edit=false) }}
+        </tr>
+    {% endcall %}
+
+    {% call form_dialog('record-dialog', 'Cash adjustment') %}
+        {{ amount_field(help='Positive adds cash, negative takes it away.') }}
+        {{ date_field() }}
+    {% endcall %}
+
+    {% include 'partials/confirm_dialog.html' %}
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="{{ url_for('static', filename='js/cash_ledger.js') }}"></script>
+{% endblock %}

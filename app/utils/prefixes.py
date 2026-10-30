@@ -1,0 +1,26 @@
+WITHDRAWAL = 'WDR'
+LOAN = 'LOAN'
+INCOME = 'INC'
+EXPENSE = 'EXP'
+BANK_TRANSFER = 'BTRA'
+DEBT = 'DEBT'
+LOAN_PAYMENT = 'LPMT'
+DEBT_PAYMENT = 'DPMT'
+CREDIT_CARD_PAYMENT = 'CCP'
+DEPOSIT = 'DPT'
+ADJUSTMENT = 'ADJ'
+
+def get_prefixes():
+    return (
+        WITHDRAWAL,
+        LOAN,
+        LOAN_PAYMENT,
+        INCOME,
+        EXPENSE,
+        BANK_TRANSFER,
+        CREDIT_CARD_PAYMENT,
+        DEBT,
+        DEBT_PAYMENT,
+        DEPOSIT,
+        ADJUSTMENT,
+    )

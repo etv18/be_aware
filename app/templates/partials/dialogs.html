@@ -1,0 +1,32 @@
+{#- Forms that more than one page uses (the script side is static/js/forms.js).
+      {% from 'partials/dialogs.html' import transfer_dialog, card_payment_dialog, payment_dialog %} -#}
+{% from 'partials/ui.html' import form_dialog, amount_field, date_field, select_field, method_field, switch_field %}
+
+{# Move money from one bank account to another. The "from" account is the one the page opened it for. #}
+{% macro transfer_dialog() -%}
+{% call form_dialog('transfer-dialog', 'New transfer') %}
+    {{ amount_field() }}
+    {{ date_field() }}
+    {{ select_field('to_bank_account_id', 'To account') }}
+{% endcall %}
+{%- endmacro %}
+
+{# Pay a credit card from an account, or add cashback. #}
+{% macro card_payment_dialog() -%}
+{% call form_dialog('card-payment-dialog', 'Pay credit card') %}
+    {{ amount_field() }}
+    {{ date_field() }}
+    {{ switch_field('is_cashback', 'Cashback', help='Credit added to the card without paying from an account.') }}
+    {{ select_field('bank_account_id', 'Pay from', when='is_cashback=false') }}
+{% endcall %}
+{%- endmacro %}
+
+{# A payment on a loan (money comes in) or a debt (money goes out). label: "Received in" / "Paid from". #}
+{% macro payment_dialog(label) -%}
+{% call form_dialog('payment-dialog', 'New payment') %}
+    {{ amount_field() }}
+    {{ date_field() }}
+    {{ method_field(label, [('cash', 'Cash'), ('bank', 'Bank account')]) }}
+    {{ select_field('bank_account_id', 'Bank account', when='method=bank') }}
+{% endcall %}
+{%- endmacro %}

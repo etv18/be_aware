@@ -1,0 +1,132 @@
+{#- The shell every page shares: top navbar from 1024px up, top bar and drawer below that.
+    A page sets `nav` (which item is active) and fills the `content` and `scripts` blocks. -#}
+{%- set sprite = url_for('static', filename='img/icons.svg') -%}
+{%- macro icon(name, classes='') -%}<svg class="icon {{ classes }}" aria-hidden="true"><use href="{{ sprite }}#{{ name }}"></use></svg>{%- endmacro -%}
+
+{#- The menu: one entry per group. `single` groups are a plain link, the others open a dropdown (a list on a phone). -#}
+{%- set groups = [
+    {'name': 'Home', 'glyph': 'house', 'items': [('home', 'home.index', 'house', 'Home')]},
+    {'name': 'Cash flow', 'glyph': 'arrow-left-right', 'items': [
+        ('incomes', 'income.index', 'trending-up', 'Incomes'),
+        ('expenses', 'expense.index', 'receipt', 'Expenses'),
+        ('categories', 'expense_category.index', 'tags', 'Expense categories')]},
+    {'name': 'Bank products', 'glyph': 'wallet-cards', 'items': [
+        ('banks', 'bank.index', 'landmark', 'Banks'),
+        ('accounts', 'bank_account.index', 'wallet', 'Bank accounts'),
+        ('cards', 'credit_card.index', 'credit-card', 'Credit cards')]},
+    {'name': 'Cash', 'glyph': 'banknote', 'items': [
+        ('withdrawals', 'withdrawal.index', 'arrow-up-from-line', 'Withdrawals'),
+        ('deposits', 'deposit.index', 'arrow-down-to-line', 'Deposits'),
+        ('cash', 'cashledger.index', 'coins', 'Cash ledger')]},
+    {'name': 'Lending', 'glyph': 'handshake', 'items': [
+        ('loans', 'loan.index', 'hand-coins', 'Loans'),
+        ('debts', 'debt.index', 'scroll-text', 'Debts')]},
+] -%}
+{%- set current = namespace(label='Be Aware', glyph='eye', group='') -%}
+{%- for group in groups %}{% for key, endpoint, glyph, label in group['items'] %}{% if key == nav %}{% set current.label = label %}{% set current.glyph = glyph %}{% set current.group = group['name'] %}{% endif %}{% endfor %}{% endfor -%}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{% if env_name != 'production' %}[{{ env_label }}] {% endif %}{% block title %}Be Aware{% endblock %} · Be Aware</title>
+    <script>
+        // set the theme before the first paint so the page does not flash
+        (function () {
+            try {
+                var saved = localStorage.getItem('theme');
+                var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+            } catch (e) {}
+        })();
+    </script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/flatpickr.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body data-module="{{ nav }}">
+    {%- macro env_badge(classes='') -%}
+    <span class="env-badge {{ classes }}" data-env="{{ env_name }}" title="Running with APP_ENV={{ env_name }}">{{ env_label }}</span>
+    {%- endmacro %}
+
+    <!-- top navbar (tablet and desktop) -->
+    <header class="sticky top-0 z-30 hidden border-b border-line bg-surface lg:block">
+        <div class="mx-auto flex h-14 max-w-[1440px] items-center gap-2 px-4 sm:px-6 lg:gap-4 lg:px-8">
+            <a href="{{ url_for('home.index') }}" class="flex shrink-0 items-center gap-2.5 text-sm font-semibold" aria-label="Be Aware">
+                <span class="flex size-8 items-center justify-center rounded-lg bg-ink text-ink-inverse">{{ icon('eye') }}</span><span class="hidden lg:inline">Be Aware</span>
+            </a>
+
+            <nav class="flex min-w-0 flex-1 items-center gap-0.5 lg:gap-1" aria-label="Main">
+                {%- for group in groups %}
+                {%- set active_group = current.group == group['name'] %}
+                {%- if group['items']|length == 1 %}
+                {%- set key, endpoint, glyph, label = group['items'][0] %}
+                <a href="{{ url_for(endpoint) }}" style="--module: var(--m-{{ key }})" class="nav-link {{ 'nav-link-active' if nav == key }}" {% if nav == key %}aria-current="page"{% endif %}>{{ icon(glyph) }}<span>{{ label }}</span></a>
+                {%- else %}
+                <div class="relative" data-menu>
+                    <button type="button" class="nav-link {{ 'nav-link-active' if active_group }}" {% if active_group %}style="--module: var(--m-{{ nav }})"{% endif %} aria-expanded="false" aria-haspopup="true" data-menu-trigger>
+                        {{ icon(group['glyph']) }}<span>{{ group['name'] }}</span>{{ icon('chevron-down', 'size-3.5 opacity-70') }}
+                    </button>
+                    <div class="menu-panel hidden" data-menu-panel role="menu">
+                        {%- for key, endpoint, glyph, label in group['items'] %}
+                        <a href="{{ url_for(endpoint) }}" style="--module: var(--m-{{ key }})" role="menuitem" class="menu-item {{ 'menu-item-active' if nav == key }}" {% if nav == key %}aria-current="page"{% endif %}>
+                            <span class="menu-icon">{{ icon(glyph) }}</span><span>{{ label }}</span><span class="ml-auto hidden rounded bg-module/15 px-1.5 text-xs font-medium text-module" data-count="{{ key }}"></span>
+                        </a>
+                        {%- endfor %}
+                    </div>
+                </div>
+                {%- endif %}
+                {%- endfor %}
+            </nav>
+
+            <div class="flex shrink-0 items-center gap-1">
+                {{ env_badge('mr-1') }}
+                <button type="button" class="btn-icon" data-theme-toggle aria-label="Switch theme">{{ icon('sun-moon') }}</button>
+                <button type="button" class="btn-icon" data-logout aria-label="Log out">{{ icon('log-out') }}</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- top bar (phone) -->
+    <header class="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-line bg-surface px-4 lg:hidden">
+        <button type="button" class="btn-icon -ml-1.5 size-9" data-drawer-open aria-label="Open menu">{{ icon('menu', 'size-5') }}</button>
+        <span class="flex min-w-0 items-center gap-2 text-sm font-semibold"><span class="flex size-7 shrink-0 items-center justify-center rounded-lg bg-module text-on-module">{{ icon(current.glyph, 'size-4') }}</span><span class="truncate">{{ current.label }}</span></span>
+        {{ env_badge('ml-auto') }}
+    </header>
+
+    <!-- drawer (phone) -->
+    <div class="fixed inset-0 z-40 hidden bg-black/50 lg:hidden" data-drawer-backdrop></div>
+    <aside class="fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85%] -translate-x-full flex-col border-r border-line bg-surface transition-transform duration-200 lg:hidden" data-drawer aria-label="Menu">
+        <div class="flex h-14 items-center justify-between border-b border-line px-4">
+            <span class="flex items-center gap-2 text-sm font-semibold"><span class="flex size-8 items-center justify-center rounded-lg bg-ink text-ink-inverse">{{ icon('eye') }}</span>Be Aware</span>
+            <button type="button" class="btn-icon" data-drawer-close aria-label="Close menu">{{ icon('x') }}</button>
+        </div>
+        <div class="flex-1 overflow-y-auto p-3">
+            {%- for group in groups %}
+            {%- if group['items']|length > 1 %}<p class="mb-1 mt-4 px-3 text-xs font-medium uppercase tracking-wide text-faint">{{ group['name'] }}</p>{% endif %}
+            {%- for key, endpoint, glyph, label in group['items'] %}
+            <a href="{{ url_for(endpoint) }}" style="--module: var(--m-{{ key }})" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm {{ 'bg-module font-medium text-on-module' if nav == key else 'text-ink hover:bg-sunken' }}">
+                <span class="{{ '' if nav == key else 'text-module' }}">{{ icon(glyph) }}</span><span>{{ label }}</span><span class="ml-auto hidden rounded bg-ink-inverse/20 px-1.5 text-xs" data-count="{{ key }}"></span>
+            </a>
+            {%- endfor %}
+            {%- endfor %}
+        </div>
+        <div class="flex gap-2 border-t border-line p-3">
+            <button type="button" class="btn btn-outline flex-1" data-theme-toggle>{{ icon('sun-moon') }}Theme</button>
+            <button type="button" class="btn btn-outline flex-1" data-logout>{{ icon('log-out') }}Log out</button>
+        </div>
+    </aside>
+
+    <main>
+        <div class="mx-auto w-full max-w-[1280px] px-4 py-5 sm:px-6 md:py-8 lg:px-8">
+            <span class="module-badge mb-4 hidden lg:inline-flex">{{ icon(current.glyph, 'size-3.5') }}{% if current.group and current.group != current.label %}{{ current.group }} · {% endif %}{{ current.label }}</span>
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='vendor/chart.umd.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/flatpickr.min.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

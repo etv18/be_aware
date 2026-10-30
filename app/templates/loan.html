@@ -1,0 +1,34 @@
+{% extends 'layout.html' %}
+{% from 'partials/ui.html' import icon, page_header, stat_row, table_card, row_actions %}
+{% from 'partials/dialogs.html' import payment_dialog %}
+
+{% block title %}Loan{% endblock %}
+
+{% block content %}
+    <div id="page" data-id="{{ id }}">
+        {{ page_header(back_href=url_for('loan.index'), back_label='Loans') }}
+
+        {{ stat_row([('amount', 'Amount', false), ('paid', 'Paid', false), ('remaining', 'Remaining', false), ('status', 'Status', false)]) }}
+
+        <div class="mb-3 flex items-center justify-between gap-3">
+            <h2 class="text-base font-semibold">Payments</h2>
+            <button type="button" class="btn btn-primary" data-new>{{ icon('plus') }}New payment</button>
+        </div>
+
+        {% call table_card([('Date', ''), ('Received in', 'hidden sm:table-cell'), ('Amount', 'text-right')], placeholder='Search description or amount…', total=true) %}
+            <tr>
+                <td class="whitespace-nowrap" data-cell="date"></td>
+                <td class="hidden sm:table-cell" data-cell="source"></td>
+                <td class="num text-right font-medium text-positive" data-cell="amount"></td>
+                {{ row_actions() }}
+            </tr>
+        {% endcall %}
+    </div>
+
+    {{ payment_dialog('Received in') }}
+    {% include 'partials/confirm_dialog.html' %}
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="{{ url_for('static', filename='js/loan.js') }}"></script>
+{% endblock %}

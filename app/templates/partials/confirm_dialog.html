@@ -1,0 +1,12 @@
+{#- "Are you sure?" pop-up. Include it once in a page: {% include 'partials/confirm_dialog.html' %}
+    The page script fills the title and text and waits for the answer: confirmDialog($('#confirm-dialog'), {title, text}) -#}
+<dialog class="modal" id="confirm-dialog">
+    <div class="p-5">
+        <h2 class="text-base font-semibold" data-confirm-title>Are you sure?</h2>
+        <p class="mt-1.5 text-sm text-muted" data-confirm-text></p>
+        <div class="mt-5 flex justify-end gap-2">
+            <button type="button" class="btn btn-outline" data-close>Cancel</button>
+            <button type="button" class="btn btn-danger" data-confirm>Delete</button>
+        </div>
+    </div>
+</dialog>

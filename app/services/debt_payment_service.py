@@ -6,7 +6,7 @@ from app.models.cash_ledger import CashLedger
 from app.models.debt import Debt
 from app.models.debt_payment import DebtPayment
 from app.exceptions.bankProductsException import NoBankProductSelected
-from app.exceptions.records import DebtAlreadyPaid
+from app.exceptions.records import DebtAlreadyPaid, MarkedAsPaid
 from app.services import money, obligations, search as search_service
 from app.services.search import SearchSpec
 from app.utils.date_handling import utcnow
@@ -28,6 +28,10 @@ def create_debt_payment(*, debt_id, amount, is_cash, bank_account_id=None, creat
 
         if _total_paid(debt) >= debt.amount:
             raise DebtAlreadyPaid('Debt is already fully paid')
+
+                # Checks if the loan is no longer active even though it's not fully paid
+        if not debt.is_active:
+            raise MarkedAsPaid('Status indicates this debt is paid')
 
         amount = money.validate_amount(amount)
         bank_account_id = _account_for(is_cash, bank_account_id)

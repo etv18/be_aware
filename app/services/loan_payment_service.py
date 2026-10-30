@@ -6,7 +6,7 @@ from app.models.cash_ledger import CashLedger
 from app.models.loan import Loan
 from app.models.loan_payment import LoanPayment
 from app.exceptions.bankProductsException import NoBankProductSelected
-from app.exceptions.records import LoanAlreadyPaid
+from app.exceptions.records import LoanAlreadyPaid, MarkedAsPaid
 from app.services import money, obligations, search as search_service
 from app.services.search import SearchSpec
 from app.utils.date_handling import utcnow
@@ -28,6 +28,10 @@ def create_loan_payment(*, loan_id, amount, is_cash, bank_account_id=None, creat
 
         if _total_paid(loan) >= loan.amount:
             raise LoanAlreadyPaid('Loan is already fully paid')
+
+        # Checks if the loan is no longer active even though it's not fully paid
+        if not loan.is_active:
+            raise MarkedAsPaid('Status indicates this loan is paid')
 
         amount = money.validate_amount(amount)
         bank_account_id = _account_for(is_cash, bank_account_id)

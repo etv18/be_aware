@@ -12,6 +12,10 @@ class DebtAlreadyPaid(Exception):
     """A payment was attempted on a debt whose payments already cover it."""
     pass
 
+class MarkedAsPaid(Exception):
+    """A payment was attempted on a debt whose payments already cover it."""
+    pass
+
 
 class BankInUse(Exception):
     """A bank cannot be deleted while bank accounts or credit cards still belong to it."""

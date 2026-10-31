@@ -43,30 +43,30 @@
 }
 
 :root[data-theme='dark'] {
-  --canvas: 14 14 15;
-  --surface: 24 24 27;
-  --sunken: 33 33 37;
-  --line: 45 45 50;
-  --ink: 244 244 245;
-  --ink-inverse: 24 24 27;
-  --muted: 161 161 170;
-  --faint: 113 113 122;
-  --positive: 74 222 128;
-  --negative: 248 113 113;
-  --warning: 251 191 36;
-  --info: 96 165 250;
-  --m-home: 148 163 184;
-  --m-banks: 34 211 238;
-  --m-accounts: 45 212 191;
-  --m-cards: 244 114 182;
-  --m-incomes: 96 165 250;
-  --m-expenses: 248 113 113;
-  --m-categories: 232 121 249;
-  --m-loans: 251 191 36;
-  --m-debts: 129 140 248;
-  --m-withdrawals: 251 146 60;
-  --m-deposits: 167 139 250;
-  --m-cash: 52 211 153;
+  --canvas: 14 22 44;
+  --surface: 22 32 58;
+  --sunken: 30 42 72;
+  --line: 56 70 104;
+  --ink: 230 226 210;
+  --muted: 160 164 176;
+  --faint: 112 118 136;
+  --ink-inverse: 14 22 44;
+  --positive: 80 150 110;
+  --negative: 190 90 90;
+  --warning: 175 135 70;
+  --info: 95 130 190;
+  --m-home: 110 124 158;
+  --m-banks: 82 138 160;
+  --m-accounts: 82 140 135;
+  --m-cards: 160 100 130;
+  --m-incomes: 90 125 180;
+  --m-expenses: 175 95 95;
+  --m-categories: 145 100 165;
+  --m-loans: 160 130 80;
+  --m-debts: 115 115 175;
+  --m-withdrawals: 170 120 85;
+  --m-deposits: 130 105 170;
+  --m-cash: 85 135 110;
   color-scheme: dark;
 }
 

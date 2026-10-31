@@ -152,7 +152,7 @@
   .menu-icon > svg { @apply size-4; }
   .menu-item-active { @apply bg-module/10 font-medium; }
   /* which environment is running (APP_ENV) */
-  .env-badge { @apply inline-flex items-center rounded-md px-2 py-0.5 text-[16px] font-semibold tracking-wide; }
+  .env-badge { @apply inline-flex items-center rounded-md px-2 py-0.5 text-[18px] font-semibold tracking-wide; }
   .env-badge[data-env='development'] { @apply bg-warning/15 text-warning; }
   .env-badge[data-env='production'] { @apply bg-negative/10 text-negative; }
   .env-badge[data-env='testing'] { @apply bg-sunken text-muted; }

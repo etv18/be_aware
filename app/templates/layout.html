@@ -46,7 +46,9 @@
 </head>
 <body data-module="{{ nav }}">
     {%- macro env_badge(classes='') -%}
-    <span class="env-badge {{ classes }}" data-env="{{ env_name }}" title="Running with APP_ENV={{ env_name }}">{{ env_label }}</span>
+        {% if env_name != 'production' %}
+            <span class="env-badge {{ classes }}" data-env="{{ env_name }}" title="Running with APP_ENV={{ env_name }}">{{ env_label }}</span>
+        {% endif %}
     {%- endmacro %}
 
     <!-- top navbar (tablet and desktop) -->

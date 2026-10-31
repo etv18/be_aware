@@ -35,29 +35,29 @@ def payment_form(debt_id, amount, account=None, cash=False, created_at='2026-10-
 
 
 def create_debt(client, **kwargs):
-    return client.post('/debts', json=debt_form(**kwargs))
+    return client.post('/api/debts', json=debt_form(**kwargs))
 
 
 def update_debt(client, debt_id, **kwargs):
-    return client.put(f'/debts/{debt_id}', json=debt_form(**kwargs))
+    return client.put(f'/api/debts/{debt_id}', json=debt_form(**kwargs))
 
 
 def delete_debt(client, debt_id):
-    return client.delete(f'/debts/{debt_id}')
+    return client.delete(f'/api/debts/{debt_id}')
 
 
 def pay(client, debt_id, **kwargs):
-    return client.post('/debt_payments', json=payment_form(debt_id, **kwargs))
+    return client.post('/api/debt_payments', json=payment_form(debt_id, **kwargs))
 
 
 def update_payment(client, payment_id, debt_id, **kwargs):
     body = payment_form(debt_id, **kwargs)
     del body['debt_id']
-    return client.put(f'/debt_payments/{payment_id}', json=body)
+    return client.put(f'/api/debt_payments/{payment_id}', json=body)
 
 
 def delete_payment(client, payment_id):
-    return client.delete(f'/debt_payments/{payment_id}')
+    return client.delete(f'/api/debt_payments/{payment_id}')
 
 
 def balance(db, account):
@@ -120,7 +120,7 @@ def test_debt_keeps_the_date_it_was_given(client):
 
 
 def test_debt_without_a_date_uses_now(client):
-    response = client.post('/debts', json={'amount': '10', 'person_name': 'C', 'is_cash': True})
+    response = client.post('/api/debts', json={'amount': '10', 'person_name': 'C', 'is_cash': True})
 
     assert response.status_code == 201
     assert only_debt().created_at is not None
@@ -510,18 +510,18 @@ def make_debts(client, data):
 def test_debt_filter_by_time(client, data):
     make_debts(client, data)
 
-    body = client.get('/debts', query_string={'start': '2026-10-01', 'end': '2026-10-31'}).get_json()
+    body = client.get('/api/debts', query_string={'start': '2026-10-01', 'end': '2026-10-31'}).get_json()
 
     assert [d['person_name'] for d in body['data']] == ['Carlos']
     assert body['meta']['total'] == '300.00'
-    assert client.get('/debts', query_string={'end': '2026-10-31'}).status_code == 422  # both dates or none
+    assert client.get('/api/debts', query_string={'end': '2026-10-31'}).status_code == 422  # both dates or none
 
 
 def test_debt_filter_by_field(client, data):
     make_debts(client, data)
 
     for query, expected in (('carlos', ['Carlos']), ('old loan', ['Dana']), ('checking', ['Carlos']), ('nothing', [])):
-        body = client.get('/debts', query_string={'q': query}).get_json()
+        body = client.get('/api/debts', query_string={'q': query}).get_json()
         assert [d['person_name'] for d in body['data']] == expected, query
 
 
@@ -531,7 +531,7 @@ def test_debt_filter_understands_yes_no_active_and_paid(client, data):
                 cash=True, paid=True, created_at='2026-09-01T12:00')
 
     def names(**params):
-        return [d['person_name'] for d in client.get('/debts', query_string=params).get_json()['data']]
+        return [d['person_name'] for d in client.get('/api/debts', query_string=params).get_json()['data']]
 
     assert names(q='yes') == ['Dana']
     assert names(q='no') == ['Carlos']
@@ -539,7 +539,7 @@ def test_debt_filter_understands_yes_no_active_and_paid(client, data):
     assert names(q='paid') == ['Dana']
     assert names(q='a', start='2026-10-01', end='2026-10-31') == ['Carlos']
 
-    meta = client.get('/debts', query_string={'q': 'active'}).get_json()['meta']
+    meta = client.get('/api/debts', query_string={'q': 'active'}).get_json()['meta']
     assert meta['actives'] == 1 and meta['paids'] == 0
     assert meta['remaining'] == '300.00'
 
@@ -549,10 +549,10 @@ def test_debt_payments_of_one_debt(client):
     debt_id = only_debt().id
     pay(client, debt_id, amount='30', cash=True)
 
-    body = client.get(f'/debts/{debt_id}/payments').get_json()
+    body = client.get(f'/api/debts/{debt_id}/payments').get_json()
 
     assert body['meta']['count'] == 1
-    assert client.get('/debts/999/payments').status_code == 404
+    assert client.get('/api/debts/999/payments').status_code == 404
 
 
 def test_debt_payment_filter(client, data):
@@ -562,7 +562,7 @@ def test_debt_payment_filter(client, data):
     pay(client, debt_id, amount='20', cash=True, created_at='2026-09-02T09:00')
 
     def amounts(**params):
-        response = client.get('/debt_payments', query_string=params)
+        response = client.get('/api/debt_payments', query_string=params)
         assert response.status_code == 200
         return sorted(float(p['amount']) for p in response.get_json()['data'])
 
@@ -576,9 +576,9 @@ def test_pages_render(client, data):
     debt_id = Debt.query.filter_by(person_name='Carlos').one().id
     pay(client, debt_id, amount='10', cash=True)
 
-    assert client.get('/debts/index').status_code == 200
-    assert client.get(f'/debts/associated/records/{debt_id}').status_code == 200
-    assert client.get('/debt_payments/index').status_code == 200
+    assert client.get('/debts').status_code == 200
+    assert client.get(f'/debts/{debt_id}').status_code == 200
+    assert client.get('/debt_payments').status_code == 200
 
 
 # ------------------------------------------------------------------ in kind, and closed by hand
@@ -603,13 +603,13 @@ def test_debt_update_to_no_money_moved_takes_the_money_back(client, db, data):
 
 def test_debt_marked_as_paid_by_hand_stops_counting_as_money_to_pay(client):
     create_debt(client, amount='100', cash=True)
-    assert client.get('/dashboard').get_json()['data']['to_pay'] == '100.00'
+    assert client.get('/api/dashboard').get_json()['data']['to_pay'] == '100.00'
 
     update_debt(client, only_debt().id, amount='100', cash=True, paid=True)
 
     assert only_debt().is_active is False
-    assert client.get('/dashboard').get_json()['data']['to_pay'] == '0.00'
-    assert client.get(f'/debts/{only_debt().id}').get_json()['data']['remaining_amount'] == '100.00'  # still shown on the row
+    assert client.get('/api/dashboard').get_json()['data']['to_pay'] == '0.00'
+    assert client.get(f'/api/debts/{only_debt().id}').get_json()['data']['remaining_amount'] == '100.00'  # still shown on the row
 
 
 def test_debt_unmarked_goes_back_to_what_the_payments_say(client):

@@ -1,17 +1,17 @@
-from flask import Blueprint
+from flask import Blueprint, render_template
 from flask_login import login_required
 
 from app.controllers import bank_controller as controller
-from app.routes._pages import page
 from app.routes._rest import register
 
-bank_bp = Blueprint('bank', __name__, url_prefix='/banks')
+bank_bp = Blueprint('bank', __name__)
 
 
-@bank_bp.route('/index', methods=['GET'])
+@bank_bp.get('/banks')
 @login_required
 def index():
-    return page('banks', 'banks', 'Banks')
+    return render_template('banks.html', nav='banks')
 
-# GET /, POST /, GET /<id>, PUT /<id>, DELETE /<id>   (JSON in, JSON out)
-register(bank_bp, controller.RESOURCE)
+
+# JSON: GET /api/banks, POST /api/banks, GET /api/banks/<id>, PUT /api/banks/<id>, DELETE /api/banks/<id>
+register(bank_bp, controller.RESOURCE, '/banks')

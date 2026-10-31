@@ -11,7 +11,7 @@ from app.models.credit_card_transactions_ledger import CreditCardTransactionsLed
 from app.models.loan import Loan
 from app.models.loan_payment import LoanPayment
 
-BASE = '/loans'
+BASE = '/api/loans'
 
 
 def loan_form(amount, person='Ana', description='Lunch money', account=None, card=None, cash=False,
@@ -52,17 +52,17 @@ def delete_loan(client, loan_id):
 
 
 def pay(client, loan_id, **kwargs):
-    return client.post('/loan_payments', json=payment_form(loan_id, **kwargs))
+    return client.post('/api/loan_payments', json=payment_form(loan_id, **kwargs))
 
 
 def update_payment(client, payment_id, loan_id, **kwargs):
     body = payment_form(loan_id, **kwargs)
     del body['loan_id']
-    return client.put(f'/loan_payments/{payment_id}', json=body)
+    return client.put(f'/api/loan_payments/{payment_id}', json=body)
 
 
 def delete_payment(client, payment_id):
-    return client.delete(f'/loan_payments/{payment_id}')
+    return client.delete(f'/api/loan_payments/{payment_id}')
 
 
 def balance(db, product):
@@ -570,7 +570,7 @@ def test_loan_payment_filter(client, data):
     pay(client, loan_id, amount='20', cash=True, created_at='2026-09-02T09:00')
 
     def amounts(**params):
-        response = client.get('/loan_payments', query_string=params)
+        response = client.get('/api/loan_payments', query_string=params)
         assert response.status_code == 200
         return sorted(float(p['amount']) for p in response.get_json()['data'])
 
@@ -593,9 +593,9 @@ def test_pages_render(client, data):
     loan_id = Loan.query.filter_by(person_name='Ana').one().id
     pay(client, loan_id, amount='10', cash=True)
 
-    assert client.get(f'{BASE}/index').status_code == 200
-    assert client.get(f'{BASE}/associated_records/{loan_id}').status_code == 200
-    assert client.get('/loan_payments/index').status_code == 200
+    assert client.get('/loans').status_code == 200
+    assert client.get(f'/loans/{loan_id}').status_code == 200
+    assert client.get('/loan_payments').status_code == 200
 
 
 # ------------------------------------------------------------------ in kind, and closed by hand
@@ -622,14 +622,14 @@ def test_loan_update_to_no_money_moved_gives_the_money_back(client, db, data):
 
 def test_loan_marked_as_paid_by_hand_stops_counting_as_money_to_collect(client):
     create_loan(client, amount='100', cash=True)
-    assert client.get('/dashboard').get_json()['data']['to_collect'] == '100.00'
+    assert client.get('/api/dashboard').get_json()['data']['to_collect'] == '100.00'
 
-    client.post('/loan_payments', json=payment_form(only_loan().id, '30', cash=True))
+    client.post('/api/loan_payments', json=payment_form(only_loan().id, '30', cash=True))
     update_loan(client, only_loan().id, amount='100', cash=True, paid=True)
 
     loan = only_loan()
     assert loan.is_active is False
-    assert client.get('/dashboard').get_json()['data']['to_collect'] == '0.00'
+    assert client.get('/api/dashboard').get_json()['data']['to_collect'] == '0.00'
     assert client.get(f'{BASE}/{loan.id}').get_json()['data']['remaining_amount'] == '70.00'  # still shown on the row
 
 
@@ -641,7 +641,7 @@ def test_loan_unmarked_goes_back_to_what_the_payments_say(client):
 
     assert only_loan().is_active is True
 
-    client.post('/loan_payments', json=payment_form(only_loan().id, '100', cash=True))
+    client.post('/api/loan_payments', json=payment_form(only_loan().id, '100', cash=True))
     update_loan(client, only_loan().id, amount='100', cash=True)  # fully paid by payments
 
     assert only_loan().is_active is False

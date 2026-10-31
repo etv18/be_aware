@@ -1,0 +1,44 @@
+{% extends 'layout.html' %}
+{% from 'partials/ui.html' import page_header, stat_row, table_card, row_actions, chart_card, form_dialog, amount_field, date_field, text_field, select_field, method_field %}
+
+{% block title %}Expenses{% endblock %}
+
+{% block content %}
+    {{ page_header('Expenses', 'What you spent, from cash, accounts and cards.', new_label='New expense') }}
+
+    {{ stat_row([('total', 'Total', true), ('limit', 'Category limits', false), ('spent', 'Spent', false), ('left', 'Left', false)]) }}
+
+    {% call table_card([('Description', ''), ('Category', 'hidden sm:table-cell'), ('Paid with', 'hidden md:table-cell'), ('Date', 'hidden sm:table-cell'), ('Amount', 'text-right')],
+                       placeholder='Search description, category, account…',
+                       note='Showing this month. Search or pick dates to look further back.') %}
+        <tr>
+            <td class="max-w-[22ch] sm:max-w-[34ch]">
+                <span class="block truncate font-medium" data-cell="description"></span>
+                <span class="block truncate text-xs text-muted sm:hidden" data-cell="meta"></span>
+            </td>
+            <td class="hidden sm:table-cell"><span class="tag" data-cell="category"></span></td>
+            <td class="hidden md:table-cell" data-cell="source"></td>
+            <td class="hidden whitespace-nowrap text-muted sm:table-cell" data-cell="date"></td>
+            <td class="num text-right font-medium text-negative" data-cell="amount"></td>
+            {{ row_actions() }}
+        </tr>
+    {% endcall %}
+
+    {{ chart_card('Expenses per month') }}
+
+    {% call form_dialog('record-dialog', 'New expense') %}
+        {{ amount_field() }}
+        {{ date_field() }}
+        {{ select_field('expense_category_id', 'Category') }}
+        {{ text_field('description', 'Description') }}
+        {{ method_field('Paid with', [('cash', 'Cash'), ('bank', 'Bank account'), ('card', 'Credit card')]) }}
+        {{ select_field('bank_account_id', 'Bank account', when='method=bank') }}
+        {{ select_field('credit_card_id', 'Credit card', when='method=card') }}
+    {% endcall %}
+
+    {% include 'partials/confirm_dialog.html' %}
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="{{ url_for('static', filename='js/expenses.js') }}"></script>
+{% endblock %}

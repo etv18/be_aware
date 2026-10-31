@@ -1,34 +1,55 @@
-"""Pages are an empty shell that the page script fills from the JSON endpoints: check the shell and the script exist."""
+"""Every page is a real HTML template with its own script: check it renders, loads its script and that nothing imports a missing file."""
 import os
 
 import pytest
 
+# every page is a real HTML template with its own script: (url, the script the page loads)
 PAGES = [
-    ('/', 'home'), ('/banks/index', 'banks'), ('/bank_accounts/index', 'bank-accounts'),
-    ('/bank_accounts/associated_records/1', 'bank-account'), ('/credit_cards/index', 'credit-cards'),
-    ('/credit_cards/associated_records/1', 'credit-card'), ('/expense_categories/index', 'expense-categories'),
-    ('/expense_categories/associated_records/1', 'expense-category'), ('/expenses/index', 'expenses'),
-    ('/incomes/index', 'incomes'), ('/withdrawals/index', 'withdrawals'), ('/deposits/index', 'deposits'),
-    ('/loans/index', 'loans'), ('/loans/associated_records/1', 'loan'),
-    ('/loan_payments/index', 'loan-payments'), ('/debts/index', 'debts'),
-    ('/debts/associated/records/1', 'debt'), ('/debt_payments/index', 'debt-payments'),
-    ('/cashledger/index', 'cash-ledger'), ('/bank_transaction_ledger/index', 'bank-ledger'),
-    ('/credit_card_ledger/ledger', 'card-ledger'),
+    ('/', 'home'), ('/banks', 'banks'), ('/bank_accounts', 'bank_accounts'),
+    ('/bank_accounts/1', 'bank_account'), ('/credit_cards', 'credit_cards'),
+    ('/credit_cards/1', 'credit_card'), ('/expense_categories', 'expense_categories'),
+    ('/expense_categories/1', 'expense_category'), ('/expenses', 'expenses'),
+    ('/incomes', 'incomes'), ('/withdrawals', 'withdrawals'), ('/deposits', 'deposits'),
+    ('/loans', 'loans'), ('/loans/1', 'loan'),
+    ('/loan_payments', 'loan_payments'), ('/debts', 'debts'),
+    ('/debts/1', 'debt'), ('/debt_payments', 'debt_payments'),
+    ('/cash_ledger', 'cash_ledger'), ('/bank_ledger', 'bank_ledger'),
+    ('/card_ledger', 'card_ledger'),
 ]
 
 
 @pytest.mark.parametrize('url,script', PAGES)
-def test_page_is_a_shell_with_its_script(client, app, url, script):
+def test_page_is_real_html_with_its_own_script(client, app, url, script):
     response = client.get(url)
     assert response.status_code == 200
     html = response.get_data(as_text=True)
-    assert 'id="app"' in html and f'js/pages/{script}.js' in html
+    assert f'js/{script}.js' in html
     assert 'name="csrf-token"' in html
-    assert os.path.exists(os.path.join(app.static_folder, 'js', 'pages', f'{script}.js'))
+    assert 'id="app"' not in html  # no empty shell any more: the markup is in the template
+    assert os.path.exists(os.path.join(app.static_folder, 'js', f'{script}.js'))
+
+
+def test_every_script_the_pages_import_exists(app):
+    """Each page script imports ./common.js, ./chart.js, ./forms.js or ./records.js: they must all be there."""
+    import re
+
+    js = os.path.join(app.static_folder, 'js')
+    for name in os.listdir(js):
+        if not name.endswith('.js'):
+            continue
+        source = open(os.path.join(js, name), encoding='utf-8').read()
+        for target in re.findall(r"from '\./([\w./-]+)'", source):
+            assert os.path.exists(os.path.join(js, target)), f'{name} imports ./{target}'
+
+
+def test_expenses_page_has_its_list_form_and_confirmation(client):
+    html = client.get('/expenses').get_data(as_text=True)
+    for piece in ('data-rows', 'data-row-template', 'id="record-dialog"', 'id="confirm-dialog"', 'data-filters', 'data-chart'):
+        assert piece in html, piece
 
 
 def test_detail_page_carries_the_record_id(client):
-    assert 'data-id="7"' in client.get('/loans/associated_records/7').get_data(as_text=True)
+    assert 'data-id="7"' in client.get('/loans/7').get_data(as_text=True)
 
 
 def test_api_rejects_unsafe_requests_without_a_csrf_token(app, data):
@@ -38,16 +59,16 @@ def test_api_rejects_unsafe_requests_without_a_csrf_token(app, data):
         s['_user_id'] = str(data['user'].id)
 
     body = {'amount': '10', 'is_cash': True, 'expense_category_id': data['food'].id, 'description': 'x'}
-    refused = client.post('/expenses', json=body)
+    refused = client.post('/api/expenses', json=body)
     assert refused.status_code == 400 and refused.get_json()['error']['code'] == 'csrf_failed'
 
-    token = client.get('/session').get_json()['data']['csrf_token']
-    accepted = client.post('/expenses', json=body, headers={'X-CSRFToken': token})
+    token = client.get('/api/session').get_json()['data']['csrf_token']
+    accepted = client.post('/api/expenses', json=body, headers={'X-CSRFToken': token})
     assert accepted.status_code == 201, accepted.get_json()
 
 
 def test_the_navbar_groups_the_modules_and_shows_the_environment(client):
-    html = client.get('/expenses/index').get_data(as_text=True)
+    html = client.get('/expenses').get_data(as_text=True)
 
     for group in ('Cash flow', 'Bank products', 'Cash', 'Lending'):
         assert group in html

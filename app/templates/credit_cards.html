@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+{% from 'partials/ui.html' import icon, page_header, stat_row, table_card, row_actions, form_dialog, amount_field, text_field, select_field %}
+{% from 'partials/dialogs.html' import card_payment_dialog %}
+
+{% block title %}Credit cards{% endblock %}
+
+{% block content %}
+    {% call page_header('Credit cards', 'Limits, what you used and what is left.', new_label='New card') %}
+        <a href="{{ url_for('credit_card_ledger.index') }}" class="btn btn-outline">{{ icon('book-open') }}Ledger</a>
+    {% endcall %}
+
+    {{ stat_row([('used', 'Used', false), ('available', 'Available', false)]) }}
+
+    {% call table_card([('Card', ''), ('Bank', 'hidden sm:table-cell'), ('Limit', 'hidden md:table-cell text-right'), ('Used', 'text-right'), ('Available', 'hidden sm:table-cell text-right')], filters=false) %}
+        <tr>
+            <td class="font-medium" data-cell="name"></td>
+            <td class="hidden sm:table-cell" data-cell="bank"></td>
+            <td class="num hidden text-right md:table-cell" data-cell="limit"></td>
+            <td class="num text-right">
+                <div class="ml-auto w-28">
+                    <div class="flex justify-between text-xs"><span data-cell="used"></span><span class="text-muted" data-cell="share"></span></div>
+                    <div class="mt-1 h-1 rounded-full bg-sunken"><div class="h-1 rounded-full" data-cell="bar"></div></div>
+                </div>
+            </td>
+            <td class="num hidden text-right font-medium sm:table-cell" data-cell="available"></td>
+            {{ row_actions(extra=[('pay', 'banknote', 'Pay the card')]) }}
+        </tr>
+    {% endcall %}
+
+    {% call form_dialog('record-dialog', 'New credit card') %}
+        {{ text_field('nick_name', 'Nickname') }}
+        {{ amount_field('Credit limit', 'limit') }}
+        {{ amount_field('Available credit', 'amount_available') }}
+        {{ select_field('bank_id', 'Bank') }}
+    {% endcall %}
+
+    {{ card_payment_dialog() }}
+    {% include 'partials/confirm_dialog.html' %}
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="{{ url_for('static', filename='js/credit_cards.js') }}"></script>
+{% endblock %}

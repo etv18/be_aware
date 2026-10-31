@@ -1,26 +1,26 @@
-from flask import Blueprint
+from flask import Blueprint, render_template
 from flask_login import login_required
 
 from app.controllers import debt_controller as controller
-from app.routes._pages import page
-from app.routes._rest import register
+from app.routes._rest import get, register
 
-debt_bp = Blueprint('debt', __name__, url_prefix='/debts')
+debt_bp = Blueprint('debt', __name__)
 
 
-@debt_bp.route('/index', methods=['GET'])
+@debt_bp.get('/debts')
 @login_required
 def index():
-    return page('debts', 'debts', 'Debts')
+    return render_template('debts.html', nav='debts')
 
 
-@debt_bp.route('/associated/records/<int:id>', methods=['GET'])
+@debt_bp.get('/debts/<int:record_id>')
 @login_required
-def associated_records(id):
-    return page('debts', 'debt', 'Debt', id=id)
+def show(record_id):
+    return render_template('debt.html', nav='debts', id=record_id)
 
 
-register(debt_bp, controller.RESOURCE)
+# JSON: GET /api/debts, POST /api/debts, GET /api/debts/<id>, PUT /api/debts/<id>, DELETE /api/debts/<id>
+register(debt_bp, controller.RESOURCE, '/debts')
 
 # the payments made on one debt
-debt_bp.add_url_rule('/<int:debt_id>/payments', 'payments', login_required(controller.payments_of), methods=['GET'])
+get(debt_bp, '/debts/<int:debt_id>/payments', controller.payments_of, 'payments')

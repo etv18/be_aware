@@ -1,17 +1,17 @@
-from flask import Blueprint
+from flask import Blueprint, render_template
 from flask_login import login_required
 
 from app.controllers import cashledger_controller as controller
-from app.routes._pages import page
 from app.routes._rest import register
 
-credit_card_ledger_bp = Blueprint('credit_card_ledger', __name__, url_prefix='/credit_card_ledger')
+credit_card_ledger_bp = Blueprint('credit_card_ledger', __name__)
 
 
-@credit_card_ledger_bp.route('/ledger')
+@credit_card_ledger_bp.get('/card_ledger')
 @login_required
 def index():
-    return page('cards', 'card-ledger', 'Card ledger')
+    return render_template('card_ledger.html', nav='cards')
 
 
-register(credit_card_ledger_bp, controller.CARD)
+# JSON: GET /api/card_ledger, GET /api/card_ledger/<id>
+register(credit_card_ledger_bp, controller.CARD, '/card_ledger')

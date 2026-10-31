@@ -1,6 +1,5 @@
 // Loaded on every page: theme switch, navbar dropdowns, phone drawer, log out and the counters in the menu.
-import { api, getData } from './core/api.js';
-import { toastError } from './core/ui.js';
+import { api, toastError } from './common.js';
 
 const root = document.documentElement;
 
@@ -85,7 +84,7 @@ document.querySelectorAll('[data-logout]').forEach((button) => {
 // ---------------------------------------------------------------- counters ("Loans 3" in the tooltip)
 async function loadCounters() {
   try {
-    const dashboard = await getData('/dashboard');
+    const dashboard = (await api.get('/dashboard')).data;
     const counts = { loans: dashboard.active_loans, debts: dashboard.active_debts };
     Object.entries(counts).forEach(([key, count]) => {
       if (!count) return;

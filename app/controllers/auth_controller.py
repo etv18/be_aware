@@ -1,4 +1,4 @@
-"""Login, logout and who is logged in. The page keeps its session in a cookie; the CSRF token comes from /session."""
+"""Login, logout and who is logged in. The page keeps its session in a cookie; the CSRF token comes from /api/session."""
 from flask import jsonify, request
 from flask_login import current_user, login_user, logout_user
 from flask_wtf.csrf import generate_csrf

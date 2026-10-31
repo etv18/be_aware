@@ -81,7 +81,7 @@ def test_create_credit_card_expense_takes_money_and_writes_ledger(client, db, da
 
 
 def test_create_without_a_date_uses_the_current_time(client, data):
-    form_response = client.post('/expenses', json={
+    form_response = client.post('/api/expenses', json={
         'amount': '10', 'is_cash': False, 'expense_category_id': data['food'].id, 'description': 'No date',
         'bank_account_id': data['account'].id,
     })

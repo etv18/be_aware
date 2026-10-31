@@ -1,18 +1,17 @@
-from flask import Blueprint
+from flask import Blueprint, render_template
 from flask_login import login_required
 
 from app.controllers import cashledger_controller as controller
-from app.routes._pages import page
 from app.routes._rest import register
 
-cashlegder_bp = Blueprint('cashledger', __name__, url_prefix='/cashledger')
+cash_ledger_bp = Blueprint('cashledger', __name__)
 
 
-@cashlegder_bp.route('/index')
+@cash_ledger_bp.get('/cash_ledger')
 @login_required
 def index():
-    return page('cash', 'cash-ledger', 'Cash ledger')
+    return render_template('cash_ledger.html', nav='cash')
 
 
-# POST makes a manual adjustment, DELETE removes one; the other entries are written by the money services
-register(cashlegder_bp, controller.CASH)
+# JSON: GET /api/cash_ledger, GET /api/cash_ledger/<id>; POST makes a manual adjustment, DELETE removes one (the other entries are written by the money services)
+register(cash_ledger_bp, controller.CASH, '/cash_ledger')

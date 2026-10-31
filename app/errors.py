@@ -1,8 +1,8 @@
 """One error format for every JSON response:  {"error": {"code": "...", "message": "...", "fields": {...}}}
 
 `code` is stable and meant for programs (a React app can switch on it); `message` is for people.
-A request counts as JSON when it sends JSON, asks for JSON, or changes data (POST, PUT, DELETE); a person
-opening a page in the browser still gets the normal HTML error pages.
+A request counts as JSON when it goes to /api, sends JSON, asks for JSON, or changes data (POST, PUT, DELETE);
+a person opening a page in the browser still gets the normal HTML error pages.
 """
 import re
 
@@ -15,7 +15,7 @@ from app.exceptions.records import RecordNotFound
 
 
 def wants_json():
-    if request.method not in ('GET', 'HEAD'):
+    if request.path.startswith('/api/') or request.method not in ('GET', 'HEAD'):
         return True
     return request.is_json or request.accept_mimetypes.best == 'application/json'
 

@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+{% from 'partials/ui.html' import icon, page_header, stat_row, chart_card, records_tabs %}
+{% from 'partials/dialogs.html' import transfer_dialog %}
+
+{% block title %}Bank account{% endblock %}
+
+{% block content %}
+    <div id="page" data-id="{{ id }}">
+        {% call page_header(back_href=url_for('bank_account.index'), back_label='Bank accounts') %}
+            <button type="button" class="btn btn-primary hidden" data-transfer>{{ icon('arrow-left-right') }}Transfer</button>
+        {% endcall %}
+
+        {{ stat_row([('balance', 'Balance', false), ('status', 'Status', false)]) }}
+
+        {{ chart_card('Money in and out, per month', year=false, classes='mb-6') }}
+
+        {{ records_tabs() }}
+    </div>
+
+    {{ transfer_dialog() }}
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="{{ url_for('static', filename='js/bank_account.js') }}"></script>
+{% endblock %}

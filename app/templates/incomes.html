@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+{% from 'partials/ui.html' import page_header, stat_row, table_card, row_actions, chart_card, form_dialog, amount_field, date_field, text_field, select_field, method_field %}
+
+{% block title %}Incomes{% endblock %}
+
+{% block content %}
+    {{ page_header('Incomes', 'What came in, as cash or into an account.', new_label='New income') }}
+
+    {{ stat_row([('total', 'Total', true)]) }}
+
+    {% call table_card([('Description', ''), ('Received in', 'hidden md:table-cell'), ('Date', 'hidden sm:table-cell'), ('Amount', 'text-right')],
+                       placeholder='Search description or account…',
+                       note='Showing this month. Search or pick dates to look further back.') %}
+        <tr>
+            <td class="max-w-[22ch] sm:max-w-[34ch]">
+                <span class="block truncate font-medium" data-cell="description"></span>
+                <span class="block truncate text-xs text-muted sm:hidden" data-cell="meta"></span>
+            </td>
+            <td class="hidden md:table-cell" data-cell="source"></td>
+            <td class="hidden whitespace-nowrap text-muted sm:table-cell" data-cell="date"></td>
+            <td class="num text-right font-medium text-positive" data-cell="amount"></td>
+            {{ row_actions() }}
+        </tr>
+    {% endcall %}
+
+    {{ chart_card('Income per month') }}
+
+    {% call form_dialog('record-dialog', 'New income') %}
+        {{ amount_field() }}
+        {{ date_field() }}
+        {{ text_field('description', 'Description', optional=true) }}
+        {{ method_field('Received in', [('cash', 'Cash'), ('bank', 'Bank account')]) }}
+        {{ select_field('bank_account_id', 'Bank account', when='method=bank') }}
+    {% endcall %}
+
+    {% include 'partials/confirm_dialog.html' %}
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="{{ url_for('static', filename='js/incomes.js') }}"></script>
+{% endblock %}

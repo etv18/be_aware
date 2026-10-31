@@ -35,15 +35,15 @@ def transfer_form(amount, origin, destination, created_at='2026-10-15T12:30'):
 
 
 def make_transfer(client, amount, origin, destination, **kwargs):
-    return client.post('/banktransfer', json=transfer_form(amount, origin, destination, **kwargs))
+    return client.post('/api/bank_transfers', json=transfer_form(amount, origin, destination, **kwargs))
 
 
 def change_transfer(client, transfer_id, amount, origin, destination, **kwargs):
-    return client.put(f'/banktransfer/{transfer_id}', json=transfer_form(amount, origin, destination, **kwargs))
+    return client.put(f'/api/bank_transfers/{transfer_id}', json=transfer_form(amount, origin, destination, **kwargs))
 
 
 def remove_transfer(client, transfer_id):
-    return client.delete(f'/banktransfer/{transfer_id}')
+    return client.delete(f'/api/bank_transfers/{transfer_id}')
 
 
 def test_transfer_moves_money_and_writes_two_ledger_rows(client, db, data):
@@ -71,7 +71,7 @@ def test_transfer_keeps_the_date_it_was_given(client, data):
 
 
 def test_transfer_without_a_date_uses_now(client, data):
-    response = client.post('/banktransfer', json={
+    response = client.post('/api/bank_transfers', json={
         'amount': '10', 'from_bank_account_id': data['account'].id, 'to_bank_account_id': data['account2'].id})
 
     assert response.status_code == 201
@@ -209,11 +209,11 @@ def test_transfer_delete_of_a_missing_transfer_is_404(client):
 def test_transfer_get_record(client, data):
     make_transfer(client, '300', data['account'], data['account2'])
 
-    body = client.get(f'/banktransfer/{BankTransfer.query.one().id}').get_json()['data']
+    body = client.get(f'/api/bank_transfers/{BankTransfer.query.one().id}').get_json()['data']
 
     assert body['from_bank_account_name'] == 'Checking'
     assert body['to_bank_account_name'] == 'Savings'
-    assert client.get('/banktransfer/999').status_code == 404
+    assert client.get('/api/bank_transfers/999').status_code == 404
 
 
 # ================================================================ credit card payments
@@ -230,7 +230,7 @@ def card_payment_form(amount, card, account=None, cashback=False):
 
 
 def pay_card(client, amount, card, account=None, cashback=False):
-    return client.post('/credit_card_payments', json=card_payment_form(amount, card, account, cashback))
+    return client.post('/api/credit_card_payments', json=card_payment_form(amount, card, account, cashback))
 
 
 def test_card_payment_from_a_bank_account(client, db, data):
@@ -278,7 +278,7 @@ def test_card_payment_update_amount(client, db, data):
     pay_card(client, '200', data['card'], data['account'])
     payment_id = CreditCardPayment.query.one().id
 
-    response = client.put(f'/credit_card_payments/{payment_id}', json=card_payment_form('300', data['card'], data['account']))
+    response = client.put(f'/api/credit_card_payments/{payment_id}', json=card_payment_form('300', data['card'], data['account']))
 
     assert response.status_code == 200
     assert CreditCardPayment.query.one().amount == Decimal('300.00')
@@ -290,7 +290,7 @@ def test_card_payment_delete_undoes_it(client, db, data):
     pay_card(client, '200', data['card'], data['account'])
     payment_id = CreditCardPayment.query.one().id
 
-    response = client.delete(f'/credit_card_payments/{payment_id}')
+    response = client.delete(f'/api/credit_card_payments/{payment_id}')
 
     assert response.status_code == 204
     assert CreditCardPayment.query.count() == 0
@@ -304,7 +304,7 @@ def test_cashback_payment_delete_undoes_it(client, db, data):
     pay_card(client, '50', data['card'], cashback=True)
     payment_id = CreditCardPayment.query.one().id
 
-    response = client.delete(f'/credit_card_payments/{payment_id}')
+    response = client.delete(f'/api/credit_card_payments/{payment_id}')
 
     assert response.status_code == 204
     assert balance(db, data['card']) == Decimal('800.00')
@@ -315,7 +315,7 @@ def test_card_payment_update_to_cashback_returns_the_old_amount_to_the_account(c
     pay_card(client, '200', data['card'], data['account'])
     payment_id = CreditCardPayment.query.one().id
 
-    response = client.put(f'/credit_card_payments/{payment_id}', json=card_payment_form('300', data['card'], cashback=True))
+    response = client.put(f'/api/credit_card_payments/{payment_id}', json=card_payment_form('300', data['card'], cashback=True))
 
     assert response.status_code == 200
     payment = CreditCardPayment.query.one()
@@ -330,7 +330,7 @@ def test_card_payment_update_to_another_account(client, db, data):
     pay_card(client, '200', data['card'], data['account'])
     payment_id = CreditCardPayment.query.one().id
 
-    response = client.put(f'/credit_card_payments/{payment_id}', json=card_payment_form('200', data['card'], data['account2']))
+    response = client.put(f'/api/credit_card_payments/{payment_id}', json=card_payment_form('200', data['card'], data['account2']))
 
     assert response.status_code == 200
     assert balance(db, data['account']) == Decimal('1000.00')
@@ -342,7 +342,7 @@ def test_card_payment_update_without_funds_changes_nothing(client, db, data):
     pay_card(client, '200', data['card'], data['account'])
     payment_id = CreditCardPayment.query.one().id
 
-    response = client.put(f'/credit_card_payments/{payment_id}', json=card_payment_form('5000', data['card'], data['account']))
+    response = client.put(f'/api/credit_card_payments/{payment_id}', json=card_payment_form('5000', data['card'], data['account']))
 
     assert response.status_code == 400
     assert CreditCardPayment.query.one().amount == Decimal('200.00')
@@ -351,15 +351,15 @@ def test_card_payment_update_without_funds_changes_nothing(client, db, data):
 
 
 def test_card_payment_missing_records_answer_404(client, db, data):
-    assert client.put('/credit_card_payments/999', json=card_payment_form('10', data['card'], data['account'])).status_code == 404
-    assert client.delete('/credit_card_payments/999').status_code == 404
+    assert client.put('/api/credit_card_payments/999', json=card_payment_form('10', data['card'], data['account'])).status_code == 404
+    assert client.delete('/api/credit_card_payments/999').status_code == 404
 
 
 def test_card_payment_accepts_a_created_at_date(client, db, data):
     form = card_payment_form('20', data['card'], data['account'])
     form['created_at'] = '2026-03-05T10:30'
 
-    created = client.post('/credit_card_payments', json=form)
+    created = client.post('/api/credit_card_payments', json=form)
 
     assert created.status_code == 201
     assert created.get_json()['data']['created_at'] == '2026-03-05T10:30:00'  # local time out, UTC in the database

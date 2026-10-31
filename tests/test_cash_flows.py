@@ -52,13 +52,13 @@ def cash_total(db):
 
 def put_cash_in_wallet(client, amount):
     """An income paid in cash, so deposits have cash to move."""
-    assert post(client, '/incomes', amount=amount, cash=True).status_code == 201
+    assert post(client, '/api/incomes', amount=amount, cash=True).status_code == 201
 
 
 # ================================================================ incomes
 
 def test_income_to_bank_account_adds_money_and_writes_ledger(client, db, data):
-    response = post(client, '/incomes', amount='200', account=data['account'])
+    response = post(client, '/api/incomes', amount='200', account=data['account'])
 
     assert response.status_code == 201
     income = Income.query.one()
@@ -74,7 +74,7 @@ def test_income_to_bank_account_adds_money_and_writes_ledger(client, db, data):
 
 
 def test_cash_income_writes_a_positive_cash_ledger(client, db, data):
-    response = post(client, '/incomes', amount='75.50', cash=True)
+    response = post(client, '/api/incomes', amount='75.50', cash=True)
 
     assert response.status_code == 201
     income = Income.query.one()
@@ -85,14 +85,14 @@ def test_cash_income_writes_a_positive_cash_ledger(client, db, data):
 
 
 def test_income_keeps_the_date_it_was_given(client):
-    post(client, '/incomes', amount='10', cash=True, created_at='2026-09-03T08:15')
+    post(client, '/api/incomes', amount='10', cash=True, created_at='2026-09-03T08:15')
 
     created = Income.query.one().created_at
     assert (created.year, created.month, created.day) == (2026, 9, 3)
 
 
 def test_income_without_a_date_uses_now(client, data):
-    response = client.post('/incomes', json={
+    response = client.post('/api/incomes', json={
         'amount': '10', 'description': 'x', 'is_cash': False, 'bank_account_id': data['account'].id})
 
     assert response.status_code == 201
@@ -101,9 +101,9 @@ def test_income_without_a_date_uses_now(client, data):
 
 def test_income_rejects_bad_amounts_and_missing_account(client, db, data):
     for amount in ('0', '-5', 'abc'):
-        assert post(client, '/incomes', amount=amount, account=data['account']).status_code in (400, 422), amount
+        assert post(client, '/api/incomes', amount=amount, account=data['account']).status_code in (400, 422), amount
 
-    assert post(client, '/incomes', amount='10').status_code == 400  # no account and not cash
+    assert post(client, '/api/incomes', amount='10').status_code == 400  # no account and not cash
 
     assert Income.query.count() == 0
     assert balance(db, data['account']) == Decimal('1000.00')
@@ -112,7 +112,7 @@ def test_income_rejects_bad_amounts_and_missing_account(client, db, data):
 def test_income_create_is_all_or_nothing_when_the_ledger_fails(client, db, data, monkeypatch):
     monkeypatch.setattr(BankAccountTransactionsLedger, 'create', staticmethod(_boom))
 
-    response = post(client, '/incomes', amount='200', account=data['account'])
+    response = post(client, '/api/incomes', amount='200', account=data['account'])
 
     assert response.status_code == 500
     assert Income.query.count() == 0
@@ -120,10 +120,10 @@ def test_income_create_is_all_or_nothing_when_the_ledger_fails(client, db, data,
 
 
 def test_income_update_amount_adjusts_balance_and_ledger(client, db, data):
-    post(client, '/incomes', amount='200', account=data['account'])
+    post(client, '/api/incomes', amount='200', account=data['account'])
     income_id = Income.query.one().id
 
-    response = put(client, f'/incomes/{income_id}', amount='50', account=data['account'])
+    response = put(client, f'/api/incomes/{income_id}', amount='50', account=data['account'])
 
     assert response.status_code == 200
     assert Income.query.one().amount == Decimal('50.00')
@@ -134,10 +134,10 @@ def test_income_update_amount_adjusts_balance_and_ledger(client, db, data):
 
 
 def test_income_update_moves_it_to_another_account(client, db, data):
-    post(client, '/incomes', amount='200', account=data['account'])
+    post(client, '/api/incomes', amount='200', account=data['account'])
     income_id = Income.query.one().id
 
-    put(client, f'/incomes/{income_id}', amount='200', account=data['account2'])
+    put(client, f'/api/incomes/{income_id}', amount='200', account=data['account2'])
 
     assert balance(db, data['account']) == Decimal('1000.00')
     assert balance(db, data['account2']) == Decimal('700.00')
@@ -145,16 +145,16 @@ def test_income_update_moves_it_to_another_account(client, db, data):
 
 
 def test_income_update_bank_to_cash_and_back(client, db, data):
-    post(client, '/incomes', amount='200', account=data['account'])
+    post(client, '/api/incomes', amount='200', account=data['account'])
     income_id = Income.query.one().id
 
-    put(client, f'/incomes/{income_id}', amount='200', cash=True)
+    put(client, f'/api/incomes/{income_id}', amount='200', cash=True)
 
     assert balance(db, data['account']) == Decimal('1000.00')
     assert BankAccountTransactionsLedger.query.count() == 0
     assert CashLedger.query.one().amount == Decimal('200.00')
 
-    put(client, f'/incomes/{income_id}', amount='200', account=data['account'])
+    put(client, f'/api/incomes/{income_id}', amount='200', account=data['account'])
 
     assert balance(db, data['account']) == Decimal('1200.00')
     assert CashLedger.query.count() == 0
@@ -162,17 +162,17 @@ def test_income_update_bank_to_cash_and_back(client, db, data):
 
 
 def test_income_update_of_a_missing_record_is_404(client):
-    response = put(client, '/incomes/999', amount='10', cash=True)
+    response = put(client, '/api/incomes/999', amount='10', cash=True)
 
     assert response.status_code == 404
 
 
 def test_income_update_is_all_or_nothing_when_the_ledger_fails(client, db, data, monkeypatch):
-    post(client, '/incomes', amount='200', account=data['account'])
+    post(client, '/api/incomes', amount='200', account=data['account'])
     income_id = Income.query.one().id
     monkeypatch.setattr(BankAccountTransactionsLedger, 'update', staticmethod(_boom))
 
-    response = put(client, f'/incomes/{income_id}', amount='500', account=data['account'])
+    response = put(client, f'/api/incomes/{income_id}', amount='500', account=data['account'])
 
     assert response.status_code == 500
     assert Income.query.one().amount == Decimal('200.00')
@@ -180,12 +180,12 @@ def test_income_update_is_all_or_nothing_when_the_ledger_fails(client, db, data,
 
 
 def test_income_delete_takes_the_money_back_and_removes_ledgers(client, db, data):
-    post(client, '/incomes', amount='200', account=data['account'])
-    post(client, '/incomes', amount='30', cash=True)
+    post(client, '/api/incomes', amount='200', account=data['account'])
+    post(client, '/api/incomes', amount='30', cash=True)
     bank_income, cash_income = Income.query.order_by(Income.id).all()
 
-    assert delete(client, f'/incomes/{bank_income.id}').status_code == 204
-    assert delete(client, f'/incomes/{cash_income.id}').status_code == 204
+    assert delete(client, f'/api/incomes/{bank_income.id}').status_code == 204
+    assert delete(client, f'/api/incomes/{cash_income.id}').status_code == 204
 
     assert Income.query.count() == 0
     assert balance(db, data['account']) == Decimal('1000.00')
@@ -194,18 +194,18 @@ def test_income_delete_takes_the_money_back_and_removes_ledgers(client, db, data
 
 
 def test_income_delete_of_a_missing_record_is_404_and_changes_nothing(client, db, data):
-    response = delete(client, '/incomes/999')
+    response = delete(client, '/api/incomes/999')
 
     assert response.status_code == 404
     assert balance(db, data['account']) == Decimal('1000.00')
 
 
 def test_income_delete_is_all_or_nothing_when_the_ledger_fails(client, db, data, monkeypatch):
-    post(client, '/incomes', amount='200', account=data['account'])
+    post(client, '/api/incomes', amount='200', account=data['account'])
     income_id = Income.query.one().id
     monkeypatch.setattr(BankAccountTransactionsLedger, 'delete', staticmethod(_boom))
 
-    response = delete(client, f'/incomes/{income_id}')
+    response = delete(client, f'/api/incomes/{income_id}')
 
     assert response.status_code == 500
     assert Income.query.count() == 1
@@ -213,35 +213,35 @@ def test_income_delete_is_all_or_nothing_when_the_ledger_fails(client, db, data,
 
 
 def test_income_filters(client, data):
-    post(client, '/incomes', amount='100', account=data['account'], description='Salary', created_at='2026-10-15T12:00')
-    post(client, '/incomes', amount='20', cash=True, description='Gift', created_at='2026-09-01T12:00')
+    post(client, '/api/incomes', amount='100', account=data['account'], description='Salary', created_at='2026-10-15T12:00')
+    post(client, '/api/incomes', amount='20', cash=True, description='Gift', created_at='2026-09-01T12:00')
 
-    by_time = client.get('/incomes', query_string={'start': '2026-10-01', 'end': '2026-10-31'}).get_json()
+    by_time = client.get('/api/incomes', query_string={'start': '2026-10-01', 'end': '2026-10-31'}).get_json()
     assert [i['description'] for i in by_time['data']] == ['Salary']
     assert by_time['meta']['total'] == '100.00'
 
-    by_field = client.get('/incomes', query_string={'q': 'checking'}).get_json()
+    by_field = client.get('/api/incomes', query_string={'q': 'checking'}).get_json()
     assert [i['description'] for i in by_field['data']] == ['Salary']
 
-    yes = client.get('/incomes', query_string={'q': 'yes'}).get_json()
+    yes = client.get('/api/incomes', query_string={'q': 'yes'}).get_json()
     assert [i['description'] for i in yes['data']] == ['Gift']
 
-    both = client.get('/incomes', query_string={'q': 'a', 'start': '2026-10-01', 'end': '2026-10-31'}).get_json()
+    both = client.get('/api/incomes', query_string={'q': 'a', 'start': '2026-10-01', 'end': '2026-10-31'}).get_json()
     assert [i['description'] for i in both['data']] == ['Salary']
 
-    assert client.get('/incomes', query_string={'start': '2026-10-01'}).status_code == 422  # both dates or none
+    assert client.get('/api/incomes', query_string={'start': '2026-10-01'}).status_code == 422  # both dates or none
 
 
 def test_income_index_page_renders(client, data):
-    post(client, '/incomes', amount='100', account=data['account'])
+    post(client, '/api/incomes', amount='100', account=data['account'])
 
-    assert client.get('/incomes/index').status_code == 200
+    assert client.get('/incomes').status_code == 200
 
 
 # ================================================================ withdrawals
 
 def test_withdrawal_takes_from_the_account_and_adds_cash(client, db, data):
-    response = post(client, '/withdrawals', amount='300', account=data['account'])
+    response = post(client, '/api/withdrawals', amount='300', account=data['account'])
 
     assert response.status_code == 201
     withdrawal = Withdrawal.query.one()
@@ -256,7 +256,7 @@ def test_withdrawal_takes_from_the_account_and_adds_cash(client, db, data):
 
 
 def test_withdrawal_with_more_than_the_available_money_changes_nothing(client, db, data):
-    response = post(client, '/withdrawals', amount='5000', account=data['account'])
+    response = post(client, '/api/withdrawals', amount='5000', account=data['account'])
 
     assert response.status_code == 400
     assert 'Insufficient' in response.get_json()['error']['message']
@@ -267,16 +267,16 @@ def test_withdrawal_with_more_than_the_available_money_changes_nothing(client, d
 
 def test_withdrawal_rejects_bad_amounts_and_missing_account(client, db, data):
     for amount in ('0', '-5', 'abc'):
-        assert post(client, '/withdrawals', amount=amount, account=data['account']).status_code in (400, 422), amount
+        assert post(client, '/api/withdrawals', amount=amount, account=data['account']).status_code in (400, 422), amount
 
-    assert post(client, '/withdrawals', amount='10').status_code == 422
+    assert post(client, '/api/withdrawals', amount='10').status_code == 422
 
     assert Withdrawal.query.count() == 0
     assert balance(db, data['account']) == Decimal('1000.00')
 
 
 def test_withdrawal_keeps_the_date_it_was_given(client, data):
-    post(client, '/withdrawals', amount='10', account=data['account'], created_at='2026-09-03T08:15')
+    post(client, '/api/withdrawals', amount='10', account=data['account'], created_at='2026-09-03T08:15')
 
     created = Withdrawal.query.one().created_at
     assert (created.year, created.month, created.day) == (2026, 9, 3)
@@ -285,7 +285,7 @@ def test_withdrawal_keeps_the_date_it_was_given(client, data):
 def test_withdrawal_create_is_all_or_nothing_when_the_ledger_fails(client, db, data, monkeypatch):
     monkeypatch.setattr(CashLedger, 'create', staticmethod(_boom))
 
-    response = post(client, '/withdrawals', amount='300', account=data['account'])
+    response = post(client, '/api/withdrawals', amount='300', account=data['account'])
 
     assert response.status_code == 500
     assert Withdrawal.query.count() == 0
@@ -293,10 +293,10 @@ def test_withdrawal_create_is_all_or_nothing_when_the_ledger_fails(client, db, d
 
 
 def test_withdrawal_update_amount_on_the_same_account(client, db, data):
-    post(client, '/withdrawals', amount='300', account=data['account'])
+    post(client, '/api/withdrawals', amount='300', account=data['account'])
     withdrawal_id = Withdrawal.query.one().id
 
-    response = put(client, f'/withdrawals/{withdrawal_id}', amount='100', account=data['account'])
+    response = put(client, f'/api/withdrawals/{withdrawal_id}', amount='100', account=data['account'])
 
     assert response.status_code == 200
     assert balance(db, data['account']) == Decimal('900.00')
@@ -305,10 +305,10 @@ def test_withdrawal_update_amount_on_the_same_account(client, db, data):
 
 
 def test_withdrawal_update_to_another_account(client, db, data):
-    post(client, '/withdrawals', amount='300', account=data['account'])
+    post(client, '/api/withdrawals', amount='300', account=data['account'])
     withdrawal_id = Withdrawal.query.one().id
 
-    put(client, f'/withdrawals/{withdrawal_id}', amount='300', account=data['account2'])
+    put(client, f'/api/withdrawals/{withdrawal_id}', amount='300', account=data['account2'])
 
     assert balance(db, data['account']) == Decimal('1000.00')
     assert balance(db, data['account2']) == Decimal('200.00')
@@ -316,10 +316,10 @@ def test_withdrawal_update_to_another_account(client, db, data):
 
 
 def test_withdrawal_update_with_more_than_the_available_money_changes_nothing(client, db, data):
-    post(client, '/withdrawals', amount='300', account=data['account'])
+    post(client, '/api/withdrawals', amount='300', account=data['account'])
     withdrawal_id = Withdrawal.query.one().id
 
-    response = put(client, f'/withdrawals/{withdrawal_id}', amount='900', account=data['account2'])
+    response = put(client, f'/api/withdrawals/{withdrawal_id}', amount='900', account=data['account2'])
 
     assert response.status_code == 400
     assert Withdrawal.query.one().amount == Decimal('300.00')
@@ -328,16 +328,16 @@ def test_withdrawal_update_with_more_than_the_available_money_changes_nothing(cl
 
 
 def test_withdrawal_update_of_a_missing_record_is_an_error(client):
-    response = put(client, '/withdrawals/999', amount='10', account=None)
+    response = put(client, '/api/withdrawals/999', amount='10', account=None)
 
     assert response.status_code in (400, 404, 422)
 
 
 def test_withdrawal_delete_gives_the_money_back(client, db, data):
-    post(client, '/withdrawals', amount='300', account=data['account'])
+    post(client, '/api/withdrawals', amount='300', account=data['account'])
     withdrawal_id = Withdrawal.query.one().id
 
-    response = delete(client, f'/withdrawals/{withdrawal_id}')
+    response = delete(client, f'/api/withdrawals/{withdrawal_id}')
 
     assert response.status_code == 204
     assert Withdrawal.query.count() == 0
@@ -347,11 +347,11 @@ def test_withdrawal_delete_gives_the_money_back(client, db, data):
 
 
 def test_withdrawal_delete_is_all_or_nothing_when_the_ledger_fails(client, db, data, monkeypatch):
-    post(client, '/withdrawals', amount='300', account=data['account'])
+    post(client, '/api/withdrawals', amount='300', account=data['account'])
     withdrawal_id = Withdrawal.query.one().id
     monkeypatch.setattr(BankAccountTransactionsLedger, 'delete', staticmethod(_boom))
 
-    response = delete(client, f'/withdrawals/{withdrawal_id}')
+    response = delete(client, f'/api/withdrawals/{withdrawal_id}')
 
     assert response.status_code == 500
     assert Withdrawal.query.count() == 1
@@ -359,32 +359,32 @@ def test_withdrawal_delete_is_all_or_nothing_when_the_ledger_fails(client, db, d
 
 
 def test_withdrawal_delete_of_a_missing_record_changes_nothing(client, db, data):
-    delete(client, '/withdrawals/999')
+    delete(client, '/api/withdrawals/999')
 
     assert balance(db, data['account']) == Decimal('1000.00')
 
 
 def test_withdrawal_filters(client, data):
-    post(client, '/withdrawals', amount='100', account=data['account'], description='ATM', created_at='2026-10-15T12:00')
-    post(client, '/withdrawals', amount='20', account=data['account2'], description='Old', created_at='2026-09-01T12:00')
+    post(client, '/api/withdrawals', amount='100', account=data['account'], description='ATM', created_at='2026-10-15T12:00')
+    post(client, '/api/withdrawals', amount='20', account=data['account2'], description='Old', created_at='2026-09-01T12:00')
 
-    by_time = client.get('/withdrawals', query_string={'start': '2026-10-01', 'end': '2026-10-31'}).get_json()
+    by_time = client.get('/api/withdrawals', query_string={'start': '2026-10-01', 'end': '2026-10-31'}).get_json()
     assert [w['description'] for w in by_time['data']] == ['ATM']
     assert by_time['meta']['total'] == '100.00'
 
-    by_field = client.get('/withdrawals', query_string={'q': 'savings'}).get_json()
+    by_field = client.get('/api/withdrawals', query_string={'q': 'savings'}).get_json()
     assert [w['description'] for w in by_field['data']] == ['Old']
 
-    both = client.get('/withdrawals', query_string={'q': 'atm', 'start': '2026-10-01', 'end': '2026-10-31'}).get_json()
+    both = client.get('/api/withdrawals', query_string={'q': 'atm', 'start': '2026-10-01', 'end': '2026-10-31'}).get_json()
     assert [w['description'] for w in both['data']] == ['ATM']
 
-    assert client.get('/withdrawals', query_string={'end': '2026-10-31'}).status_code == 422
+    assert client.get('/api/withdrawals', query_string={'end': '2026-10-31'}).status_code == 422
 
 
 def test_withdrawal_index_page_renders(client, data):
-    post(client, '/withdrawals', amount='100', account=data['account'])
+    post(client, '/api/withdrawals', amount='100', account=data['account'])
 
-    assert client.get('/withdrawals/index').status_code == 200
+    assert client.get('/withdrawals').status_code == 200
 
 
 # ================================================================ deposits
@@ -392,7 +392,7 @@ def test_withdrawal_index_page_renders(client, data):
 def test_deposit_moves_cash_into_the_account(client, db, data):
     put_cash_in_wallet(client, '500')
 
-    response = post(client, '/deposits', amount='200', account=data['account'])
+    response = post(client, '/api/deposits', amount='200', account=data['account'])
 
     assert response.status_code == 201
     deposit = Deposit.query.one()
@@ -409,7 +409,7 @@ def test_deposit_moves_cash_into_the_account(client, db, data):
 def test_deposit_needs_enough_cash(client, db, data):
     put_cash_in_wallet(client, '50')
 
-    response = post(client, '/deposits', amount='200', account=data['account'])
+    response = post(client, '/api/deposits', amount='200', account=data['account'])
 
     assert response.status_code == 400
     assert 'cash' in response.get_json()['error']['message'].lower()
@@ -421,8 +421,8 @@ def test_deposit_rejects_bad_amounts_and_missing_account(client, db, data):
     put_cash_in_wallet(client, '500')
 
     for amount in ('0', '-5', 'abc'):
-        assert post(client, '/deposits', amount=amount, account=data['account']).status_code in (400, 422), amount
-    assert post(client, '/deposits', amount='10').status_code == 422
+        assert post(client, '/api/deposits', amount=amount, account=data['account']).status_code in (400, 422), amount
+    assert post(client, '/api/deposits', amount='10').status_code == 422
 
     assert Deposit.query.count() == 0
     assert balance(db, data['account']) == Decimal('1000.00')
@@ -430,7 +430,7 @@ def test_deposit_rejects_bad_amounts_and_missing_account(client, db, data):
 
 def test_deposit_keeps_the_date_it_was_given(client, data):
     put_cash_in_wallet(client, '500')
-    post(client, '/deposits', amount='10', account=data['account'], created_at='2026-09-03T08:15')
+    post(client, '/api/deposits', amount='10', account=data['account'], created_at='2026-09-03T08:15')
 
     created = Deposit.query.one().created_at
     assert (created.year, created.month, created.day) == (2026, 9, 3)
@@ -440,7 +440,7 @@ def test_deposit_create_is_all_or_nothing_when_the_ledger_fails(client, db, data
     put_cash_in_wallet(client, '500')
     monkeypatch.setattr(BankAccountTransactionsLedger, 'create', staticmethod(_boom))
 
-    response = post(client, '/deposits', amount='200', account=data['account'])
+    response = post(client, '/api/deposits', amount='200', account=data['account'])
 
     assert response.status_code == 500
     assert Deposit.query.count() == 0
@@ -450,10 +450,10 @@ def test_deposit_create_is_all_or_nothing_when_the_ledger_fails(client, db, data
 
 def test_deposit_update_amount_on_the_same_account(client, db, data):
     put_cash_in_wallet(client, '500')
-    post(client, '/deposits', amount='200', account=data['account'])
+    post(client, '/api/deposits', amount='200', account=data['account'])
     deposit_id = Deposit.query.one().id
 
-    response = put(client, f'/deposits/{deposit_id}', amount='100', account=data['account'])
+    response = put(client, f'/api/deposits/{deposit_id}', amount='100', account=data['account'])
 
     assert response.status_code == 200
     assert balance(db, data['account']) == Decimal('1100.00')
@@ -463,10 +463,10 @@ def test_deposit_update_amount_on_the_same_account(client, db, data):
 
 def test_deposit_update_to_another_account(client, db, data):
     put_cash_in_wallet(client, '500')
-    post(client, '/deposits', amount='200', account=data['account'])
+    post(client, '/api/deposits', amount='200', account=data['account'])
     deposit_id = Deposit.query.one().id
 
-    put(client, f'/deposits/{deposit_id}', amount='200', account=data['account2'])
+    put(client, f'/api/deposits/{deposit_id}', amount='200', account=data['account2'])
 
     assert balance(db, data['account']) == Decimal('1000.00')
     assert balance(db, data['account2']) == Decimal('700.00')
@@ -474,17 +474,17 @@ def test_deposit_update_to_another_account(client, db, data):
 
 
 def test_deposit_update_of_a_missing_record_is_an_error(client):
-    response = put(client, '/deposits/999', amount='10', account=None)
+    response = put(client, '/api/deposits/999', amount='10', account=None)
 
     assert response.status_code in (400, 404, 422)
 
 
 def test_deposit_delete_takes_the_money_back_out_of_the_account(client, db, data):
     put_cash_in_wallet(client, '500')
-    post(client, '/deposits', amount='200', account=data['account'])
+    post(client, '/api/deposits', amount='200', account=data['account'])
     deposit_id = Deposit.query.one().id
 
-    response = delete(client, f'/deposits/{deposit_id}')
+    response = delete(client, f'/api/deposits/{deposit_id}')
 
     assert response.status_code == 204
     assert Deposit.query.count() == 0
@@ -495,11 +495,11 @@ def test_deposit_delete_takes_the_money_back_out_of_the_account(client, db, data
 
 def test_deposit_delete_is_refused_when_the_account_no_longer_has_the_money(client, db, data):
     put_cash_in_wallet(client, '500')
-    post(client, '/deposits', amount='200', account=data['account'])
+    post(client, '/api/deposits', amount='200', account=data['account'])
     deposit_id = Deposit.query.one().id
-    post(client, '/withdrawals', amount='1150', account=data['account'])  # leaves 50
+    post(client, '/api/withdrawals', amount='1150', account=data['account'])  # leaves 50
 
-    response = delete(client, f'/deposits/{deposit_id}')
+    response = delete(client, f'/api/deposits/{deposit_id}')
 
     assert response.status_code == 400
     assert Deposit.query.count() == 1
@@ -508,11 +508,11 @@ def test_deposit_delete_is_refused_when_the_account_no_longer_has_the_money(clie
 
 def test_deposit_delete_is_all_or_nothing_when_the_ledger_fails(client, db, data, monkeypatch):
     put_cash_in_wallet(client, '500')
-    post(client, '/deposits', amount='200', account=data['account'])
+    post(client, '/api/deposits', amount='200', account=data['account'])
     deposit_id = Deposit.query.one().id
     monkeypatch.setattr(BankAccountTransactionsLedger, 'delete', staticmethod(_boom))
 
-    response = delete(client, f'/deposits/{deposit_id}')
+    response = delete(client, f'/api/deposits/{deposit_id}')
 
     assert response.status_code == 500
     assert Deposit.query.count() == 1
@@ -521,23 +521,23 @@ def test_deposit_delete_is_all_or_nothing_when_the_ledger_fails(client, db, data
 
 def test_deposit_filters(client, data):
     put_cash_in_wallet(client, '500')
-    post(client, '/deposits', amount='100', account=data['account'], description='Pay in', created_at='2026-10-15T12:00')
-    post(client, '/deposits', amount='20', account=data['account2'], description='Old', created_at='2026-09-01T12:00')
+    post(client, '/api/deposits', amount='100', account=data['account'], description='Pay in', created_at='2026-10-15T12:00')
+    post(client, '/api/deposits', amount='20', account=data['account2'], description='Old', created_at='2026-09-01T12:00')
 
-    by_time = client.get('/deposits', query_string={'start': '2026-10-01', 'end': '2026-10-31'}).get_json()
+    by_time = client.get('/api/deposits', query_string={'start': '2026-10-01', 'end': '2026-10-31'}).get_json()
     assert [d['description'] for d in by_time['data']] == ['Pay in']
 
-    by_field = client.get('/deposits', query_string={'q': 'savings'}).get_json()
+    by_field = client.get('/api/deposits', query_string={'q': 'savings'}).get_json()
     assert [d['description'] for d in by_field['data']] == ['Old']
 
-    both = client.get('/deposits', query_string={'q': 'pay', 'start': '2026-10-01', 'end': '2026-10-31'}).get_json()
+    both = client.get('/api/deposits', query_string={'q': 'pay', 'start': '2026-10-01', 'end': '2026-10-31'}).get_json()
     assert [d['description'] for d in both['data']] == ['Pay in']
 
-    assert client.get('/deposits', query_string={'start': '2026-10-01'}).status_code == 422
+    assert client.get('/api/deposits', query_string={'start': '2026-10-01'}).status_code == 422
 
 
 def test_deposit_index_page_renders(client, data):
-    assert client.get('/deposits/index').status_code == 200
+    assert client.get('/deposits').status_code == 200
 
 
 def _boom(*args, **kwargs):

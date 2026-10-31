@@ -1,26 +1,27 @@
-from flask import Blueprint
+from flask import Blueprint, render_template
 from flask_login import login_required
 
 from app.controllers import credit_card_controller as controller
-from app.routes._pages import page
-from app.routes._rest import register
+from app.routes._rest import get, register
 
-credit_card_bp = Blueprint('credit_card', __name__, url_prefix='/credit_cards')
+credit_card_bp = Blueprint('credit_card', __name__)
 
 
-@credit_card_bp.route('/index', methods=['GET'])
+@credit_card_bp.get('/credit_cards')
 @login_required
 def index():
-    return page('cards', 'credit-cards', 'Credit cards')
+    return render_template('credit_cards.html', nav='cards')
 
 
-@credit_card_bp.route('/associated_records/<int:id>', methods=['GET'])
+@credit_card_bp.get('/credit_cards/<int:record_id>')
 @login_required
-def associated_records(id):
-    return page('cards', 'credit-card', 'Credit card', id=id)
+def show(record_id):
+    return render_template('credit_card.html', nav='cards', id=record_id)
 
 
-register(credit_card_bp, controller.RESOURCE)
+# JSON: GET /api/credit_cards, POST /api/credit_cards, GET /api/credit_cards/<id>, PUT /api/credit_cards/<id>, DELETE /api/credit_cards/<id>
+register(credit_card_bp, controller.RESOURCE, '/credit_cards')
 
-credit_card_bp.add_url_rule('/<int:card_id>/records', 'records', login_required(controller.records_of), methods=['GET'])
-credit_card_bp.add_url_rule('/<int:card_id>/reports/yearly', 'yearly', login_required(controller.yearly_report), methods=['GET'])
+# what hangs from a card, and its yearly report (GET, ?year=2026)
+get(credit_card_bp, '/credit_cards/<int:card_id>/records', controller.records_of, 'records')
+get(credit_card_bp, '/credit_cards/<int:card_id>/reports/yearly', controller.yearly_report, 'yearly')

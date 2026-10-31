@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+{% from 'partials/ui.html' import page_header, table_card %}
+
+{% block title %}Debt payments{% endblock %}
+
+{% block content %}
+    {{ page_header('Debt payments', 'Everything you paid, across all debts.') }}
+
+    {% call table_card([('Person', ''), ('Paid from', 'hidden sm:table-cell'), ('Date', 'hidden sm:table-cell'), ('Amount', 'text-right')],
+                       placeholder='Search person or account…', actions=false) %}
+        <tr>
+            <td class="font-medium">
+                <span class="block" data-cell="person"></span>
+                <span class="block text-xs font-normal text-muted sm:hidden" data-cell="meta"></span>
+            </td>
+            <td class="hidden sm:table-cell" data-cell="source"></td>
+            <td class="hidden whitespace-nowrap text-muted sm:table-cell" data-cell="date"></td>
+            <td class="num text-right font-medium text-negative" data-cell="amount"></td>
+        </tr>
+    {% endcall %}
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="{{ url_for('static', filename='js/debt_payments.js') }}"></script>
+{% endblock %}

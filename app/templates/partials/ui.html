@@ -1,0 +1,223 @@
+{#- Pieces any page can reuse. Import only what the page needs:
+      {% from 'partials/ui.html' import page_header, stat_row, table_card, row_actions, chart_card, form_dialog, amount_field %}
+    To change how every table, stat card or form looks, edit it here once. -#}
+
+{# An inline icon from the sprite: {{ icon('plus') }} #}
+{% macro icon(name, classes='') -%}
+<svg class="icon {{ classes }}" aria-hidden="true"><use href="{{ url_for('static', filename='img/icons.svg') }}#{{ name }}"></use></svg>
+{%- endmacro %}
+
+{# ---------------------------------------------------------------- page header
+   new_label: adds the "New …" button (the page script opens its form) · back_href/back_label: a "< Back" link above the title
+   The body of {% call page_header(...) %} adds more buttons next to "New". The title and subtitle can be filled by the script (data-page-title). #}
+{% macro page_header(title='', subtitle='', new_label='', back_href='', back_label='') -%}
+<header class="mb-6 flex flex-wrap items-end justify-between gap-3">
+    <div class="min-w-0">
+        {% if back_href %}<a href="{{ back_href }}" class="mb-2 inline-flex items-center gap-1 text-sm text-muted hover:text-ink">{{ icon('chevron-left') }}{{ back_label }}</a>{% endif %}
+        <h1 class="truncate text-xl font-semibold" data-page-title>{{ title }}</h1>
+        <p class="mt-0.5 text-sm text-muted" data-page-subtitle>{{ subtitle }}</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+        {% if caller %}{{ caller() }}{% endif %}
+        {% if new_label %}<button type="button" class="btn btn-primary" data-new>{{ icon('plus') }}{{ new_label }}</button>{% endif %}
+    </div>
+</header>
+{%- endmacro %}
+
+{# ---------------------------------------------------------------- figures above a table. The script fills data-stat="<key>" (and data-stat-hint). #}
+{% macro stat_card(key, label, hint=false) -%}
+<div class="card px-4 py-3.5">
+    <p class="text-xs text-muted">{{ label }}</p>
+    <p class="num mt-1 truncate text-xl font-semibold" data-stat="{{ key }}">–</p>
+    {% if hint %}<p class="mt-0.5 truncate text-xs text-muted" data-stat-hint="{{ key }}"></p>{% endif %}
+</div>
+{%- endmacro %}
+
+{# items: [(key, label, has_hint), ...] #}
+{% macro stat_row(items) -%}
+{% set columns = {1: 'lg:grid-cols-1', 2: 'lg:grid-cols-2', 3: 'lg:grid-cols-3', 4: 'lg:grid-cols-4'} %}
+<div class="mb-4 grid grid-cols-2 gap-3 {{ columns[[items|length, 4]|min] }}">
+    {% for key, label, hint in items %}{{ stat_card(key, label, hint) }}{% endfor %}
+</div>
+{%- endmacro %}
+
+{# A link tile with one figure (the home page). The script fills data-stat="<key>" (and data-stat-hint when hint=true). #}
+{% macro tile(key, label, glyph, href, hint=false) -%}
+<a href="{{ href }}" class="card flex items-start gap-3 p-4 transition-colors hover:bg-sunken">
+    <span class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-sunken text-muted">{{ icon(glyph) }}</span>
+    <span class="min-w-0">
+        <span class="block text-xs text-muted">{{ label }}</span>
+        <span class="num block truncate text-lg font-semibold" data-stat="{{ key }}">–</span>
+        {% if hint %}<span class="block truncate text-xs text-muted" data-stat-hint="{{ key }}"></span>{% endif %}
+    </span>
+</a>
+{%- endmacro %}
+
+{# ---------------------------------------------------------------- search box + date range + clear button #}
+{% macro filter_bar(placeholder='Search…') -%}
+<div class="flex flex-col gap-2 border-b border-line p-3 sm:flex-row sm:items-center" data-filters>
+    <div class="relative flex-1">
+        <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint">{{ icon('search') }}</span>
+        <input class="input pl-9" type="search" placeholder="{{ placeholder }}" data-filter="q" aria-label="Search">
+    </div>
+    <div class="flex items-center gap-2">
+        <input class="input w-full sm:w-40" type="date" data-filter="start" aria-label="From date">
+        <span class="text-faint">–</span>
+        <input class="input w-full sm:w-40" type="date" data-filter="end" aria-label="To date">
+        <button type="button" class="btn-icon shrink-0" data-filter-clear title="Clear filters" aria-label="Clear filters">{{ icon('filter-x') }}</button>
+    </div>
+</div>
+{%- endmacro %}
+
+{# ---------------------------------------------------------------- a table card
+   headers: [(label, classes), ...]  e.g. ('Date', 'hidden sm:table-cell') hides the column on a phone; 'text-right' aligns numbers
+   The body of {% call table_card(...) %} is ONE <tr>: the row the script copies for every record. Mark each spot the script fills with data-cell="name".
+   actions: false when the rows have no buttons · filters: false for no search bar · total: true adds a "Total · n records" line · note: shown while no search is active #}
+{% macro table_card(headers, placeholder='Search…', note='', total=false, filters=true, actions=true) -%}
+<section class="card overflow-hidden" data-list>
+    {% if filters %}{{ filter_bar(placeholder) }}{% endif %}
+    <div class="table-wrap table-scroll">
+        <table class="table">
+            <thead>
+                <tr>
+                    {% for label, classes in headers %}<th class="{{ classes }}">{{ label }}</th>{% endfor %}
+                    {% if actions %}<th class="w-px"><span class="sr-only">Actions</span></th>{% endif %}
+                </tr>
+            </thead>
+            <tbody data-rows></tbody>
+        </table>
+    </div>
+    <div class="hidden flex flex-col items-center px-6 py-14 text-center" data-empty>
+        <span class="mb-3 flex size-10 items-center justify-center rounded-full bg-sunken text-muted">{{ icon('inbox') }}</span>
+        <p class="text-sm font-medium" data-empty-title>Nothing here yet</p>
+        <p class="mt-1 max-w-sm text-sm text-muted" data-empty-text></p>
+    </div>
+    {% if total %}
+    <div class="flex items-center justify-between gap-3 border-t border-line bg-sunken/40 px-4 py-2.5 text-sm" data-total-bar>
+        <span class="text-muted" data-total-label>Total</span>
+        <span class="num font-semibold" data-total-value></span>
+    </div>
+    {% endif %}
+    {% if note %}<p class="hidden border-t border-line px-4 py-2.5 text-xs text-muted" data-note>{{ note }}</p>{% endif %}
+    <template data-row-template>{{ caller() }}</template>
+</section>
+{%- endmacro %}
+
+{# The buttons cell of a row. extra: [(action, icon, label), ...] go before edit / delete; the script handles each action by name. #}
+{% macro row_actions(extra=[], edit=true, delete=true) -%}
+<td>
+    <div class="flex justify-end gap-0.5">
+        {% for action, glyph, label in extra %}
+        <button type="button" class="btn-icon" data-action="{{ action }}" data-cell="{{ action }}" title="{{ label }}" aria-label="{{ label }}">{{ icon(glyph) }}</button>
+        {% endfor %}
+        {% if edit %}<button type="button" class="btn-icon" data-action="edit" data-cell="edit" title="Edit" aria-label="Edit">{{ icon('pencil') }}</button>{% endif %}
+        {% if delete %}<button type="button" class="btn-icon btn-icon-danger" data-action="delete" data-cell="delete" title="Delete" aria-label="Delete">{{ icon('trash-2') }}</button>{% endif %}
+    </div>
+</td>
+{%- endmacro %}
+
+{# ---------------------------------------------------------------- chart card. year: true adds the year picker and total (yearlyChart in chart.js fills them) #}
+{% macro chart_card(title, year=true, classes='mt-6') -%}
+<section class="card card-pad {{ classes }}">
+    <div class="mb-4 flex items-center justify-between gap-3">
+        <h2 class="text-sm font-semibold" data-chart-title>{{ title }}</h2>
+        {% if year %}<select class="select h-8 w-24 text-xs" data-chart-year aria-label="Year"></select>{% endif %}
+    </div>
+    <div class="relative h-64"><canvas data-chart></canvas></div>
+    {% if year %}<p class="num mt-3 text-sm text-muted">Total <span class="font-medium text-ink" data-chart-total></span></p>{% endif %}
+</section>
+{%- endmacro %}
+
+{# ---------------------------------------------------------------- the records of one account / card / category, one tab per kind (records.js fills it) #}
+{% macro records_tabs() -%}
+<div data-records>
+    <div class="mb-3 scroll-x"><div class="tabs" role="tablist" data-tabs></div></div>
+    <section class="card overflow-hidden">
+        {{ filter_bar('Search description or amount…') }}
+        <div class="table-wrap table-scroll" data-records-body></div>
+        <div class="hidden flex flex-col items-center px-6 py-14 text-center" data-empty>
+            <span class="mb-3 flex size-10 items-center justify-center rounded-full bg-sunken text-muted">{{ icon('inbox') }}</span>
+            <p class="text-sm font-medium" data-empty-title>No records yet</p>
+            <p class="mt-1 max-w-sm text-sm text-muted" data-empty-text>Everything that moves through here will be listed.</p>
+        </div>
+        <div class="flex items-center justify-between gap-3 border-t border-line bg-sunken/40 px-4 py-2.5 text-sm" data-total-bar>
+            <span class="text-muted" data-total-label>Total</span>
+            <span class="num font-semibold" data-total-value></span>
+        </div>
+    </section>
+</div>
+{%- endmacro %}
+
+{# ---------------------------------------------------------------- forms
+   field: one labelled field with its error line. Use it as {% call field('amount', 'Amount', half=true) %}<input ...>{% endcall %}
+     half: half width on a wide screen · optional: adds "(optional)" · when: "method=bank" shows it only while that value is chosen
+     edit_only: shown only when editing an existing record #}
+{% macro field(name, label, half=false, optional=false, when='', edit_only=false) -%}
+<div class="{{ '' if half else 'sm:col-span-2' }} {{ 'hidden' if (when or edit_only) }}" data-field="{{ name }}"{% if when %} data-show-when="{{ when }}"{% endif %}{% if edit_only %} data-edit-only{% endif %}>
+    <label class="label" for="f-{{ name }}">{{ label }}{% if optional %} <span class="font-normal text-faint">(optional)</span>{% endif %}</label>
+    {{ caller() }}
+    <p class="field-error hidden" data-error-for="{{ name }}"></p>
+</div>
+{%- endmacro %}
+
+{% macro amount_field(label='Amount', name='amount', help='') -%}
+{% call field(name, label, half=true) %}
+<input class="input num" id="f-{{ name }}" name="{{ name }}" type="text" inputmode="decimal" autocomplete="off" placeholder="0.00" required>
+{% if help %}<p class="mt-1 text-xs text-muted">{{ help }}</p>{% endif %}
+{% endcall %}
+{%- endmacro %}
+
+{% macro date_field(label='Date and time', name='created_at') -%}
+{% call field(name, label, half=true) %}<input class="input" id="f-{{ name }}" name="{{ name }}" type="datetime-local" required>{% endcall %}
+{%- endmacro %}
+
+{% macro text_field(name, label, optional=false, half=false, help='', placeholder='') -%}
+{% call field(name, label, half=half, optional=optional) %}
+<input class="input" id="f-{{ name }}" name="{{ name }}" type="text" autocomplete="off" placeholder="{{ placeholder }}"{% if not optional %} required{% endif %}>
+{% if help %}<p class="mt-1 text-xs text-muted">{{ help }}</p>{% endif %}
+{% endcall %}
+{%- endmacro %}
+
+{# A select whose options the script fills (recordForm selects). #}
+{% macro select_field(name, label, half=false, when='') -%}
+{% call field(name, label, half=half, when=when) %}<select class="select" id="f-{{ name }}" name="{{ name }}" required></select>{% endcall %}
+{%- endmacro %}
+
+{# "Cash | Bank account | Credit card": options [(value, label), ...], the first one is chosen by default. #}
+{% macro method_field(label, options, name='method', help='') -%}
+{% call field(name, label) %}
+<div class="segmented" role="radiogroup" aria-label="{{ label }}">
+    {% for value, text in options %}<label><input class="peer sr-only" type="radio" name="{{ name }}" value="{{ value }}"{% if loop.first %} checked{% endif %}><span>{{ text }}</span></label>{% endfor %}
+</div>
+{% if help %}<p class="mt-1 text-xs text-muted">{{ help }}</p>{% endif %}
+{% endcall %}
+{%- endmacro %}
+
+{% macro switch_field(name, label, help='', edit_only=false, when='') -%}
+{% call field(name, label, edit_only=edit_only, when=when) %}
+<label class="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-line px-3 py-2.5">
+    <span class="text-sm">{{ label }}{% if help %}<span class="block text-xs text-muted">{{ help }}</span>{% endif %}</span>
+    <input type="checkbox" class="switch" id="f-{{ name }}" name="{{ name }}">
+</label>
+{% endcall %}
+{%- endmacro %}
+
+{# The pop-up around a form (a bottom sheet on a phone). The fields go in the {% call %} body. #}
+{% macro form_dialog(id, title) -%}
+<dialog class="modal" id="{{ id }}">
+    <form novalidate data-form>
+        <div class="flex items-center justify-between border-b border-line px-5 py-3.5">
+            <h2 class="text-base font-semibold" data-title>{{ title }}</h2>
+            <button type="button" class="btn-icon -mr-1.5" data-close aria-label="Close">{{ icon('x') }}</button>
+        </div>
+        <div class="max-h-[70vh] overflow-y-auto px-5 py-4">
+            <p class="mb-4 hidden rounded-lg border border-negative/30 bg-negative/10 px-3 py-2 text-sm text-negative" data-form-error role="alert"></p>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">{{ caller() }}</div>
+        </div>
+        <div class="flex justify-end gap-2 border-t border-line px-5 py-3.5">
+            <button type="button" class="btn btn-outline" data-close>Cancel</button>
+            <button type="submit" class="btn btn-primary" data-submit>Save</button>
+        </div>
+    </form>
+</dialog>
+{%- endmacro %}

@@ -116,7 +116,7 @@ def register_resources(app):
     app.register_blueprint(loan_payment_routes.loan_payment_bp)
     app.register_blueprint(credit_card_payment_routes.credit_card_payment_bp)
     app.register_blueprint(withdrawal_routes.withdrawal_bp)
-    app.register_blueprint(cashledger_routes.cashlegder_bp)
+    app.register_blueprint(cashledger_routes.cash_ledger_bp)
     app.register_blueprint(banktransfer_routes.banktransfer_bp)
     app.register_blueprint(bank_transaction_ledger_routes.bank_transaction_ledger_bp)
     app.register_blueprint(debt_routes.debt_bp)

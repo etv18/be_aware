@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+{% from 'partials/ui.html' import page_header, table_card %}
+
+{% block title %}Card ledger{% endblock %}
+
+{% block content %}
+    {{ page_header('Card ledger', 'Every movement of your credit cards.') }}
+
+    {% call table_card([('Reference', ''), ('Card', 'hidden sm:table-cell'), ('Type', 'hidden md:table-cell'), ('Date', 'hidden sm:table-cell'), ('Before', 'hidden lg:table-cell text-right'), ('After', 'hidden lg:table-cell text-right'), ('Amount', 'text-right')],
+                       placeholder='Search reference, card or type…', actions=false) %}
+        <tr>
+            <td>
+                <span class="block font-mono text-xs font-medium" data-cell="reference"></span>
+                <span class="block text-xs text-muted sm:hidden" data-cell="meta"></span>
+            </td>
+            <td class="hidden sm:table-cell" data-cell="card"></td>
+            <td class="hidden md:table-cell"><span class="tag" data-cell="type"></span></td>
+            <td class="hidden whitespace-nowrap text-muted sm:table-cell" data-cell="date"></td>
+            <td class="num hidden text-right lg:table-cell" data-cell="before"></td>
+            <td class="num hidden text-right lg:table-cell" data-cell="after"></td>
+            <td class="num text-right" data-cell="amount"></td>
+        </tr>
+    {% endcall %}
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="{{ url_for('static', filename='js/card_ledger.js') }}"></script>
+{% endblock %}

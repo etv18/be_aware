@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+{% from 'partials/ui.html' import page_header, table_card, row_actions, chart_card, form_dialog, amount_field, text_field %}
+
+{% block title %}Expense categories{% endblock %}
+
+{% block content %}
+    {{ page_header('Expense categories', 'Group your expenses and give each group a monthly limit.', new_label='New category') }}
+
+    {% call table_card([('Category', ''), ('Added', 'hidden sm:table-cell'), ('Monthly limit', 'text-right')], filters=false) %}
+        <tr>
+            <td><span class="inline-flex items-center gap-2 font-medium"><span class="dot" style="background: rgb(var(--c-expenses))"></span><span data-cell="name"></span></span></td>
+            <td class="hidden whitespace-nowrap text-muted sm:table-cell" data-cell="added"></td>
+            <td class="num text-right font-medium" data-cell="limit"></td>
+            {{ row_actions() }}
+        </tr>
+    {% endcall %}
+
+    {{ chart_card('Spent this month, by category', year=false) }}
+
+    {% call form_dialog('record-dialog', 'New category') %}
+        {{ text_field('name', 'Name', help='At least 4 characters.') }}
+        {{ amount_field('Monthly limit', 'limit', help='Leave 0 for no limit.') }}
+    {% endcall %}
+
+    {% include 'partials/confirm_dialog.html' %}
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="{{ url_for('static', filename='js/expense_categories.js') }}"></script>
+{% endblock %}

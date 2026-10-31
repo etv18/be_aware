@@ -14,12 +14,12 @@ def expense_form(amount, category, description='Lunch', cash=False, card=None, a
 
 
 def post_expense(client, **kwargs):
-    return client.post('/expenses', json=expense_form(**kwargs))
+    return client.post('/api/expenses', json=expense_form(**kwargs))
 
 
 def put_expense(client, expense_id, **kwargs):
-    return client.put(f'/expenses/{expense_id}', json=expense_form(**kwargs))
+    return client.put(f'/api/expenses/{expense_id}', json=expense_form(**kwargs))
 
 
 def delete_expense(client, expense_id):
-    return client.delete(f'/expenses/{expense_id}')
+    return client.delete(f'/api/expenses/{expense_id}')

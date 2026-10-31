@@ -1,0 +1,66 @@
+{% extends 'layout.html' %}
+{% from 'partials/ui.html' import icon, page_header, tile %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    {{ page_header('Home') }}
+
+    <!-- the figures that matter today -->
+    <div class="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        {{ tile('cash', 'Cash on hand', 'coins', url_for('cashledger.index')) }}
+        {{ tile('banks', 'In bank accounts', 'wallet', url_for('bank_account.index')) }}
+        {{ tile('cards', 'Used on cards', 'credit-card', url_for('credit_card.index')) }}
+        {{ tile('collect', 'To collect', 'hand-coins', url_for('loan.index'), hint=true) }}
+        {{ tile('pay', 'To pay', 'scroll-text', url_for('debt.index'), hint=true) }}
+        {{ tile('left', 'Left this month', 'trending-up', url_for('expense.index')) }}
+    </div>
+
+    <div class="mb-6 grid gap-4 lg:grid-cols-3">
+        <!-- incomes and expenses, month by month -->
+        <section class="card card-pad lg:col-span-2">
+            <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <h2 class="text-sm font-semibold">Incomes and expenses</h2>
+                <div class="flex items-center gap-2">
+                    <div class="tabs" role="tablist" aria-label="Chart type">
+                        <button type="button" role="tab" data-kind="bar" aria-selected="true">{{ icon('chart-column') }}Bars</button>
+                        <button type="button" role="tab" data-kind="line" aria-selected="false">{{ icon('chart-line') }}Lines</button>
+                    </div>
+                    <select class="select h-8 w-24 text-xs" data-year aria-label="Year"></select>
+                </div>
+            </div>
+            <div class="relative h-64"><canvas data-flow></canvas></div>
+        </section>
+
+        <!-- this month -->
+        <section class="card card-pad">
+            <h2 class="mb-4 text-sm font-semibold">This month</h2>
+            <div class="relative mx-auto h-48 max-w-[14rem]"><canvas data-month></canvas></div>
+            <dl class="num mt-4 space-y-1.5 text-sm">
+                <div class="flex justify-between"><dt class="flex items-center gap-2"><span class="dot" style="background: rgb(var(--c-incomes))"></span>Incomes</dt><dd data-stat="month-incomes"></dd></div>
+                <div class="flex justify-between"><dt class="flex items-center gap-2"><span class="dot" style="background: rgb(var(--c-expenses))"></span>Expenses</dt><dd data-stat="month-expenses"></dd></div>
+            </dl>
+        </section>
+    </div>
+
+    <!-- one row per month -->
+    <section class="card mb-6 overflow-hidden">
+        <h2 class="border-b border-line px-4 py-3 text-sm font-semibold">Month by month <span class="font-normal text-muted" data-year-label></span></h2>
+        <div class="table-wrap">
+            <table class="table">
+                <thead><tr><th>Month</th><th class="text-right">Incomes</th><th class="text-right">Expenses</th><th class="text-right">Balance</th></tr></thead>
+                <tbody data-months></tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- the year by kind of record -->
+    <section class="card overflow-hidden">
+        <h2 class="border-b border-line px-4 py-3 text-sm font-semibold">Year by kind of record</h2>
+        <ul class="divide-y divide-line" data-kinds></ul>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="{{ url_for('static', filename='js/home.js') }}"></script>
+{% endblock %}

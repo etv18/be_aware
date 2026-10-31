@@ -1,0 +1,18 @@
+{% extends 'layout.html' %}
+{% from 'partials/ui.html' import page_header, stat_row, records_tabs %}
+
+{% block title %}Expense category{% endblock %}
+
+{% block content %}
+    <div id="page" data-id="{{ id }}">
+        {{ page_header(back_href=url_for('expense_category.index'), back_label='Expense categories') }}
+
+        {{ stat_row([('limit', 'Monthly limit', false), ('spent', 'Spent so far', true)]) }}
+
+        {{ records_tabs() }}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="{{ url_for('static', filename='js/expense_category.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+{% from 'partials/ui.html' import icon, page_header, stat_row, table_card, row_actions, chart_card, form_dialog, amount_field, date_field, text_field, select_field, method_field, switch_field %}
+{% from 'partials/dialogs.html' import payment_dialog %}
+
+{% block title %}Debts{% endblock %}
+
+{% block content %}
+    {% call page_header('Debts', 'Money you owe. Payments you make reduce what is left.', new_label='New debt') %}
+        <a href="{{ url_for('debt_payment.index') }}" class="btn btn-outline">{{ icon('list') }}All payments</a>
+    {% endcall %}
+
+    {{ stat_row([('remaining', 'Still to pay', false), ('active', 'Active', false), ('paid', 'Paid', false)]) }}
+
+    {% call table_card([('Person', ''), ('Status', 'hidden sm:table-cell'), ('Received in', 'hidden md:table-cell'), ('Date', 'hidden lg:table-cell'), ('Paid', 'hidden md:table-cell text-right'), ('Remaining', 'text-right'), ('Amount', 'hidden sm:table-cell text-right')],
+                       placeholder='Search person, description, account…') %}
+        <tr>
+            <td>
+                <span class="block font-medium" data-cell="person"></span>
+                <span class="block max-w-[28ch] truncate text-xs text-muted" data-cell="description"></span>
+            </td>
+            <td class="hidden sm:table-cell"><span class="tag" data-cell="status"></span></td>
+            <td class="hidden md:table-cell" data-cell="source"></td>
+            <td class="hidden whitespace-nowrap text-muted lg:table-cell" data-cell="date"></td>
+            <td class="num hidden text-right md:table-cell" data-cell="paid"></td>
+            <td class="num text-right" data-cell="remaining"></td>
+            <td class="num hidden text-right font-medium sm:table-cell" data-cell="amount"></td>
+            {{ row_actions(extra=[('pay', 'hand-coins', 'Make a payment')]) }}
+        </tr>
+    {% endcall %}
+
+    {{ chart_card('Debts per month') }}
+
+    {% call form_dialog('record-dialog', 'New debt') %}
+        {{ text_field('person_name', 'Person', half=true) }}
+        {{ amount_field() }}
+        {{ date_field() }}
+        {{ text_field('description', 'Description', optional=true) }}
+        {{ method_field('Received in', [('cash', 'Cash'), ('bank', 'Bank account'), ('none', 'No money')], help='Pick "No money" when someone paid for something in kind and you never received the money.') }}
+        {{ select_field('bank_account_id', 'Bank account', when='method=bank') }}
+        {{ switch_field('mark_paid', 'Mark as paid', help='You owe nothing more, even if the payments do not cover the amount.', edit_only=true) }}
+    {% endcall %}
+
+    {{ payment_dialog('Paid from') }}
+    {% include 'partials/confirm_dialog.html' %}
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="{{ url_for('static', filename='js/debts.js') }}"></script>
+{% endblock %}

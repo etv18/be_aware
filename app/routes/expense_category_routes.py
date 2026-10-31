@@ -1,26 +1,27 @@
-from flask import Blueprint
+from flask import Blueprint, render_template
 from flask_login import login_required
 
 from app.controllers import expense_category_controller as controller
-from app.routes._pages import page
-from app.routes._rest import register
+from app.routes._rest import get, register
 
-expense_category_bp = Blueprint('expense_category', __name__, url_prefix='/expense_categories')
+expense_category_bp = Blueprint('expense_category', __name__)
 
 
-@expense_category_bp.route('/index', methods=['GET'])
+@expense_category_bp.get('/expense_categories')
 @login_required
 def index():
-    return page('categories', 'expense-categories', 'Expense categories')
+    return render_template('expense_categories.html', nav='categories')
 
 
-@expense_category_bp.route('/associated_records/<int:category_id>', methods=['GET'])
+@expense_category_bp.get('/expense_categories/<int:record_id>')
 @login_required
-def show_associated_records(category_id):
-    return page('categories', 'expense-category', 'Expense category', id=category_id)
+def show(record_id):
+    return render_template('expense_category.html', nav='categories', id=record_id)
 
 
-register(expense_category_bp, controller.RESOURCE)
+# JSON: GET /api/expense_categories, POST /api/expense_categories, GET /api/expense_categories/<id>, PUT /api/expense_categories/<id>, DELETE /api/expense_categories/<id>
+register(expense_category_bp, controller.RESOURCE, '/expense_categories')
 
-expense_category_bp.add_url_rule('/<int:category_id>/records', 'records', login_required(controller.records_of), methods=['GET'])
-expense_category_bp.add_url_rule('/reports/monthly', 'monthly', login_required(controller.monthly_report), methods=['GET'])
+# the expenses of one category, and what each category spent this month
+get(expense_category_bp, '/expense_categories/<int:category_id>/records', controller.records_of, 'records')
+get(expense_category_bp, '/expense_categories/reports/monthly', controller.monthly_report, 'monthly')

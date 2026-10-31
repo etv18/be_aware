@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+{% from 'partials/ui.html' import icon, page_header, stat_row, table_card, row_actions, form_dialog, amount_field, text_field, select_field %}
+{% from 'partials/dialogs.html' import transfer_dialog %}
+
+{% block title %}Bank accounts{% endblock %}
+
+{% block content %}
+    {% call page_header('Bank accounts', 'Where your money sits.', new_label='New account') %}
+        <a href="{{ url_for('bank_transaction_ledger.index') }}" class="btn btn-outline">{{ icon('book-open') }}Ledger</a>
+    {% endcall %}
+
+    {{ stat_row([('total', 'In all accounts', false), ('count', 'Accounts', false)]) }}
+
+    {% call table_card([('Account', ''), ('Bank', 'hidden sm:table-cell'), ('Status', 'hidden md:table-cell'), ('Added', 'hidden lg:table-cell'), ('Balance', 'text-right')], filters=false) %}
+        <tr>
+            <td>
+                <span class="block font-medium" data-cell="name"></span>
+                <span class="block font-mono text-xs text-muted" data-cell="number"></span>
+            </td>
+            <td class="hidden sm:table-cell" data-cell="bank"></td>
+            <td class="hidden md:table-cell"><span class="tag" data-cell="status"></span></td>
+            <td class="hidden whitespace-nowrap text-muted lg:table-cell" data-cell="added"></td>
+            <td class="num text-right font-medium" data-cell="balance"></td>
+            {{ row_actions(extra=[('transfer', 'arrow-left-right', 'Transfer')]) }}
+        </tr>
+    {% endcall %}
+
+    {% call form_dialog('record-dialog', 'New bank account') %}
+        {{ text_field('nick_name', 'Nickname', half=true) }}
+        {{ text_field('account_number', 'Account number', optional=true, half=true, placeholder='Up to 6 characters') }}
+        {{ amount_field('Balance', 'amount_available') }}
+        {{ select_field('bank_id', 'Bank', half=true) }}
+    {% endcall %}
+
+    {{ transfer_dialog() }}
+    {% include 'partials/confirm_dialog.html' %}
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="{{ url_for('static', filename='js/bank_accounts.js') }}"></script>
+{% endblock %}

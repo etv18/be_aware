@@ -21,7 +21,7 @@ logs/
 error.log
 
 # Front-end tooling: reinstall with "npm install" in /frontend
-node_modules/
+/node_modules/
 
 # Editors, OS and tooling noise
 .idx/

@@ -166,6 +166,7 @@
   .tag { @apply inline-flex items-center gap-1.5 rounded-md bg-sunken px-2 py-0.5 text-xs font-medium text-muted; }
   .tag-positive { @apply bg-positive/10 text-positive; }
   .tag-warning { @apply bg-warning/10 text-warning; }
+  .tag-negative { @apply bg-negative/10 text-negative; }
   .dot { @apply inline-block size-2 rounded-full; }
 
   /* ---------------------------------------------------------------- tables */

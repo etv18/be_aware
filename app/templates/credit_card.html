@@ -10,7 +10,7 @@
             <button type="button" class="btn btn-primary hidden" data-pay>{{ icon('banknote') }}Pay the card</button>
         {% endcall %}
 
-        {{ stat_row([('limit', 'Limit', false), ('used', 'Used', false), ('available', 'Available', false)]) }}
+        {{ stat_row([('limit', 'Limit', false), ('used', 'Used', false, 'text-orange-500'), ('available', 'Available', false)]) }}
 
         {{ chart_card('Per month', year=false, classes='mb-6') }}
 

@@ -11,16 +11,14 @@
 
     {{ stat_row([('used', 'Used', false), ('available', 'Available', false)]) }}
 
-    {% call table_card([('Card', ''), ('Bank', 'hidden sm:table-cell'), ('Limit', 'hidden md:table-cell text-right'), ('Used', 'text-right'), ('Available', 'hidden sm:table-cell text-right')], filters=false) %}
+    {% call table_card([('Card', ''), ('Bank', 'hidden sm:table-cell'), ('Limit', 'hidden md:table-cell text-right'), ('Used', 'text-center'), ('Available', 'hidden sm:table-cell text-right')], filters=false) %}
         <tr>
             <td class="font-medium" data-cell="name"></td>
             <td class="hidden sm:table-cell" data-cell="bank"></td>
             <td class="num hidden text-right md:table-cell" data-cell="limit"></td>
-            <td class="num text-right">
-                <div class="ml-auto w-28">
-                    <div class="flex justify-between text-xs"><span data-cell="used"></span><span class="text-muted" data-cell="share"></span></div>
-                    <div class="mt-1 h-1 rounded-full bg-sunken"><div class="h-1 rounded-full" data-cell="bar"></div></div>
-                </div>
+            <td class="num text-center text-orange-500 font-bold"> 
+                <span data-cell="used"></span>
+
             </td>
             <td class="num hidden text-right font-medium sm:table-cell" data-cell="available"></td>
             {{ row_actions(extra=[('pay', 'banknote', 'Pay the card')]) }}

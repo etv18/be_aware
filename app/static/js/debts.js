@@ -43,7 +43,7 @@ const list = bindList({
   cells: (row) => ({
     person: row.person_name,
     description: { text: row.description, show: Boolean(row.description) },
-    status: row.is_active ? 'Active' : { text: 'Paid', class: 'tag-positive' },
+    status: row.is_active ? { text: 'ACTIVE', class: 'tag-negative' } : { text: 'Paid', class: 'tag-positive' },
     source: source(row),
     date: formatDate(row.created_at),
     paid: money(row.total_paid),

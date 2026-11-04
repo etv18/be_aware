@@ -40,13 +40,17 @@ class Config:
 class DevelopmentConfig(Config):
     """Local development. Uses a SQLite file (instance/be_aware_dev.db) unless DEV_DATABASE_URL is set."""
 
+    # A throwaway key so sessions work out of the box. Never used in production.
+    SECRET_KEY = os.getenv('SECRET_KEY') or 'dev-only-insecure-key'
     DEBUG = True
     TEMPLATES_AUTO_RELOAD = True
     ENV_NAME, ENV_LABEL = 'development', 'DEV'
 
-    # A throwaway key so sessions work out of the box. Never used in production.
-    SECRET_KEY = os.getenv('SECRET_KEY') or 'dev-only-insecure-key'
-    SQLALCHEMY_DATABASE_URI = os.getenv('DEV_DATABASE_URL') or _sqlite_uri('be_aware_dev.db')
+    @property
+    def SQLALCHEMY_DATABASE_URI(self):
+        # Imported here so development and tests never need the DB_* variables.
+        from app.utils.db import db_url
+        return db_url
 
 
 class TestingConfig(Config):
@@ -64,7 +68,7 @@ class TestingConfig(Config):
 
 
 class ProductionConfig(Config):
-    """Real deployment. Reads the MySQL connection from the .env file (see app/utils/db.py)."""
+    """Reads the MySQL connection from the .env file (see app/utils/db.py)."""
 
     ENV_NAME, ENV_LABEL = 'production', 'PROD'
 

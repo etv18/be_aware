@@ -25,19 +25,20 @@
 {%- endmacro %}
 
 {# ---------------------------------------------------------------- figures above a table. The script fills data-stat="<key>" (and data-stat-hint). #}
-{% macro stat_card(key, label, hint=false) -%}
+{% macro stat_card(key, label, hint=false, classes_for_key='') -%}
 <div class="card px-4 py-3.5">
     <p class="text-xs text-muted">{{ label }}</p>
-    <p class="num mt-1 truncate text-xl font-semibold" data-stat="{{ key }}">–</p>
+    <p class="num mt-1 truncate text-xl font-semibold {{ classes_for_key }}" data-stat="{{ key }}">–</p>
     {% if hint %}<p class="mt-0.5 truncate text-xs text-muted" data-stat-hint="{{ key }}"></p>{% endif %}
 </div>
 {%- endmacro %}
 
-{# items: [(key, label, has_hint), ...] #}
+{# items: [(key, label, has_hint, classes_for_key), ...] #}
 {% macro stat_row(items) -%}
 {% set columns = {1: 'lg:grid-cols-1', 2: 'lg:grid-cols-2', 3: 'lg:grid-cols-3', 4: 'lg:grid-cols-4'} %}
 <div class="mb-4 grid grid-cols-2 gap-3 {{ columns[[items|length, 4]|min] }}">
-    {% for key, label, hint in items %}{{ stat_card(key, label, hint) }}{% endfor %}
+    {% for item in items %}{{ stat_card(*item) }}{% endfor %}
+    {# item=(key, label, has_hint, classes_for_key) #}
 </div>
 {%- endmacro %}
 

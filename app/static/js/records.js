@@ -13,7 +13,7 @@ const description = column('Description', (r) => r.description || '–');
 const obligation = (sourceLabel, isActiveStsLabel, isActiveStsClass) => [ //     status: row.is_active ?  : { text: 'Paid', class: 'tag-positive' },
 
   person,
-  column('Status', (r) => (r.is_active ? isActiveStsLabel.toUpperCase() : 'Paid'), { class: (r) => (r.is_active ? isActiveStsClass : 'text-positive') }),
+  column('Status', (r) => (r.is_active ? isActiveStsLabel.toUpperCase() : 'Paid'), { class: (r) => (r.is_active ? isActiveStsClass : 'text-positive font-bold') }),
   column(sourceLabel, source),
   date,
   column('Paid', (r) => money(r.total_paid), { right: true }),
@@ -28,7 +28,7 @@ const KINDS = {
   incomes: ['Incomes', [description, column('Received in', source), date, amount('text-positive')]],
   deposits: ['Deposits', [description, column('Into account', (r) => r.bank_account_name || '–'), date, amount()]],
   withdrawals: ['Withdrawals', [description, column('From account', (r) => r.bank_account_name || '–'), date, amount()]],
-  loans: ['Loans', obligation('Lent from', 'COLLECT', 'tag-warning')],
+  loans: ['Loans', obligation('Lent from', 'COLLECT', 'text-yellow-400 font-bold')],
   loan_payments: ['Loan payments', [person, column('Received in', source), date, amount('text-positive')]],
   debts: ['Debts', obligation('Received in', 'ACTIVE')],
   debt_payments: ['Debt payments', [person, column('Paid from', source), date, amount('text-negative')]],
@@ -55,9 +55,9 @@ function buildTable(columns, rows) {
   rows.forEach((row) => {
     const tr = el('tr');
     columns.forEach((c) => {
-      const td = el('td', `${c.right ? 'num text-right' : ''} ${c.class || ''}`);
-     // const td = el('td', `${c.right ? 'num text-right' : ''} ${resolve(c.class, row) || ''}`);
-      td.append(el('span', c.sub ? `block font-medium ${resolve(c.class, row) || ''}` : '', c.text(row)));
+     // const td = el('td', `${c.right ? 'num text-right' : ''} ${c.class || ''}`);
+     const td = el('td', `${c.right ? 'num text-right' : ''} ${resolve(c.class, row) || ''}`);
+      td.append(el('span', c.sub ? `block font-medium` : '', c.text(row)));
       const sub = c.sub?.(row);
       if (sub) td.append(el('span', `block max-w-[28ch] truncate text-xs text-muted`, sub));
       tr.append(td);

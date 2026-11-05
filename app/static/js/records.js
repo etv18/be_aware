@@ -10,9 +10,10 @@ const person = column('Person', (r) => r.person_name || '–', { sub: (r) => r.d
 const description = column('Description', (r) => r.description || '–');
 
 // loans and debts share their columns; only the "where the money went" label changes
-const obligation = (sourceLabel) => [
+const obligation = (sourceLabel, isActiveStsLabel, isActiveStsClass) => [ //     status: row.is_active ?  : { text: 'Paid', class: 'tag-positive' },
+
   person,
-  column('Status', (r) => (r.is_active ? 'Active' : 'Paid')),
+  column('Status', (r) => (r.is_active ? isActiveStsLabel.toUpperCase() : 'Paid'), { class: (r) => (r.is_active ? isActiveStsClass : 'text-positive') }),
   column(sourceLabel, source),
   date,
   column('Paid', (r) => money(r.total_paid), { right: true }),
@@ -20,14 +21,16 @@ const obligation = (sourceLabel) => [
   amount(),
 ];
 
+const resolve = (value, row) => (typeof value === 'function' ? value(row) : value); // util function for decompiling classes in {options} param from
+
 const KINDS = {
   expenses: ['Expenses', [description, column('Category', (r) => r.expense_category_name || '–'), column('Paid with', source), date, amount('text-negative')]],
   incomes: ['Incomes', [description, column('Received in', source), date, amount('text-positive')]],
   deposits: ['Deposits', [description, column('Into account', (r) => r.bank_account_name || '–'), date, amount()]],
   withdrawals: ['Withdrawals', [description, column('From account', (r) => r.bank_account_name || '–'), date, amount()]],
-  loans: ['Loans', obligation('Lent from')],
+  loans: ['Loans', obligation('Lent from', 'COLLECT', 'tag-warning')],
   loan_payments: ['Loan payments', [person, column('Received in', source), date, amount('text-positive')]],
-  debts: ['Debts', obligation('Received in')],
+  debts: ['Debts', obligation('Received in', 'ACTIVE')],
   debt_payments: ['Debt payments', [person, column('Paid from', source), date, amount('text-negative')]],
   credit_card_payments: ['Card payments', [column('Card', (r) => r.credit_card_name || '–'), column('Paid from', (r) => (r.is_cashback ? 'Cashback' : r.bank_account_name || '–')), date, amount('text-positive')]],
   bank_transfers: ['Transfers', [column('Code', (r) => r.code, { class: 'font-mono text-xs' }), column('From', (r) => r.from_bank_account_name || '–'), column('To', (r) => r.to_bank_account_name || '–'), date, amount()]],
@@ -53,9 +56,10 @@ function buildTable(columns, rows) {
     const tr = el('tr');
     columns.forEach((c) => {
       const td = el('td', `${c.right ? 'num text-right' : ''} ${c.class || ''}`);
-      td.append(el('span', c.sub ? 'block font-medium' : '', c.text(row)));
+     // const td = el('td', `${c.right ? 'num text-right' : ''} ${resolve(c.class, row) || ''}`);
+      td.append(el('span', c.sub ? `block font-medium ${resolve(c.class, row) || ''}` : '', c.text(row)));
       const sub = c.sub?.(row);
-      if (sub) td.append(el('span', 'block max-w-[28ch] truncate text-xs text-muted', sub));
+      if (sub) td.append(el('span', `block max-w-[28ch] truncate text-xs text-muted`, sub));
       tr.append(td);
     });
     body.append(tr);

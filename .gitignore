@@ -19,6 +19,8 @@ instance/
 logs/
 *.log
 error.log
+.bundle
+.patch
 
 # Front-end tooling: reinstall with "npm install" in /frontend, rebuild with "npm run build"
 node_modules/

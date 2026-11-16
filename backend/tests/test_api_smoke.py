@@ -71,7 +71,6 @@ def test_unauthenticated(app):
     r = app.test_client().get('/api/expenses', headers={'Accept': 'application/json'})
     assert r.status_code == 401 and r.get_json()['error']['code'] == 'not_authenticated'
     assert app.test_client().post('/api/expenses', json={}).status_code == 401
-    assert 'Log in' in app.test_client().get('/expenses').get_data(as_text=True)  # a person gets the login page
     assert app.test_client().get('/api/session').get_json()['data']['authenticated'] is False
 
 

@@ -261,6 +261,81 @@ class YearlyReportOut(BaseModel):
     label: str
 
 
+# ------------------------------------------------------------------ what hangs from an account, a card or a category
+
+class RecordsOut(Out):
+    """Every record that touched the account, card or category, one list per kind. Kinds without records are left out."""
+    expenses: list[ExpenseOut] = Field(default_factory=list)
+    incomes: list[IncomeOut] = Field(default_factory=list)
+    deposits: list[CashMovementOut] = Field(default_factory=list)
+    withdrawals: list[CashMovementOut] = Field(default_factory=list)
+    loans: list[LoanOut] = Field(default_factory=list)
+    loan_payments: list[LoanPaymentOut] = Field(default_factory=list)
+    debts: list[DebtOut] = Field(default_factory=list)
+    debt_payments: list[DebtPaymentOut] = Field(default_factory=list)
+    credit_card_payments: list[CreditCardPaymentOut] = Field(default_factory=list)
+    bank_transfers: list[BankTransferOut] = Field(default_factory=list)
+
+
+class BankAccountRecordsOut(Out):
+    bank_account: BankAccountOut
+    records: RecordsOut
+
+
+class CreditCardRecordsOut(Out):
+    credit_card: CreditCardOut
+    records: RecordsOut
+
+
+class ExpenseCategoryRecordsOut(Out):
+    expense_category: ExpenseCategoryOut
+    records: RecordsOut
+
+
+# ------------------------------------------------------------------ reports used by the pages
+
+class AccountCashFlowOut(Out):
+    """Money in and out of one bank account for each month of the year."""
+    months: list[str]
+    incomings: list[Money]
+    outgoings: list[Money]
+    balances: list[Money]
+
+
+class CardYearlyInfo(Out):
+    credit_card_payments: list[Money]
+    expenses: list[Money]
+    loans: list[Money]
+
+
+class CardYearlyOut(Out):
+    months: list[str]
+    associations_info: CardYearlyInfo
+
+
+class CategoriesMonthlyOut(Out):
+    """What each expense category spent this month."""
+    names: list[str]
+    totals: list[Money]
+
+
+class CashFlowReport(Out):
+    incomes: list[Money]
+    expenses: list[Money]
+    balances: list[Money]
+
+
+class CashFlowOut(Out):
+    months: list[str]
+    report: CashFlowReport
+
+
+class YearlyAllOut(Out):
+    """The 12 monthly totals of every kind of record (the key is the table name)."""
+    months: list[str]
+    report: dict[str, list[Money]]
+
+
 # ------------------------------------------------------------------ which model describes which serializer
 
 def _by_serializer():

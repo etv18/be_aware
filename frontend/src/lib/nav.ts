@@ -1,6 +1,4 @@
 // The menu. `key` picks the module color (--m-<key> in app.css); `path` is the page.
-// MIGRATED lists the pages that already exist in React: their links stay inside the React app, the others still
-// go to the Jinja page of the same URL. Add a key here when a page is ported; when the list is complete, delete it.
 import type { IconName } from '@/components/Icon';
 
 export type NavItem = { key: string; path: string; icon: IconName; label: string };
@@ -37,11 +35,14 @@ export const GROUPS: NavGroup[] = [
   },
 ];
 
-export const MIGRATED = new Set(['expenses']);
+
+// pages that are not in the menu belong to the entry they hang from
+const BELONGS_TO: Record<string, string> = { '/bank_ledger': '/bank_accounts', '/card_ledger': '/credit_cards', '/loan_payments': '/loans', '/debt_payments': '/debts' };
 
 /** Which menu entry a URL belongs to ('/loans/12' -> loans). */
 export function currentItem(pathname: string): { item: NavItem | null; group: NavGroup | null } {
-  const first = `/${pathname.split('/')[1] ?? ''}`;
+  const segment = `/${pathname.split('/')[1] ?? ''}`;
+  const first = BELONGS_TO[segment] ?? segment;
   for (const group of GROUPS) {
     const item = group.items.find((candidate) => candidate.path === first);
     if (item) return { item, group };

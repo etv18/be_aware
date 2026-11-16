@@ -2,16 +2,13 @@
   "name": "be-aware-frontend",
   "private": true,
   "type": "module",
-  "description": "The React + TypeScript frontend of Be Aware. The Jinja pages in app/templates still use build:css and build:icons until they are replaced.",
+  "description": "The React + TypeScript frontend of Be Aware (Vite, React Router, TanStack Query, Tailwind). Flask serves its build.",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "gen:api": "python ../backend/scripts/export_openapi.py && openapi-typescript openapi.json -o src/types/api.ts --default-non-nullable false",
-    "build:css": "tailwindcss -c tailwind.config.js -i src/app.css -o ../backend/app/static/css/app.css --minify",
-    "watch:css": "tailwindcss -c tailwind.config.js -i src/app.css -o ../backend/app/static/css/app.css --watch",
-    "build:icons": "node scripts/build-icons.mjs"
+    "gen:api": "python ../backend/scripts/export_openapi.py && openapi-typescript openapi.json -o src/types/api.ts --default-non-nullable false"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.0",
@@ -27,8 +24,6 @@
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
-    "flatpickr": "^4.6.13",
-    "lucide-static": "0.469.0",
     "openapi-typescript": "^7.5.0",
     "postcss": "^8.4.49",
     "tailwindcss": "3.4.17",

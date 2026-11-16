@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 
 // Development: `npm run dev` serves the app on :5173 and sends /api to Flask (:5000), so the session cookie and the
-// CSRF token work without any CORS setup. Build: the files go to backend/app/static/app, which Flask serves (app/routes/spa_routes.py).
+// CSRF token work without any CORS setup. Build: the files go to backend/app/static/app, which Flask serves at / (app/routes/spa_routes.py).
 export default defineConfig(({ command }) => ({
   plugins: [react()],
   base: command === 'build' ? '/static/app/' : '/',

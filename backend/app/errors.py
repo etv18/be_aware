@@ -1,12 +1,11 @@
 """One error format for every JSON response:  {"error": {"code": "...", "message": "...", "fields": {...}}}
 
 `code` is stable and meant for programs (a React app can switch on it); `message` is for people.
-A request counts as JSON when it goes to /api, sends JSON, asks for JSON, or changes data (POST, PUT, DELETE);
-a person opening a page in the browser still gets the normal HTML error pages.
+A request counts as JSON when it goes to /api, sends JSON, asks for JSON, or changes data (POST, PUT, DELETE).
 """
 import re
 
-from flask import current_app, jsonify, render_template, request
+from flask import current_app, jsonify, request
 from flask_wtf.csrf import CSRFError
 from pydantic import ValidationError
 from werkzeug.exceptions import HTTPException
@@ -96,7 +95,5 @@ def register_error_handlers(app):
 
 
 def unauthorized():
-    """Flask-Login: JSON callers get a 401, a person opening a page gets the login form."""
-    if wants_json():
-        return error_response(401, 'not_authenticated', 'You need to log in.')
-    return render_template('auth/login.html')
+    """Flask-Login: only the JSON API is behind a login (the pages are the React app, which sends people to /login itself)."""
+    return error_response(401, 'not_authenticated', 'You need to log in.')

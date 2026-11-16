@@ -1,13 +1,14 @@
 // The expenses page. (templates/expenses.html + static/js/expenses.js)
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
 import { YearlyChart } from '@/components/charts/YearlyChart';
-import { useConfirm, useToast } from '@/components/Providers';
+import { useToast } from '@/components/Providers';
 import { PageHeader, StatRow } from '@/components/ui/page';
 import { AmountField, DateField, FormDialog, MethodField, SelectField, TextField } from '@/components/ui/form';
 import { RowActions, TableCard } from '@/components/ui/table';
+import { useCrud } from '@/lib/crud';
 import { formatDate, idOrNull, money, plural, source, toInputValue } from '@/lib/format';
-import { useList, useOptions, usePageTitle, useRemove, useSave, type Filters } from '@/lib/queries';
+import { useOptions, usePageTitle, useSave } from '@/lib/queries';
 import type { Expense, ExpenseBody, ExpenseListMeta } from '@/types';
 
 type Method = 'cash' | 'bank' | 'card';
@@ -79,27 +80,9 @@ function ExpenseForm({ record, onClose }: { record: Expense | null; onClose: () 
 // ------------------------------------------------------------------ the page
 export function Expenses() {
   usePageTitle('Expenses');
-  const confirm = useConfirm();
-  const { toast, toastError } = useToast();
-  const remove = useRemove('/expenses');
-
-  const [filters, setFilters] = useState<Filters>({});
-  const onFilters = useCallback((next: Filters) => setFilters(next), []);
-  const [editing, setEditing] = useState<Expense | 'new' | null>(null);
-
-  const list = useList<Expense, ExpenseListMeta>('/expenses', filters);
-  const rows = list.data?.data ?? [];
-  const meta = list.data?.meta;
-
-  async function onDelete(row: Expense) {
-    if (!(await confirm({ title: 'Delete this expense?', text: 'The money goes back to where it came from.' }))) return;
-    try {
-      await remove.mutateAsync(row.id);
-      toast('Expense deleted.');
-    } catch (error) {
-      toastError(error);
-    }
-  }
+  const { rows, meta, filters, onFilters, editing, setEditing, onDelete } = useCrud<Expense, ExpenseListMeta>({
+    path: '/expenses', noun: 'expense', undo: 'The money goes back to where it came from.',
+  });
 
   return (
     <>

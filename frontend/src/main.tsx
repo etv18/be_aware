@@ -1,13 +1,25 @@
 import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { Layout } from '@/components/Layout';
 import { ConfirmProvider, ThemeProvider, ToastProvider } from '@/components/Providers';
 import { RequireAuth } from '@/components/RequireAuth';
 import { ApiError } from '@/lib/api';
+import { BankAccounts } from '@/pages/BankAccounts';
+import { Banks } from '@/pages/Banks';
+import { Deposits, Withdrawals } from '@/pages/CashMovements';
+import { CreditCards } from '@/pages/CreditCards';
+import { BankAccountDetail, CreditCardDetail, ExpenseCategoryDetail } from '@/pages/Details';
+import { ExpenseCategories } from '@/pages/ExpenseCategories';
 import { Expenses } from '@/pages/Expenses';
+import { Home } from '@/pages/Home';
+import { Incomes } from '@/pages/Incomes';
+import { BankLedger, CardLedger, CashLedger } from '@/pages/Ledgers';
+import { DebtDetail, LoanDetail } from '@/pages/ObligationDetail';
+import { Debts, Loans } from '@/pages/Obligations';
+import { DebtPayments, LoanPayments } from '@/pages/PaymentLists';
 import { Login } from '@/pages/Login';
 import { NotFound } from '@/pages/NotFound';
 
@@ -24,8 +36,8 @@ const client: QueryClient = new QueryClient({
   defaultOptions: { queries: { retry: false, refetchOnWindowFocus: false } },
 });
 
-// While the Jinja pages still exist the app lives under /app (see app/routes/spa_routes.py); `npm run dev` serves it at /.
-const basename = import.meta.env.VITE_BASENAME ?? (import.meta.env.DEV ? '/' : '/app');
+// The app lives at "/" (Flask answers every page URL with index.html, see backend/app/routes/spa_routes.py).
+const basename = '/';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -38,8 +50,27 @@ createRoot(document.getElementById('root')!).render(
                 <Route path="/login" element={<Login />} />
                 <Route element={<RequireAuth />}>
                   <Route element={<Layout />}>
-                    <Route path="/" element={<Navigate to="/expenses" replace />} />
+                    <Route path="/" element={<Home />} />
                     <Route path="/expenses" element={<Expenses />} />
+                    <Route path="/incomes" element={<Incomes />} />
+                    <Route path="/withdrawals" element={<Withdrawals />} />
+                    <Route path="/deposits" element={<Deposits />} />
+                    <Route path="/expense_categories" element={<ExpenseCategories />} />
+                    <Route path="/expense_categories/:id" element={<ExpenseCategoryDetail />} />
+                    <Route path="/banks" element={<Banks />} />
+                    <Route path="/bank_accounts" element={<BankAccounts />} />
+                    <Route path="/bank_accounts/:id" element={<BankAccountDetail />} />
+                    <Route path="/credit_cards" element={<CreditCards />} />
+                    <Route path="/credit_cards/:id" element={<CreditCardDetail />} />
+                    <Route path="/cash_ledger" element={<CashLedger />} />
+                    <Route path="/bank_ledger" element={<BankLedger />} />
+                    <Route path="/card_ledger" element={<CardLedger />} />
+                    <Route path="/loans" element={<Loans />} />
+                    <Route path="/loans/:id" element={<LoanDetail />} />
+                    <Route path="/loan_payments" element={<LoanPayments />} />
+                    <Route path="/debts" element={<Debts />} />
+                    <Route path="/debts/:id" element={<DebtDetail />} />
+                    <Route path="/debt_payments" element={<DebtPayments />} />
                     <Route path="*" element={<NotFound />} />
                   </Route>
                 </Route>

@@ -1,6 +1,5 @@
-from flask import Flask, render_template
+from flask import Flask
 from flask_migrate import Migrate
-from flask_babel import format_datetime, format_date, format_time
 from werkzeug.middleware.proxy_fix import ProxyFix
 from sqlalchemy.engine import make_url
 
@@ -10,7 +9,6 @@ from logging.handlers import RotatingFileHandler
 
 from app.config import get_config
 from app.cli import register_cli
-from app.utils.date_handling import format_datetime_filter
 from app.errors import register_error_handlers, unauthorized
 from app.openapi import register_openapi
 from app.extensions import db, babel, limiter, crsf, login_manager
@@ -66,15 +64,6 @@ def create_app(config_name=None):
         make_url(app.config['SQLALCHEMY_DATABASE_URI']).get_backend_name(),
     )
 
-    @app.context_processor
-    def inject_theme():
-        return {
-            'nav_bar_backgroud': app.config['NAV_BAR_BACKGROUND_COLOR'],
-            # the badge in the navbar: APP_ENV of the .env file -> DEV / PROD / TEST
-            'env_name': app.config['ENV_NAME'],
-            'env_label': app.config['ENV_LABEL'],
-        }
-
     from app import models
 
     return app
@@ -98,14 +87,6 @@ def register_extensions(app):
 
     #GLOBAL rate limiter
     limiter.default_limits = ['600 per minute']  # a page makes several calls per screen
-
-    # REGISTER BABEL FILTERS MANUALLY (Flask-Babel 4.x)
-    app.jinja_env.filters['format_datetime'] = format_datetime
-    app.jinja_env.filters['format_date'] = format_date
-    app.jinja_env.filters['format_time'] = format_time
-
-    # Register custom the filter with Jinja
-    app.jinja_env.filters['format_datetime_custom'] = format_datetime_filter
 
 def register_resources(app):
     app.register_blueprint(home_routes.home_bp)

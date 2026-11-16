@@ -15,6 +15,11 @@ export const useOptions = () => useQuery({ queryKey: ['options'], queryFn: () =>
 
 export const useDashboard = () => useQuery({ queryKey: ['dashboard'], queryFn: () => api.get<One<Dashboard>>('/dashboard').then((r) => r.data) });
 
+/** One report or one record: useReport<CashFlow>('/reports/cash_flow', { year: 2026 }). Loaded again after anything is saved. */
+export function useReport<T>(path: string, params: Record<string, string | number> = {}, enabled = true) {
+  return useQuery({ queryKey: ['report', path, params], queryFn: () => api.get<One<T>>(path, params).then((r) => r.data), enabled });
+}
+
 /** A list of records: useList<Expense, ExpenseListMeta>('/expenses', { q: 'pizza' }). The old rows stay on screen while the new ones load. */
 export function useList<T, M = List<T>['meta']>(path: string, filters: Filters = {}) {
   return useQuery({

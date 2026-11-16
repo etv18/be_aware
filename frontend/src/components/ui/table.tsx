@@ -1,7 +1,7 @@
 // A card with a search bar, a table and its empty state. (partials/ui.html: filter_bar, table_card, row_actions)
 import { useEffect, useState, type ReactNode } from 'react';
 
-import { Icon } from '@/components/Icon';
+import { Icon, type IconName } from '@/components/Icon';
 import type { Filters } from '@/lib/queries';
 
 function useDebounced<T>(value: T, wait = 280): T {
@@ -47,7 +47,7 @@ export function FilterBar({ placeholder, onChange }: { placeholder: string; onCh
  * children: the rows (<tr>), already drawn by the page. note: shown while no search is active.
  * total: adds a "Total · n records" line.
  */
-export function TableCard({ headers, children, count, filters, onFilters, placeholder = 'Search…', note, empty, total, actions = true }: {
+export function TableCard({ headers, children, count, filters, onFilters, placeholder = 'Search…', note, empty, total, actions = true, openRows = false }: {
   headers: [string, string][];
   children: ReactNode;
   count: number;                                       // how many rows there are (0 shows the empty state)
@@ -58,6 +58,7 @@ export function TableCard({ headers, children, count, filters, onFilters, placeh
   empty?: { title?: string; text?: string };
   total?: { label: string; value: string };
   actions?: boolean;
+  openRows?: boolean;                                  // the rows have a double click (a pointer cursor says so)
 }) {
   const filtering = Boolean(filters?.q || (filters?.start && filters?.end));
 
@@ -65,7 +66,7 @@ export function TableCard({ headers, children, count, filters, onFilters, placeh
     <section className="card overflow-hidden">
       {onFilters && <FilterBar placeholder={placeholder} onChange={onFilters} />}
       <div className="table-wrap table-scroll">
-        <table className="table">
+        <table className={`table ${openRows ? 'row-open' : ''}`}>
           <thead>
             <tr>
               {headers.map(([label, classes]) => <th key={label} className={classes}>{label}</th>)}
@@ -93,9 +94,9 @@ export function TableCard({ headers, children, count, filters, onFilters, placeh
   );
 }
 
-/** The buttons cell of a row. extra: more buttons before edit / delete. */
+/** The buttons cell of a row. extra: more buttons before edit / delete (leave a button out of the list to hide it, e.g. an inactive account). */
 export function RowActions({ onEdit, onDelete, extra = [] }: {
-  onEdit?: () => void; onDelete?: () => void; extra?: { icon: 'banknote'; label: string; onClick: () => void }[];
+  onEdit?: () => void; onDelete?: () => void; extra?: { icon: IconName; label: string; onClick: () => void }[];
 }) {
   return (
     <td>

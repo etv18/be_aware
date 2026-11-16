@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint
 from flask_login import login_required
 
 from app.controllers import auth_controller as controller
@@ -8,11 +8,6 @@ from app.extensions import limiter
 from app.openapi import document
 
 auth = Blueprint('auth', __name__)
-
-
-@auth.get('/login')
-def get_login():
-    return render_template('auth/login.html')
 
 
 # JSON: POST /api/login, POST /api/logout, GET /api/session (who is logged in + the CSRF token)

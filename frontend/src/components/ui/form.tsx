@@ -64,8 +64,8 @@ export function FormDialog({ open, title, onClose, onSubmit, children }: {
 }
 
 /** One labelled field with its error line. `half`: half width on a wide screen. The single child is the input. */
-export function Field({ name, label, half = false, optional = false, children }: {
-  name: string; label: string; half?: boolean; optional?: boolean; children: ReactNode;
+export function Field({ name, label, half = false, optional = false, help, bare = false, children }: {
+  name: string; label: string; half?: boolean; optional?: boolean; help?: string; bare?: boolean; children: ReactNode; // bare: no label, the child brings its own (a switch)
 }) {
   const { messages, shown } = useContext(FieldErrors);
   const message = messages[name];
@@ -74,14 +74,15 @@ export function Field({ name, label, half = false, optional = false, children }:
     return () => { shown.delete(name); };
   }, [shown, name]);
   const child = Children.only(children);
-  const input = isValidElement(child)
+  const input = !bare && isValidElement(child)
     ? cloneElement(child as ReactElement<Record<string, unknown>>, { id: `f-${name}`, name, ...(message ? { 'aria-invalid': 'true' } : {}) })
     : child;
 
   return (
     <div className={half ? '' : 'sm:col-span-2'}>
-      <label className="label" htmlFor={`f-${name}`}>{label}{optional && <> <span className="font-normal text-faint">(optional)</span></>}</label>
+      {!bare && <label className="label" htmlFor={`f-${name}`}>{label}{optional && <> <span className="font-normal text-faint">(optional)</span></>}</label>}
       {input}
+      {help && <p className="mt-1 text-xs text-muted">{help}</p>}
       {message && <p className="field-error">{message}</p>}
     </div>
   );
@@ -89,9 +90,9 @@ export function Field({ name, label, half = false, optional = false, children }:
 
 type Controlled = { value: string; onChange: (value: string) => void };
 
-export function AmountField({ value, onChange, label = 'Amount', name = 'amount' }: Controlled & { label?: string; name?: string }) {
+export function AmountField({ value, onChange, label = 'Amount', name = 'amount', help }: Controlled & { label?: string; name?: string; help?: string }) {
   return (
-    <Field name={name} label={label} half>
+    <Field name={name} label={label} half help={help}>
       <input className="input num" type="text" inputMode="decimal" autoComplete="off" placeholder="0.00" required value={value} onChange={(e) => onChange(e.target.value)} />
     </Field>
   );
@@ -105,11 +106,11 @@ export function DateField({ value, onChange, label = 'Date and time', name = 'cr
   );
 }
 
-export function TextField({ name, label, value, onChange, optional, half, placeholder }: Controlled & {
-  name: string; label: string; optional?: boolean; half?: boolean; placeholder?: string;
+export function TextField({ name, label, value, onChange, optional, half, placeholder, help }: Controlled & {
+  name: string; label: string; optional?: boolean; half?: boolean; placeholder?: string; help?: string;
 }) {
   return (
-    <Field name={name} label={label} optional={optional} half={half}>
+    <Field name={name} label={label} optional={optional} half={half} help={help}>
       <input className="input" type="text" autoComplete="off" placeholder={placeholder} required={!optional} value={value} onChange={(e) => onChange(e.target.value)} />
     </Field>
   );
@@ -129,8 +130,8 @@ export function SelectField({ name, label, value, onChange, items, blank, half }
 }
 
 /** "Cash | Bank account | Credit card": a row of exclusive choices. */
-export function MethodField<V extends string>({ label, value, onChange, options, name = 'method' }: {
-  label: string; value: V; onChange: (value: V) => void; options: [V, string][]; name?: string;
+export function MethodField<V extends string>({ label, value, onChange, options, name = 'method', help }: {
+  label: string; value: V; onChange: (value: V) => void; options: [V, string][]; name?: string; help?: string;
 }) {
   return (
     <div className="sm:col-span-2">
@@ -143,6 +144,19 @@ export function MethodField<V extends string>({ label, value, onChange, options,
           </label>
         ))}
       </div>
+      {help && <p className="mt-1 text-xs text-muted">{help}</p>}
     </div>
+  );
+}
+
+/** An on / off switch with its explanation: "Mark as paid", "Cashback". */
+export function SwitchField({ name, label, help, value, onChange }: { name: string; label: string; help?: string; value: boolean; onChange: (value: boolean) => void }) {
+  return (
+    <Field name={name} label={label} bare>
+      <label className="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-line px-3 py-2.5">
+        <span className="text-sm">{label}{help && <span className="block text-xs text-muted">{help}</span>}</span>
+        <input type="checkbox" className="switch" id={`f-${name}`} name={name} checked={value} onChange={(e) => onChange(e.target.checked)} />
+      </label>
+    </Field>
   );
 }

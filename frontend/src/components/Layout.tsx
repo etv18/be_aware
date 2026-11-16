@@ -6,16 +6,13 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Icon } from '@/components/Icon';
 import { useTheme, useToast } from '@/components/Providers';
 import { api } from '@/lib/api';
-import { GROUPS, MIGRATED, currentItem, type NavGroup, type NavItem } from '@/lib/nav';
+import { GROUPS, currentItem, type NavGroup, type NavItem } from '@/lib/nav';
 import { useDashboard, useSession } from '@/lib/queries';
 
 const moduleStyle = (key: string) => ({ '--module': `var(--m-${key})` }) as CSSProperties;
 
-/** A link inside the React app, or (for a page that is not ported yet) a plain link to its Jinja page. */
 function NavLink({ item, className, style, children, onClick, role }: { item: NavItem; className: string; style?: CSSProperties; children: ReactNode; onClick?: () => void; role?: string }) {
-  return MIGRATED.has(item.key)
-    ? <Link to={item.path} className={className} style={style} onClick={onClick} role={role}>{children}</Link>
-    : <a href={item.path} className={className} style={style} role={role}>{children}</a>;
+  return <Link to={item.path} className={className} style={style} onClick={onClick} role={role}>{children}</Link>;
 }
 
 function EnvBadge({ className = '' }: { className?: string }) {
@@ -106,9 +103,9 @@ export function Layout() {
       {/* top navbar (tablet and desktop) */}
       <header className="sticky top-0 z-30 hidden border-b border-line bg-surface lg:block">
         <div className="mx-auto flex h-14 max-w-[1440px] items-center gap-2 px-4 sm:px-6 lg:gap-4 lg:px-8">
-          <a href="/" className="flex shrink-0 items-center gap-2.5 text-sm font-semibold" aria-label="Be Aware">
+          <Link to="/" className="flex shrink-0 items-center gap-2.5 text-sm font-semibold" aria-label="Be Aware">
             <span className="flex size-8 items-center justify-center rounded-lg bg-ink text-ink-inverse"><Icon name="eye" /></span><span className="hidden lg:inline">Be Aware</span>
-          </a>
+          </Link>
 
           <nav className="flex min-w-0 flex-1 items-center gap-0.5 lg:gap-1" aria-label="Main">
             {GROUPS.map((group) => group.items.length === 1 ? (

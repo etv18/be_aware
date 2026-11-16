@@ -258,9 +258,6 @@ def test_everything_asks_for_a_login(app):
         assert response.status_code == 401, path
         assert response.get_json()['error']['code'] == 'not_authenticated'
 
-    for path in ('/', '/expenses', '/incomes', '/banks'):
-        assert b'Log in' in anonymous.get(path).data, path
-
     assert anonymous.post('/api/expenses', json={}).status_code == 401
     assert anonymous.delete('/api/expenses/1').status_code == 401
 

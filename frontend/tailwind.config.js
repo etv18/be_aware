@@ -1,9 +1,9 @@
-/** Tailwind scans the React sources (and, until they are removed, the Jinja templates and page scripts) for class names. */
+/** Tailwind scans the React sources for class names. */
 const withAlpha = (name) => `rgb(var(--${name}) / <alpha-value>)`;
 
 module.exports = {
   darkMode: ['class', '[data-theme="dark"]'],
-  content: ['./index.html', './src/**/*.{ts,tsx}', '../backend/app/templates/**/*.html', '../backend/app/static/js/**/*.js'],
+  content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
       colors: {

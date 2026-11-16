@@ -1021,6 +1021,20 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * AccountCashFlowOut
+         * @description Money in and out of one bank account for each month of the year.
+         */
+        AccountCashFlowOut: {
+            /** Balances */
+            balances: string[];
+            /** Incomings */
+            incomings: string[];
+            /** Months */
+            months: string[];
+            /** Outgoings */
+            outgoings: string[];
+        };
         /** BankAccountIn */
         BankAccountIn: {
             /**
@@ -1058,6 +1072,11 @@ export interface components {
             nick_name: string;
             /** Updated At */
             updated_at: string | null;
+        };
+        /** BankAccountRecordsOut */
+        BankAccountRecordsOut: {
+            bank_account: components["schemas"]["BankAccountOut"];
+            records: components["schemas"]["RecordsOut"];
         };
         /** BankIn */
         BankIn: {
@@ -1189,6 +1208,21 @@ export interface components {
             /** Updated At */
             updated_at: string | null;
         };
+        /** CardYearlyInfo */
+        CardYearlyInfo: {
+            /** Credit Card Payments */
+            credit_card_payments: string[];
+            /** Expenses */
+            expenses: string[];
+            /** Loans */
+            loans: string[];
+        };
+        /** CardYearlyOut */
+        CardYearlyOut: {
+            associations_info: components["schemas"]["CardYearlyInfo"];
+            /** Months */
+            months: string[];
+        };
         /** CashAdjustmentIn */
         CashAdjustmentIn: {
             /** Amount */
@@ -1198,6 +1232,21 @@ export interface components {
              * @default null
              */
             created_at?: string | null;
+        };
+        /** CashFlowOut */
+        CashFlowOut: {
+            /** Months */
+            months: string[];
+            report: components["schemas"]["CashFlowReport"];
+        };
+        /** CashFlowReport */
+        CashFlowReport: {
+            /** Balances */
+            balances: string[];
+            /** Expenses */
+            expenses: string[];
+            /** Incomes */
+            incomes: string[];
         };
         /** CashLedgerOut */
         CashLedgerOut: {
@@ -1243,6 +1292,16 @@ export interface components {
             id: number;
             /** Updated At */
             updated_at: string | null;
+        };
+        /**
+         * CategoriesMonthlyOut
+         * @description What each expense category spent this month.
+         */
+        CategoriesMonthlyOut: {
+            /** Names */
+            names: string[];
+            /** Totals */
+            totals: string[];
         };
         /** CreditCardIn */
         CreditCardIn: {
@@ -1348,6 +1407,11 @@ export interface components {
              * @default false
              */
             is_cashback?: boolean;
+        };
+        /** CreditCardRecordsOut */
+        CreditCardRecordsOut: {
+            credit_card: components["schemas"]["CreditCardOut"];
+            records: components["schemas"]["RecordsOut"];
         };
         /** DashboardOut */
         DashboardOut: {
@@ -1560,6 +1624,11 @@ export interface components {
             name: string;
             /** Updated At */
             updated_at: string | null;
+        };
+        /** ExpenseCategoryRecordsOut */
+        ExpenseCategoryRecordsOut: {
+            expense_category: components["schemas"]["ExpenseCategoryOut"];
+            records: components["schemas"]["RecordsOut"];
         };
         /** ExpenseIn */
         ExpenseIn: {
@@ -1891,6 +1960,32 @@ export interface components {
             /** Years */
             years: number[];
         };
+        /**
+         * RecordsOut
+         * @description Every record that touched the account, card or category, one list per kind. Kinds without records are left out.
+         */
+        RecordsOut: {
+            /** Bank Transfers */
+            bank_transfers?: components["schemas"]["BankTransferOut"][];
+            /** Credit Card Payments */
+            credit_card_payments?: components["schemas"]["CreditCardPaymentOut"][];
+            /** Debt Payments */
+            debt_payments?: components["schemas"]["DebtPaymentOut"][];
+            /** Debts */
+            debts?: components["schemas"]["DebtOut"][];
+            /** Deposits */
+            deposits?: components["schemas"]["CashMovementOut"][];
+            /** Expenses */
+            expenses?: components["schemas"]["ExpenseOut"][];
+            /** Incomes */
+            incomes?: components["schemas"]["IncomeOut"][];
+            /** Loan Payments */
+            loan_payments?: components["schemas"]["LoanPaymentOut"][];
+            /** Loans */
+            loans?: components["schemas"]["LoanOut"][];
+            /** Withdrawals */
+            withdrawals?: components["schemas"]["CashMovementOut"][];
+        };
         /** SessionOut */
         SessionOut: {
             /** Authenticated */
@@ -1935,6 +2030,18 @@ export interface components {
              * @default null
              */
             description?: string | null;
+        };
+        /**
+         * YearlyAllOut
+         * @description The 12 monthly totals of every kind of record (the key is the table name).
+         */
+        YearlyAllOut: {
+            /** Months */
+            months: string[];
+            /** Report */
+            report: {
+                [key: string]: string[];
+            };
         };
         /**
          * YearlyReportOut
@@ -2058,14 +2165,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description The answer. Its shape is not described yet. */
+            /** @description The answer. */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": {
-                        data: Record<string, never>;
+                        data: components["schemas"]["BankAccountRecordsOut"];
                     };
                 };
             };
@@ -2087,14 +2194,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description The answer. Its shape is not described yet. */
+            /** @description The answer. */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": {
-                        data: Record<string, never>;
+                        data: components["schemas"]["AccountCashFlowOut"];
                     };
                 };
             };
@@ -2946,14 +3053,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description The answer. Its shape is not described yet. */
+            /** @description The answer. */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": {
-                        data: Record<string, never>;
+                        data: components["schemas"]["CreditCardRecordsOut"];
                     };
                 };
             };
@@ -2975,14 +3082,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description The answer. Its shape is not described yet. */
+            /** @description The answer. */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": {
-                        data: Record<string, never>;
+                        data: components["schemas"]["CardYearlyOut"];
                     };
                 };
             };
@@ -3609,14 +3716,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description The answer. Its shape is not described yet. */
+            /** @description The answer. */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": {
-                        data: Record<string, never>;
+                        data: components["schemas"]["CategoriesMonthlyOut"];
                     };
                 };
             };
@@ -3634,14 +3741,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description The answer. Its shape is not described yet. */
+            /** @description The answer. */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": {
-                        data: Record<string, never>;
+                        data: components["schemas"]["ExpenseCategoryRecordsOut"];
                     };
                 };
             };
@@ -4408,14 +4515,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description The answer. Its shape is not described yet. */
+            /** @description The answer. */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": {
-                        data: Record<string, never>;
+                        data: components["schemas"]["CashFlowOut"];
                     };
                 };
             };
@@ -4589,14 +4696,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description The answer. Its shape is not described yet. */
+            /** @description The answer. */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": {
-                        data: Record<string, never>;
+                        data: components["schemas"]["YearlyAllOut"];
                     };
                 };
             };

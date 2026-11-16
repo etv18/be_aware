@@ -2,7 +2,8 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
-import { Icon } from '@/components/Icon';
+import { Icon, type IconName } from '@/components/Icon';
+import { money, plural } from '@/lib/format';
 
 export function PageHeader({ title, subtitle, newLabel, onNew, back, children }: {
   title: string; subtitle?: string; newLabel?: string; onNew?: () => void;
@@ -50,3 +51,22 @@ export function StatRow({ stats }: { stats: Stat[] }) {
     </div>
   );
 }
+
+/** A link tile with one figure: the home page. */
+export function Tile({ to, icon, label, value, hint }: { to: string; icon: IconName; label: string; value: ReactNode; hint?: string }) {
+  return (
+    <Link to={to} className="card flex items-start gap-3 p-4 transition-colors hover:bg-sunken">
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-sunken text-muted"><Icon name={icon} /></span>
+      <span className="min-w-0">
+        <span className="block text-xs text-muted">{label}</span>
+        <span className="num block truncate text-lg font-semibold">{value}</span>
+        {hint !== undefined && <span className="block truncate text-xs text-muted">{hint}</span>}
+      </span>
+    </Link>
+  );
+}
+
+/** The "Total" figure of a list with an amount: the sum and how many records there are. */
+export const totalStat = (meta?: { total?: string | null; count: number }): Stat => ({
+  label: 'Total', value: meta ? money(meta.total) : '–', hint: meta ? `${meta.count} ${plural(meta.count, 'record')}` : '',
+});

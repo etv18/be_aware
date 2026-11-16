@@ -43,6 +43,48 @@
       }
     },
     "schemas": {
+      "AccountCashFlowOut": {
+        "additionalProperties": false,
+        "description": "Money in and out of one bank account for each month of the year.",
+        "properties": {
+          "balances": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Balances",
+            "type": "array"
+          },
+          "incomings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Incomings",
+            "type": "array"
+          },
+          "months": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Months",
+            "type": "array"
+          },
+          "outgoings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Outgoings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "months",
+          "incomings",
+          "outgoings",
+          "balances"
+        ],
+        "title": "AccountCashFlowOut",
+        "type": "object"
+      },
       "BankAccountIn": {
         "properties": {
           "account_number": {
@@ -176,6 +218,23 @@
           "bank_name"
         ],
         "title": "BankAccountOut",
+        "type": "object"
+      },
+      "BankAccountRecordsOut": {
+        "additionalProperties": false,
+        "properties": {
+          "bank_account": {
+            "$ref": "#/components/schemas/BankAccountOut"
+          },
+          "records": {
+            "$ref": "#/components/schemas/RecordsOut"
+          }
+        },
+        "required": [
+          "bank_account",
+          "records"
+        ],
+        "title": "BankAccountRecordsOut",
         "type": "object"
       },
       "BankIn": {
@@ -678,6 +737,60 @@
         "title": "CardLedgerOut",
         "type": "object"
       },
+      "CardYearlyInfo": {
+        "additionalProperties": false,
+        "properties": {
+          "credit_card_payments": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Credit Card Payments",
+            "type": "array"
+          },
+          "expenses": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Expenses",
+            "type": "array"
+          },
+          "loans": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Loans",
+            "type": "array"
+          }
+        },
+        "required": [
+          "credit_card_payments",
+          "expenses",
+          "loans"
+        ],
+        "title": "CardYearlyInfo",
+        "type": "object"
+      },
+      "CardYearlyOut": {
+        "additionalProperties": false,
+        "properties": {
+          "associations_info": {
+            "$ref": "#/components/schemas/CardYearlyInfo"
+          },
+          "months": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Months",
+            "type": "array"
+          }
+        },
+        "required": [
+          "months",
+          "associations_info"
+        ],
+        "title": "CardYearlyOut",
+        "type": "object"
+      },
       "CashAdjustmentIn": {
         "properties": {
           "amount": {
@@ -709,6 +822,60 @@
           "amount"
         ],
         "title": "CashAdjustmentIn",
+        "type": "object"
+      },
+      "CashFlowOut": {
+        "additionalProperties": false,
+        "properties": {
+          "months": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Months",
+            "type": "array"
+          },
+          "report": {
+            "$ref": "#/components/schemas/CashFlowReport"
+          }
+        },
+        "required": [
+          "months",
+          "report"
+        ],
+        "title": "CashFlowOut",
+        "type": "object"
+      },
+      "CashFlowReport": {
+        "additionalProperties": false,
+        "properties": {
+          "balances": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Balances",
+            "type": "array"
+          },
+          "expenses": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Expenses",
+            "type": "array"
+          },
+          "incomes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Incomes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "incomes",
+          "expenses",
+          "balances"
+        ],
+        "title": "CashFlowReport",
         "type": "object"
       },
       "CashLedgerOut": {
@@ -875,6 +1042,32 @@
           "bank_account_name"
         ],
         "title": "CashMovementOut",
+        "type": "object"
+      },
+      "CategoriesMonthlyOut": {
+        "additionalProperties": false,
+        "description": "What each expense category spent this month.",
+        "properties": {
+          "names": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Names",
+            "type": "array"
+          },
+          "totals": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Totals",
+            "type": "array"
+          }
+        },
+        "required": [
+          "names",
+          "totals"
+        ],
+        "title": "CategoriesMonthlyOut",
         "type": "object"
       },
       "CreditCardIn": {
@@ -1221,6 +1414,23 @@
           "amount"
         ],
         "title": "CreditCardPaymentUpdate",
+        "type": "object"
+      },
+      "CreditCardRecordsOut": {
+        "additionalProperties": false,
+        "properties": {
+          "credit_card": {
+            "$ref": "#/components/schemas/CreditCardOut"
+          },
+          "records": {
+            "$ref": "#/components/schemas/RecordsOut"
+          }
+        },
+        "required": [
+          "credit_card",
+          "records"
+        ],
+        "title": "CreditCardRecordsOut",
         "type": "object"
       },
       "DashboardOut": {
@@ -1871,6 +2081,23 @@
           "limit"
         ],
         "title": "ExpenseCategoryOut",
+        "type": "object"
+      },
+      "ExpenseCategoryRecordsOut": {
+        "additionalProperties": false,
+        "properties": {
+          "expense_category": {
+            "$ref": "#/components/schemas/ExpenseCategoryOut"
+          },
+          "records": {
+            "$ref": "#/components/schemas/RecordsOut"
+          }
+        },
+        "required": [
+          "expense_category",
+          "records"
+        ],
+        "title": "ExpenseCategoryRecordsOut",
         "type": "object"
       },
       "ExpenseIn": {
@@ -2924,6 +3151,84 @@
         "title": "OptionsOut",
         "type": "object"
       },
+      "RecordsOut": {
+        "additionalProperties": false,
+        "description": "Every record that touched the account, card or category, one list per kind. Kinds without records are left out.",
+        "properties": {
+          "bank_transfers": {
+            "items": {
+              "$ref": "#/components/schemas/BankTransferOut"
+            },
+            "title": "Bank Transfers",
+            "type": "array"
+          },
+          "credit_card_payments": {
+            "items": {
+              "$ref": "#/components/schemas/CreditCardPaymentOut"
+            },
+            "title": "Credit Card Payments",
+            "type": "array"
+          },
+          "debt_payments": {
+            "items": {
+              "$ref": "#/components/schemas/DebtPaymentOut"
+            },
+            "title": "Debt Payments",
+            "type": "array"
+          },
+          "debts": {
+            "items": {
+              "$ref": "#/components/schemas/DebtOut"
+            },
+            "title": "Debts",
+            "type": "array"
+          },
+          "deposits": {
+            "items": {
+              "$ref": "#/components/schemas/CashMovementOut"
+            },
+            "title": "Deposits",
+            "type": "array"
+          },
+          "expenses": {
+            "items": {
+              "$ref": "#/components/schemas/ExpenseOut"
+            },
+            "title": "Expenses",
+            "type": "array"
+          },
+          "incomes": {
+            "items": {
+              "$ref": "#/components/schemas/IncomeOut"
+            },
+            "title": "Incomes",
+            "type": "array"
+          },
+          "loan_payments": {
+            "items": {
+              "$ref": "#/components/schemas/LoanPaymentOut"
+            },
+            "title": "Loan Payments",
+            "type": "array"
+          },
+          "loans": {
+            "items": {
+              "$ref": "#/components/schemas/LoanOut"
+            },
+            "title": "Loans",
+            "type": "array"
+          },
+          "withdrawals": {
+            "items": {
+              "$ref": "#/components/schemas/CashMovementOut"
+            },
+            "title": "Withdrawals",
+            "type": "array"
+          }
+        },
+        "title": "RecordsOut",
+        "type": "object"
+      },
       "SessionOut": {
         "additionalProperties": false,
         "properties": {
@@ -3039,6 +3344,35 @@
           "bank_account_id"
         ],
         "title": "WithdrawalIn",
+        "type": "object"
+      },
+      "YearlyAllOut": {
+        "additionalProperties": false,
+        "description": "The 12 monthly totals of every kind of record (the key is the table name).",
+        "properties": {
+          "months": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Months",
+            "type": "array"
+          },
+          "report": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "title": "Report",
+            "type": "object"
+          }
+        },
+        "required": [
+          "months",
+          "report"
+        ],
+        "title": "YearlyAllOut",
         "type": "object"
       },
       "YearlyReportOut": {
@@ -3203,7 +3537,7 @@
                 "schema": {
                   "properties": {
                     "data": {
-                      "type": "object"
+                      "$ref": "#/components/schemas/BankAccountRecordsOut"
                     }
                   },
                   "required": [
@@ -3213,7 +3547,7 @@
                 }
               }
             },
-            "description": "The answer. Its shape is not described yet."
+            "description": "The answer."
           },
           "401": {
             "$ref": "#/components/responses/Error401"
@@ -3230,8 +3564,7 @@
         "summary": "records",
         "tags": [
           "bank_accounts"
-        ],
-        "x-typed": false
+        ]
       }
     },
     "/api/bank_accounts/{account_id}/reports/cash_flow": {
@@ -3263,7 +3596,7 @@
                 "schema": {
                   "properties": {
                     "data": {
-                      "type": "object"
+                      "$ref": "#/components/schemas/AccountCashFlowOut"
                     }
                   },
                   "required": [
@@ -3273,7 +3606,7 @@
                 }
               }
             },
-            "description": "The answer. Its shape is not described yet."
+            "description": "The answer."
           },
           "401": {
             "$ref": "#/components/responses/Error401"
@@ -3290,8 +3623,7 @@
         "summary": "cash flow",
         "tags": [
           "bank_accounts"
-        ],
-        "x-typed": false
+        ]
       }
     },
     "/api/bank_accounts/{account_id}/reports/monthly": {
@@ -4958,7 +5290,7 @@
                 "schema": {
                   "properties": {
                     "data": {
-                      "type": "object"
+                      "$ref": "#/components/schemas/CreditCardRecordsOut"
                     }
                   },
                   "required": [
@@ -4968,7 +5300,7 @@
                 }
               }
             },
-            "description": "The answer. Its shape is not described yet."
+            "description": "The answer."
           },
           "401": {
             "$ref": "#/components/responses/Error401"
@@ -4985,8 +5317,7 @@
         "summary": "records",
         "tags": [
           "credit_cards"
-        ],
-        "x-typed": false
+        ]
       }
     },
     "/api/credit_cards/{card_id}/reports/yearly": {
@@ -5018,7 +5349,7 @@
                 "schema": {
                   "properties": {
                     "data": {
-                      "type": "object"
+                      "$ref": "#/components/schemas/CardYearlyOut"
                     }
                   },
                   "required": [
@@ -5028,7 +5359,7 @@
                 }
               }
             },
-            "description": "The answer. Its shape is not described yet."
+            "description": "The answer."
           },
           "401": {
             "$ref": "#/components/responses/Error401"
@@ -5045,8 +5376,7 @@
         "summary": "yearly",
         "tags": [
           "credit_cards"
-        ],
-        "x-typed": false
+        ]
       }
     },
     "/api/credit_cards/{record_id}": {
@@ -6247,7 +6577,7 @@
                 "schema": {
                   "properties": {
                     "data": {
-                      "type": "object"
+                      "$ref": "#/components/schemas/CategoriesMonthlyOut"
                     }
                   },
                   "required": [
@@ -6257,7 +6587,7 @@
                 }
               }
             },
-            "description": "The answer. Its shape is not described yet."
+            "description": "The answer."
           },
           "401": {
             "$ref": "#/components/responses/Error401"
@@ -6271,8 +6601,7 @@
         "summary": "monthly",
         "tags": [
           "expense_categories"
-        ],
-        "x-typed": false
+        ]
       }
     },
     "/api/expense_categories/{category_id}/records": {
@@ -6295,7 +6624,7 @@
                 "schema": {
                   "properties": {
                     "data": {
-                      "type": "object"
+                      "$ref": "#/components/schemas/ExpenseCategoryRecordsOut"
                     }
                   },
                   "required": [
@@ -6305,7 +6634,7 @@
                 }
               }
             },
-            "description": "The answer. Its shape is not described yet."
+            "description": "The answer."
           },
           "401": {
             "$ref": "#/components/responses/Error401"
@@ -6322,8 +6651,7 @@
         "summary": "records",
         "tags": [
           "expense_categories"
-        ],
-        "x-typed": false
+        ]
       }
     },
     "/api/expense_categories/{record_id}": {
@@ -7793,7 +8121,7 @@
                 "schema": {
                   "properties": {
                     "data": {
-                      "type": "object"
+                      "$ref": "#/components/schemas/CashFlowOut"
                     }
                   },
                   "required": [
@@ -7803,7 +8131,7 @@
                 }
               }
             },
-            "description": "The answer. Its shape is not described yet."
+            "description": "The answer."
           },
           "401": {
             "$ref": "#/components/responses/Error401"
@@ -7817,8 +8145,7 @@
         "summary": "cash flow report",
         "tags": [
           "reports"
-        ],
-        "x-typed": false
+        ]
       }
     },
     "/api/reports/incomings_and_outgoings": {
@@ -8133,7 +8460,7 @@
                 "schema": {
                   "properties": {
                     "data": {
-                      "type": "object"
+                      "$ref": "#/components/schemas/YearlyAllOut"
                     }
                   },
                   "required": [
@@ -8143,7 +8470,7 @@
                 }
               }
             },
-            "description": "The answer. Its shape is not described yet."
+            "description": "The answer."
           },
           "401": {
             "$ref": "#/components/responses/Error401"
@@ -8157,8 +8484,7 @@
         "summary": "yearly all report",
         "tags": [
           "reports"
-        ],
-        "x-typed": false
+        ]
       }
     },
     "/api/session": {

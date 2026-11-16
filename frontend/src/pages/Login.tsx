@@ -19,7 +19,7 @@ export function Login() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
-  if (session.data?.data.authenticated) return <Navigate to={from ?? '/expenses'} replace />; // '/' once Home is ported
+  if (session.data?.data.authenticated) return <Navigate to={from ?? '/'} replace />;
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -28,7 +28,7 @@ export function Login() {
     try {
       await api.post('/login', { username, password });
       await client.invalidateQueries({ queryKey: ['session'] });
-      navigate(from ?? '/expenses', { replace: true });
+      navigate(from ?? '/', { replace: true });
     } catch (caught) {
       setError(caught instanceof ApiError ? (caught.status === 429 ? 'Too many attempts. Try again in a little while.' : caught.message) : 'Could not log in.');
       setBusy(false);

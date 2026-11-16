@@ -11,21 +11,13 @@ from app.openapi import build_spec
 # Endpoints whose answer is not described by a model yet. The list only gets shorter: describe one in
 # app/controllers/out.py, pass `out=` to get() in its routes file, and delete it here.
 NOT_TYPED_YET = {
-    '/api/bank_accounts/{account_id}/records',
-    '/api/bank_accounts/{account_id}/reports/cash_flow',
     '/api/bank_accounts/{account_id}/reports/monthly',
     '/api/bank_accounts/{account_id}/reports/yearly',
-    '/api/credit_cards/{card_id}/records',
-    '/api/credit_cards/{card_id}/reports/yearly',
-    '/api/expense_categories/{category_id}/records',
-    '/api/expense_categories/reports/monthly',
-    '/api/reports/cash_flow',
     '/api/reports/incomings_and_outgoings',
     '/api/reports/incomings_and_outgoings/monthly',
     '/api/reports/sources/bank_accounts',
     '/api/reports/sources/cash',
     '/api/reports/sources/credit_cards',
-    '/api/reports/yearly/all',
 }
 
 
@@ -114,3 +106,29 @@ def test_the_exported_file_is_up_to_date(spec):
     exported = json.loads((Path(__file__).resolve().parent.parent.parent / 'frontend' / 'openapi.json').read_text(encoding='utf-8'))
 
     assert exported == json.loads(json.dumps(spec)), 'The API changed: run "npm run gen:api" in /frontend and commit the result.'
+
+
+def test_the_answers_the_pages_read_fit_the_document(client, data, spec):
+    """Records of an account, a card and a category, and the reports behind the charts, with real records in them."""
+    account, other, card, food = data['account'].id, data['account2'].id, data['card'].id, data['food'].id
+    client.post('/api/expenses', json={'amount': '10.00', 'is_cash': False, 'description': 'A', 'expense_category_id': food, 'bank_account_id': account})
+    client.post('/api/expenses', json={'amount': '5.00', 'is_cash': False, 'description': 'B', 'expense_category_id': food, 'credit_card_id': card})
+    client.post('/api/incomes', json={'amount': '50.00', 'is_cash': False, 'bank_account_id': account})
+    client.post('/api/deposits', json={'amount': '5.00', 'bank_account_id': account})
+    client.post('/api/bank_transfers', json={'amount': '20.00', 'from_bank_account_id': account, 'to_bank_account_id': other})
+    client.post('/api/credit_card_payments', json={'amount': '3.00', 'credit_card_id': card, 'bank_account_id': account})
+    loan = client.post('/api/loans', json={'person_name': 'Ana', 'amount': '30.00', 'is_cash': False, 'bank_account_id': account}).get_json()['data']
+    client.post('/api/loan_payments', json={'loan_id': loan['id'], 'amount': '10.00', 'is_cash': False, 'bank_account_id': account})
+
+    paths = [
+        f'/api/bank_accounts/{account}/records', f'/api/bank_accounts/{account}/reports/cash_flow',
+        f'/api/credit_cards/{card}/records', f'/api/credit_cards/{card}/reports/yearly',
+        f'/api/expense_categories/{food}/records', '/api/expense_categories/reports/monthly',
+        '/api/reports/cash_flow', '/api/reports/yearly/all',
+    ]
+    for path in paths:
+        response = client.get(path)
+        assert response.status_code == 200, path
+        key = next(k for k in spec['paths'] if re.fullmatch(re.sub(r'\{\w+\}', r'\\d+', k), path))
+        schema = spec['paths'][key]['get']['responses']['200']['content']['application/json']['schema']
+        jsonschema.validate(response.get_json(), {'components': spec['components'], **schema})

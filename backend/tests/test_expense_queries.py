@@ -8,21 +8,6 @@ def make_expenses(client, data):
     post_expense(client, amount='10', category=data['food'], description='Old coffee', card=data['card'], created_at='2026-09-01T09:00')
 
 
-def test_index_page_renders(client, data):
-    make_expenses(client, data)
-
-    response = client.get('/expenses')
-
-    assert response.status_code == 200
-    assert b'Expenses' in response.data
-
-
-def test_index_requires_login(app):
-    response = app.test_client().get('/expenses')
-
-    assert b'login' in response.data.lower()
-
-
 def test_filter_by_time_returns_only_the_expenses_in_range(client, data):
     make_expenses(client, data)
 

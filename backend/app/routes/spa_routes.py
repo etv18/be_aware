@@ -1,4 +1,4 @@
-"""The React app (built from /frontend into app/static/app).
+"""The React app (built from /frontend into backend/app/static/app).
 
 While the Jinja pages still exist the React app lives under /app: every URL below /app answers with the same
 index.html and React Router draws the page. When the last Jinja page is gone, this moves to "/" (see the

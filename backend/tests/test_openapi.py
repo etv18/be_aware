@@ -111,6 +111,6 @@ def test_the_exported_file_is_up_to_date(spec):
     """frontend/openapi.json (and the TypeScript types made from it) must be regenerated when the API changes."""
     from pathlib import Path
 
-    exported = json.loads((Path(__file__).resolve().parent.parent / 'frontend' / 'openapi.json').read_text(encoding='utf-8'))
+    exported = json.loads((Path(__file__).resolve().parent.parent.parent / 'frontend' / 'openapi.json').read_text(encoding='utf-8'))
 
     assert exported == json.loads(json.dumps(spec)), 'The API changed: run "npm run gen:api" in /frontend and commit the result.'

@@ -3,7 +3,7 @@ const withAlpha = (name) => `rgb(var(--${name}) / <alpha-value>)`;
 
 module.exports = {
   darkMode: ['class', '[data-theme="dark"]'],
-  content: ['./index.html', './src/**/*.{ts,tsx}', '../app/templates/**/*.html', '../app/static/js/**/*.js'],
+  content: ['./index.html', './src/**/*.{ts,tsx}', '../backend/app/templates/**/*.html', '../backend/app/static/js/**/*.js'],
   theme: {
     extend: {
       colors: {

@@ -1,4 +1,4 @@
-// Packs the Lucide icons the app uses into one SVG sprite (app/static/img/icons.svg).
+// Packs the Lucide icons the app uses into one SVG sprite (backend/app/static/img/icons.svg).
 // Add a name to ICONS, run `npm run build:icons`, then use it as icon('name') in the scripts.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -27,5 +27,5 @@ const symbols = ICONS.map((name) => {
 });
 
 const sprite = `<svg xmlns="http://www.w3.org/2000/svg">\n${symbols.join('\n')}\n</svg>\n`;
-writeFileSync(join(here, '..', '..', 'app', 'static', 'img', 'icons.svg'), sprite);
+writeFileSync(join(here, '..', '..', 'backend', 'app', 'static', 'img', 'icons.svg'), sprite);
 console.log(`icons.svg: ${ICONS.length} icons`);

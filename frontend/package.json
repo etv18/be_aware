@@ -8,9 +8,9 @@
     "build": "tsc --noEmit && vite build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "gen:api": "python ../scripts/export_openapi.py && openapi-typescript openapi.json -o src/types/api.ts --default-non-nullable false",
-    "build:css": "tailwindcss -c tailwind.config.js -i src/app.css -o ../app/static/css/app.css --minify",
-    "watch:css": "tailwindcss -c tailwind.config.js -i src/app.css -o ../app/static/css/app.css --watch",
+    "gen:api": "python ../backend/scripts/export_openapi.py && openapi-typescript openapi.json -o src/types/api.ts --default-non-nullable false",
+    "build:css": "tailwindcss -c tailwind.config.js -i src/app.css -o ../backend/app/static/css/app.css --minify",
+    "watch:css": "tailwindcss -c tailwind.config.js -i src/app.css -o ../backend/app/static/css/app.css --watch",
     "build:icons": "node scripts/build-icons.mjs"
   },
   "dependencies": {

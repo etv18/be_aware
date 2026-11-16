@@ -13,7 +13,7 @@ htmlcov/
 !.env.example
 
 # Local data: databases, uploads, logs
-/instance/
+instance/
 *.db
 *.sqlite3
 logs/
@@ -22,7 +22,7 @@ error.log
 
 # Front-end tooling: reinstall with "npm install" in /frontend, rebuild with "npm run build"
 node_modules/
-app/static/app/
+backend/app/static/app/
 
 # Editors, OS and tooling noise
 .idx/

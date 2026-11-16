@@ -1,23 +1,28 @@
 Be Aware is a personal project which helps me to track my financial records on a monthly basis, keeping me post on my incomes and expenses and how my bank accounts's money fluctuate day to day depending on my cash flow.
 
+Folder layout
+
+backend/   the Flask app (app/, tests/, migrations/, requirements/, run.py). Every path such as app/... or tests/... below is inside backend/. Run flask, pytest and pip from here.
+frontend/  the React + TypeScript app and the Tailwind build (Node). Run npm from here.
+
 Installation
 
 1. clone the repo
 2. create a venv
 3. activate the venv
-4. go to /project/requirements
+4. go to /backend/requirements
 5. run "pip install -r requirements.txt"
-6. go to /project
+6. go to /backend
 7. run "flask init-db" to create the local SQLite database (instance/be_aware_dev.db)
 8. run "flask seed-db" to create a login user and some demo records
 9. run this command "flask run"
 
 Frontend (only needed when you change styles or icons)
 
-The pages are plain HTML templates and ES modules in app/static/js, with no build step. The CSS (Tailwind) and the icon sprite are built from /frontend and the result is committed in app/static, so the app runs without Node. Run "npm run build:css" after adding a Tailwind class to a template or script.
+The pages are plain HTML templates and ES modules in backend/app/static/js, with no build step. The CSS (Tailwind) and the icon sprite are built from /frontend and the result is committed in backend/app/static, so the app runs without Node. Run "npm run build:css" after adding a Tailwind class to a template or script.
 
 1. go to /frontend and run "npm install"
-2. "npm run build" rebuilds app/static/css/app.css and app/static/img/icons.svg ("npm run watch:css" while styling)
+2. "npm run build" rebuilds backend/app/static/css/app.css and backend/app/static/img/icons.svg ("npm run watch:css" while styling)
 3. add an icon: put its Lucide name in ICONS in frontend/scripts/build-icons.mjs, then "npm run build:icons"
 
 How the code is organised
@@ -53,8 +58,8 @@ React frontend (in progress, replaces the Jinja pages one page at a time)
 The new frontend is React + TypeScript + Tailwind in /frontend. It uses the same JSON endpoints and looks the same as the Jinja pages. While both exist, the React app is served at /app (for example /app/expenses); the menu links to the React page when the page is ported and to the Jinja page when it is not (the list is MIGRATED in frontend/src/lib/nav.ts).
 
 1. go to /frontend and run "npm install"
-2. development: run "flask run" in one terminal and "npm run dev" in another, then open http://localhost:5173 (Vite sends /api to Flask)
-3. "npm run build" builds the app into app/static/app, which Flask serves at /app (not committed: build it after pulling)
+2. development: run "flask run" (in /backend) in one terminal and "npm run dev" in another, then open http://localhost:5173 (Vite sends /api to Flask)
+3. "npm run build" builds the app into backend/app/static/app, which Flask serves at /app (not committed: build it after pulling)
 4. "npm test" runs the unit tests and "npm run typecheck" checks the types
 
 The API description (OpenAPI)
@@ -62,7 +67,7 @@ The API description (OpenAPI)
 The API is described by an OpenAPI document that is generated from the code (the Pydantic models in app/controllers/schemas.py for requests and app/controllers/out.py for responses). In development and tests it is served at /api/openapi.json, with a page to try the endpoints at /api/docs.
 
 - After changing an endpoint or a response model, run "npm run gen:api" in /frontend. It rewrites frontend/openapi.json and the TypeScript types in frontend/src/types/api.ts (never edit that file by hand). A test fails when the exported file is out of date.
-- Endpoints that are not described yet are listed in NOT_TYPED_YET in tests/test_openapi.py. Describe one (a model in out.py, "out=" in its route) and remove it from the list.
+- Endpoints that are not described yet are listed in NOT_TYPED_YET in backend/tests/test_openapi.py. Describe one (a model in out.py, "out=" in its route) and remove it from the list.
 
 Environments
 
@@ -75,4 +80,4 @@ The APP_ENV variable picks the settings (see app/config.py):
 Tests
 
 1. run "pip install -r requirements/requirements-dev.txt"
-2. from /project run "pytest" (the React tests run with "npm test" in /frontend)
+2. from /backend run "pytest" (the React tests run with "npm test" in /frontend)

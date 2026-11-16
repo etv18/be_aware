@@ -14,5 +14,5 @@ echo ">> Building the React app (served at /app)..."
 npm run build
 
 echo ">> Starting  be_aware..."
-cd "$PROJECT_DIR"
-python "$PROJECT_DIR/run.py"
+cd "$PROJECT_DIR/backend"
+python run.py

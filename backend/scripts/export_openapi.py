@@ -1,4 +1,4 @@
-"""Write frontend/openapi.json (the OpenAPI document of the JSON API). Run it from the project root:
+"""Write frontend/openapi.json (the OpenAPI document of the JSON API). Run it from the backend folder:
 
     python scripts/export_openapi.py
 
@@ -14,6 +14,6 @@ sys.path.insert(0, str(ROOT))
 from app import create_app  # noqa: E402
 from app.openapi import write_spec  # noqa: E402
 
-target = ROOT / 'frontend' / 'openapi.json'
+target = ROOT.parent / 'frontend' / 'openapi.json'
 write_spec(target, create_app('testing'))
 print(f'OpenAPI document written to {target}')

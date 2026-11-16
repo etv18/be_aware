@@ -24,4 +24,4 @@ register(credit_card_bp, controller.RESOURCE, '/credit_cards')
 
 # what hangs from a card, and its yearly report (GET, ?year=2026)
 get(credit_card_bp, '/credit_cards/<int:card_id>/records', controller.records_of, 'records')
-get(credit_card_bp, '/credit_cards/<int:card_id>/reports/yearly', controller.yearly_report, 'yearly')
+get(credit_card_bp, '/credit_cards/<int:card_id>/reports/yearly', controller.yearly_report, 'yearly', query=('year',))

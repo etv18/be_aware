@@ -48,6 +48,22 @@ URLs. Pages live at plain URLs and the JSON lives under /api, always snake_case 
 - Login: POST /api/login with {"username", "password"}, POST /api/logout; GET /api/session returns the user and a CSRF token that has to come back in an X-CSRFToken header on POST, PUT and DELETE.
 - Errors under /api are always JSON, even for a GET opened in the browser.
 
+React frontend (in progress, replaces the Jinja pages one page at a time)
+
+The new frontend is React + TypeScript + Tailwind in /frontend. It uses the same JSON endpoints and looks the same as the Jinja pages. While both exist, the React app is served at /app (for example /app/expenses); the menu links to the React page when the page is ported and to the Jinja page when it is not (the list is MIGRATED in frontend/src/lib/nav.ts).
+
+1. go to /frontend and run "npm install"
+2. development: run "flask run" in one terminal and "npm run dev" in another, then open http://localhost:5173 (Vite sends /api to Flask)
+3. "npm run build" builds the app into app/static/app, which Flask serves at /app (not committed: build it after pulling)
+4. "npm test" runs the unit tests and "npm run typecheck" checks the types
+
+The API description (OpenAPI)
+
+The API is described by an OpenAPI document that is generated from the code (the Pydantic models in app/controllers/schemas.py for requests and app/controllers/out.py for responses). In development and tests it is served at /api/openapi.json, with a page to try the endpoints at /api/docs.
+
+- After changing an endpoint or a response model, run "npm run gen:api" in /frontend. It rewrites frontend/openapi.json and the TypeScript types in frontend/src/types/api.ts (never edit that file by hand). A test fails when the exported file is out of date.
+- Endpoints that are not described yet are listed in NOT_TYPED_YET in tests/test_openapi.py. Describe one (a model in out.py, "out=" in its route) and remove it from the list.
+
 Environments
 
 The APP_ENV variable picks the settings (see app/config.py):
@@ -59,4 +75,4 @@ The APP_ENV variable picks the settings (see app/config.py):
 Tests
 
 1. run "pip install -r requirements/requirements-dev.txt"
-2. from /project run "pytest"
+2. from /project run "pytest" (the React tests run with "npm test" in /frontend)

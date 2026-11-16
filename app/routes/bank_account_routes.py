@@ -24,6 +24,6 @@ register(bank_account_bp, controller.RESOURCE, '/bank_accounts')
 
 # what hangs from an account, and its reports (GET, ?year=2026)
 get(bank_account_bp, '/bank_accounts/<int:account_id>/records', controller.records_of, 'records')
-get(bank_account_bp, '/bank_accounts/<int:account_id>/reports/yearly', controller.yearly_report, 'yearly')
-get(bank_account_bp, '/bank_accounts/<int:account_id>/reports/cash_flow', controller.cash_flow_report, 'cash_flow')
+get(bank_account_bp, '/bank_accounts/<int:account_id>/reports/yearly', controller.yearly_report, 'yearly', query=('year',))
+get(bank_account_bp, '/bank_accounts/<int:account_id>/reports/cash_flow', controller.cash_flow_report, 'cash_flow', query=('year',))
 get(bank_account_bp, '/bank_accounts/<int:account_id>/reports/monthly', controller.monthly_report, 'monthly')

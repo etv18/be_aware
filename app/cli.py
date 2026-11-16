@@ -17,6 +17,15 @@ def register_cli(app):
         db.create_all()
         click.echo('Database tables created.')
 
+    @app.cli.command('export-openapi')
+    @click.option('--out', 'path', default='frontend/openapi.json', show_default=True, type=click.Path(dir_okay=False))
+    def export_openapi(path):
+        """Write the OpenAPI document of the JSON API to a file (the frontend builds its TypeScript types from it)."""
+        from app.openapi import write_spec
+
+        write_spec(path, app)
+        click.echo(f'OpenAPI document written to {path}.')
+
     @app.cli.command('seed-db')
     @click.option('--username', default='admin', show_default=True)
     @click.option('--password', prompt=True, hide_input=True, confirmation_prompt=True)

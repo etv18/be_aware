@@ -12,6 +12,7 @@ from app.config import get_config
 from app.cli import register_cli
 from app.utils.date_handling import format_datetime_filter
 from app.errors import register_error_handlers, unauthorized
+from app.openapi import register_openapi
 from app.extensions import db, babel, limiter, crsf, login_manager
 from app.routes import (
     home_routes, 
@@ -34,6 +35,7 @@ from app.routes import (
     credit_card_transaction_routes,
     stats_routes,
     auth_routes,
+    spa_routes,
 )
 
 def create_app(config_name=None):
@@ -52,6 +54,7 @@ def create_app(config_name=None):
 
     register_extensions(app)
     register_resources(app)
+    register_openapi(app)
     register_cli(app)
 
     create_error_logger(app)
@@ -125,6 +128,7 @@ def register_resources(app):
     app.register_blueprint(credit_card_transaction_routes.credit_card_ledger_bp)
     app.register_blueprint(stats_routes.stats_bp)
     app.register_blueprint(auth_routes.auth)
+    app.register_blueprint(spa_routes.spa_bp)
 
 def create_error_logger(app):
     # Tests (and anything else that sets LOG_TO_FILES = False) skip the log files

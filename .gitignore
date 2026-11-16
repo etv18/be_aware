@@ -20,8 +20,9 @@ logs/
 *.log
 error.log
 
-# Front-end tooling: reinstall with "npm install" in /frontend
+# Front-end tooling: reinstall with "npm install" in /frontend, rebuild with "npm run build"
 node_modules/
+app/static/app/
 
 # Editors, OS and tooling noise
 .idx/

@@ -32,6 +32,9 @@ class Config:
 
     LOG_TO_FILES = True
 
+    # /api/openapi.json and the /api/docs page. Only development and tests turn them on.
+    OPENAPI_ENABLED = False
+
     # What the page shows in its badge; each environment below sets its own
     ENV_NAME = 'development'
     ENV_LABEL = 'DEV'
@@ -44,6 +47,7 @@ class DevelopmentConfig(Config):
     SECRET_KEY = os.getenv('SECRET_KEY') or 'dev-only-insecure-key'
     DEBUG = True
     TEMPLATES_AUTO_RELOAD = True
+    OPENAPI_ENABLED = True
     ENV_NAME, ENV_LABEL = 'development', 'DEV'
 
     @property
@@ -58,6 +62,7 @@ class TestingConfig(Config):
 
     TESTING = True
     LOG_TO_FILES = False
+    OPENAPI_ENABLED = True
     ENV_NAME, ENV_LABEL = 'testing', 'TEST'
 
     SECRET_KEY = 'test-secret-key'

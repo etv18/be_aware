@@ -4,6 +4,7 @@ from decimal import Decimal
 
 from app.controllers import serializers as ser
 from app.controllers._rest import data
+from app.controllers.out import DashboardOut, OptionsOut
 from app.controllers.serializers import money
 from app.models.bank_account import BankAccount
 from app.models.credit_card import CreditCard
@@ -20,7 +21,7 @@ def dashboard():
     accounts = get_not_deleted_records(model=BankAccount)
     cards = get_not_deleted_records(model=CreditCard)
 
-    return data({
+    return data(DashboardOut.model_validate({
         **home_service.active_loans_and_debts(),
         'month': {name: money(value) for name, value in home_service.monthly_income_and_expense().items()},
         'year': datetime.now().year,
@@ -29,7 +30,7 @@ def dashboard():
         'cards_used': money(sum((c.limit - c.amount_available for c in cards), Decimal())),
         'to_collect': money(loan_service.calculate_all_remainings()),
         'to_pay': money(debt_service.calculate_all_remainings()),
-    })
+    }).model_dump())
 
 
 def options():
@@ -37,10 +38,10 @@ def options():
     accounts = [a for a in bank_account_service.list_visible() if a.is_active]
     cards = [c for c in credit_card_service.list_visible() if c.is_active]
 
-    return data({
+    return data(OptionsOut.model_validate({
         'banks': [ser.bank(b) for b in bank_service.list_banks()],
         'bank_accounts': [ser.bank_account(a) for a in accounts],
         'credit_cards': [ser.credit_card(c) for c in cards],
         'expense_categories': [ser.expense_category(c) for c in expense_category_service.list_visible()],
         'years': get_years(),
-    })
+    }).model_dump())

@@ -6,6 +6,7 @@ Pages live at plain URLs (/expenses, /loans/12). The JSON of the same things liv
 from flask_login import login_required
 
 from app.controllers._rest import handlers
+from app.openapi import document
 
 API = '/api'
 
@@ -16,6 +17,7 @@ def register(blueprint, resource, path):
 
     def add(rule, key, verb):
         blueprint.add_url_rule(f'{API}{rule}', f'record_{key}', login_required(view[key]), methods=[verb])
+        document(f'{blueprint.name}.record_{key}', kind=key, resource=resource)  # for the OpenAPI document
 
     add(path, 'list', 'GET')
     if resource.create:
@@ -27,6 +29,11 @@ def register(blueprint, resource, path):
         add(f'{path}/<int:record_id>', 'delete', 'DELETE')
 
 
-def get(blueprint, path, view, name):
-    """A read-only JSON endpoint: GET /api<path>."""
+def get(blueprint, path, view, name, out=None, many=False, query=(), summary=None):
+    """A read-only JSON endpoint: GET /api<path>.
+
+    For the OpenAPI document: `out` is the model of "data" (many=True when it is a list of them) and `query` the
+    names of the query parameters it reads. Without `out` the endpoint is listed as "not typed yet".
+    """
     blueprint.add_url_rule(f'{API}{path}', name, login_required(view), methods=['GET'])
+    document(f'{blueprint.name}.{name}', out=out, many=many, query=query, summary=summary)

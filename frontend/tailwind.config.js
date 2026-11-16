@@ -1,9 +1,9 @@
-/** Tailwind scans the templates and the page scripts for class names. After adding a class, run `npm run build:css`. */
+/** Tailwind scans the React sources (and, until they are removed, the Jinja templates and page scripts) for class names. */
 const withAlpha = (name) => `rgb(var(--${name}) / <alpha-value>)`;
 
 module.exports = {
   darkMode: ['class', '[data-theme="dark"]'],
-  content: ['../app/templates/**/*.html', '../app/static/js/**/*.js'],
+  content: ['./index.html', './src/**/*.{ts,tsx}', '../app/templates/**/*.html', '../app/static/js/**/*.js'],
   theme: {
     extend: {
       colors: {

@@ -2,6 +2,7 @@ from flask import Blueprint, render_template
 from flask_login import login_required
 
 from app.controllers import debt_controller as controller
+from app.controllers.out import DebtPaymentOut
 from app.routes._rest import get, register
 
 debt_bp = Blueprint('debt', __name__)
@@ -23,4 +24,4 @@ def show(record_id):
 register(debt_bp, controller.RESOURCE, '/debts')
 
 # the payments made on one debt
-get(debt_bp, '/debts/<int:debt_id>/payments', controller.payments_of, 'payments')
+get(debt_bp, '/debts/<int:debt_id>/payments', controller.payments_of, 'payments', out=DebtPaymentOut, many=True)

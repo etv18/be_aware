@@ -383,3 +383,27 @@ Useful commands (from the project root): `pytest` (all tests), `pytest tests/tes
   - Dialogs are native `<dialog>` elements.
   - Interface text is in English.
 - **Styling.** Tailwind utilities in the markup, shared look as component classes in `frontend/src/app.css`, colors from CSS variables, generated CSS committed.
+
+## 11. React frontend and the OpenAPI document (added after the rest of this guide)
+
+Sections 4 to 6 describe the Jinja frontend, which is still in use. A React + TypeScript frontend is replacing it page by page.
+
+**What exists**
+
+- `frontend/` is a Vite project (`npm run dev`, `npm run build`, `npm test`). The build goes to `app/static/app` and is not committed. Flask serves it at `/app` (`app/routes/spa_routes.py`): every URL below `/app` returns the same `index.html` and React Router draws the page.
+- `frontend/src/app.css` and `frontend/tailwind.config.js` are shared with the Jinja pages, so the look is the same.
+- Structure: `src/lib` (`api.ts` fetch wrapper with CSRF, `format.ts`, `queries.ts` TanStack Query hooks, `nav.ts` the menu), `src/components` (`Layout`, `ui/` with `page.tsx`, `table.tsx`, `form.tsx`, `charts/`, `Providers.tsx` for theme, toasts and the confirm dialog), `src/pages` (one file per page), `src/types` (`api.ts` is generated).
+- `src/pages/Expenses.tsx` is the reference page: copy its structure for the next one (stats, `TableCard`, a form component with `FormDialog`, `YearlyChart`).
+- `MIGRATED` in `src/lib/nav.ts` lists the ported pages. A menu entry not in it links to the Jinja page of the same URL.
+
+**OpenAPI**
+
+- `app/controllers/out.py` has one Pydantic model per response. `Resource.present()` validates every record against its model before it is sent, so a response that does not fit fails in tests instead of silently changing the API.
+- `app/openapi.py` builds the document from `app.url_map`, the request schemas, the response models and what `register()` / `get()` in `app/routes/_rest.py` record. `GET /api/openapi.json` and `GET /api/docs` exist while `OPENAPI_ENABLED` is true (development and tests).
+- `python scripts/export_openapi.py` (run by `npm run gen:api`) writes `frontend/openapi.json`, and `openapi-typescript` turns it into `frontend/src/types/api.ts`.
+- To describe a new endpoint: add its response model to `out.py`, pass `out=` (and `many=True`, `query=`) to `get()`, run `npm run gen:api`, and remove it from `NOT_TYPED_YET` in `tests/test_openapi.py`.
+
+**Changed for the React app**
+
+- `GET /api/session` also returns `env_name` and `env_label` (the DEV badge), which the Jinja layout used to get from the template context.
+

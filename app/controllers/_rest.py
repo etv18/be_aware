@@ -14,13 +14,14 @@ does the work, how a record is serialized. The handlers below do the HTTP part f
 
 The routes (app/routes) only say which URL goes to which handler.
 """
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
 from typing import Callable, Optional
 
 from flask import jsonify, request
 
+from app.controllers.out import META_FOR, ListMeta, out_for
 from app.errors import error_response
 from app.services import money
 from app.utils.times import from_client
@@ -43,6 +44,17 @@ class Resource:
     list_meta: Optional[Callable] = None       # (records) -> dict merged into meta
     stored_as_utc: bool = True                 # False for expenses and incomes (see app/utils/times.py)
     has_amount: bool = True
+    out: Optional[type] = field(default=None, init=False)       # the response model of `serialize` (controllers/out.py)
+    meta_out: type = field(default=ListMeta, init=False)        # the model of `meta` in a list response
+
+    def __post_init__(self):
+        self.out = out_for(self.serialize)
+        self.meta_out = META_FOR.get(self.out, ListMeta)
+
+    def present(self, record):
+        """A record as the JSON of the response. It has to fit its model, which is also what the OpenAPI document says."""
+        shown = self.serialize(record)
+        return self.out.model_validate(shown).model_dump() if self.out else shown
 
 
 def json_body(schema, stored_as_utc=True):
@@ -76,7 +88,7 @@ def list_response(resource, records, extra_meta=None):
         meta.update(resource.list_meta(records))
     if extra_meta:
         meta.update(extra_meta)
-    return jsonify({'data': [resource.serialize(r) for r in records], 'meta': meta})
+    return jsonify({'data': [resource.present(r) for r in records], 'meta': meta})
 
 
 def data(payload, status=200):
@@ -102,15 +114,15 @@ def handlers(resource):
 
     def create_record():
         record = resource.create(**json_body(resource.create_schema, resource.stored_as_utc))
-        return data(resource.serialize(record), 201)
+        return data(resource.present(record), 201)
 
     def read_record(record_id):
-        return data(resource.serialize(money.get_record(resource.model, record_id, resource.label)))
+        return data(resource.present(money.get_record(resource.model, record_id, resource.label)))
 
     def update_record(record_id):
         schema = resource.update_schema or resource.create_schema
         record = resource.update(record_id, **json_body(schema, resource.stored_as_utc))
-        return data(resource.serialize(record))
+        return data(resource.present(record))
 
     def delete_record(record_id):
         resource.delete(record_id)

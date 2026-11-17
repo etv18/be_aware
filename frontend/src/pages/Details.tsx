@@ -33,7 +33,7 @@ export function BankAccountDetail() {
       <ReportChart title={`Money in and out, per month · ${year}`} className="mb-6"
         options={flow.data ? { type: 'bar', series: [{ label: 'In', data: flow.data.incomings, color: 'c-incomes' }, { label: 'Out', data: flow.data.outgoings, color: 'c-expenses' }] } : null} />
 
-      {records.data && <RecordsTabs records={records.data.records} />}
+      {records.data && <RecordsTabs records={records.data.records} bankProduct='bank_account'/>}
       {account && transferring && <TransferForm from={account} onClose={() => setTransferring(false)} />}
     </div>
   );
@@ -66,7 +66,7 @@ export function CreditCardDetail() {
           series: [{ label: 'Expenses', data: info.expenses, color: 'c-expenses' }, { label: 'Payments', data: info.credit_card_payments, color: 'c-incomes' }, { label: 'Loans', data: info.loans, color: 'c-loans' }],
         } : null} />
 
-      {records.data && <RecordsTabs records={records.data.records} />}
+      {records.data && <RecordsTabs records={records.data.records} bankProduct='credit_card'/>}
       {card && paying && <CardPaymentForm card={card} onClose={() => setPaying(false)} />}
     </div>
   );
@@ -88,7 +88,7 @@ export function ExpenseCategoryDetail() {
         { label: 'Spent so far', value: records.data ? money(sum(expenses.map((e) => e.amount))) : '–', hint: records.data ? `${expenses.length} expenses` : '' },
       ]} />
 
-      {records.data && <RecordsTabs records={records.data.records} />}
+      {records.data && <RecordsTabs records={records.data.records} bankProduct='expense'/>}
     </div>
   );
 }

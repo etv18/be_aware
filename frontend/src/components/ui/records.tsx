@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 
 import { Icon } from '@/components/Icon';
-import { FilterBar } from '@/components/ui/table';
+import { FilterBar, RowActions } from '@/components/ui/table';
 import { filterRows, formatDate, money, source, sum } from '@/lib/format';
 import type { Filters } from '@/lib/queries';
 import type { RecordsKinds } from '@/types';
@@ -51,7 +51,7 @@ const KINDS: Record<keyof RecordsKinds, [string, Column[]]> = {
 
 const classOf = (value: Column['className'], row: Row) => (typeof value === 'function' ? value(row) : value) ?? '';
 
-export function RecordsTabs({ records }: { records: RecordsKinds }) {
+export function RecordsTabs({ records, bankProduct }: { records: RecordsKinds, bankProduct: string }) {
   const kinds = (Object.keys(KINDS) as (keyof RecordsKinds)[]).filter((kind) => records[kind]?.length);
   const [picked, setPicked] = useState<keyof RecordsKinds | null>(null);
   const [filters, setFilters] = useState<Filters>({});
@@ -88,7 +88,16 @@ export function RecordsTabs({ records }: { records: RecordsKinds }) {
         <FilterBar placeholder="Search description or amount…" onChange={setFilters} />
         <div className="table-wrap table-scroll">
           <table className="table">
-            <thead><tr>{columns.map((c) => <th key={c.label} className={c.right ? 'text-right' : ''}>{c.label}</th>)}</tr></thead>
+            <thead>
+              <tr>
+                {columns.map((c) => <th key={c.label} className={c.right ? 'text-right' : ''}>{c.label}</th>)}
+                {/* If credit card tab is selected show this column */}
+                {current.toLowerCase() === 'credit_card_payments'  &&
+                 bankProduct === 'credit_card'&& (
+                    <th className='text-right'>Action</th>
+                )}
+              </tr>
+            </thead>
             <tbody>
               {rows.map((row) => (
                 <tr key={row.id}>
@@ -98,6 +107,12 @@ export function RecordsTabs({ records }: { records: RecordsKinds }) {
                       {c.sub?.(row) ? <span className="block max-w-[28ch] truncate text-xs text-muted">{c.sub(row)}</span> : null}
                     </td>
                   ))}
+                  {/* If credit card tab is selected show this button */}
+                  {current.toLowerCase() === 'credit_card_payments' && 
+                    bankProduct === 'credit_card' &&
+                  (
+                    <RowActions onDelete={() => {}} />
+                  )}
                 </tr>
               ))}
             </tbody>
